@@ -5,4 +5,4 @@ A library of Unity3D systems/prefabs ment for reuse/addition that were initialy 
 # Contributing
 
 We encourage other dutch municipalities to contribute to this package with developments of their own.<br>
-Please refer to CONTRIBUTING.md for details on how to contribute.
+Please refer to [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute.
