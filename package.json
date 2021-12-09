@@ -3,7 +3,7 @@
   "displayName": "Netherlands 3D",
   "version": "0.0.1",
   "unity": "2020.3",
-  "description": "An open-source library of systems/prefabs ment for reuse/addition by other dutch municipalities",
+  "description": "An open-source library of systems/prefabs meant for reuse/addition by other dutch municipalities",
   "type": "library",
   "keywords": [
     "3d",
