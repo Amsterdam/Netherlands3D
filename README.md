@@ -1,6 +1,6 @@
 # Netherlands3D
 
-A library of Unity3D systems/prefabs ment for reuse/addition that were initialy developed for 3D Amsterdam and 3D Utrecht.<br>
+A library of Unity3D systems/prefabs meant for reuse/addition that were initialy developed for 3D Amsterdam and 3D Utrecht.<br>
 
 # Contributing
 
