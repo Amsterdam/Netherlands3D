@@ -14,7 +14,7 @@ namespace Netherlands3D.TileSystem
 	[HelpURL("https://3d.amsterdam.nl/netherlands3d/help#LayersLoader")]
 	public class LayerLoader : MonoBehaviour
 	{
-		public string streamingAssetsConfigFile = "TileHandlerConfig.json";
+		public string streamingAssetsConfigFile = "LayerConfig.json";
 		private string configPath = "";
 
 		[SerializeField]
