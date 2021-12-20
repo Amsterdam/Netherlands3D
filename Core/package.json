@@ -1,0 +1,20 @@
+{
+    "name": "nl.netherlands3d.core",
+    "displayName": "Netherlands 3D core",
+    "version": "0.0.2",
+    "unity": "2020.3",
+    "description": "An open-source library of systems/prefabs meant for reuse/addition by other dutch municipalities",
+    "type": "library",
+    "keywords": [
+        "3d",
+        "geojson",
+        "cityjson",
+        "digital",
+        "twin",
+        "city"
+    ],
+    "author": {
+        "name": "3D Amsterdam Team",
+        "url": "https://3d.amsterdam.nl"
+    }
+}
