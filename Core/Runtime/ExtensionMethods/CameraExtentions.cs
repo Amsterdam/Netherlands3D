@@ -11,8 +11,10 @@ public static class CameraExtensions
     private static Vector2 bottomRight = new Vector2(1, 0);
     private static Vector2 bottomLeft = new Vector2(0, 0);
 
-    public static Extent GetRDExtent(this Camera camera, float maximumViewDistance)
+    public static Extent GetRDExtent(this Camera camera, float maximumViewDistance = 0)
     {
+        if (maximumViewDistance == 0) maximumViewDistance = camera.farClipPlane;
+
         // Determine what world coordinates are in the corners of our view
         corners[0] = GetCornerPoint(camera, topLeft, maximumViewDistance);
         corners[1] = GetCornerPoint(camera, topRight, maximumViewDistance);
@@ -67,7 +69,7 @@ public static class CameraExtensions
         return output;
     }
 
-    public static Vector3[] GetWorldSpaceCorners()
+    public static Vector3[] GetWorldSpaceCorners(this Camera camera)
     {
         return corners;
     }
