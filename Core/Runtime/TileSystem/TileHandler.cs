@@ -107,10 +107,13 @@ namespace Netherlands3D.TileSystem
 
 		void Start()
 		{
-			maxTileSize = tileSizes.Max();
-
 			pauseLoading = false;
 			CacheCameraFrustum();
+
+			if (tileSizes.Count == 0)
+			{
+				GetTilesizes();
+			}
 		}
 
 		private void CacheCameraFrustum()
@@ -132,10 +135,6 @@ namespace Netherlands3D.TileSystem
 			viewRange = GetViewRange();
 			cameraPosition = GetRDCameraPosition();
 
-			if (tileSizes.Count == 0)
-			{
-				GetTilesizes();
-			}
 			GetTileDistancesInView(tileSizes, viewRange, cameraPosition);
 
 			pendingTileChanges.Clear();
@@ -245,6 +244,7 @@ namespace Netherlands3D.TileSystem
 			cameraPosition.x = (int)cameraPositionRD.x;
 			cameraPosition.y = (int)cameraPositionRD.y;
 			cameraPosition.z = (int)cameraPositionRD.z;
+
 			return cameraPosition;
 		}
 		
@@ -267,7 +267,7 @@ namespace Netherlands3D.TileSystem
 					}
 				}
 			}
-			
+			maxTileSize = tileSizes.Max();
 		}
 
 		private Vector3 GetPlaneIntersection(Plane plane, Camera camera, Vector2 screenCoordinate)
