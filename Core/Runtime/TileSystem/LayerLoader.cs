@@ -1,3 +1,4 @@
+using Netherlands3D.Core;
 using Netherlands3D.Events;
 using Netherlands3D.TileSystem;
 using System;
@@ -28,13 +29,16 @@ namespace Netherlands3D.TileSystem
 		private Material lineShader;
 		void Start()
 		{
-			configuration.dataChanged.AddListener(ConstructLayers);
+			configuration.dataChanged.AddListener(TileLayerSettingsUpdate);
 			StartCoroutine(LoadExternalConfig());
 		}
 
-		private void ConstructLayers()
+		private void TileLayerSettingsUpdate()
 		{
 			tileHandler = gameObject.AddComponent<TileHandler>();
+
+			CoordConvert.relativeCenterRD = new Vector2RD(configuration.rdCenterX, configuration.rdCenterY);
+			CoordConvert.zeroGroundLevelY = configuration.groundYZero;
 
 			foreach (var binaryMeshLayer in configuration.binaryMeshLayers)
 			{

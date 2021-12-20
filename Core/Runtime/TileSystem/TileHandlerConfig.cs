@@ -16,7 +16,7 @@ namespace Netherlands3D.TileSystem
 		public double rdCenterX = 0, rdCenterY = 0;
 
 		[Tooltip("NAP based")]
-		public double groundYzero = 0;
+		public float groundYZero = 0;
 
 		public Binarymeshlayer[] binaryMeshLayers;
 		public Geojsonlayer[] geoJsonLayers;
