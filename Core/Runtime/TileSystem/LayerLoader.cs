@@ -148,7 +148,11 @@ namespace Netherlands3D.TileSystem
 			{
 				Debug.Log($"Could not load {configPath} in StreamingAssets. It will be generated for you.");
 				var configJson = JsonUtility.ToJson(configuration);
-				File.WriteAllText(configPath, configJson);
+
+				FileInfo file = new FileInfo(configPath);
+				file.Directory.Create();
+				File.WriteAllText(file.FullName, configJson);
+
 				yield break;
 			}
 			LoadConfig(File.ReadAllText(configPath));
