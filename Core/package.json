@@ -16,5 +16,10 @@
     "author": {
         "name": "3D Amsterdam Team",
         "url": "https://3d.amsterdam.nl"
+    },
+	"dependencies":
+      {
+        "com.unity.textmeshpro": "3.0.6"
+      }
     }
 }
