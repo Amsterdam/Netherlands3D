@@ -46,6 +46,7 @@ namespace Netherlands3D.TileSystem
 				newLayer.transform.SetParent(this.transform);
 				newLayer.layerPriority = binaryMeshLayer.priority;
 				newLayer.name = binaryMeshLayer.layerName;
+				newLayer.enabled = binaryMeshLayer.visible;
 				/*if (binaryMeshLayer.selectableSubobjects)
 				{
 					newLayer.gameObject.AddComponent<SelectSubObjects>();
@@ -78,6 +79,7 @@ namespace Netherlands3D.TileSystem
 				newLayer.name = geoJsonLayer.layerName;
 				newLayer.textPrefab = (geoJsonLayer.overlay) ? textOverlayPrefab : textIntersectPrefab;
 				newLayer.lineRenderMaterial = lineShader;
+				newLayer.enabled = geoJsonLayer.visible;
 
 				ColorUtility.TryParseHtmlString(geoJsonLayer.lineColor, out Color lineColor);
 				newLayer.lineColor = lineColor;
