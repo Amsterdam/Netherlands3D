@@ -12,6 +12,12 @@ namespace Netherlands3D.TileSystem
 		[HideInInspector]
 		public UnityEvent dataChanged = new UnityEvent();
 
+		[Tooltip("RD coordinate based")]
+		public double rdCenterX = 0, rdCenterY = 0;
+
+		[Tooltip("NAP based")]
+		public double groundYzero = 0;
+
 		public Binarymeshlayer[] binaryMeshLayers;
 		public Geojsonlayer[] geoJsonLayers;
 
