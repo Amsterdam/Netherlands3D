@@ -7,8 +7,6 @@ namespace Netherlands3D.TileSystem
 	[System.Serializable]
 	public class TileHandlerConfig : ScriptableObject
 	{
-		public string configFile = "TileHandlerConfig.json";
-
 		[HideInInspector]
 		public UnityEvent dataChanged = new UnityEvent();
 

@@ -14,6 +14,9 @@ namespace Netherlands3D.TileSystem
 	[HelpURL("https://3d.amsterdam.nl/netherlands3d/help#LayersLoader")]
 	public class LayerLoader : MonoBehaviour
 	{
+		public string streamingAssetsConfigFile = "TileHandlerConfig.json";
+		private string configPath = "";
+
 		[SerializeField]
 		private TileHandlerConfig configuration;
 		private TileHandler tileHandler;
@@ -29,8 +32,16 @@ namespace Netherlands3D.TileSystem
 		private Material lineShader;
 		void Start()
 		{
+			configPath = Application.streamingAssetsPath + "/" + streamingAssetsConfigFile;
 			configuration.dataChanged.AddListener(TileLayerSettingsUpdate);
-			StartCoroutine(LoadExternalConfig());
+
+			if (streamingAssetsConfigFile != "")
+			{
+				StartCoroutine(LoadExternalConfig());
+			}
+			else{
+				configuration.dataChanged.Invoke();
+			}
 		}
 
 		private void TileLayerSettingsUpdate()
@@ -115,30 +126,32 @@ namespace Netherlands3D.TileSystem
 			configuration.dataChanged.Invoke();
 		}
 
+
 		IEnumerator LoadExternalConfig()
 		{
-			var streamingAssetsConfigPath = Application.streamingAssetsPath + "/" + configuration.configFile;
-			Debug.Log($"Loading layers config file: {streamingAssetsConfigPath}");
+			Debug.Log($"Loading layers config file: {configPath}");
 #if UNITY_WEBGL && !UNITY_EDITOR
-        UnityWebRequest webRequest = UnityWebRequest.Get(streamingAssetsConfigPath);
+			UnityWebRequest webRequest = UnityWebRequest.Get(configPath);
         
-        yield return webRequest.SendWebRequest();
-        if (webRequest.result == UnityWebRequest.Result.Success)
-        {
-            LoadConfig(webRequest.downloadHandler.text);
-        }
-        else
-        {
-            Debug.Log($"Could not load {configuration.configFile}");
-        }
-        yield return null;
-#else
-			if (!File.Exists(streamingAssetsConfigPath))
+			yield return webRequest.SendWebRequest();
+			if (webRequest.result == UnityWebRequest.Result.Success)
 			{
-				Debug.Log($"Could not load {configuration.configFile}");
+				LoadConfig(webRequest.downloadHandler.text);
+			}
+			else
+			{
+				Debug.Log($"Could not load {configPath}");
+			}
+			yield return null;
+#else
+			if (!File.Exists(configPath))
+			{
+				Debug.Log($"Could not load {configPath} in StreamingAssets. It will be generated for you.");
+				var configJson = JsonUtility.ToJson(configuration);
+				File.WriteAllText(configPath, configJson);
 				yield break;
 			}
-			LoadConfig(File.ReadAllText(streamingAssetsConfigPath));
+			LoadConfig(File.ReadAllText(configPath));
 			yield return null;
 #endif
 		}
