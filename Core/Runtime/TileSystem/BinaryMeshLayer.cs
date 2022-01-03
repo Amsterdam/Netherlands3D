@@ -96,7 +96,7 @@ namespace Netherlands3D.TileSystem
 
 			//On WebGL we request brotli encoded files instead. We might want to base this on browser support.
 #if !UNITY_EDITOR && UNITY_WEBGL
-			url += brotliCompressedAssetFileExtention;
+			url += brotliCompressedExtention;
 #endif
 			var webRequest = UnityWebRequest.Get(url);
 /*#if !UNITY_EDITOR && UNITY_WEBGL
