@@ -17,7 +17,7 @@
     {
       "displayName": "example",
       "description": "Core example of the 3D tile system for Amsterdam",
-      "path": "Samples~/TileSystem"
+      "path": "Core/Samples~/TileSystem"
     }
   ],
   "hideInEditor": false,
