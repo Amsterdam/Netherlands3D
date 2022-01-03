@@ -14,7 +14,10 @@ namespace Netherlands3D.TileSystem
 		public List<Material> DefaultMaterialList = new List<Material>();
 		public bool createMeshcollider = false;
 		public ShadowCastingMode tileShadowCastingMode = ShadowCastingMode.On;
-		
+
+		[SerializeField]
+		private string brotliCompressedAssetFileExtention = ".br";
+
 		private GameObject container;
 		private Mesh mesh;
 		private MeshRenderer meshRenderer;
@@ -94,12 +97,13 @@ namespace Netherlands3D.TileSystem
 
 			//On WebGL we request brotli encoded files instead. We might want to base this on browser support.
 #if !UNITY_EDITOR && UNITY_WEBGL
-			url += Config.activeConfiguration.brotliCompressedAssetFileExtention;
+			url += brotliCompressedAssetFileExtention;
 #endif
 			var webRequest = UnityWebRequest.Get(url);
-#if !UNITY_EDITOR && UNITY_WEBGL
+/*#if !UNITY_EDITOR && UNITY_WEBGL
 			webRequest.SetRequestHeader("Accept-Encoding", "br");
-#endif
+			//Not allowed for this unity version (but seems to be legacy)
+#endif*/
 
 			tiles[tileKey].runningWebRequest = webRequest;
 			yield return webRequest.SendWebRequest();
