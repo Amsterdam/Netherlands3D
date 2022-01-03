@@ -13,7 +13,6 @@ namespace Netherlands3D.TileSystem
     {
 		public List<Material> DefaultMaterialList = new List<Material>();
 		public bool createMeshcollider = false;
-		public bool addHighlightuvs = false;
 		public ShadowCastingMode tileShadowCastingMode = ShadowCastingMode.On;
 		
 		private GameObject container;

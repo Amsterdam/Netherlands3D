@@ -13,6 +13,14 @@
     "twin",
     "city"
   ],
+  "samples": [
+    {
+      "displayName": "example",
+      "description": "Core example of the 3D tile system for Amsterdam",
+      "path": "Samples~/TileSystem"
+    }
+  ],
+  "hideInEditor": false,
   "author": {
     "name": "3D Amsterdam Team",
     "url": "https://3d.amsterdam.nl"
