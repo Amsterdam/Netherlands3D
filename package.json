@@ -15,7 +15,7 @@
   ],
   "samples": [
     {
-      "displayName": "example",
+      "displayName": "Tile system example of Amsterdam",
       "description": "Core example of the 3D tile system for Amsterdam",
       "path": "Core/Samples~/TileSystem"
     }
