@@ -32,6 +32,7 @@ namespace Netherlands3D.TileSystem
 			public int priority = 1;
 			public bool selectableSubobjects;
 			public Lod[] lods;
+			public string brotliCompressedExtention = ".br";
 			public int[] materialLibraryIndices;
 			public bool visible = true;
 		}

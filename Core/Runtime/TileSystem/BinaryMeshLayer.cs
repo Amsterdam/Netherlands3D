@@ -15,8 +15,7 @@ namespace Netherlands3D.TileSystem
 		public bool createMeshcollider = false;
 		public ShadowCastingMode tileShadowCastingMode = ShadowCastingMode.On;
 
-		[SerializeField]
-		private string brotliCompressedAssetFileExtention = ".br";
+		public string brotliCompressedExtention = ".br";
 
 		private GameObject container;
 		private Mesh mesh;

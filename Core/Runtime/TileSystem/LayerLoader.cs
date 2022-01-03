@@ -58,6 +58,7 @@ namespace Netherlands3D.TileSystem
 				newLayer.layerPriority = binaryMeshLayer.priority;
 				newLayer.name = binaryMeshLayer.layerName;
 				newLayer.enabled = binaryMeshLayer.visible;
+				newLayer.brotliCompressedExtention = binaryMeshLayer.brotliCompressedExtention;
 				/*if (binaryMeshLayer.selectableSubobjects)
 				{
 					newLayer.gameObject.AddComponent<SelectSubObjects>();
