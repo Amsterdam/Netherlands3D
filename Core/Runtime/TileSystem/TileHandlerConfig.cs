@@ -11,7 +11,7 @@ namespace Netherlands3D.TileSystem
 		public UnityEvent dataChanged = new UnityEvent();
 
 		[Tooltip("RD coordinate based")]
-		public double rdCenterX = 0, rdCenterY = 0;
+		public double rdCenterX = 121000, rdCenterY = 487000;
 
 		[Tooltip("NAP based")]
 		public float groundYZero = 0;
