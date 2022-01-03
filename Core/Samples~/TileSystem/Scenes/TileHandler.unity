@@ -433,7 +433,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   DefaultMaterialList:
-  - {fileID: 2100000, guid: 1c01a836d7381b040a3927a969a2fabf, type: 2}
+  - {fileID: 2100000, guid: 8784d6829f244dc4a82c34a923b3108f, type: 2}
   createMeshcollider: 0
   tileShadowCastingMode: 1
   brotliCompressedExtention: .br
@@ -842,7 +842,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 154ad834a9047874f8c032d05bb8f73b, type: 2}
   - {fileID: 2100000, guid: 85d8b49e901d2d74f861df5ff6e3af74, type: 2}
   - {fileID: 2100000, guid: 1d27b4df77a58394d934beb17e22ef9c, type: 2}
-  - {fileID: 2100000, guid: 0bd1798a77e07d6448a16df4b2052aaf, type: 2}
+  - {fileID: 2100000, guid: effeb907e73e0bf479f61f38032b4493, type: 2}
   createMeshcollider: 0
   tileShadowCastingMode: 1
   brotliCompressedExtention: .br
