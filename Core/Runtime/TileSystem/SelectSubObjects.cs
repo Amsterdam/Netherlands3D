@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Linq;
 using System.Globalization;
+using Netherlands3D.Events;
 
 namespace Netherlands3D.TileSystem
 {
@@ -38,9 +39,12 @@ namespace Netherlands3D.TileSystem
 
         private bool doingMultiselect = false;
 
+        [SerializeField]
+        private StringListEvent selectedBuildings;
+
         private void Awake()
         {
-            if(exclusiveSelectedShader)
+            if (exclusiveSelectedShader)
                 exclusiveSelectedShader.SetColor("_HighlightColor", selectionVertexColor);
 
             selectedIDs = new List<string>();
@@ -49,24 +53,33 @@ namespace Netherlands3D.TileSystem
             containerLayer = gameObject.GetComponent<BinaryMeshLayer>();
         }
 
-        public void Select()
+        public void SelectWithInputs(Ray inputRay, bool multiSelect, bool secondary = false){
+            ray = inputRay;
+            doingMultiselect = multiSelect;
+
+            if (secondary)
+            {
+                SecondarySelect();
+                return;
+            }
+            Select();
+        }
+
+        private void Select()
         {
             if (!enabled) return;
             FindSelectedID();
         }
 
-        public void SecondarySelect()
+        private void SecondarySelect()
         {
-            if (!enabled) return;
-
-            Select();
             //On a secondary click, only select if we did not make a multisselection yet.
             if (selectedIDs.Count < 2)
             {
                 Select();
             }
             else{
-                //Simply retrigger the selection list we already have to trigger the right state for the context menu
+                //Simply retrigger the selection list with the new values
                 HighlightObjectsWithIDs(selectedIDs);
             }
         }
@@ -74,7 +87,6 @@ namespace Netherlands3D.TileSystem
         public void Deselect()
         {
             if (!enabled) return;
-
             ClearSelection();
         }
 
@@ -148,29 +160,8 @@ namespace Netherlands3D.TileSystem
 
 			HighlightSelectedWithColor(selectionVertexColor);
 
-			//Specific context menu /sidepanel items per selection count
-			/*if (selectedIDs.Count == 1)
-			{
-				ShowBAGDataForSelectedID(lastSelectedID);
-				ContextPointerMenu.Instance.SwitchState(ContextPointerMenu.ContextState.BUILDING_SELECTION);
-			}
-			else if (selectedIDs.Count > 1)
-			{
-				ContextPointerMenu.Instance.SwitchState(ContextPointerMenu.ContextState.MULTI_BUILDING_SELECTION);
-				//Update sidepanel outliner
-				PropertiesPanel.Instance.OpenObjectInformation("Selectie", true);
-				PropertiesPanel.Instance.RenderThumbnail(PropertiesPanel.ThumbnailRenderMethod.HIGHLIGHTED_BUILDINGS);
-				PropertiesPanel.Instance.AddTitle("Geselecteerde panden");
-				foreach (var id in selectedIDs)
-				{
-					PropertiesPanel.Instance.AddSelectionOutliner(this.gameObject, "Pand " + id, id);
-				}
-			}
-			else if (ContextPointerMenu.Instance.state != ContextPointerMenu.ContextState.CUSTOM_OBJECTS)
-			{
-				ContextPointerMenu.Instance.SwitchState(ContextPointerMenu.ContextState.DEFAULT);
-			}*/
-		}
+            selectedBuildings.started.Invoke(selectedIDs);
+        }
 
 		private void HighlightSelectedWithColor(Color highlightColor)
 		{
@@ -257,33 +248,6 @@ namespace Netherlands3D.TileSystem
             hiddenIDs.Clear();
             selectedIDs.Clear();
             UnhideAllSubObjects();
-        }
-
-        /// <summary>
-        /// Method to allow other objects to display the information panel for the last ID we selected here.
-        /// </summary>
-        public void ShowBAGDataForSelectedID(string id = "")
-        {
-            if (!enabled) return;
-
-            var thumbnailFrom = lastRaycastHit.point + (Vector3.up * 300) + (Vector3.back * 300);
-            var lookAtTarget = lastRaycastHit.point;
-
-           /* if (id != emptyID)
-            {
-				PropertiesPanel.Instance.OpenObjectInformation("", true);
-                if (selectedIDs.Count > 1) Interface.SidePanel.PropertiesPanel.Instance.AddActionButtonText("< Geselecteerde panden", (action) =>
-                {
-					HighlightObjectsWithIDs();
-                }
-                );
-				PropertiesPanel.Instance.displayBagData.ShowBuildingData(id);
-            }
-            else if (lastSelectedID != emptyID)
-            {
-				PropertiesPanel.Instance.OpenObjectInformation("", true);
-				PropertiesPanel.Instance.displayBagData.ShowBuildingData(lastSelectedID);
-            }*/
         }
 
         IEnumerator FindSelectedSubObjectID(Ray ray, System.Action<string> callback)
