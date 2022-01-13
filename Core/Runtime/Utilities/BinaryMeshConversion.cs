@@ -226,7 +226,7 @@ namespace Netherlands3D.Core
                         subMeshDescriptor.indexStart = subMeshFirstIndex;
                         subMeshDescriptor.indexCount = subMeshIndexCount;
 
-                        mesh.SetSubMesh(subMeshID, subMeshDescriptor);
+                        mesh.SetSubMesh(i, subMeshDescriptor);
                     }
                     submeshMaterialIndices = materialIndices;
 
