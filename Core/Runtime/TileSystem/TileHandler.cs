@@ -105,6 +105,8 @@ namespace Netherlands3D.TileSystem
 
 		private int maxTileSize = 0;
 
+		private float groundLevelClipRange = 1000;
+
 		void Start()
 		{
 			pauseLoading = false;
@@ -226,7 +228,22 @@ namespace Netherlands3D.TileSystem
 		/// </summary>
 		private Vector4 GetViewRange()
 		{
-			Extent cameraExtent = Camera.main.GetRDExtent(Camera.main.farClipPlane + maxTileSize);
+			Extent cameraExtent;
+			if(Camera.main.transform.position.y > 20)
+			{
+				useRadialDistanceCheck = false;
+				cameraExtent = Camera.main.GetRDExtent(Camera.main.farClipPlane + maxTileSize);
+			}
+			else{
+				useRadialDistanceCheck = true;
+				var cameraRD = CoordConvert.UnitytoRD(Camera.main.transform.position);
+				cameraExtent = new Extent(
+					cameraRD.x - groundLevelClipRange,
+					cameraRD.y - groundLevelClipRange,
+					cameraRD.x + groundLevelClipRange,
+					cameraRD.y + groundLevelClipRange
+				);
+			}
 
 			Vector4 viewRange = new Vector4();
 			viewRange.x = (float)cameraExtent.MinX;
