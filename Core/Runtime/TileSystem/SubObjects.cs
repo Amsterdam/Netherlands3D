@@ -55,7 +55,6 @@ public partial class SubObjects : MonoBehaviour
 			{
 				var version = reader.ReadInt32();
 				var subObjects = reader.ReadInt32();
-				Debug.Log("Metadata subobject count: " + subObjects);
 				for (int i = 0; i < subObjects; i++)
 				{
 					var id = reader.ReadString();
@@ -78,6 +77,20 @@ public partial class SubObjects : MonoBehaviour
 		}
 	}
 
+	[ContextMenu("Copy ID's to clipboard")]
+	private void CopyIDsToClipBoard()
+	{
+		string csvString = "";
+		foreach(var subObject in SubObjectsData)
+		{
+			var randomData = ColorUtility.ToHtmlStringRGB(new Color(Random.value, Random.value, Random.value));
+			csvString += subObject.objectID + ";#" + randomData + "\n";
+		}
+
+		GUIUtility.systemCopyBuffer = csvString;
+		Debug.Log("Copied ID's");
+	}
+
 	private IEnumerator LoadMetaDataAndSelect(int selectedVertAfterLoading, System.Action<string> callback)
 	{	
 		yield return LoadMetaData(mesh);
@@ -86,10 +99,12 @@ public partial class SubObjects : MonoBehaviour
 		callback(id);
 	}
 
-	public IEnumerator LoadMetaDataAndApply(List<SubOjectData> prevousObjectDatas)
+	public IEnumerator LoadMetaDataAndApply(List<SubOjectData> prevousObjectDatas = null)
 	{
 		yield return LoadMetaData(mesh);
-		
+
+		if (prevousObjectDatas == null) yield break;
+
 		//Sync parts of the data with our new objectdata 
 		foreach(var subObject in SubObjectsData)
 		{
@@ -116,6 +131,10 @@ public partial class SubObjects : MonoBehaviour
 
 	private IEnumerator LoadMetaData(Mesh mesh)
 	{
+		if (!mesh) yield break;
+
+		downloadingSubObjects = true;
+
 		var metaDataName = mesh.name.Replace(".bin","-data.bin");
 		var webRequest = UnityWebRequest.Get(metaDataName);
 #if !UNITY_EDITOR && UNITY_WEBGL
@@ -127,9 +146,12 @@ public partial class SubObjects : MonoBehaviour
 		if (webRequest.result != UnityWebRequest.Result.Success)
 		{
 			Debug.Log("No metadata on path: " + metaDataName);
+			downloadingSubObjects = false;
 		}
 		else
 		{
+			if(gameObject == null) yield return null;
+
 			byte[] results = webRequest.downloadHandler.data;
 			ReadMetaDataFile(results);
 			downloadingSubObjects = false;
@@ -166,6 +188,35 @@ public partial class SubObjects : MonoBehaviour
 			}
 		}
 
+		mesh.colors = vertexColors;
+	}
+
+	public void ColorObjectsByID(Dictionary<string, Color> idColors)
+	{
+		StartCoroutine(LoadAndColorByID(idColors));
+	}
+	private IEnumerator LoadAndColorByID(Dictionary<string, Color> idColors)
+	{
+		yield return LoadMetaData(mesh);
+
+		if (this.gameObject == null) yield break;
+
+		Altered = true;
+
+		//Find all subobject ranges, and color the verts at those indices
+		for (int i = 0; i < SubObjectsData.Count; i++)
+		{
+			var subObject = SubObjectsData[i];
+			if (!idColors.ContainsKey(subObject.objectID)) continue;
+
+			Color color = idColors[subObject.objectID];
+			subObject.color = color;
+
+			for (int j = 0; j < subObject.verticesLength; j++)
+			{
+				vertexColors[subObject.firstVertex + j] = color;
+			}
+		}
 		mesh.colors = vertexColors;
 	}
 
@@ -215,7 +266,7 @@ public partial class SubObjects : MonoBehaviour
 		mesh.colors = vertexColors;
 	}
 
-	public void UnhideAll()
+	public void ResetColors()
 	{
 		Altered = false;
 

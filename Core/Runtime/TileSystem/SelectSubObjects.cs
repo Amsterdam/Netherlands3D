@@ -196,7 +196,7 @@ namespace Netherlands3D.TileSystem
             var subObjectContainers = GetComponentsInChildren<SubObjects>();
             foreach (var subObjectContainer in subObjectContainers)
             {
-                subObjectContainer.UnhideAll();
+                subObjectContainer.ResetColors();
             }
         }
 
