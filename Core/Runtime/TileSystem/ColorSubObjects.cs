@@ -19,7 +19,28 @@ namespace Netherlands3D.TileSystem
         private int idColumn = 0;
 
         [SerializeField]
-        private int hexColorColumn = 2;
+        private int colorColumn = 2;
+
+        [SerializeField]
+        private ColorInterpretation colorInterpretation = ColorInterpretation.HEX;
+
+        [Header("Interpolation")]
+        [SerializeField]
+        private double minimumValue;
+        [SerializeField]
+        private double maximumValue;
+        [SerializeField]
+        private Gradient gradient;
+
+        public enum ColorInterpretation{
+            HEX,
+            INTERPOLATE
+		}
+
+        public class ColorAndValue{
+            public float value = 0;
+            public Color color;
+		}
 
         private void OnEnable()
         {
@@ -46,18 +67,40 @@ namespace Netherlands3D.TileSystem
                 else
                 {
                     idColors = new Dictionary<string, Color>();
+                    //Ready CSV lines ( skip header )
                     var lines = CsvParser.ReadLines(webRequest.downloadHandler.text, 1);
                     foreach (var line in lines)
                     {
                         Color color = Color.magenta;
                         string id = line[0];
-                        ColorUtility.TryParseHtmlString(line[hexColorColumn], out color);
+                        ParseColor(line[colorColumn], out color);
                         idColors.Add(id, color);
                     }
                 }
                 UpdateColors();
             }
         }
+
+        private void ParseColor(string colorInput, out Color color){
+            color = Color.white;
+			switch (colorInterpretation)
+			{
+				case ColorInterpretation.HEX:
+                    ColorUtility.TryParseHtmlString(colorInput, out color);
+                    break;
+				case ColorInterpretation.INTERPOLATE:
+                    if(float.TryParse(colorInput, out float parsed))
+                    {
+                        color = gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, parsed));
+					}
+                    else{
+                        Debug.Log($"Cant parse {colorInput} as float");
+                    }
+					break;
+				default:
+					break;
+			}
+		}
 
         private void OnDisable()
         {
