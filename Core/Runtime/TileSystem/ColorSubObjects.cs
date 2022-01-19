@@ -32,6 +32,10 @@ namespace Netherlands3D.TileSystem
         [SerializeField]
         private Gradient gradient;
 
+        [Header("Default")]
+        [SerializeField]
+        private Color defaultColor;
+
         public enum ColorInterpretation{
             HEX,
             INTERPOLATE
@@ -74,8 +78,20 @@ namespace Netherlands3D.TileSystem
                         Color color = Color.magenta;
                         string id = line[0];
                         ParseColor(line[colorColumn], out color);
+<<<<<<< HEAD
                         if(!idColors.ContainsKey(id))
                             idColors.Add(id, color);
+=======
+
+                        if (idColors.ContainsKey(id))
+                        {
+                            Debug.Log($"Duplicate key found in dataset:{id}. Skipping.");
+                        }
+                        else
+                        {
+                            idColors.Add(id, color);
+                        }
+>>>>>>> 4f5909dc725bae55d6fc7fd757e01e3b24b62cc6
                     }
                 }
                 UpdateColors();
@@ -130,7 +146,7 @@ namespace Netherlands3D.TileSystem
                 if (!subObjects && child.gameObject.GetComponent<MeshFilter>())
                 {
                     subObjects = child.gameObject.AddComponent<SubObjects>();
-                    subObjects.ColorObjectsByID(idColors);
+                    subObjects.ColorObjectsByID(idColors, defaultColor);
                 }
             }
         }
