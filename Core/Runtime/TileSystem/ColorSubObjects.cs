@@ -78,6 +78,10 @@ namespace Netherlands3D.TileSystem
                         Color color = Color.magenta;
                         string id = line[0];
                         ParseColor(line[colorColumn], out color);
+<<<<<<< HEAD
+                        if(!idColors.ContainsKey(id))
+                            idColors.Add(id, color);
+=======
 
                         if (idColors.ContainsKey(id))
                         {
@@ -87,6 +91,7 @@ namespace Netherlands3D.TileSystem
                         {
                             idColors.Add(id, color);
                         }
+>>>>>>> 4f5909dc725bae55d6fc7fd757e01e3b24b62cc6
                     }
                 }
                 UpdateColors();
