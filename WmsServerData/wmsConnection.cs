@@ -115,13 +115,9 @@ public class wmsConnection : MonoBehaviour
                 string layername = layerNode.SelectSingleNode("wfs:Name", nsmgr).InnerText;
                 string layerdescription = layerNode.SelectSingleNode("wfs:Abstract", nsmgr).InnerText;
 
-                XmlNode styleNode = layerNode.SelectSingleNode("wfs:Style", nsmgr);
-                if (styleNode == null)
+
+                foreach (XmlNode styleNode in layerNode.SelectNodes("wfs:Style", nsmgr))
                 {
-                    continue;
-                }
-                //foreach (XmlNode styleNode in layerNode.SelectNodes("wfs:Style",nsmgr))
-                //{
                     GameObject newLayer = Instantiate(LayerPanelPrefab, layersCanvas.transform);
                     layergroup layerdata = newLayer.GetComponent<layergroup>();
                     layerdata.layername = layername;
@@ -142,9 +138,9 @@ public class wmsConnection : MonoBehaviour
                     
                     layerdata.layerDescriptionText.text = layerdescription;
                     layerdata.baseURL = url;
-                //}
+                }
 
-                
+
             }
         }
 
