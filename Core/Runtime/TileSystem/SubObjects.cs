@@ -191,11 +191,11 @@ public partial class SubObjects : MonoBehaviour
 		mesh.colors = vertexColors;
 	}
 
-	public void ColorObjectsByID(Dictionary<string, Color> idColors)
+	public void ColorObjectsByID(Dictionary<string, Color> idColors, Color defaultColor)
 	{
-		StartCoroutine(LoadAndColorByID(idColors));
+		StartCoroutine(LoadAndColorByID(idColors, defaultColor));
 	}
-	private IEnumerator LoadAndColorByID(Dictionary<string, Color> idColors)
+	private IEnumerator LoadAndColorByID(Dictionary<string, Color> idColors, Color defaultColor)
 	{
 		yield return LoadMetaData(mesh);
 
@@ -207,9 +207,15 @@ public partial class SubObjects : MonoBehaviour
 		for (int i = 0; i < SubObjectsData.Count; i++)
 		{
 			var subObject = SubObjectsData[i];
-			if (!idColors.ContainsKey(subObject.objectID)) continue;
-
-			Color color = idColors[subObject.objectID];
+			Color color;
+			if (!idColors.ContainsKey(subObject.objectID))
+			{
+				color = defaultColor;
+			}
+			else
+			{
+				color = idColors[subObject.objectID];
+			}
 			subObject.color = color;
 
 			for (int j = 0; j < subObject.verticesLength; j++)

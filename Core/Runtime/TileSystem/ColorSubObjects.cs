@@ -32,6 +32,10 @@ namespace Netherlands3D.TileSystem
         [SerializeField]
         private Gradient gradient;
 
+        [Header("Default")]
+        [SerializeField]
+        private Color defaultColor;
+
         public enum ColorInterpretation{
             HEX,
             INTERPOLATE
@@ -129,7 +133,7 @@ namespace Netherlands3D.TileSystem
                 if (!subObjects && child.gameObject.GetComponent<MeshFilter>())
                 {
                     subObjects = child.gameObject.AddComponent<SubObjects>();
-                    subObjects.ColorObjectsByID(idColors);
+                    subObjects.ColorObjectsByID(idColors, defaultColor);
                 }
             }
         }
