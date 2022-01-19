@@ -162,7 +162,7 @@ public partial class SubObjects : MonoBehaviour
 
 	public string GetIDByVertexIndex(int vertexIndex)
 	{
-		//Find all subobject ranges, and color the verts at those indices
+		//Find all subobject ranges, and color the vertices at those indices
 		for (int i = 0; i < SubObjectsData.Count; i++)
 		{
 			var subObject = SubObjectsData[i];
