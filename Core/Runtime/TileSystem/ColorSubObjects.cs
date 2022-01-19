@@ -78,7 +78,15 @@ namespace Netherlands3D.TileSystem
                         Color color = Color.magenta;
                         string id = line[0];
                         ParseColor(line[colorColumn], out color);
-                        idColors.Add(id, color);
+
+                        if (idColors.ContainsKey(id))
+                        {
+                            Debug.Log($"Duplicate key found in dataset:{id}. Skipping.");
+                        }
+                        else
+                        {
+                            idColors.Add(id, color);
+                        }
                     }
                 }
                 UpdateColors();
