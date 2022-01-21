@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -10,6 +11,27 @@ namespace Netherlands3D.Core
 {
     public class BinaryMeshConversion : MonoBehaviour
     {
+
+        public struct SubMeshInfo
+        {
+            public int subMeshID;
+            public int subMeshFirstIndex;
+            public int subMeshIndexCount;
+            public int submeshFirstVertex;
+            public int submeshVertexCount;
+        }
+
+        public struct BinaryMeshTile
+        {
+            public int version;
+            public int vertexCount;
+            public int normalsCount;
+            public int uvsCount;
+            public int indicesCount;
+            public int submeshCount;
+        }
+
+
         private const int version = 1;
 
         [SerializeField]
@@ -147,6 +169,9 @@ namespace Netherlands3D.Core
 
         public static Mesh ReadBinaryMesh(byte[] fileBytes, out int[] submeshMaterialIndices)
         {
+            return ReadBinaryMeshUnSafe(fileBytes, out submeshMaterialIndices);
+
+
             using (var stream = new MemoryStream(fileBytes))
             {
                 using (BinaryReader reader = new BinaryReader(stream))
@@ -295,5 +320,137 @@ namespace Netherlands3D.Core
                 }
             }
         }
+
+
+        public static Mesh ReadBinaryMeshUnSafe(byte[] fileBytes, out int[] submeshMaterialIndices)
+        {
+            // todo: array reuse through BufferedStream bs;?
+
+            using (var stream = new MemoryStream(fileBytes))
+            {
+
+                using (BinaryReader reader = new BinaryReader(stream))
+                {
+                    var version = reader.ReadInt32();
+                    var vertexCount = reader.ReadInt32();
+                    var normalsCount = reader.ReadInt32();
+                    var uvsCount = reader.ReadInt32();
+                    var indicesCount = reader.ReadInt32();
+                    var submeshCount = reader.ReadInt32();
+
+
+
+                    var mesh = new Mesh();
+
+                    //byte[] b = new byte[Marshal.SizeOf<Vector3>() * vertexCount];
+                    byte[] b = reader.ReadBytes(Marshal.SizeOf<Vector3>() * vertexCount);
+                    Vector3[] vertices = new Vector3[vertexCount];
+                    FromByteArray<Vector3>(b, vertices);
+                    mesh.vertices = vertices;
+
+                    // Normals should be same size as vertices - right?
+                    if (vertexCount != normalsCount)
+                    {
+                        // Otherwise resize:
+                        vertices = new Vector3[normalsCount];
+                    }
+
+
+
+                    // Normals:
+                    b = reader.ReadBytes(Marshal.SizeOf<Vector3>() * normalsCount);
+                    FromByteArray<Vector3>(b, vertices);
+                    mesh.normals = vertices;
+
+                    // UVS - if present.
+                    if (uvsCount > 0)
+                    {
+                        Vector2[] uvs = new Vector2[uvsCount];
+                        b = reader.ReadBytes(Marshal.SizeOf<Vector2>() * uvsCount);
+                        FromByteArray<Vector2>(b, uvs);
+                        mesh.uv = uvs;
+                    }
+
+                    // Indices:
+                    int[] indices = new int[indicesCount];
+                    b = reader.ReadBytes(sizeof(int) * indicesCount);
+                    FromByteArray<int>(b, indices);
+
+
+                    mesh.SetIndexBufferParams(indicesCount, UnityEngine.Rendering.IndexFormat.UInt32);
+                    mesh.SetIndexBufferData(indices, 0, 0, indicesCount, UnityEngine.Rendering.MeshUpdateFlags.DontNotifyMeshUsers | UnityEngine.Rendering.MeshUpdateFlags.DontRecalculateBounds | UnityEngine.Rendering.MeshUpdateFlags.DontResetBoneBounds | UnityEngine.Rendering.MeshUpdateFlags.DontValidateIndices);
+                    mesh.subMeshCount = submeshCount;
+
+                    // Read submesh info:
+                    SubMeshInfo[] subMeshInfos = new SubMeshInfo[submeshCount];
+                    b = reader.ReadBytes(Marshal.SizeOf<SubMeshInfo>() * submeshCount);
+                    FromByteArray<SubMeshInfo>(b, subMeshInfos);
+
+                    int[] materialIndices = new int[submeshCount];
+
+                    for (int i = 0; i < submeshCount; i++)
+                    {
+                        materialIndices[i] = subMeshInfos[i].subMeshID;
+
+                        var subMeshDescriptor = new UnityEngine.Rendering.SubMeshDescriptor()
+                        {
+                            baseVertex = 0,
+                            firstVertex = subMeshInfos[i].submeshFirstVertex,
+                            vertexCount = subMeshInfos[i].submeshVertexCount,
+
+                            indexStart = subMeshInfos[i].subMeshFirstIndex,
+                            indexCount = subMeshInfos[i].subMeshIndexCount,
+                        };
+
+                        mesh.SetSubMesh(i, subMeshDescriptor);
+                    }
+
+                    submeshMaterialIndices = materialIndices;
+
+
+
+                    return mesh;
+                }
+            }
+
+        }
+
+
+        public static void FromByteArray<T>(byte[] source, T[] destination) where T : struct
+        {
+            //  T[] destination = new T[source.Length / Marshal.SizeOf(typeof(T))];
+            GCHandle handle = GCHandle.Alloc(destination, GCHandleType.Pinned);
+            try
+            {
+                IntPtr pointer = handle.AddrOfPinnedObject();
+                Marshal.Copy(source, 0, pointer, source.Length);
+                // return destination;
+            }
+            finally
+            {
+                if (handle.IsAllocated)
+                    handle.Free();
+            }
+        }
+
+
+        public static void FromByteArray<T>(byte[] source, T[] destination, int sourceLength) where T : struct
+        {
+            //  T[] destination = new T[source.Length / Marshal.SizeOf(typeof(T))];
+            GCHandle handle = GCHandle.Alloc(destination, GCHandleType.Pinned);
+            try
+            {
+                IntPtr pointer = handle.AddrOfPinnedObject();
+                Marshal.Copy(source, 0, pointer, sourceLength);
+                // return destination;
+            }
+            finally
+            {
+                if (handle.IsAllocated)
+                    handle.Free();
+            }
+        }
+
+
     }
 }
