@@ -1,7 +1,7 @@
 {
   "name": "nl.amsterdam.netherlands3d",
   "displayName": "Netherlands 3D",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "unity": "2020.3",
   "description": "An open-source library of systems/prefabs meant for reuse/addition by other dutch municipalities",
   "type": "library",

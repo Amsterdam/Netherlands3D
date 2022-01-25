@@ -160,9 +160,14 @@ public partial class SubObjects : MonoBehaviour
 		yield return null;
 	}
 
-	private string GetIDByVertexIndex(int vertexIndex)
+	/// <summary>
+	/// Get the ID of the object belonging to this vertex index
+	/// </summary>
+	/// <param name="vertexIndex">Vertex index</param>
+	/// <returns></returns>
+	public string GetIDByVertexIndex(int vertexIndex)
 	{
-		//Find all subobject ranges, and color the verts at those indices
+		//Find all subobject ranges, and color the vertices at those indices
 		for (int i = 0; i < SubObjectsData.Count; i++)
 		{
 			var subObject = SubObjectsData[i];
