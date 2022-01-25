@@ -13,6 +13,9 @@
     "twin city",
     "geoservice"
   ],
+"license":"EUPL-1.2",
+"licenseURL":"https://github.com/Amsterdam/Netherlands3D/blob/main/LICENSE.txt",
+"changelogURL": "https://github.com/Amsterdam/Netherlands3D/blob/feature_create_WMS_url/GeoService/CHANGELOG.md",
   "samples": [
     {
       "displayName": "Example Interface",
