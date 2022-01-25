@@ -16,27 +16,12 @@ namespace Netherlands3D.wmsServer
         public override bool UrlIsValid(string url)
         {
             return true;
-            url = url.ToLower();
-                if (url.Contains("http") == false)
-                {
-                    return false;
-                }
-
-                if (url.Contains("request=getcapabilities") == false)
-                {
-                    return false;
-                }
-                if (url.Contains("service=wms") == false)
-                {
-                    return false;
-                }
-
-                return true;
-
+            
         }
 
         private void FindNameSpaces()
         {
+            nsmgr = new XmlNamespaceManager(Capabilities.NameTable);
             if (Capabilities.DocumentElement.Attributes.GetNamedItem("xmlns")!=null)
             {
                 nsmgr.AddNamespace("wfs", Capabilities.DocumentElement.Attributes.GetNamedItem("xmlns").InnerText);
@@ -50,9 +35,6 @@ namespace Netherlands3D.wmsServer
             Capabilities = new XmlDocument();
             Capabilities.LoadXml(xmlstring);
             
-            // set the namespace
-            nsmgr = new XmlNamespaceManager(Capabilities.NameTable);
-            //nsmgr.AddNamespace("wfs", "http://www.opengis.net/wms");
             FindNameSpaces();
 
             //find the ServiceNode
@@ -84,7 +66,7 @@ namespace Netherlands3D.wmsServer
             serverData.GetMapURL = OnlineResourceNode.Attributes.GetNamedItem("xlink:href").InnerText;
 
             //find the parentLayer
-            serverData.layer.Clear();
+            serverData.layer = new List<WMSLayerData>();
             XmlNode parentLayer = getChildNode(CapabilityNode, "Layer");
             serverData.globalCRS = new List<string>();
             foreach (XmlNode crsNode in getChildNodes(parentLayer, "CRS"))

@@ -14,6 +14,7 @@ namespace Netherlands3D.wmsServer
 
         public abstract bool readCapabilities(ServerData serverData, string xmlstring);
     }
+
     //public class wmts : ImageGeoservice
     //{
     //    public override string getType()

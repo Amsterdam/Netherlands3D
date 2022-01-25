@@ -8,13 +8,20 @@ namespace Netherlands3D.wmsServer
 {
     public class wmsresults : MonoBehaviour
     {
+        [Header ("dataSource")]
+        public GetCapabiltiesDownload dataOwner;
+
+        [Header("ListenToEvents")]
+        public TriggerEvent displayServerdataEvent;
+
+
         [Header ("data")]
         public ServerData serverData;
 
         [Header("serviceInformation")]
         public Text ServiceTitle;
         public Text ServiceAbstract;
-        public BoolEvent displayServerdataEvent;
+        
         public GameObject LayersContainer;
 
         
@@ -42,28 +49,51 @@ namespace Netherlands3D.wmsServer
         public StringEvent onLegendSelected;
 
 
-        public void Start()
+        void Awake()
         {
+           
             if (displayServerdataEvent!=null)
             {
                 displayServerdataEvent.started.AddListener(DisplayServiceInfo);
             }
             
+
         }
+
+       
         public void DisplayServiceInfo(bool arg0)
         {
-            if (arg0==false)
+            if (arg0 == false)
             {
                 return;
             }
+            DisplayServiceInfo();
+        }
+
+        public void DisplayServiceInfo()
+        {
+            serverData = dataOwner.serverData;
             if (ServiceTitle != null) ServiceTitle.text = serverData.ServiceTitle;
             if (ServiceAbstract != null) ServiceAbstract.text = serverData.ServiceAbstract;
+
+            //clear the layers
+            // clear the list
+            foreach ( Transform child in LayersContainer.transform)
+            {
+                if (child != StylesContainer.transform)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
 
             // loop trough the layers
             for (int i = 0; i < serverData.layer.Count; i++)
             {
                 GameObject layerObject = Instantiate(LayerPrefab,LayersContainer.transform);
+                
                 wmsresults layerinfo = layerObject.GetComponent<wmsresults>();
+                layerinfo.serverData = serverData;
+                layerinfo.dataOwner = dataOwner;
                 layerinfo.displayLayerInfo(i);
                 if (StylesContainer != null)
                 {
@@ -82,11 +112,22 @@ namespace Netherlands3D.wmsServer
         {
             if (StylesContainer != null)
             {
+                // clear the list
+                //foreach (GameObject child in StylesContainer.transform)
+                //{
+                //    if (child !=StylesContainer)
+                //    {
+                //        Destroy(child);
+                //    }
+                //}
 
                 for (int i = startIndex; i < serverData.layer[LayerIndex].styles.Count; i++)
                 {
                     GameObject styleObject = Instantiate(StylePrefab, StylesContainer.transform);
-                    styleObject.GetComponent<wmsresults>().displayStyleInfo(LayerIndex, i);
+                    wmsresults styleobject = styleObject.GetComponent<wmsresults>();
+                    styleobject.serverData = serverData;
+                    styleobject.dataOwner = dataOwner;
+                    styleobject.displayStyleInfo(LayerIndex, i);
                 }
             }
         }

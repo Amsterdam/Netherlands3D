@@ -29,12 +29,14 @@ public class ShowPreview : MonoBehaviour
     private void LoadLegendImage(string url)
     {
         Debug.Log($"loading legend {url}");
+        legendaImage.sprite = null;
         StartCoroutine(DownloadImage(url, legendaImage));
     }
 
     private void LoadPreviewImage(string url)
     {
         Debug.Log($"loading preview {url}");
+        previewImage.sprite = null;
         StartCoroutine(DownloadImage(url,previewImage));
     }
 
