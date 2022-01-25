@@ -21,7 +21,7 @@
     }
   ],
   "dependencies": {
-    "nl.netherlands3d.core": "0.0.6",
+    "nl.netherlands3d.core": "0.0.6"
  },
   "hideInEditor": false,
   "author": {
