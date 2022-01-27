@@ -12,14 +12,16 @@ namespace Netherlands3D.TileSystem
     {
         private Dictionary<string, Color> idColors;
 
-        [Header("CSV with:  id;color")]
-
         [Header("By event")]
+        [SerializeField]
+        private bool disableOnStart = false;
+
         [SerializeField]
         private ObjectEvent onReceiveIdsAndColors;
 
         [Header("Or from URL")]
         [SerializeField]
+        [Tooltip("CSV should have: id;color")]
         private string dataSource = "file:///somecsv.csv";
 
         [SerializeField]
@@ -58,6 +60,7 @@ namespace Netherlands3D.TileSystem
             if (onReceiveIdsAndColors)
             {
                 onReceiveIdsAndColors.started.AddListener(SetIDsAndColors);
+                this.enabled = !disableOnStart;
 			}
         }
 
@@ -82,8 +85,9 @@ namespace Netherlands3D.TileSystem
 
         public void SetIDsAndColors(object idsAndColors)
         {
+            this.enabled = true;
             idColors = (Dictionary<string, Color>)idsAndColors;
-
+            UpdateColors();
         }
 
         private IEnumerator LoadCSV()
