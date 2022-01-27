@@ -24,7 +24,7 @@
     }
   ],
   "gitDependencies": {
-   "nl.netherlands3d.core":"https://github.com/Amsterdam/Netherlands3D.git?path=/Core#feature_create_WMS_url"
+   "nl.netherlands3d.core":"https://github.com/Amsterdam/Netherlands3D.git?path=/Core"
   },
   "hideInEditor": false,
   "author": {
