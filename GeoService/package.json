@@ -1,5 +1,5 @@
 {
-  "name": "nl.amsterdam.netherlands3d.geoservice",
+  "name": "nl.netherlands3d.geoservice",
   "displayName": "Netherlands 3D",
   "version": "0.0.1",
   "unity": "2020.3",
@@ -24,7 +24,7 @@
     }
   ],
   "gitDependencies": {
-   "nl.amsterdam.netherlands3d.core":"https://github.com/Amsterdam/Netherlands3D.git?path=/Core"
+   "nl.netherlands3d.core":"https://github.com/Amsterdam/Netherlands3D.git?path=/Core"
   },
   "hideInEditor": false,
   "author": {
