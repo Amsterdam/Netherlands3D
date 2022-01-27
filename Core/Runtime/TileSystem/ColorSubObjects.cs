@@ -72,7 +72,6 @@ namespace Netherlands3D.TileSystem
                 return;
             }
 
-
             if (idColors == null)
             {
                 StartCoroutine(LoadCSV());
