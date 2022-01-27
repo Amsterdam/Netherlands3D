@@ -21,7 +21,7 @@ using UnityEngine.Events;
 namespace Netherlands3D.Events
 {
 	[System.Serializable]
-	public class ObjectValueUnityEvent : UnityEvent<Object> { }
+	public class ObjectValueUnityEvent : UnityEvent<object> { }
 
 	[CreateAssetMenu(fileName = "ObjectEvent", menuName = "EventContainers/ObjectEvent", order = 0)]
 	[System.Serializable]

@@ -1,4 +1,5 @@
 using Netherlands3D.Core;
+using Netherlands3D.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,12 @@ namespace Netherlands3D.TileSystem
         private Dictionary<string, Color> idColors;
 
         [Header("CSV with:  id;color")]
+
+        [Header("By event")]
+        [SerializeField]
+        private ObjectEvent onReceiveIdsAndColors;
+
+        [Header("Or from URL")]
         [SerializeField]
         private string dataSource = "file:///somecsv.csv";
 
@@ -46,8 +53,23 @@ namespace Netherlands3D.TileSystem
             public Color color;
 		}
 
-        private void OnEnable()
+		private void Awake()
+		{
+            if (onReceiveIdsAndColors)
+            {
+                onReceiveIdsAndColors.started.AddListener(SetIDsAndColors);
+			}
+        }
+
+		private void OnEnable()
         {
+            if (onReceiveIdsAndColors)
+            {
+                //Colors are updated via event
+                return;
+            }
+
+
             if (idColors == null)
             {
                 StartCoroutine(LoadCSV());
@@ -56,6 +78,12 @@ namespace Netherlands3D.TileSystem
             {
                 UpdateColors();
             }
+        }
+
+        public void SetIDsAndColors(object idsAndColors)
+        {
+            idColors = (Dictionary<string, Color>)idsAndColors;
+
         }
 
         private IEnumerator LoadCSV()
