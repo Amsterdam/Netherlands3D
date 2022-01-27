@@ -1,0 +1,28 @@
+{
+  "name": "nl.amsterdam.netherlands3d",
+  "displayName": "Netherlands 3D",
+  "version": "0.0.6",
+  "unity": "2020.3",
+  "description": "An open-source library of systems/prefabs meant for reuse/addition by other dutch municipalities",
+  "type": "library",
+  "keywords": [
+    "3d",
+    "geojson",
+    "cityjson",
+    "digital",
+    "twin",
+    "city"
+  ],
+  "samples": [
+    {
+      "displayName": "Tile system example of Amsterdam",
+      "description": "Core example of the 3D tile system for Amsterdam",
+      "path": "Samples~/TileSystem"
+    }
+  ],
+  "hideInEditor": false,
+  "author": {
+    "name": "3D Amsterdam Team",
+    "url": "https://3d.amsterdam.nl"
+  }
+}
