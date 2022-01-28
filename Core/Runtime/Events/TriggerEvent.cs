@@ -22,8 +22,5 @@ namespace Netherlands3D.Events
 {
     [CreateAssetMenu(fileName = "TriggerEvent", menuName = "EventContainers/TriggerEvent", order = 0)]
     [System.Serializable]
-    public class TriggerEvent : EventContainer<UnityEvent>
-    {
-        public UnityEvent floatEvent;
-    }
+    public class TriggerEvent : EventContainer<UnityEvent> { }
 }
