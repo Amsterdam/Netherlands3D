@@ -47,6 +47,7 @@ namespace Netherlands3D.TileSystem
 		private bool filterByCameraFrustum = true;
 
 		public List<Layer> layers = new List<Layer>();
+		
 		private List<int> tileSizes = new List<int>();
 		/// <summary>
 		/// contains, for each tilesize in tileSizes, al list with tilecoordinates an distance to camera
@@ -118,6 +119,41 @@ namespace Netherlands3D.TileSystem
 			}
 		}
 
+		public void AddLayer(Layer layer)
+        {
+			layers.Add(layer);
+			GetTilesizes();
+        }
+		public void RemoveLayer(Layer layer)
+		{
+			
+			int layerIndex = layers.IndexOf(layer);
+			
+
+			// add all existing tiles to pending destroy
+			int tilesizeIndex = tileSizes.IndexOf(layer.tileSize);
+			foreach (Vector3Int tileDistance in tileDistances[tilesizeIndex])
+			{
+				tileKey = new Vector2Int(tileDistance.x, tileDistance.y);
+				
+				if (layer.tiles.ContainsKey(tileKey))
+				{
+						TileChange tileChange = new TileChange();
+						tileChange.action = TileAction.Remove;
+						tileChange.X = tileKey.x;
+						tileChange.Y = tileKey.y;
+						tileChange.layerIndex = layerIndex;
+						tileChange.priorityScore = CalculatePriorityScore(layer.layerPriority, 0, tileDistance.z, TileAction.Remove);
+						AddTileChange(tileChange, layerIndex);
+
+				}
+			}
+			InstantlyStartRemoveChanges();
+			layers.Remove(layer);
+			
+
+		}
+
 		private void CacheCameraFrustum()
 		{
 			tileBounds = new Bounds();
@@ -134,6 +170,10 @@ namespace Netherlands3D.TileSystem
 
 		void Update()
 		{
+            if (layers.Count==0)
+            {
+				return;
+            }
 			viewRange = GetViewRange();
 			cameraPosition = GetRDCameraPosition();
 
@@ -273,6 +313,10 @@ namespace Netherlands3D.TileSystem
 		{
 			int tilesize;
 			tileSizes = new List<int>();
+            if (layers.Count==0)
+            {
+				return;
+            }
 			foreach (Layer layer in layers)
 			{
 				if (layer.isEnabled == true)
@@ -532,6 +576,10 @@ namespace Netherlands3D.TileSystem
 			{
 				// create a list of tilekeys for the tiles that are within the viewrange
 				 layer = layers[layerIndex];
+                if (layer == null)
+                {
+					continue;
+                }
 				if (layer.gameObject.activeSelf == false) { continue; }
 				int tilesizeIndex = tileSizes.IndexOf(layer.tileSize);
 				neededTiles = tileDistances[tilesizeIndex];

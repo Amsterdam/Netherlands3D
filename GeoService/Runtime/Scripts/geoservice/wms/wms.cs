@@ -21,11 +21,12 @@ namespace Netherlands3D.Geoservice
 
         private void FindNameSpaces()
         {
+            namespacePrefix = "";
             nsmgr = new XmlNamespaceManager(Capabilities.NameTable);
             if (Capabilities.DocumentElement.Attributes.GetNamedItem("xmlns")!=null)
             {
-                nsmgr.AddNamespace("wfs", Capabilities.DocumentElement.Attributes.GetNamedItem("xmlns").InnerText);
-                namespacePrefix = "wfs:";
+                nsmgr.AddNamespace("wms", Capabilities.DocumentElement.Attributes.GetNamedItem("xmlns").InnerText);
+                namespacePrefix = "wms:";
             }
         }
 

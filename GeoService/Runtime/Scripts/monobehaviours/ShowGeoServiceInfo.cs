@@ -3,21 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
-public class ShowGeoServiceInfo : MonoBehaviour
+namespace Netherlands3D.Geoservice
 {
-    [HideInInspector]
-    public ServerData serverData;
-
-    [Header("serviceInformation")]
-    public Text ServiceTitle;
-    public Text ServiceAbstract;
-    // Start is called before the first frame update
-    public void Show()
+    public class ShowGeoServiceInfo : MonoBehaviour
     {
-        if (ServiceTitle != null) ServiceTitle.text = serverData.ServiceTitle;
-        if (ServiceAbstract != null) ServiceAbstract.text = serverData.ServiceAbstract;
-    }
+        [HideInInspector]
+        public ServerData serverData;
 
-    
+        [Header("serviceInformation")]
+        public Text ServiceTitle;
+        public Text ServiceAbstract;
+        // Start is called before the first frame update
+        public void Show()
+        {
+            if (ServiceTitle != null) ServiceTitle.text = serverData.ServiceTitle;
+            if (ServiceAbstract != null) ServiceAbstract.text = serverData.ServiceAbstract;
+        }
+
+
+    }
 }
