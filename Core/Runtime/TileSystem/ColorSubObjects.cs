@@ -18,6 +18,13 @@ namespace Netherlands3D.TileSystem
 
         [SerializeField]
         private ObjectEvent onReceiveIdsAndColors;
+        [SerializeField]
+        private ObjectEvent onReceiveIdsAndFloats;
+
+        [SerializeField]
+        private FloatEvent onReceiveMinRange;
+        [SerializeField]
+        private FloatEvent onReceiveMaxRange;
 
         [Header("Or from URL")]
         [SerializeField]
@@ -62,11 +69,22 @@ namespace Netherlands3D.TileSystem
                 onReceiveIdsAndColors.started.AddListener(SetIDsAndColors);
                 this.enabled = !disableOnStart;
 			}
+
+            if(onReceiveIdsAndFloats)
+            {
+                onReceiveIdsAndFloats.started.AddListener(SetIDsAndFloatsAsColors);
+
+                //If we can receive ids+floats, add listeners to determine the min and max of the range
+                if(onReceiveMinRange) onReceiveMinRange.started.AddListener(SetMinRange);
+                if(onReceiveMaxRange) onReceiveMaxRange.started.AddListener(SetMaxRange);
+
+                this.enabled = !disableOnStart;
+            }
         }
 
 		private void OnEnable()
         {
-            if (onReceiveIdsAndColors)
+            if (onReceiveIdsAndColors || onReceiveIdsAndFloats)
             {
                 //Colors are updated via event
                 return;
@@ -86,6 +104,30 @@ namespace Netherlands3D.TileSystem
         {
             this.enabled = true;
             idColors = (Dictionary<string, Color>)idsAndColors;
+            UpdateColors();
+        }
+
+        public void SetMinRange(float value)
+        {
+            minimumValue = value;
+        }
+        public void SetMaxRange(float value)
+        {
+            maximumValue = value;
+        }
+
+        public void SetIDsAndFloatsAsColors(object idsAndFloats)
+        {
+            this.enabled = true;
+            var idFloats = (Dictionary<string, float>)idsAndFloats;
+
+            idColors = new Dictionary<string, Color>();
+            foreach (var keyValuePair in idFloats)
+            { 
+                Color colorFromGradient = gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, keyValuePair.Value));
+                idColors.Add(keyValuePair.Key, colorFromGradient);
+            }
+
             UpdateColors();
         }
 

@@ -204,7 +204,7 @@ public partial class SubObjects : MonoBehaviour
 	{
 		yield return LoadMetaData(mesh);
 
-		if (this.gameObject == null) yield break;
+		if (this.gameObject == null || mesh == null) yield break;
 
 		Altered = true;
 
@@ -228,6 +228,7 @@ public partial class SubObjects : MonoBehaviour
 				vertexColors[subObject.firstVertex + j] = color;
 			}
 		}
+
 		mesh.colors = vertexColors;
 	}
 
