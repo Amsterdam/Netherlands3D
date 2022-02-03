@@ -100,13 +100,6 @@ namespace Netherlands3D.TileSystem
             }
         }
 
-        public void SetIDsAndColors(object idsAndColors)
-        {
-            this.enabled = true;
-            idColors = (Dictionary<string, Color>)idsAndColors;
-            UpdateColors();
-        }
-
         public void SetMinRange(float value)
         {
             minimumValue = value;
@@ -116,6 +109,12 @@ namespace Netherlands3D.TileSystem
             maximumValue = value;
         }
 
+        public void SetIDsAndColors(object idsAndColors)
+        {
+            this.enabled = true;
+            idColors = (Dictionary<string, Color>)idsAndColors;
+            UpdateColors(true);
+        }
         public void SetIDsAndFloatsAsColors(object idsAndFloats)
         {
             this.enabled = true;
@@ -128,7 +127,7 @@ namespace Netherlands3D.TileSystem
                 idColors.Add(keyValuePair.Key, colorFromGradient);
             }
 
-            UpdateColors();
+            UpdateColors(true);
         }
 
         private IEnumerator LoadCSV()
@@ -162,7 +161,7 @@ namespace Netherlands3D.TileSystem
                         }
                     }
                 }
-                UpdateColors();
+                UpdateColors(true);
             }
         }
 
@@ -201,19 +200,25 @@ namespace Netherlands3D.TileSystem
 
         private void OnTransformChildrenChanged()
         {
-            UpdateColors();
+            UpdateColors(false);
         }
 
-        private void UpdateColors()
+        private void UpdateColors(bool applyToExistingSubObjects = false)
         {
             if (idColors == null) return;
 
             foreach (Transform child in transform)
             {
                 SubObjects subObjects = child.gameObject.GetComponent<SubObjects>();
-                if (!subObjects && child.gameObject.GetComponent<MeshFilter>())
+                if (!subObjects)
                 {
-                    subObjects = child.gameObject.AddComponent<SubObjects>();
+                    if (child.gameObject.GetComponent<MeshFilter>())
+                    {
+                        subObjects = child.gameObject.AddComponent<SubObjects>();
+                        subObjects.ColorObjectsByID(idColors, defaultColor);
+                    }
+                }
+                else if(applyToExistingSubObjects){
                     subObjects.ColorObjectsByID(idColors, defaultColor);
                 }
             }
