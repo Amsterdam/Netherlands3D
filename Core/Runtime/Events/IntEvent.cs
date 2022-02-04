@@ -27,5 +27,9 @@ namespace Netherlands3D.Events
 	[System.Serializable]
 	public class IntEvent : EventContainer<IntValueUnityEvent>
 	{
+		public void Invoke(int intContent)
+		{
+			started.Invoke(intContent);
+		}
 	}
 }
