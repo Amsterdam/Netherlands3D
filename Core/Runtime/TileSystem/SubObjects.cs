@@ -137,9 +137,6 @@ public partial class SubObjects : MonoBehaviour
 
 		var metaDataName = mesh.name.Replace(".bin","-data.bin");
 		var webRequest = UnityWebRequest.Get(metaDataName);
-#if !UNITY_EDITOR && UNITY_WEBGL
-		webRequest.SetRequestHeader("Accept-Encoding", "br");
-#endif
 
 		yield return webRequest.SendWebRequest();
 
