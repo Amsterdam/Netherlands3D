@@ -38,9 +38,12 @@ namespace Netherlands3D.TileSystem
         public List<string> hiddenIDs;
 
         private bool doingMultiselect = false;
+        private bool pauseSelectHighlighting = false;
 
         [SerializeField]
         private StringListEvent selectedBuildings;
+        [SerializeField]
+        private BoolEvent onColoringSubobjects;
 
         private void Awake()
         {
@@ -50,10 +53,20 @@ namespace Netherlands3D.TileSystem
             selectedIDs = new List<string>();
             hiddenIDs = new List<string>();
 
+            onColoringSubobjects.started.AddListener(DisableWhileColoring);
+             
             containerLayer = gameObject.GetComponent<BinaryMeshLayer>();
         }
 
-        public void SelectWithInputs(Ray inputRay, bool multiSelect, bool secondary = false){
+		private void DisableWhileColoring(bool coloring)
+		{
+            pauseSelectHighlighting = coloring;
+        }
+
+		public void SelectWithInputs(Ray inputRay, bool multiSelect, bool secondary = false){
+            if (pauseSelectHighlighting) 
+                return;
+
             ray = inputRay;
             doingMultiselect = multiSelect;
 
