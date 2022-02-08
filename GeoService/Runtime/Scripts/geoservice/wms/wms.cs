@@ -111,6 +111,7 @@ namespace Netherlands3D.Geoservice
                 }
 
                 // read the styles
+                
                 foreach (XmlNode styleNode in getChildNodes(item,"Style"))
                 {
                     ImageGeoserviceStyle style = new ImageGeoserviceStyle();
@@ -129,7 +130,16 @@ namespace Netherlands3D.Geoservice
                     }
                     
                 }
-
+                if (layerdata.styles.Count==0)
+                {
+                    // we can only usee the default style
+                    ImageGeoserviceStyle style = new ImageGeoserviceStyle();
+                    style.Name = "Default";
+                    if (createImageURL(serverData, style, layerdata))
+                    {
+                        layerdata.styles.Add(style);
+                    }
+                }
 
 
                 //add the layer to the serverdata
@@ -167,8 +177,8 @@ namespace Netherlands3D.Geoservice
         private bool createImageURL(ServerData serverData, ImageGeoserviceStyle style, ImageLayerData layerdata)
         {
 
-            string width = "1024";
-            string height = "1024";
+            string width = "{width}";
+            string height = "{height}";
             string Format = "image/jpeg";
             string srs = "EPSG:28992";
             string bbox = "{Xmin},{Ymin},{Xmax},{Ymax}";
@@ -183,7 +193,11 @@ namespace Netherlands3D.Geoservice
             }
 
             string url = serverData.TemplateURL;
-            url = $"{url}service=WMS&request=GETMAP&version=1.1.1&LAYERS={layerdata.Name}&Styles={style.Name}&WIDTH={width}&HEIGHT={height}&format={Format}&srs={srs}&bbox={bbox}";
+            if (url.Contains("?")==false)
+            {
+                url = url + "?";
+            }
+            url = $"{url}service=WMS&request=GETMAP&version=1.1.1&LAYERS={layerdata.Name}&Styles={style.Name}&WIDTH={width}&HEIGHT={height}&format={Format}&srs={srs}&bbox={bbox}&tansparent=true";
             style.imageURL = url;
             return true;
         }
