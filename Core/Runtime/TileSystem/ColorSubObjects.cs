@@ -17,6 +17,8 @@ namespace Netherlands3D.TileSystem
         private bool disableOnStart = false;
 
         [SerializeField]
+        private BoolEvent onEnableDrawingColors;
+        [SerializeField]
         private ObjectEvent onReceiveIdsAndColors;
         [SerializeField]
         private ObjectEvent onReceiveIdsAndFloats;
@@ -80,7 +82,21 @@ namespace Netherlands3D.TileSystem
 
                 this.enabled = !disableOnStart;
             }
+
+            if(onEnableDrawingColors)
+            {
+                onEnableDrawingColors.started.AddListener(EnableDrawingColors);
+
+            }
         }
+
+        private void EnableDrawingColors(bool enable){
+            this.enabled = enable;
+            if(!enable)
+            {
+                idColors.Clear();
+            }
+		}
 
 		private void OnEnable()
         {
