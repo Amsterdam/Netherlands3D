@@ -319,6 +319,10 @@ namespace Netherlands3D.TileSystem
             }
 			foreach (Layer layer in layers)
 			{
+                if (layer.gameObject.activeInHierarchy==false)
+                {
+					continue;
+                }
 				if (layer.isEnabled == true)
 				{
 					tilesize = layer.tileSize;
@@ -581,6 +585,10 @@ namespace Netherlands3D.TileSystem
 					continue;
                 }
 				if (layer.gameObject.activeSelf == false) { continue; }
+                if (layer.isEnabled==false)
+                {
+					continue;
+                }
 				int tilesizeIndex = tileSizes.IndexOf(layer.tileSize);
 				neededTiles = tileDistances[tilesizeIndex];
 				neededTileKeys.Clear();
