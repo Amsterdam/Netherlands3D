@@ -27,5 +27,9 @@ namespace Netherlands3D.Events
 	[System.Serializable]
 	public class FloatEvent : EventContainer<FloatValueUnityEvent>
 	{
+		public void Invoke(float floatContent)
+		{
+			started.Invoke(floatContent);
+		}
 	}
 }

@@ -137,9 +137,6 @@ public partial class SubObjects : MonoBehaviour
 
 		var metaDataName = mesh.name.Replace(".bin","-data.bin");
 		var webRequest = UnityWebRequest.Get(metaDataName);
-#if !UNITY_EDITOR && UNITY_WEBGL
-		webRequest.SetRequestHeader("Accept-Encoding", "br");
-#endif
 
 		yield return webRequest.SendWebRequest();
 
@@ -204,7 +201,7 @@ public partial class SubObjects : MonoBehaviour
 	{
 		yield return LoadMetaData(mesh);
 
-		if (this.gameObject == null) yield break;
+		if (this.gameObject == null || mesh == null) yield break;
 
 		Altered = true;
 
@@ -228,6 +225,7 @@ public partial class SubObjects : MonoBehaviour
 				vertexColors[subObject.firstVertex + j] = color;
 			}
 		}
+
 		mesh.colors = vertexColors;
 	}
 

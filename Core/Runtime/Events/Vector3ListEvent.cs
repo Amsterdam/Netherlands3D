@@ -28,8 +28,9 @@ namespace Netherlands3D.Events
 	[System.Serializable]
 	public class Vector3ListEvent : EventContainer<Vector3ListValueUnityEvent>
 	{
-#if UNITY_EDITOR
-		public List<Vector3> testData;
-#endif
+		public void Invoke(List<Vector3> listVector3Content)
+		{
+			started.Invoke(listVector3Content);
+		}
 	}
 }

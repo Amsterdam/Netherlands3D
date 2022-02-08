@@ -18,7 +18,7 @@ namespace Netherlands3D.Events.GenericListeners
             objectEvent.started.AddListener(ObjectReceived);
         }
 
-        void ObjectReceived(Object receivedObject)
+        void ObjectReceived(object receivedObject)
         {
             onEvent.Invoke(receivedObject);
         }

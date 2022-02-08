@@ -28,4 +28,10 @@ public class EventContainer<T> : ScriptableObject
 
     [HideInInspector]
     public T started;
+
+	private void OnValidate()
+	{
+		if (eventName == "")
+			eventName = this.name;
+	}
 }

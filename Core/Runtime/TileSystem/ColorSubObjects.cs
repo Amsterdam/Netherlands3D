@@ -1,4 +1,5 @@
 using Netherlands3D.Core;
+using Netherlands3D.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,8 +12,23 @@ namespace Netherlands3D.TileSystem
     {
         private Dictionary<string, Color> idColors;
 
-        [Header("CSV with:  id;color")]
+        [Header("By event")]
         [SerializeField]
+        private bool disableOnStart = false;
+
+        [SerializeField]
+        private ObjectEvent onReceiveIdsAndColors;
+        [SerializeField]
+        private ObjectEvent onReceiveIdsAndFloats;
+
+        [SerializeField]
+        private FloatEvent onReceiveMinRange;
+        [SerializeField]
+        private FloatEvent onReceiveMaxRange;
+
+        [Header("Or from URL")]
+        [SerializeField]
+        [Tooltip("CSV should have: id;color")]
         private string dataSource = "file:///somecsv.csv";
 
         [SerializeField]
@@ -46,8 +62,34 @@ namespace Netherlands3D.TileSystem
             public Color color;
 		}
 
-        private void OnEnable()
+		private void Awake()
+		{
+            if (onReceiveIdsAndColors)
+            {
+                onReceiveIdsAndColors.started.AddListener(SetIDsAndColors);
+                this.enabled = !disableOnStart;
+			}
+
+            if(onReceiveIdsAndFloats)
+            {
+                onReceiveIdsAndFloats.started.AddListener(SetIDsAndFloatsAsColors);
+
+                //If we can receive ids+floats, add listeners to determine the min and max of the range
+                if(onReceiveMinRange) onReceiveMinRange.started.AddListener(SetMinRange);
+                if(onReceiveMaxRange) onReceiveMaxRange.started.AddListener(SetMaxRange);
+
+                this.enabled = !disableOnStart;
+            }
+        }
+
+		private void OnEnable()
         {
+            if (onReceiveIdsAndColors || onReceiveIdsAndFloats)
+            {
+                //Colors are updated via event
+                return;
+            }
+
             if (idColors == null)
             {
                 StartCoroutine(LoadCSV());
@@ -56,6 +98,36 @@ namespace Netherlands3D.TileSystem
             {
                 UpdateColors();
             }
+        }
+
+        public void SetMinRange(float value)
+        {
+            minimumValue = value;
+        }
+        public void SetMaxRange(float value)
+        {
+            maximumValue = value;
+        }
+
+        public void SetIDsAndColors(object idsAndColors)
+        {
+            this.enabled = true;
+            idColors = (Dictionary<string, Color>)idsAndColors;
+            UpdateColors(true);
+        }
+        public void SetIDsAndFloatsAsColors(object idsAndFloats)
+        {
+            this.enabled = true;
+            var idFloats = (Dictionary<string, float>)idsAndFloats;
+
+            idColors = new Dictionary<string, Color>();
+            foreach (var keyValuePair in idFloats)
+            { 
+                Color colorFromGradient = gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, keyValuePair.Value));
+                idColors.Add(keyValuePair.Key, colorFromGradient);
+            }
+
+            UpdateColors(true);
         }
 
         private IEnumerator LoadCSV()
@@ -89,7 +161,7 @@ namespace Netherlands3D.TileSystem
                         }
                     }
                 }
-                UpdateColors();
+                UpdateColors(true);
             }
         }
 
@@ -128,19 +200,25 @@ namespace Netherlands3D.TileSystem
 
         private void OnTransformChildrenChanged()
         {
-            UpdateColors();
+            UpdateColors(false);
         }
 
-        private void UpdateColors()
+        private void UpdateColors(bool applyToExistingSubObjects = false)
         {
             if (idColors == null) return;
 
             foreach (Transform child in transform)
             {
                 SubObjects subObjects = child.gameObject.GetComponent<SubObjects>();
-                if (!subObjects && child.gameObject.GetComponent<MeshFilter>())
+                if (!subObjects)
                 {
-                    subObjects = child.gameObject.AddComponent<SubObjects>();
+                    if (child.gameObject.GetComponent<MeshFilter>())
+                    {
+                        subObjects = child.gameObject.AddComponent<SubObjects>();
+                        subObjects.ColorObjectsByID(idColors, defaultColor);
+                    }
+                }
+                else if(applyToExistingSubObjects){
                     subObjects.ColorObjectsByID(idColors, defaultColor);
                 }
             }
