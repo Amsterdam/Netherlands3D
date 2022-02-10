@@ -1,0 +1,16 @@
+{
+    "name": "nl.netherlands3d.geoservice",
+    "rootNamespace": "",
+    "references": [
+        "nl.netherlands3d.core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
