@@ -1,7 +1,7 @@
 {
   "name": "nl.netherlands3d",
   "displayName": "Netherlands 3D",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "unity": "2020.3",
   "description": "enable a user to select a layer from a wms-server",
   "type": "library",
