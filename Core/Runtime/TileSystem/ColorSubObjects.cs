@@ -1,4 +1,5 @@
 using Netherlands3D.Core;
+using Netherlands3D.Core.Colors;
 using Netherlands3D.Events;
 using System;
 using System.Collections;
@@ -16,6 +17,8 @@ namespace Netherlands3D.TileSystem
         [SerializeField]
         private bool disableOnStart = false;
 
+        [SerializeField]
+        private BoolEvent onEnableDrawingColors;
         [SerializeField]
         private ObjectEvent onReceiveIdsAndColors;
         [SerializeField]
@@ -46,7 +49,7 @@ namespace Netherlands3D.TileSystem
         [SerializeField]
         private double maximumValue;
         [SerializeField]
-        private Gradient gradient;
+        private GradientContainer gradientContainer;
 
         [Header("Default")]
         [SerializeField]
@@ -67,8 +70,9 @@ namespace Netherlands3D.TileSystem
             if (onReceiveIdsAndColors)
             {
                 onReceiveIdsAndColors.started.AddListener(SetIDsAndColors);
-                this.enabled = !disableOnStart;
-			}
+                onEnableDrawingColors.started.Invoke(true);
+                this.enabled = true;
+            }
 
             if(onReceiveIdsAndFloats)
             {
@@ -77,10 +81,23 @@ namespace Netherlands3D.TileSystem
                 //If we can receive ids+floats, add listeners to determine the min and max of the range
                 if(onReceiveMinRange) onReceiveMinRange.started.AddListener(SetMinRange);
                 if(onReceiveMaxRange) onReceiveMaxRange.started.AddListener(SetMaxRange);
+                onEnableDrawingColors.started.Invoke(true);
+                this.enabled = true;
+            }
 
-                this.enabled = !disableOnStart;
+            if(onEnableDrawingColors)
+            {
+                onEnableDrawingColors.started.AddListener(EnableDrawingColors);
             }
         }
+
+        private void EnableDrawingColors(bool enable){
+            this.enabled = enable;
+            if(!enable && idColors != null)
+            {
+                idColors.Clear();
+            }
+		}
 
 		private void OnEnable()
         {
@@ -123,7 +140,7 @@ namespace Netherlands3D.TileSystem
             idColors = new Dictionary<string, Color>();
             foreach (var keyValuePair in idFloats)
             { 
-                Color colorFromGradient = gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, keyValuePair.Value));
+                Color colorFromGradient = gradientContainer.gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, keyValuePair.Value));
                 idColors.Add(keyValuePair.Key, colorFromGradient);
             }
 
@@ -175,7 +192,7 @@ namespace Netherlands3D.TileSystem
 				case ColorInterpretation.INTERPOLATE:
                     if(float.TryParse(colorInput, out float parsed))
                     {
-                        color = gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, parsed));
+                        color = gradientContainer.gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, parsed));
 					}
                     else{
                         Debug.Log($"Cant parse {colorInput} as float");
