@@ -31,6 +31,7 @@ Shader "Universal Render Pipeline/NiloCat Extension/Screen Space Decal/Unlit"
         [Header(Stencil Masking)]
         // https://docs.unity3d.com/ScriptReference/Rendering.CompareFunction.html
         _StencilRef("_StencilRef", Float) = 0
+        [IntRange] _ReadMask("ReadMask [0:255]", Range(0 , 255)) = 8
         [Enum(UnityEngine.Rendering.CompareFunction)]_StencilComp("_StencilComp (default = Disable) _____Set to NotEqual if you want to mask by specific _StencilRef value, else set to Disable", Float) = 0 //0 = disable
 
         [Header(ZTest)]
@@ -70,6 +71,8 @@ Shader "Universal Render Pipeline/NiloCat Extension/Screen Space Decal/Unlit"
             {
                 Ref[_StencilRef]
                 Comp[_StencilComp]
+                ReadMask [_ReadMask]
+                
             }
 
 
