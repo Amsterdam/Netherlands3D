@@ -1329,13 +1329,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f56e8526a6fa4154ab343f890f9340b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isenabled: 1
+  isenabled: 0
   tileSize: 1000
   layerPriority: 0
   Datasets:
   - Description: 
     lod: 0
-    path: https://3d.amsterdam.nl/web/data/binary/terrain1.1/terrain_{x}-{y}-lod0.bin
+    path: https://3d.amsterdam.nl/data/terrain1.1/terrain_{x}-{y}-lod0.bin
     maximumDistance: 6000
     maximumDistanceSquared: 0
     enabled: 1
@@ -1606,7 +1606,7 @@ MonoBehaviour:
   Datasets:
   - Description: 
     lod: 0
-    path: https://3d.amsterdam.nl/web/data/binary/buildings1.1/buildings_{x}_{y}.2.2.bin
+    path: https://3d.amsterdam.nl/data/buildings1.1/buildings_{x}_{y}.2.2.bin
     maximumDistance: 6000
     maximumDistanceSquared: 0
     enabled: 1
