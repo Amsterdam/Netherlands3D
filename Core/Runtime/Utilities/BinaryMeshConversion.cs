@@ -341,7 +341,7 @@ namespace Netherlands3D.Core
 
 
                     var mesh = new Mesh();
-
+                    mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
                     //byte[] b = new byte[Marshal.SizeOf<Vector3>() * vertexCount];
                     byte[] b = reader.ReadBytes(Marshal.SizeOf<Vector3>() * vertexCount);
                     Vector3[] vertices = new Vector3[vertexCount];
@@ -375,11 +375,26 @@ namespace Netherlands3D.Core
                     int[] indices = new int[indicesCount];
                     b = reader.ReadBytes(sizeof(int) * indicesCount);
                     FromByteArray<int>(b, indices);
+                    
 
+                   
 
                     mesh.SetIndexBufferParams(indicesCount, UnityEngine.Rendering.IndexFormat.UInt32);
                     mesh.SetIndexBufferData(indices, 0, 0, indicesCount, UnityEngine.Rendering.MeshUpdateFlags.DontNotifyMeshUsers | UnityEngine.Rendering.MeshUpdateFlags.DontRecalculateBounds | UnityEngine.Rendering.MeshUpdateFlags.DontResetBoneBounds | UnityEngine.Rendering.MeshUpdateFlags.DontValidateIndices);
-                    mesh.subMeshCount = submeshCount;
+                    var subMeshDescriptor = new UnityEngine.Rendering.SubMeshDescriptor()
+                    {
+                        baseVertex = 0,
+                        firstVertex =0 ,
+                        vertexCount = vertices.Length,
+
+
+
+                        indexStart = 0,
+                        indexCount = indices.Length,
+                    };
+                    //mesh.subMeshCount = submeshCount;
+                    mesh.SetSubMesh(0, subMeshDescriptor);
+                    
 
                     // Read submesh info:
                     SubMeshInfo[] subMeshInfos = new SubMeshInfo[submeshCount];
@@ -388,23 +403,44 @@ namespace Netherlands3D.Core
 
                     int[] materialIndices = new int[submeshCount];
 
+                    // set uv2 u-value to materialIndex
+                    Vector2[] uv2 = new Vector2[vertices.Count()];
+                    int startindex = 0;
                     for (int i = 0; i < submeshCount; i++)
                     {
                         materialIndices[i] = subMeshInfos[i].subMeshID;
 
-                        var subMeshDescriptor = new UnityEngine.Rendering.SubMeshDescriptor()
+                        //var subMeshDescriptor = new UnityEngine.Rendering.SubMeshDescriptor()
+                        //{
+                        //    baseVertex = 0,
+                        //    firstVertex = subMeshInfos[i].submeshFirstVertex,
+                        //    vertexCount = subMeshInfos[i].submeshVertexCount,
+                            
+
+
+                        //    indexStart = subMeshInfos[i].subMeshFirstIndex,
+                        //    indexCount = subMeshInfos[i].subMeshIndexCount,
+                        //};
+
+                        // set uv2 u-value to materialIndex
+                        Vector2 materialmap = new Vector2(subMeshInfos[i].subMeshID, 0);
+                        
+                        int endindex = subMeshInfos[i].submeshVertexCount + startindex;
+                        if (endindex>vertices.Length)
                         {
-                            baseVertex = 0,
-                            firstVertex = subMeshInfos[i].submeshFirstVertex,
-                            vertexCount = subMeshInfos[i].submeshVertexCount,
+                            endindex = vertices.Length;
+                        }
+                        for (int uvIndex = startindex; uvIndex < endindex; uvIndex++)
+                        {
+                            uv2[uvIndex] = materialmap;
+                        }
+                        startindex += subMeshInfos[i].submeshVertexCount;
+                        Debug.Log(materialmap.x);
 
-                            indexStart = subMeshInfos[i].subMeshFirstIndex,
-                            indexCount = subMeshInfos[i].subMeshIndexCount,
-                        };
 
-                        mesh.SetSubMesh(i, subMeshDescriptor);
+                        //mesh.SetSubMesh(i, subMeshDescriptor);
                     }
-
+                    mesh.uv2 = uv2;
                     submeshMaterialIndices = materialIndices;
 
 

@@ -204,12 +204,13 @@ namespace Netherlands3D.TileSystem
 			container.AddComponent<MeshFilter>().sharedMesh = mesh;
 
 			meshRenderer = container.AddComponent<MeshRenderer>();
-			List<Material> materialList = new List<Material>();
-			for (int i = 0; i < submeshIndices.Length; i++)
-			{
-				materialList.Add(DefaultMaterialList[submeshIndices[i]]);
-			}
-			meshRenderer.sharedMaterials = materialList.ToArray();
+			meshRenderer.sharedMaterial = DefaultMaterialList[0];
+			//List<Material> materialList = new List<Material>();
+			//for (int i = 0; i < submeshIndices.Length; i++)
+			//{
+			//	materialList.Add(DefaultMaterialList[submeshIndices[i]]);
+			//}
+			//meshRenderer.sharedMaterials = materialList.ToArray();
 			meshRenderer.shadowCastingMode = tileShadowCastingMode;
 
 			if (createMeshcollider)

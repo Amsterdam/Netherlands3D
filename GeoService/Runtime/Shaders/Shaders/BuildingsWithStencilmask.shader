@@ -1,4 +1,4 @@
-Shader "Buildings_Stencilmask"
+Shader "Universal Render Pipeline/Netherlands3D/Buildings_Stencilmask"
 {
     Properties
     {
