@@ -1,0 +1,14 @@
+{
+    "name": "Netherlands3D.VISSIM",
+    "rootNamespace": "Netherlands3D.VISSIM",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
