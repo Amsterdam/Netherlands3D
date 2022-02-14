@@ -2,7 +2,7 @@
 - Got Vissim and traffic simulator
 
 ## Gamelogic flow
-1. Loads .fzp file
+1. Loads .fzp file <- triggerd by event
 2. converts .fzp file to vissim data
 3. creates matching vehicles in world
 4. updates vehicles
@@ -39,7 +39,7 @@ fileparsing > ImportVissim
 - SendCameraToVissim()
 - SendCameraToStart()
 
-## VissimConfiguration
+## VissimConfiguration, has to do something with UI
 - fileConverter fzp
 - list of UI
 - prefabs

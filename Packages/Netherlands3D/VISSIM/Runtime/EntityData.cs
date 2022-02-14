@@ -18,7 +18,7 @@ namespace Netherlands3D.VISSIM
         /// <remarks>
         /// 100 = Car; 200 = Truck; 300 = Bus; 400 = Tram; 500 = Pedestrian; 600 = Cycle; 700 = Van;
         /// </remarks>
-        public int key; //TODO make this a dropdown menu for user
+        public int id; //TODO make this a dropdown menu for user
         [Tooltip("The name to be displayed to user")]
         public string displayName;
         [Tooltip("The sprite to be displayed to user")]

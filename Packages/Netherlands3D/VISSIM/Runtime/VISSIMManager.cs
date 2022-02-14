@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Netherlands3D.Events;
+using System.Globalization;
 
 namespace Netherlands3D.VISSIM
 {
@@ -19,13 +20,27 @@ namespace Netherlands3D.VISSIM
         /// The template for VISSIM
         /// </summary>
         public static string RequiredTemplate { get { return "$VEHICLE:SIMSEC;NO;VEHTYPE;COORDFRONT;COORDREAR;WIDTH"; } }
+        /// <summary>
+        /// All VISSIM data
+        /// </summary>
+        public static ref List<Data> Datas { get { return ref Instance.datas; } }
+        /// <summary>
+        /// A list containing all entities that do not have a corresponding id from entitiesDatas
+        /// </summary>
+        public static ref List<int> MissingEntityIDs { get { return ref Instance.missingEntityIDs; } } //TODO is ref needed here?
 
         private static VISSIMManager instance;
 
-        [HideInInspector] public List<int> missingVissimTypes = new List<int>();
-        [HideInInspector] public Dictionary<int, GameObject[]> vehicleTypes = new Dictionary<int, GameObject[]>();
-        [HideInInspector] public List<Data> allVissimData = new List<Data>();
-        [HideInInspector] public Dictionary<int, List<Data>> allVissimDataByVehicleID = new Dictionary<int, List<Data>>();
+        /// <summary>
+        /// A list containing all entities that do not have a corresponding id from entitiesDatas
+        /// </summary>
+        [HideInInspector] public List<int> missingEntityIDs = new List<int>(); //missingVissimTypes
+        [HideInInspector] public Dictionary<int, GameObject[]> availableEntitiesData = new Dictionary<int, GameObject[]>(); //vehicleTypes
+        /// <summary>
+        /// All VISSIM Data
+        /// </summary>
+        [HideInInspector] public List<Data> datas = new List<Data>(); //allVissimData
+        [HideInInspector] public Dictionary<int, List<Data>> allVissimDataByVehicleID = new Dictionary<int, List<Data>>();//?? "Vehicle Sorting test, see SortDataByCar() function"
 
 
         [Header("Values")]
@@ -34,7 +49,7 @@ namespace Netherlands3D.VISSIM
 
         [Header("Entity Data")]
         [Tooltip("List containing every available entity data (Scriptable Objects)")]
-        public List<EntityData> entityDatas = new List<EntityData>();
+        public List<EntityData> entitiesDatas = new List<EntityData>();
 
         [Header("Components")]
         [Tooltip("Event that fires when files are imported")]
@@ -65,7 +80,7 @@ namespace Netherlands3D.VISSIM
         // Start is called before the first frame update
         void Start()
         {
-        
+            LoadDefaultData();
         }
 
         // Update is called once per frame
@@ -75,11 +90,40 @@ namespace Netherlands3D.VISSIM
         }
 
         /// <summary>
+        /// Add the VISSIM data to VISSIMManager.datas
+        /// </summary>
+        /// <param name="dataString">A line in the format of RequiredTemplate</param>
+        public static void AddData(string dataString)
+        {
+            string[] array = dataString.Split(';');
+            float simulationSeconds = float.Parse(array[0], CultureInfo.InvariantCulture);
+            int vehicleTypeIndex = int.Parse(array[2]);
+            // Check if ID isn't set, then store it in missingEntityIDs
+            if(!Instance.availableEntitiesData.ContainsKey(vehicleTypeIndex) && !Instance.missingEntityIDs.Contains(vehicleTypeIndex)) Instance.missingEntityIDs.Add(vehicleTypeIndex);
+
+            Instance.datas.Add(new Data(simulationSeconds, int.Parse(array[1]), vehicleTypeIndex, ConverterFZP.StringToVector3(array[3]), ConverterFZP.StringToVector3(array[4]), float.Parse(array[5])));
+        }
+
+        /// <summary>
         /// Clears all VISSIM data
         /// </summary>
         public static void Clear()
         {
 
+        }
+
+        /// <summary>
+        /// Load the default VISSIM data
+        /// </summary>
+        public static void LoadDefaultData()
+        {
+            Instance.missingEntityIDs.Clear();
+            Instance.availableEntitiesData.Clear();
+
+            foreach(var item in Instance.entitiesDatas)
+            {
+                Instance.availableEntitiesData.Add(item.id, item.gameObjects);
+            }
         }
 
         /// <summary>

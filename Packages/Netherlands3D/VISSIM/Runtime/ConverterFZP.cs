@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
+using Netherlands3D.Core;
 
 namespace Netherlands3D.VISSIM
 {
@@ -22,9 +24,72 @@ namespace Netherlands3D.VISSIM
         /// <param name="file"></param>
         public static IEnumerator Convert(string file)
         {
+            // Split the file into lines
+            string[] lines = file.Split((System.Environment.NewLine + "\n" + "\r").ToCharArray());
+            
+            // Go through each line and add the data to VISSIMManager
+            bool readyToConvert = false;
+            foreach(string line in lines)
+            {
+                // Check line
+                if(readyToConvert && !string.IsNullOrEmpty(line))
+                {
+                    VISSIMManager.AddData(line);
+                }
+                // Check if the line template string is the same as the requiredTemplate, if so start adding //TODO can this be improved by regex?
+                if(line == VISSIMManager.RequiredTemplate)
+                {
+                    readyToConvert = true;
+                }
+            }
 
+            // Automatically calculates the time between the frames.
+            foreach(Data data in VISSIMManager.Datas)
+            {
+                if(data.simulationSeconds != VISSIMManager.Datas[0].simulationSeconds)
+                {
+                    timeBetweenFrames = data.simulationSeconds - VISSIMManager.Datas[0].simulationSeconds;
+                    break; // after calculating the correct framerate of the simulation, exit the loop.
+                }
+            }
+
+            // Check if there are missing Vissim entity ids
+            if(VISSIMManager.MissingEntityIDs.Count > 0)
+            {
+                //vissimConfiguration.OpenInterface(missingVissimTypes); // opens missing visism interface
+            }
+            else
+            {
+                //StartVissim(); // starts animation
+            }
+
+            // Set the current VISSIM file start parameters
+            frameCounter = VISSIMManager.Datas[0].simulationSeconds - timeBetweenFrames; // Some simulations start at a different simsec depending on the population of the simulation. This makes sure that it will always start at the 1st frame
 
             yield break;
+        }
+
+        /// <summary>
+        /// Converts the VISSIM RD coordinate string into a Vector3.
+        /// </summary>
+        /// <param name="s">The string to convert</param>
+        /// <returns>Vector3</returns>
+        public static Vector3 StringToVector3(string s)
+        {
+            //0 value is X
+            //1 value is Y
+            //2 value is Z
+            //stringVector = stringVector.Replace(".", ","); // Transforms decimal from US standard which uses a Period to European with a Comma
+
+            string[] splitString = s.Split(' '); // Splits the string into individual vectors
+            double x = double.Parse(splitString[0], CultureInfo.InvariantCulture);
+            double y = double.Parse(splitString[1], CultureInfo.InvariantCulture);
+            double z = double.Parse(splitString[2], CultureInfo.InvariantCulture);
+            Vector3RD rdVector = new Vector3RD(x, y, z); // Creates the Double Vector
+            Vector3 convertedCoordinates = CoordConvert.RDtoUnity(rdVector);
+            // Y Coordinates will be calculated by the vehicle to connect with the Map (Maaiveld).
+
+            return convertedCoordinates;
         }
     }
 }
