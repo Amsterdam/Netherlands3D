@@ -14,7 +14,9 @@ Make sure pull requests with changes adhere to the following rules:
 
 ## Code convention
 All the project code and comments should be written in English. Content text is written in Dutch.
-For C#/.NET coding conventions please refer to the Microsoft conventions:
+
+For C#/.NET coding conventions please refer to the Microsoft conventions:<br>
 https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/inside-a-program/coding-conventions
-For variable naming please refer to:
-https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/general-naming-conventions
+
+For variable naming please refer to:<br>
+https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/general-naming-conventions<br>
