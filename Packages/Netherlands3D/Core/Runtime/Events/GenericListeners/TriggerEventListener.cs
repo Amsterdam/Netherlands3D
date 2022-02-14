@@ -12,7 +12,8 @@ namespace Netherlands3D.Core
 
         [SerializeField]
         private BoolValueUnityEvent trigger;
-        void Start()
+
+        void Awake()
         {
             onEvent.started.AddListener(Invoke);
         }
