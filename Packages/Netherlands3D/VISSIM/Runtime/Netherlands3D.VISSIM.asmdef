@@ -1,7 +1,9 @@
 {
     "name": "Netherlands3D.VISSIM",
     "rootNamespace": "Netherlands3D.VISSIM",
-    "references": [],
+    "references": [
+        "GUID:9ca88277166fea644a31588b4f943acc"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

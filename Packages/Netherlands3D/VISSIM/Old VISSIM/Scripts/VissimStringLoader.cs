@@ -85,7 +85,7 @@ namespace Netherlands3D.Traffic.VISSIM
             loadingObjScreen.ProgressBar.SetMessage("50%");
             loadingObjScreen.ProgressBar.Percentage(.5f);
             loadingObjScreen.ShowMessage("FZP wordt geladen: Vissim");
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame(); //(TAB) lmao what is this
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
             // calls vissim data
