@@ -13,9 +13,9 @@ namespace Netherlands3D.VISSIM
     {
         public static VISSIMManager Instance { get { return instance; } private set { } }
         /// <summary>
-        /// The file location of the VISSIM file
+        /// Show the Debug.Log() messages from VISSIM
         /// </summary>
-        public static string FileLocation { get { return Instance.fileLocation; } set { Instance.fileLocation = value; } }
+        public static bool ShowDebugLog { get { return Instance.showDebugLog; } set { Instance.showDebugLog = value; } }
         /// <summary>
         /// The template for VISSIM
         /// </summary>
@@ -44,8 +44,8 @@ namespace Netherlands3D.VISSIM
 
 
         [Header("Values")]
-        [Tooltip("The file location of the VISSIM file")]
-        [SerializeField] private string fileLocation = "921929autoluw2030ref005.fzp";
+        [Tooltip("Show the Debug.Log() messages from VISSIM")]
+        [SerializeField] private bool showDebugLog = true;
 
         [Header("Entity Data")]
         [Tooltip("List containing every available entity data (Scriptable Objects)")]
@@ -110,6 +110,21 @@ namespace Netherlands3D.VISSIM
         public static void Clear()
         {
 
+        }
+
+        /// <summary>
+        /// Invoke the string event Files Imported
+        /// </summary>
+        /// <param name="filePath"></param>
+        public static void InvokeEventFilesImported(string filePath)
+        {
+            if(Instance.eventFilesImported == null || Instance.eventFilesImported.started == null)
+            {
+                Debug.LogError("[VISSIM] Event files imported not started!");
+                return;
+            }
+
+            Instance.eventFilesImported.started.Invoke(filePath);
         }
 
         /// <summary>

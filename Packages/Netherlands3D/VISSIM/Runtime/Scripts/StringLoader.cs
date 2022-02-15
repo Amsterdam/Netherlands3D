@@ -35,6 +35,8 @@ namespace Netherlands3D.VISSIM
         /// <param name="files">The files to import</param>
         private void FileImported(string files)
         {
+            if(VISSIMManager.ShowDebugLog) Debug.Log("[VISSIM] StringLoader.FilesImported(): " + files);
+
             // Sepperate the files
             string[] importedFiles = files.Split(',');
             foreach(string file in importedFiles)
@@ -59,6 +61,7 @@ namespace Netherlands3D.VISSIM
 
             // Load
             yield return ConverterFZP.Convert(fileContent);
+            if(VISSIMManager.ShowDebugLog) Debug.Log("[VISSIM] Loaded VISSIM from file");
 
             // Clear database
             eventClearDatabase.started.Invoke(true);
