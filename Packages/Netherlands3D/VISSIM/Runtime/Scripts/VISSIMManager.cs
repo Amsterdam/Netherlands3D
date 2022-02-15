@@ -30,16 +30,22 @@ namespace Netherlands3D.VISSIM
         /// The template for VISSIM
         /// </summary>
         public static string RequiredTemplate { get { return "$VEHICLE:SIMSEC;NO;VEHTYPE;COORDFRONT;COORDREAR;WIDTH"; } }
-
+        /// <summary>
+        /// The parent transform of the visualizer script
+        /// </summary>
         public static Transform VisualizerParentTransform { get { return Instance.visualizerParentTransform; } }
         /// <summary>
         /// The binary mesh layer of the tile system
         /// </summary>
         public static BinaryMeshLayer BinaryMeshLayer { get { return Instance.binaryMeshLayer; } }
         /// <summary>
+        /// The Visualizer script that visualizes the VISSIM data
+        /// </summary>
+        public static Visualizer Visualizer { get { return Instance.visualizer; } }
+        /// <summary>
         /// All VISSIM data
         /// </summary>
-        public static ref List<Data> Datas { get { return ref Instance.datas; } }
+        public static List<Data> Datas { get { return Instance.datas; } private set { } }
         /// <summary>
         /// A list containing all entities that do not have a corresponding id from entitiesDatas
         /// </summary>
@@ -66,8 +72,8 @@ namespace Netherlands3D.VISSIM
         [Header("Values")]
         [Tooltip("Show the Debug.Log() messages from VISSIM")]
         [SerializeField] private bool showDebugLog = true;
-        [Tooltip("The binary mesh layer of the tile system")]
-        [SerializeField] private BinaryMeshLayer binaryMeshLayer;
+        [Tooltip("Visualize the VISSIM Data")]
+        [SerializeField] private bool visualizeData = true;
 
         [Header("Entity Data")]
         [Tooltip("List containing every available entity data (Scriptable Objects)")]
@@ -78,9 +84,11 @@ namespace Netherlands3D.VISSIM
         [SerializeField] private StringEvent eventFilesImported;
         [Tooltip("Event that fires when the database needs to be cleared")]
         [SerializeField] private BoolEvent eventClearDatabase;
+        [Tooltip("The binary mesh layer of the tile system")]
+        [SerializeField] private BinaryMeshLayer binaryMeshLayer;
 
         /// <summary>
-        /// The parent transform of the visulizer script
+        /// The parent transform of the visualizer script
         /// </summary>
         private Transform visualizerParentTransform;
         /// <summary>
@@ -119,26 +127,32 @@ namespace Netherlands3D.VISSIM
         // Update is called once per frame
         void Update()
         {
-        
+            visualizer.Update();
         }
 
         /// <summary>
-        /// Add the VISSIM data to VISSIMManager.datas
+        /// Add VISSIM data to VISSIMManager.datas
         /// </summary>
-        /// <param name="dataString">A line in the format of RequiredTemplate</param>
-        public static void AddData(string dataString) //TODO this is only for .FZP data, needs to be reworked if other data types are added
+        /// <param name="data">The Data class to add</param>
+        public static void AddData(Data data)
         {
             // Check if allowed to add
             if(DatasReachedMaxCount) return;
-
-            string[] array = dataString.Split(';');
-            float simulationSeconds = float.Parse(array[0], CultureInfo.InvariantCulture);
-            int vehicleTypeIndex = int.Parse(array[2]);
-            // Check if ID isn't set, then store it in missingEntityIDs
-            if(!Instance.availableEntitiesData.ContainsKey(vehicleTypeIndex) && !Instance.missingEntityIDs.Contains(vehicleTypeIndex)) Instance.missingEntityIDs.Add(vehicleTypeIndex);
-
-            Instance.datas.Add(new Data(simulationSeconds, int.Parse(array[1]), vehicleTypeIndex, ConverterFZP.StringToVector3(array[3]), ConverterFZP.StringToVector3(array[4]), float.Parse(array[5]))); //TODO error handling if parsing doesnt work
+            Datas.Add(data);            
             if(ShowDebugLog) Debug.Log("[VISSIM] Added data");
+        }
+
+        /// <summary>
+        /// Add VISSIM data to VISSIMManager.datas
+        /// </summary>
+        /// <param name="datas">The Data list to add</param>
+        public static void AddData(List<Data> datas)
+        {
+            foreach(Data data in datas)
+            {
+                if(DatasReachedMaxCount) break;
+                AddData(data);
+            }
         }
 
         /// <summary>

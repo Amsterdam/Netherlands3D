@@ -93,6 +93,7 @@ namespace Netherlands3D.VISSIM
                     break;
             }
 
+            if(VISSIMManager.ShowDebugLog) UnityEngine.Debug.Log("[VISSIM] File contents: " + fileContent.Substring(0, 2048) + " ...[Log Cutoff]");
             // Load
             yield return ConverterFZP.Convert(fileContent);
             sw.Stop();

@@ -34,7 +34,7 @@ namespace Netherlands3D.VISSIM
                 // Check line
                 if(readyToConvert && !string.IsNullOrEmpty(line))
                 {
-                    VISSIMManager.AddData(line);
+                    VISSIMManager.AddData(line);//TODO change -> save in list, then add when all is over, then call visualizer updateData shizz
                     // Wait a frame to not make the project freeze
                     yield return null;
                 }
@@ -71,7 +71,25 @@ namespace Netherlands3D.VISSIM
             // Set the current VISSIM file start parameters
             frameCounter = VISSIMManager.Datas[0].simulationSeconds - timeBetweenFrames; // Some simulations start at a different simsec depending on the population of the simulation. This makes sure that it will always start at the 1st frame
 
+            // 
+
             yield break;
+        }
+
+        /// <summary>
+        /// Converts a data string to data
+        /// </summary>
+        /// <param name="dataString"></param>
+        /// <returns>Data</returns>
+        public static Data ConvertToData(string dataString)
+        {
+            string[] array = dataString.Split(';');
+            float simulationSeconds = float.Parse(array[0], CultureInfo.InvariantCulture);
+            int vehicleTypeIndex = int.Parse(array[2]);
+            // Check if ID isn't set, then store it in missingEntityIDs
+            if(!VISSIMManager.Instance.availableEntitiesData.ContainsKey(vehicleTypeIndex) && !VISSIMManager.Instance.missingEntityIDs.Contains(vehicleTypeIndex)) VISSIMManager.Instance.missingEntityIDs.Add(vehicleTypeIndex);
+
+            return new Data(simulationSeconds, int.Parse(array[1]), vehicleTypeIndex, StringToVector3(array[3]), StringToVector3(array[4]), float.Parse(array[5])); //TODO error handling if parsing doesnt work
         }
 
         /// <summary>
@@ -96,5 +114,6 @@ namespace Netherlands3D.VISSIM
 
             return convertedCoordinates;
         }
+
     }
 }
