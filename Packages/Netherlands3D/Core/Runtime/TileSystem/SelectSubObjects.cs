@@ -53,7 +53,8 @@ namespace Netherlands3D.TileSystem
             selectedIDs = new List<string>();
             hiddenIDs = new List<string>();
 
-            onColoringSubobjects.started.AddListener(DisableWhileColoring);
+            if(onColoringSubobjects)
+                onColoringSubobjects.started.AddListener(DisableWhileColoring);
              
             containerLayer = gameObject.GetComponent<BinaryMeshLayer>();
         }
