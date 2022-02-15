@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEditor;
 
@@ -29,15 +30,16 @@ namespace Netherlands3D.VISSIM.Editor
             // Import .fpz
             if(GUILayout.Button(new GUIContent("Import .FZP", "Import a .FPZ file to test"), GUILayout.Height(32)))
             {
-                string path = EditorUtility.OpenFilePanel("Select .FZP File", "", "fzp");
-                if(path.Length != 0)
+                string filePath = EditorUtility.OpenFilePanel("Select .FZP File", "", "fzp");
+                if(filePath.Length != 0)
                 {
-                    if(VISSIMManager.ShowDebugLog) Debug.Log("[VISSIM Testing] Selected .fzp file from: " + path);
-                    selected.OpenFile(path);
+                    if(VISSIMManager.ShowDebugLog) Debug.Log("[VISSIM Testing] Selected .fzp file from: " + filePath);
+                    VISSIMManager.LoadFile(filePath);
                 }
             }
 
             GUI.enabled = true;
+            base.OnInspectorGUI();
         }
     }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Netherlands3D.Events;
+using Netherlands3D.TileSystem;
 using System.Globalization;
 
 namespace Netherlands3D.VISSIM
@@ -17,9 +18,24 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         public static bool ShowDebugLog { get { return Instance.showDebugLog; } set { Instance.showDebugLog = value; } }
         /// <summary>
+        /// If the Datas list has reached its max count
+        /// </summary>
+        public static bool DatasReachedMaxCount { get { return MaxDatasCount > 0 && Datas.Count >= MaxDatasCount; } }
+        /// <summary>
+        /// The max limit the list Datas can be
+        /// </summary>
+        /// <remarks>-1 = max</remarks>
+        public static int MaxDatasCount = -1;
+        /// <summary>
         /// The template for VISSIM
         /// </summary>
         public static string RequiredTemplate { get { return "$VEHICLE:SIMSEC;NO;VEHTYPE;COORDFRONT;COORDREAR;WIDTH"; } }
+
+        public static Transform VisualizerParentTransform { get { return Instance.visualizerParentTransform; } }
+        /// <summary>
+        /// The binary mesh layer of the tile system
+        /// </summary>
+        public static BinaryMeshLayer BinaryMeshLayer { get { return Instance.binaryMeshLayer; } }
         /// <summary>
         /// All VISSIM data
         /// </summary>
@@ -28,24 +44,30 @@ namespace Netherlands3D.VISSIM
         /// A list containing all entities that do not have a corresponding id from entitiesDatas
         /// </summary>
         public static ref List<int> MissingEntityIDs { get { return ref Instance.missingEntityIDs; } } //TODO is ref needed here?
-
-        private static VISSIMManager instance;
-
         /// <summary>
         /// A list containing all entities that do not have a corresponding id from entitiesDatas
         /// </summary>
-        [HideInInspector] public List<int> missingEntityIDs = new List<int>(); //missingVissimTypes
-        [HideInInspector] public Dictionary<int, GameObject[]> availableEntitiesData = new Dictionary<int, GameObject[]>(); //vehicleTypes
+        public static ref Dictionary<int, GameObject[]> AvailableEntitiesData { get { return ref Instance.availableEntitiesData; } }
+
+        private static VISSIMManager instance;
+
+        [Header("VISSIM Data")]
         /// <summary>
         /// All VISSIM Data
         /// </summary>
-        [HideInInspector] public List<Data> datas = new List<Data>(); //allVissimData
-        [HideInInspector] public Dictionary<int, List<Data>> allVissimDataByVehicleID = new Dictionary<int, List<Data>>();//?? "Vehicle Sorting test, see SortDataByCar() function"
-
+        public List<Data> datas = new List<Data>(); //allVissimData
+        /// <summary>
+        /// A list containing all entities that do not have a corresponding id from entitiesDatas
+        /// </summary>
+        public List<int> missingEntityIDs = new List<int>(); //missingVissimTypes
+        public Dictionary<int, GameObject[]> availableEntitiesData = new Dictionary<int, GameObject[]>(); //vehicleTypes
+        public Dictionary<int, List<Data>> allVissimDataByVehicleID = new Dictionary<int, List<Data>>();//?? "Vehicle Sorting test, see SortDataByCar() function"
 
         [Header("Values")]
         [Tooltip("Show the Debug.Log() messages from VISSIM")]
         [SerializeField] private bool showDebugLog = true;
+        [Tooltip("The binary mesh layer of the tile system")]
+        [SerializeField] private BinaryMeshLayer binaryMeshLayer;
 
         [Header("Entity Data")]
         [Tooltip("List containing every available entity data (Scriptable Objects)")]
@@ -58,9 +80,17 @@ namespace Netherlands3D.VISSIM
         [SerializeField] private BoolEvent eventClearDatabase;
 
         /// <summary>
+        /// The parent transform of the visulizer script
+        /// </summary>
+        private Transform visualizerParentTransform;
+        /// <summary>
         /// For handling the string events
         /// </summary>
         private StringLoader stringLoader;
+        /// <summary>
+        /// The VISSIM visualizer to show cars etc.
+        /// </summary>
+        private Visualizer visualizer;
 
         private void Awake()
         {
@@ -74,7 +104,10 @@ namespace Netherlands3D.VISSIM
             instance = this;
 
             // Set
+            visualizerParentTransform = new GameObject("Visulizer Parent").GetComponent<Transform>();
+            visualizerParentTransform.SetParent(transform);
             stringLoader = new StringLoader(eventFilesImported, eventClearDatabase);
+            visualizer = new Visualizer();
         }
 
         // Start is called before the first frame update
@@ -93,15 +126,19 @@ namespace Netherlands3D.VISSIM
         /// Add the VISSIM data to VISSIMManager.datas
         /// </summary>
         /// <param name="dataString">A line in the format of RequiredTemplate</param>
-        public static void AddData(string dataString)
+        public static void AddData(string dataString) //TODO this is only for .FZP data, needs to be reworked if other data types are added
         {
+            // Check if allowed to add
+            if(DatasReachedMaxCount) return;
+
             string[] array = dataString.Split(';');
             float simulationSeconds = float.Parse(array[0], CultureInfo.InvariantCulture);
             int vehicleTypeIndex = int.Parse(array[2]);
             // Check if ID isn't set, then store it in missingEntityIDs
             if(!Instance.availableEntitiesData.ContainsKey(vehicleTypeIndex) && !Instance.missingEntityIDs.Contains(vehicleTypeIndex)) Instance.missingEntityIDs.Add(vehicleTypeIndex);
 
-            Instance.datas.Add(new Data(simulationSeconds, int.Parse(array[1]), vehicleTypeIndex, ConverterFZP.StringToVector3(array[3]), ConverterFZP.StringToVector3(array[4]), float.Parse(array[5])));
+            Instance.datas.Add(new Data(simulationSeconds, int.Parse(array[1]), vehicleTypeIndex, ConverterFZP.StringToVector3(array[3]), ConverterFZP.StringToVector3(array[4]), float.Parse(array[5]))); //TODO error handling if parsing doesnt work
+            if(ShowDebugLog) Debug.Log("[VISSIM] Added data");
         }
 
         /// <summary>
@@ -115,8 +152,8 @@ namespace Netherlands3D.VISSIM
         /// <summary>
         /// Invoke the string event Files Imported
         /// </summary>
-        /// <param name="filePath"></param>
-        public static void InvokeEventFilesImported(string filePath)
+        /// <param name="file">The file contents to import</param>
+        public static void InvokeEventFilesImported(string file)
         {
             if(Instance.eventFilesImported == null || Instance.eventFilesImported.started == null)
             {
@@ -124,7 +161,7 @@ namespace Netherlands3D.VISSIM
                 return;
             }
 
-            Instance.eventFilesImported.started.Invoke(filePath);
+            Instance.eventFilesImported.started.Invoke(file);
         }
 
         /// <summary>
@@ -137,8 +174,22 @@ namespace Netherlands3D.VISSIM
 
             foreach(var item in Instance.entitiesDatas)
             {
+                if(Instance.availableEntitiesData.ContainsKey(item.id))
+                {
+                    Debug.LogError(string.Format("[VISSIM] VISSIM Entity with ID {0} has already been added. Check your entity data for duplicates with same ID", item.id));
+                    continue;
+                }
+
                 Instance.availableEntitiesData.Add(item.id, item.gameObjects);
             }
+        }
+
+        /// <summary>
+        /// Loads a file into VISSIM
+        /// </summary>
+        public static void LoadFile(string file)
+        {
+            Instance.stringLoader.LoadFile(file);
         }
 
         /// <summary>

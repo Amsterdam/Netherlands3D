@@ -35,16 +35,21 @@ namespace Netherlands3D.VISSIM
                 if(readyToConvert && !string.IsNullOrEmpty(line))
                 {
                     VISSIMManager.AddData(line);
+                    // Wait a frame to not make the project freeze
+                    yield return null;
                 }
                 // Check if the line template string is the same as the requiredTemplate, if so start adding //TODO can this be improved by regex?
                 if(line == VISSIMManager.RequiredTemplate)
                 {
                     readyToConvert = true;
                 }
+
+                // Check if limit has been reached
+                if(VISSIMManager.DatasReachedMaxCount) break;
             }
 
             // Automatically calculates the time between the frames.
-            foreach(Data data in VISSIMManager.Datas)
+            foreach(Data data in VISSIMManager.Datas) //TODO this can be calculated in VISSIMManager.AddData
             {
                 if(data.simulationSeconds != VISSIMManager.Datas[0].simulationSeconds)
                 {

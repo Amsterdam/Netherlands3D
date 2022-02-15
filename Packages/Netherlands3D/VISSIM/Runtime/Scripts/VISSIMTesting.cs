@@ -9,13 +9,15 @@ namespace Netherlands3D.VISSIM
     /// </summary>
     public class VISSIMTesting : MonoBehaviour
     {
-        /// <summary>
-        /// Opens a file and runs it through the VISSIMManager
-        /// </summary>
-        /// <param name="path"></param>
-        public void OpenFile(string filePath)
+        [Header("Values")]
+        [Tooltip("Set a limit on how long the VISSIM.Datas list can be")]
+        [SerializeField] private int maxVISSIMDatasLength = 1000;
+
+        void Start()
         {
-            VISSIMManager.InvokeEventFilesImported(filePath);            
+            if(!Application.isEditor) return;
+
+            VISSIMManager.MaxDatasCount = maxVISSIMDatasLength;
         }
     }
 }

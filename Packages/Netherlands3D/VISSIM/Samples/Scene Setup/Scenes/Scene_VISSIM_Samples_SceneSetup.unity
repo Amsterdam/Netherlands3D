@@ -329,10 +329,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f4a4078816f54f45972f21ecd1ad5cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  missingEntityIDs: 
   datas: []
-  fileLocation: 921929autoluw2030ref005.fzp
-  entitiesDatas: []
+  missingEntityIDs: 
+  showDebugLog: 1
+  entitiesDatas:
+  - {fileID: 11400000, guid: 554e16e731e104246ab9f60fb87e4eec, type: 2}
+  - {fileID: 11400000, guid: 2cfb3438a36d9b24da4717d588f3968b, type: 2}
+  - {fileID: 11400000, guid: c5fb47f0fb0cdff4491f9b4e1d475ad3, type: 2}
   eventFilesImported: {fileID: 11400000, guid: 8491950a9badaae46996777c747e43d1, type: 2}
   eventClearDatabase: {fileID: 11400000, guid: 3a9cdedad05358846955d9112acf117d, type: 2}
 --- !u!4 &2073698542
@@ -361,3 +364,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98434de64a1b16f469de1e6477f52f80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxVISSIMDatasLength: 100

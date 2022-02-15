@@ -2,6 +2,7 @@
 - Got Vissim and traffic simulator
 
 ## Gamelogic flow
+0. VISSIMManager -> StringLoader -> ConverterFZP
 1. Loads .fzp file <- triggerd by event
 2. converts .fzp file to vissim data
 3. creates matching vehicles in world
@@ -33,7 +34,7 @@ fileparsing > ImportVissim
 - LoadDefaultVissimData(): void
 - StartVissim(): void
 
-## Playback, plays back all vehicles after ConvertFZP has finishedLoadingData
+## Playback, plays back all vehicles after ConvertFZP has finishedLoadingData (creates vehicles/updates them)
 - Update(): void
 - SendCommand(List<VissimData>): void = Checks the current simulation time and sends according commands to all vehicles.
 - SendCameraToVissim()
