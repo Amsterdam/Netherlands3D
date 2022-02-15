@@ -11,12 +11,7 @@ namespace Netherlands3D.VISSIM
     public class Data
     {
         // $VEHICLE:SIMSEC;NO;VEHTYPE;COORDFRONT;COORDREAR;WIDTH
-
-        /// <summary>
-        /// The simulation time in seconds
-        /// </summary>
-        [Tooltip("The simulation time in seconds")]
-        public float simulationSeconds;
+                
         /// <summary>
         /// Unique vehicle number (in data called "NO")
         /// </summary>
@@ -28,26 +23,65 @@ namespace Netherlands3D.VISSIM
         [Tooltip("The vehicle type 100 = Car; 200 = Truck; 300 = Bus; 400 = Tram; 500 = Pedestrian; 600 = Cycle; 700 = Van;")]
         public int vehicleTypeIndex;
         /// <summary>
-        /// Coordinate of front end of vehicle at the end of the time step
-        /// </summary>
-        [Tooltip("Coordinate of front end of vehicle at the end of the time step")]
-        public Vector3 coordinatesFront;
-        /// <summary>
-        /// Coordinate of rear end position of vehicle at the end of the time step
-        /// </summary>
-        [Tooltip("Coordinate of rear end position of vehicle at the end of the time step")]
-        public Vector3 coordinatesRear;
-        /// <summary>
         /// Vehicle width in meters, depending on 2D/3D model distribution. The width is relevant for overtaking within the lane
         /// </summary>
         [Tooltip("Vehicle width in meters, depending on 2D/3D model distribution. The width is relevant for overtaking within the lane")]
         public float width;
+        /// <summary>
+        /// The coordinates of the entity with corresponding key simulation second <simulationSecond, StartEndPos
+        /// </summary>
+        /// <remarks>
+        /// float: The simulation time in seconds
+        /// FrontEndCoordinates: contains the coordinatesFront and coordinatesRear
+        /// </remarks>
+        public Dictionary<float, Coordinates> coordinates; //TODO make this showup in inspector
 
-        public Data(float simulationSeconds, int id, int vehicleType, Vector3 coordinatesFront, Vector3 coordinatesRear, float width)
+        public Data(int id, int vehicleTypeIndex, float width, Dictionary<float, Coordinates> coordinates)
         {
-            this.simulationSeconds = simulationSeconds;
             this.id = id;
-            this.vehicleTypeIndex = vehicleType;
+            this.vehicleTypeIndex = vehicleTypeIndex;
+            this.width = width;
+            this.coordinates = coordinates;
+        }
+        
+        
+        [System.Serializable]
+        public struct Coordinates
+        {
+            /// <summary>
+            /// Coordinate of front end of vehicle at the end of the time step (
+            /// </summary>
+            public Vector3 coordinatesFront;
+            /// <summary>
+            /// Coordinate of rear end position of vehicle at the end of the time step
+            /// </summary>
+            public Vector3 coordinatesRear;
+
+            public Coordinates(Vector3 coordinatesFront, Vector3 coordinatesRear)
+            {
+                this.coordinatesFront = coordinatesFront;
+                this.coordinatesRear = coordinatesRear;
+            }
+        }        
+    }
+
+    /// <summary>
+    /// Class to contain raw data before turning it into the class Data
+    /// </summary>
+    public class DataRaw
+    {
+        public float simulationSecond;
+        public int id;
+        public int vehicleTypeIndex;
+        public Vector3 coordinatesFront;
+        public Vector3 coordinatesRear;
+        public float width;
+
+        public DataRaw(float simulationSecond, int id, int vehicleTypeIndex, Vector3 coordinatesFront, Vector3 coordinatesRear, float width)
+        {
+            this.simulationSecond = simulationSecond;
+            this.id = id;
+            this.vehicleTypeIndex = vehicleTypeIndex;
             this.coordinatesFront = coordinatesFront;
             this.coordinatesRear = coordinatesRear;
             this.width = width;

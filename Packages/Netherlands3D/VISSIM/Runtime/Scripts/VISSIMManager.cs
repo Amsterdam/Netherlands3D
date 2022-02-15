@@ -39,13 +39,17 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         public static BinaryMeshLayer BinaryMeshLayer { get { return Instance.binaryMeshLayer; } }
         /// <summary>
+        /// Callback that gets called when Data is added to Datas
+        /// </summary>
+        public static DelegateAddData OnAddData;
+        /// <summary>
         /// The Visualizer script that visualizes the VISSIM data
         /// </summary>
         public static Visualizer Visualizer { get { return Instance.visualizer; } }
         /// <summary>
         /// All VISSIM data
         /// </summary>
-        public static List<Data> Datas { get { return Instance.datas; } private set { } }
+        public static Dictionary<int, Data> Datas { get { return Instance.datas; } private set { } }
         /// <summary>
         /// A list containing all entities that do not have a corresponding id from entitiesDatas
         /// </summary>
@@ -59,9 +63,9 @@ namespace Netherlands3D.VISSIM
 
         [Header("VISSIM Data")]
         /// <summary>
-        /// All VISSIM Data
+        /// All VISSIM Data, <ID, Data>
         /// </summary>
-        public List<Data> datas = new List<Data>(); //allVissimData
+        public Dictionary<int, Data> datas = new Dictionary<int, Data>(); //allVissimData
         /// <summary>
         /// A list containing all entities that do not have a corresponding id from entitiesDatas
         /// </summary>
@@ -86,6 +90,11 @@ namespace Netherlands3D.VISSIM
         [SerializeField] private BoolEvent eventClearDatabase;
         [Tooltip("The binary mesh layer of the tile system")]
         [SerializeField] private BinaryMeshLayer binaryMeshLayer;
+
+        /// <summary>
+        /// Delegate that gets called when data is added to Datas
+        /// </summary>
+        public delegate void DelegateAddData(List<Data> newData);
 
         /// <summary>
         /// The parent transform of the visualizer script
@@ -138,7 +147,7 @@ namespace Netherlands3D.VISSIM
         {
             // Check if allowed to add
             if(DatasReachedMaxCount) return;
-            Datas.Add(data);            
+            Datas.Add(data.id, data);
             if(ShowDebugLog) Debug.Log("[VISSIM] Added data");
         }
 
@@ -146,18 +155,30 @@ namespace Netherlands3D.VISSIM
         /// Add VISSIM data to VISSIMManager.datas
         /// </summary>
         /// <param name="datas">The Data list to add</param>
-        public static void AddData(List<Data> datas)
+        public static void AddData(Dictionary<int, Data> datas)
         {
             int lastIndex = 0;
             for(int i = 0; i < datas.Count; i++)
             {
                 if(DatasReachedMaxCount) break;
-                AddData(datas[i]);
+
+                // Check if key is already present
+                if(Datas.ContainsKey(datas[i].id))
+                {
+                    // Key already present, update it
+                    Datas[datas[i].id].AddCoordinates(datas[i].coordinates);
+                }
+                else
+                {
+                    // Add
+                    Datas.Add(datas[i].id, datas[i]);
+                }
                 lastIndex = i;
+                if(ShowDebugLog) Debug.Log("[VISSIM] Added data");
             }
 
             // Tell Visualizer to update with new datas
-            Visualizer.UpdateEntities(datas.GetRange(0, lastIndex));
+            //Visualizer.UpdateEntities(datas.GetRange(0, lastIndex));
         }
 
         /// <summary>

@@ -53,13 +53,17 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         public void UpdateNavigation()
         {
-            // Calculate the right y axis coordinate for coordinatesFront
-            if(Physics.Raycast(transform.position + Vector3.up * 50, Vector3.down, out Visualizer.Hit))
-            {
-                data.coordinatesFront.y = Visualizer.Hit.point.y;
-            }
+            //// Calculate the right y axis coordinate for coordinatesFront
+            //if(Physics.Raycast(transform.position + Vector3.up * 50, Vector3.down, out Visualizer.Hit))
+            //{
+            //    //data.coordinates..y = Visualizer.Hit.point.y;
+            //}
 
-
+            //// Calculate the right y axis coordinate for coordinatesFront
+            //if(Physics.Raycast(data.coordinatesRear + Vector3.up * 50, Vector3.down, out Visualizer.Hit))
+            //{
+            //    //data.coordinatesFront.y = Visualizer.Hit.point.y;
+            //}
         }
     }
 }

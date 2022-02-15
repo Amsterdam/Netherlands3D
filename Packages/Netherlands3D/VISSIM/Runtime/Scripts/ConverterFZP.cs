@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 using Netherlands3D.Core;
+using System.Linq;
 
 namespace Netherlands3D.VISSIM
 {
@@ -27,15 +28,15 @@ namespace Netherlands3D.VISSIM
             // Split the file into lines
             string[] lines = file.Split((System.Environment.NewLine + "\n" + "\r").ToCharArray());
             
-            // Go through each line and add the data to VISSIMManager
+            // Go through each line and convert the string to DataRaw
             bool readyToConvert = false;
-            List<Data> convertedData = new List<Data>();
+            List<DataRaw> convertedDataRaw = new List<DataRaw>();
             foreach(string line in lines)
             {
                 // Check line
                 if(readyToConvert && !string.IsNullOrEmpty(line))
                 {
-                    convertedData.Add(ConvertToData(line));//TODO change -> save in list, then add when all is over, then call visualizer updateData shizz
+                    convertedDataRaw.Add(ConvertToDataRaw(line));//TODO change -> save in list, then add when all is over, then call visualizer updateData shizz
                     // Wait a frame to not make the project freeze
                     yield return null;
                 }
@@ -46,21 +47,41 @@ namespace Netherlands3D.VISSIM
                 }
 
                 // Check if limit has been reached
-                if(VISSIMManager.MaxDatasCount != -1 && convertedData.Count >= VISSIMManager.MaxDatasCount) break;
+                if(VISSIMManager.MaxDatasCount != -1 && convertedDataRaw.Count >= VISSIMManager.MaxDatasCount) break;
+            }
+
+            // Convert DataRaw to Data (That way, each entity has a unieke id, where inside there is a dictonary with the simulation seconds as keys with the corresponding coordiantes)
+            // <Data.id, Data>
+            Dictionary<int, Data> convertedDataDic = new Dictionary<int, Data>();
+            foreach(DataRaw dataRaw in convertedDataRaw)
+            {
+                // Check if data id is already in convertedDataDic
+                if(convertedDataDic.ContainsKey(dataRaw.id))
+                {
+                    // Already exists, add new simulation second to its coordinates
+                    convertedDataDic[dataRaw.id].coordinates.Add(dataRaw.simulationSecond, new Data.Coordinates(dataRaw.coordinatesFront, dataRaw.coordinatesRear));
+                }
+                else
+                {
+                    // Doesnt exist, add it
+                    convertedDataDic.Add(dataRaw.id, new Data(dataRaw.id, dataRaw.vehicleTypeIndex, dataRaw.width, 
+                        new Dictionary<float, Data.Coordinates>()
+                        { { dataRaw.simulationSecond, new Data.Coordinates(dataRaw.coordinatesFront, dataRaw.coordinatesRear) } }));
+                }
             }
 
             // Add data to VISSIM
-            VISSIMManager.AddData(convertedData);
+            VISSIMManager.AddData(convertedDataDic);
 
-            // Automatically calculates the time between the frames.
-            foreach(Data data in VISSIMManager.Datas) //TODO this can be calculated in VISSIMManager.AddData
-            {
-                if(data.simulationSeconds != VISSIMManager.Datas[0].simulationSeconds)
-                {
-                    timeBetweenFrames = data.simulationSeconds - VISSIMManager.Datas[0].simulationSeconds;
-                    break; // after calculating the correct framerate of the simulation, exit the loop.
-                }
-            }
+            // Automatically calculates the time between the frames. //TODO is this needed?
+            //foreach(Data data in VISSIMManager.Datas) //TODO this can be calculated in VISSIMManager.AddData
+            //{
+            //    if(data.simulationSeconds != VISSIMManager.Datas[0].simulationSeconds)
+            //    {
+            //        timeBetweenFrames = data.simulationSeconds - VISSIMManager.Datas[0].simulationSeconds;
+            //        break; // after calculating the correct framerate of the simulation, exit the loop.
+            //    }
+            //}
 
             // Check if there are missing Vissim entity ids
             if(VISSIMManager.MissingEntityIDs.Count > 0)
@@ -72,10 +93,8 @@ namespace Netherlands3D.VISSIM
                 //StartVissim(); // starts animation
             }
 
-            // Set the current VISSIM file start parameters
-            frameCounter = VISSIMManager.Datas[0].simulationSeconds - timeBetweenFrames; // Some simulations start at a different simsec depending on the population of the simulation. This makes sure that it will always start at the 1st frame
-
-            // 
+            // Set the current VISSIM file start parameters //TODO is this needed?
+            //frameCounter = VISSIMManager.Datas[0].simulationSeconds - timeBetweenFrames; // Some simulations start at a different simsec depending on the population of the simulation. This makes sure that it will always start at the 1st frame
 
             yield break;
         }
@@ -85,7 +104,7 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         /// <param name="dataString"></param>
         /// <returns>Data</returns>
-        public static Data ConvertToData(string dataString)
+        public static DataRaw ConvertToDataRaw(string dataString)
         {
             string[] array = dataString.Split(';');
             float simulationSeconds = float.Parse(array[0], CultureInfo.InvariantCulture);
@@ -93,7 +112,7 @@ namespace Netherlands3D.VISSIM
             // Check if ID isn't set, then store it in missingEntityIDs
             if(!VISSIMManager.Instance.availableEntitiesData.ContainsKey(vehicleTypeIndex) && !VISSIMManager.Instance.missingEntityIDs.Contains(vehicleTypeIndex)) VISSIMManager.Instance.missingEntityIDs.Add(vehicleTypeIndex);
 
-            return new Data(simulationSeconds, int.Parse(array[1]), vehicleTypeIndex, StringToVector3(array[3]), StringToVector3(array[4]), float.Parse(array[5])); //TODO error handling if parsing doesnt work
+            return new DataRaw(simulationSeconds, int.Parse(array[1]), vehicleTypeIndex, StringToVector3(array[3]), StringToVector3(array[4]), float.Parse(array[5])); //TODO error handling if parsing doesnt work
         }
 
         /// <summary>

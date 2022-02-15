@@ -44,7 +44,7 @@ namespace Netherlands3D.VISSIM
         /// Updates the entities dictionary with all data from VISSIMManager.Datas
         /// </summary>
         /// <param name="newData">Insert list of Data if you only want this list data to be updated</param>
-        public void UpdateEntities(List<Data> newData = null)
+        public void UpdateEntities(Dictionary<int, Data> newData = null)
         {
             // Check to update only partial or from entire datas list
             if(newData == null)
@@ -54,18 +54,18 @@ namespace Netherlands3D.VISSIM
             }
 
             GameObject prefab;
-            foreach(Data data in newData)
+            foreach(var data in newData)
             {
                 // Check if data already has an entity connected to it
-                if(entities.ContainsKey(data.id))
+                if(entities.ContainsKey(data.Key))
                 {
                     // Already created, update data
-                    entities[data.id].data = data;
+                    entities[data.Key].data = data.Value;
                 }
                 else
                 {
                     // Entity prefab
-                    if(!VISSIMManager.AvailableEntitiesData.ContainsKey(data.vehicleTypeIndex) || VISSIMManager.AvailableEntitiesData[data.vehicleTypeIndex].Length == 0) //TODO if no available entites give different error msg
+                    if(!VISSIMManager.AvailableEntitiesData.ContainsKey(data.Value.vehicleTypeIndex) || VISSIMManager.AvailableEntitiesData[data.Value.vehicleTypeIndex].Length == 0) //TODO if no available entites give different error msg
                     {
                         // No gameobjects to choose from
                         prefab = defaultEntityPrefab;
@@ -74,13 +74,13 @@ namespace Netherlands3D.VISSIM
                     else
                     {
                         // Choose random prefab
-                        prefab = VISSIMManager.AvailableEntitiesData[data.vehicleTypeIndex][Random.Range(0, VISSIMManager.AvailableEntitiesData[data.vehicleTypeIndex].Length)];
+                        prefab = VISSIMManager.AvailableEntitiesData[data.Value.vehicleTypeIndex][Random.Range(0, VISSIMManager.AvailableEntitiesData[data.Value.vehicleTypeIndex].Length)];
                     }
                     
                     // Create entity
                     Entity entity = Object.Instantiate(prefab, VISSIMManager.VisualizerParentTransform).GetComponent<Entity>();
-                    entities.Add(data.id, entity);
-                    entity.Initialize(data);
+                    entities.Add(data.Key, entity);
+                    entity.Initialize(data.Value);
                 }
             }
         }
