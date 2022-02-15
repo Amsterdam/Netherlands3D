@@ -200,13 +200,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 109169405}
-  m_LocalRotation: {x: 0.38169733, y: -0, z: -0, w: 0.9242873}
-  m_LocalPosition: {x: 928, y: 450, z: -1180}
+  m_LocalRotation: {x: 0.44238046, y: -0.11681242, z: 0.058240514, w: 0.8872781}
+  m_LocalPosition: {x: 1033, y: 734, z: -661}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 44.878, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 53, y: -15, z: 0}
 --- !u!114 &109169409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1537,12 +1537,17 @@ PrefabInstance:
     - target: {fileID: 5455193151985345691, guid: c3f9902c8a4d78e4b8b88cb92b630fee,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5966495868047681695, guid: c3f9902c8a4d78e4b8b88cb92b630fee,
         type: 3}
       propertyPath: isenabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5966495868047681695, guid: c3f9902c8a4d78e4b8b88cb92b630fee,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c3f9902c8a4d78e4b8b88cb92b630fee, type: 3}
@@ -1672,7 +1677,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   DefaultMaterialList:
-  - {fileID: 2100000, guid: 45e3498aff84c1b41bc2fa18c5141810, type: 2}
+  - {fileID: 2100000, guid: a4937c68bef988b46b9f429420eec03c, type: 2}
   createMeshcollider: 0
   tileShadowCastingMode: 1
   brotliCompressedExtention: .unityweb
@@ -1942,6 +1947,27 @@ PrefabInstance:
         type: 3}
       propertyPath: Datasets.Array.data[0].path
       value: file://E:/brondata/TerreinModel Kadaster/output/Terrain-{x}_{y}.1.2.bin
+      objectReference: {fileID: 0}
+    - target: {fileID: 4871232992830335139, guid: ef6391d8c0375874989bc7b6f2293872,
+        type: 3}
+      propertyPath: materialSettings
+      value: 
+      objectReference: {fileID: 11400000, guid: ca0a0b9974d648746aa42c3a8a964cc1,
+        type: 2}
+    - target: {fileID: 4871232992830335139, guid: ef6391d8c0375874989bc7b6f2293872,
+        type: 3}
+      propertyPath: Colors.Array.data[11].b
+      value: 0.16981131
+      objectReference: {fileID: 0}
+    - target: {fileID: 4871232992830335139, guid: ef6391d8c0375874989bc7b6f2293872,
+        type: 3}
+      propertyPath: Colors.Array.data[11].g
+      value: 0.047326244
+      objectReference: {fileID: 0}
+    - target: {fileID: 4871232992830335139, guid: ef6391d8c0375874989bc7b6f2293872,
+        type: 3}
+      propertyPath: Colors.Array.data[11].r
+      value: 0.010412962
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ef6391d8c0375874989bc7b6f2293872, type: 3}

@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b9715dbce425b94d99c0c473fb1f5c3, type: 3}
+  m_Name: terrainMaterial
+  m_EditorClassIdentifier: 
+  BaseMaterial: {fileID: 2100000, guid: 2bd51592a88994c429f763f8328f2a1a, type: 2}
+  Colors:
+  - changed: 0
+    description: voetpaden
+    color: {r: 0.4509804, g: 0.42745098, b: 0.4, a: 1}
+    smoothness: 0
+    metallic: 0.057
+    noiseSize: 9.3
+    noiseStrength: 0.111
+  - changed: 0
+    description: fietspaden
+    color: {r: 0.9056604, g: 0.47419012, b: 0.47419012, a: 0}
+    smoothness: 0
+    metallic: 0
+    noiseSize: 2.2
+    noiseStrength: 0.065
+  - changed: 0
+    description: parkeervakken
+    color: {r: 0.33962262, g: 0.29316482, b: 0.29316482, a: 0}
+    smoothness: 0
+    metallic: 0
+    noiseSize: 3.2
+    noiseStrength: 0.047
+  - changed: 0
+    description: wegen
+    color: {r: 0.16981131, g: 0.16580632, b: 0.16580632, a: 0}
+    smoothness: 0
+    metallic: 0
+    noiseSize: 15.6
+    noiseStrength: 0.104
+  - changed: 0
+    description: begroeid
+    color: {r: 0.16602886, g: 0.38679248, b: 0.20323856, a: 0}
+    smoothness: 0
+    metallic: 0
+    noiseSize: 23.4
+    noiseStrength: 0
+  - changed: 0
+    description: erven
+    color: {r: 0.17954151, g: 0.509434, b: 0.1754183, a: 0}
+    smoothness: 0
+    metallic: 0
+    noiseSize: 37.6
+    noiseStrength: 0.147
+  - changed: 0
+    description: onbegroeid
+    color: {r: 0.8207547, g: 0.7988551, b: 0.35230508, a: 0}
+    smoothness: 0
+    metallic: 0
+    noiseSize: 43.5
+    noiseStrength: 0.194
+  - changed: 0
+    description: spoorbanen
+    color: {r: 0.4339623, g: 0.22256821, b: 0.0061409646, a: 0}
+    smoothness: 0
+    metallic: 0
+    noiseSize: 49.4
+    noiseStrength: 0.112
+  - changed: 0
+    description: woonerven
+    color: {r: 0.48235294, g: 0.48235294, b: 0.48235294, a: 1}
+    smoothness: 0
+    metallic: 0
+    noiseSize: 46.5
+    noiseStrength: 0.055
+  - changed: 0
+    description: constructies
+    color: {r: 0.5754717, g: 0.5238964, b: 0.5238964, a: 0}
+    smoothness: 0
+    metallic: 0
+    noiseSize: 2.7
+    noiseStrength: 0.115
+  - changed: 0
+    description: bruggen
+    color: {r: 0.31132078, g: 0.29810435, b: 0.29810435, a: 0}
+    smoothness: 0
+    metallic: 0
+    noiseSize: 48.4
+    noiseStrength: 0.051
+  - changed: 0
+    description: water
+    color: {r: 0.023228897, g: 0.1293436, b: 0.5471698, a: 0}
+    smoothness: 0
+    metallic: 0
+    noiseSize: 33.8
+    noiseStrength: 0.055
