@@ -29,12 +29,13 @@ namespace Netherlands3D.VISSIM
             
             // Go through each line and add the data to VISSIMManager
             bool readyToConvert = false;
+            List<Data> convertedData = new List<Data>();
             foreach(string line in lines)
             {
                 // Check line
                 if(readyToConvert && !string.IsNullOrEmpty(line))
                 {
-                    VISSIMManager.AddData(line);//TODO change -> save in list, then add when all is over, then call visualizer updateData shizz
+                    convertedData.Add(ConvertToData(line));//TODO change -> save in list, then add when all is over, then call visualizer updateData shizz
                     // Wait a frame to not make the project freeze
                     yield return null;
                 }
@@ -45,8 +46,11 @@ namespace Netherlands3D.VISSIM
                 }
 
                 // Check if limit has been reached
-                if(VISSIMManager.DatasReachedMaxCount) break;
+                if(VISSIMManager.MaxDatasCount != -1 && convertedData.Count >= VISSIMManager.MaxDatasCount) break;
             }
+
+            // Add data to VISSIM
+            VISSIMManager.AddData(convertedData);
 
             // Automatically calculates the time between the frames.
             foreach(Data data in VISSIMManager.Datas) //TODO this can be calculated in VISSIMManager.AddData

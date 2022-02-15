@@ -112,7 +112,7 @@ namespace Netherlands3D.VISSIM
             instance = this;
 
             // Set
-            visualizerParentTransform = new GameObject("Visulizer Parent").GetComponent<Transform>();
+            visualizerParentTransform = new GameObject("Visualizer Parent").GetComponent<Transform>();
             visualizerParentTransform.SetParent(transform);
             stringLoader = new StringLoader(eventFilesImported, eventClearDatabase);
             visualizer = new Visualizer();
@@ -148,11 +148,16 @@ namespace Netherlands3D.VISSIM
         /// <param name="datas">The Data list to add</param>
         public static void AddData(List<Data> datas)
         {
-            foreach(Data data in datas)
+            int lastIndex = 0;
+            for(int i = 0; i < datas.Count; i++)
             {
                 if(DatasReachedMaxCount) break;
-                AddData(data);
+                AddData(datas[i]);
+                lastIndex = i;
             }
+
+            // Tell Visualizer to update with new datas
+            Visualizer.UpdateEntities(datas.GetRange(0, lastIndex));
         }
 
         /// <summary>
