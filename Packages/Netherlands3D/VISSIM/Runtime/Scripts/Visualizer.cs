@@ -107,6 +107,8 @@ namespace Netherlands3D.VISSIM
                     entity.Initialize(data.Value);
                 }
             }
+
+            if(VISSIMManager.ShowDebugLog) Debug.Log(string.Format("[VISSIM] Visualizer updated {0} entitie(s)", newData.Count));
         }
     }
 }

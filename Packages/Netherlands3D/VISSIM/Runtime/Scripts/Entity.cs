@@ -27,12 +27,30 @@ namespace Netherlands3D.VISSIM
         /// The animation clip of the entity where its movement is in stored to animatie
         /// </summary>
         protected AnimationClip animationClip;
-
+        /// <summary>
+        /// The animationCurve for the entitys position x
+        /// </summary>
+        protected AnimationCurve animationCurvePositionX;
+        protected AnimationCurve animationCurvePositionY;
+        protected AnimationCurve animationCurvePositionZ;
+        /// <summary>
+        /// The data of the entity
+        /// </summary>
         protected Data data;
 
         public void Initialize(Data data)
         {
             this.data = data;
+            animationClip = new AnimationClip();
+            animationClip.name = "Movement";
+            animationClip.legacy = true;            
+            animation.Play();
+
+            animationCurvePositionX = new AnimationCurve();
+            animationCurvePositionY = new AnimationCurve();
+            animationCurvePositionZ = new AnimationCurve();
+
+            UpdateNavigation();
         }
 
         protected virtual void Awake()
@@ -43,7 +61,7 @@ namespace Netherlands3D.VISSIM
         // Start is called before the first frame update
         void Start()
         {
-        
+            
         }
 
         // Update is called once per frame
@@ -63,16 +81,35 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         public void UpdateNavigation()
         {
+            print("updatenav");
             // Loop through coordinates and calculate its correct y position
             foreach(var item in data.coordinates)
             {
-                if(Physics.Raycast(item.Value.center + new Vector3(0, 50, 0), Vector3.down, out Visualizer.Hit))
+                // Check for a raycast with ground
+                if(Physics.Raycast(item.Value.center + new Vector3(0, 50, 0), Vector3.down, out Visualizer.Hit)) //TODO add layermask?
                 {
                     item.Value.center.y = Visualizer.Hit.point.y;
                 }
+
+                // Add animation keyframe to clip
+                // Movement animation
+                animationCurvePositionX.AddKey(item.Key, item.Value.center.x);
+                animationCurvePositionY.AddKey(item.Key, item.Value.center.y);
+                animationCurvePositionZ.AddKey(item.Key, item.Value.center.z);
             }
 
+            // Set animation clip curve positions
+            animationClip.SetCurve("", typeof(Transform), "localPosition.x", animationCurvePositionX);
+            animationClip.SetCurve("", typeof(Transform), "localPosition.y", animationCurvePositionX);
+            animationClip.SetCurve("", typeof(Transform), "localPosition.z", animationCurvePositionX);
 
+            print("anclip " + animationClip);
+            animation.clip = animationClip;
+            animation.AddClip(animationClip, animationClip.name);
+            animation.Play();
+            print(animation.clip);
+            print(animation.GetClipCount());
+            print(animation.clip.name);
         }
     }
 }
