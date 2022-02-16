@@ -153,7 +153,7 @@ namespace Netherlands3D.VISSIM
 
         private void OnDrawGizmosSelected()
         {
-            if(!VISSIMManager.VisualizeGizmosDataPoints) return;
+            if(!VISSIMManager.VisualizeGizmosDataPoints || !Application.isPlaying) return;
 
             // Draw each data coordinate
             Gizmos.color = Color.blue;
