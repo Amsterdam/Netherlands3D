@@ -14,13 +14,17 @@ namespace Netherlands3D.VISSIM
     {
         public static VISSIMManager Instance { get { return instance; } private set { } }
         /// <summary>
+        /// If the Datas list has reached its max count
+        /// </summary>
+        public static bool DatasReachedMaxCount { get { return MaxDatasCount > 0 && Datas.Count >= MaxDatasCount; } }
+        /// <summary>
         /// Show the Debug.Log() messages from VISSIM
         /// </summary>
         public static bool ShowDebugLog { get { return Instance.showDebugLog; } set { Instance.showDebugLog = value; } }
         /// <summary>
-        /// If the Datas list has reached its max count
+        /// When selecting an entity its data coordinates are drawn with gizmos
         /// </summary>
-        public static bool DatasReachedMaxCount { get { return MaxDatasCount > 0 && Datas.Count >= MaxDatasCount; } }
+        public static bool VisualizeGizmosDataPoints { get { return Instance.visualizeGizmosDataPoints; } set { Instance.visualizeGizmosDataPoints = value; } }
         /// <summary>
         /// The max limit the list Datas can be
         /// </summary>
@@ -78,6 +82,8 @@ namespace Netherlands3D.VISSIM
         [SerializeField] private bool showDebugLog = true;
         [Tooltip("Visualize the VISSIM Data")]
         [SerializeField] private bool visualizeData = true;
+        [Tooltip("When selecting an entity its data coordinates are drawn with gizmos")]
+        [SerializeField] private bool visualizeGizmosDataPoints = true;
 
         [Header("Entity Data")]
         [Tooltip("List containing every available entity data (Scriptable Objects)")]
