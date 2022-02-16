@@ -132,6 +132,7 @@ namespace Netherlands3D.VISSIM
             double y = double.Parse(splitString[1], CultureInfo.InvariantCulture);
             double z = double.Parse(splitString[2], CultureInfo.InvariantCulture);
             Vector3RD rdVector = new Vector3RD(x, y, z); // Creates the Double Vector
+            // Convert fzp vector3(x,z,y) to unity vector3(x,y,z)
             Vector3 convertedCoordinates = CoordConvert.RDtoUnity(rdVector);
             // Y Coordinates will be calculated by the vehicle to connect with the Map (Maaiveld).
 

@@ -100,8 +100,8 @@ namespace Netherlands3D.VISSIM
 
             // Set animation clip curve positions
             animationClip.SetCurve("", typeof(Transform), "localPosition.x", animationCurvePositionX);
-            animationClip.SetCurve("", typeof(Transform), "localPosition.y", animationCurvePositionX);
-            animationClip.SetCurve("", typeof(Transform), "localPosition.z", animationCurvePositionX);
+            animationClip.SetCurve("", typeof(Transform), "localPosition.y", animationCurvePositionY);
+            animationClip.SetCurve("", typeof(Transform), "localPosition.z", animationCurvePositionZ);
 
             print("anclip " + animationClip);
             animation.clip = animationClip;

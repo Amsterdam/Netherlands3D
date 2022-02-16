@@ -587,7 +587,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98434de64a1b16f469de1e6477f52f80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxVISSIMDatasLength: 100
+  maxVISSIMDatasLength: 1000
 --- !u!1 &2094555473
 GameObject:
   m_ObjectHideFlags: 0
