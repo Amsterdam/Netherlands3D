@@ -46,21 +46,26 @@ namespace Netherlands3D.VISSIM
         
         
         [System.Serializable]
-        public struct Coordinates
+        public class Coordinates
         {
             /// <summary>
-            /// Coordinate of front end of vehicle at the end of the time step (
+            /// Coordinate of front end of the entity at the end of the time step
             /// </summary>
             public Vector3 coordinatesFront;
             /// <summary>
-            /// Coordinate of rear end position of vehicle at the end of the time step
+            /// Coordinate of rear end position of the entity at the end of the time step
             /// </summary>
             public Vector3 coordinatesRear;
+            /// <summary>
+            /// The entitys center of mass position calculated by front/rear
+            /// </summary>
+            public Vector3 center;
 
             public Coordinates(Vector3 coordinatesFront, Vector3 coordinatesRear)
             {
                 this.coordinatesFront = coordinatesFront;
                 this.coordinatesRear = coordinatesRear;
+                center = (coordinatesFront + coordinatesRear) / 2;
             }
         }        
     }

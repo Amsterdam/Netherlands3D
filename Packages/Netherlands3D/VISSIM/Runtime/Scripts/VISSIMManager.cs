@@ -94,7 +94,10 @@ namespace Netherlands3D.VISSIM
         /// <summary>
         /// Delegate that gets called when data is added to Datas
         /// </summary>
-        public delegate void DelegateAddData(List<Data> newData);
+        /// <remarks>
+        /// newDataKeys contains the keys of 'Datas' that have been added/updated
+        /// </remarks>
+        public delegate void DelegateAddData(List<int> newDataKeys);
 
         /// <summary>
         /// The parent transform of the visualizer script
@@ -108,6 +111,16 @@ namespace Netherlands3D.VISSIM
         /// The VISSIM visualizer to show cars etc.
         /// </summary>
         private Visualizer visualizer;
+
+        private void OnEnable()
+        {
+            OnAddData += CallbackOnAddData;
+        }
+
+        private void OnDisable()
+        {
+            OnAddData -= CallbackOnAddData;
+        }
 
         private void Awake()
         {
@@ -147,38 +160,40 @@ namespace Netherlands3D.VISSIM
         {
             // Check if allowed to add
             if(DatasReachedMaxCount) return;
+
             Datas.Add(data.id, data);
-            if(ShowDebugLog) Debug.Log("[VISSIM] Added data");
+
+            OnAddData?.Invoke(new List<int>() { data.id });
         }
 
         /// <summary>
         /// Add VISSIM data to VISSIMManager.datas
         /// </summary>
         /// <param name="datas">The Data list to add</param>
-        public static void AddData(Dictionary<int, Data> datas)
+        public static void AddData(Dictionary<int, Data> newDatas)
         {
-            int lastIndex = 0;
-            for(int i = 0; i < datas.Count; i++)
+            // Keep track of what datas keys have been added/updated
+            List<int> dataKeysUpdated = new List<int>();
+
+            foreach(var data in newDatas)
             {
                 if(DatasReachedMaxCount) break;
 
                 // Check if key is already present
-                if(Datas.ContainsKey(datas[i].id))
+                if(Datas.ContainsKey(data.Key))
                 {
                     // Key already present, update it
-                    Datas[datas[i].id].AddCoordinates(datas[i].coordinates);
+                    Datas[data.Key].AddCoordinates(data.Value.coordinates);
                 }
                 else
                 {
-                    // Add
-                    Datas.Add(datas[i].id, datas[i]);
+                    // Add new key
+                    Datas.Add(data.Key, data.Value);
                 }
-                lastIndex = i;
-                if(ShowDebugLog) Debug.Log("[VISSIM] Added data");
+                dataKeysUpdated.Add(data.Key);
             }
 
-            // Tell Visualizer to update with new datas
-            //Visualizer.UpdateEntities(datas.GetRange(0, lastIndex));
+            OnAddData?.Invoke(dataKeysUpdated);
         }
 
         /// <summary>
@@ -240,6 +255,15 @@ namespace Netherlands3D.VISSIM
         public void Clear4Button()
         {
             Clear();
+        }
+
+        /// <summary>
+        /// Called when new data has been added to datas
+        /// </summary>
+        /// <param name="newDataKeys">The keys that have been updated from Datas</param>
+        private void CallbackOnAddData(List<int> newDataKeys)
+        {
+            if(ShowDebugLog) Debug.Log(string.Format("[VISSIM] Added {0} data(s)", newDataKeys.Count));
         }
     }
 }

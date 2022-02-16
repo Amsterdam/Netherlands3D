@@ -24,12 +24,24 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         private GameObject defaultEntityPrefab;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Visualizer()
         {
             defaultEntityPrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
             defaultEntityPrefab.AddComponent<Entity>();
             defaultEntityPrefab.name = "Default Entity";
             defaultEntityPrefab.transform.SetParent(VISSIMManager.VisualizerParentTransform);
+            VISSIMManager.OnAddData += UpdateEntities;
+        }
+
+        /// <summary>
+        /// Deconstructor
+        /// </summary>
+        ~Visualizer()
+        {
+            VISSIMManager.OnAddData -= UpdateEntities;
         }
 
         /// <summary>
@@ -44,15 +56,27 @@ namespace Netherlands3D.VISSIM
         /// Updates the entities dictionary with all data from VISSIMManager.Datas
         /// </summary>
         /// <param name="newData">Insert list of Data if you only want this list data to be updated</param>
-        public void UpdateEntities(Dictionary<int, Data> newData = null)
+        public void UpdateEntities(List<int> dataKeysUpdated = null)
         {
+            // Setup Dictionary
+            Dictionary<int, Data> newData = new Dictionary<int, Data>();
+
             // Check to update only partial or from entire datas list
-            if(newData == null)
+            if(dataKeysUpdated == null)
             {
                 // Update from entire VISSIMManager.Datas
                 newData = VISSIMManager.Datas;
             }
+            else
+            {
+                // Get updated data
+                foreach(var item in dataKeysUpdated)
+                {
+                    newData.Add(item, VISSIMManager.Datas[item]);
+                }
+            }
 
+            // Updating the entities
             GameObject prefab;
             foreach(var data in newData)
             {
@@ -60,7 +84,7 @@ namespace Netherlands3D.VISSIM
                 if(entities.ContainsKey(data.Key))
                 {
                     // Already created, update data
-                    entities[data.Key].data = data.Value;
+                    entities[data.Key].UpdateData(data.Value);
                 }
                 else
                 {

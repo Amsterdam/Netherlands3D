@@ -20,7 +20,7 @@ namespace Netherlands3D.VISSIM
         public static float timeBetweenFrames = 0.0f;
 
         /// <summary>
-        /// Reads the file with VISSIM data and converts it to useable vissim data
+        /// Reads the file.fzp with VISSIM data and converts it to useable vissim data
         /// </summary>
         /// <param name="file"></param>
         public static IEnumerator Convert(string file)

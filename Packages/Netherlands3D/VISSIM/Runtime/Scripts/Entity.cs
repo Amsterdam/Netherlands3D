@@ -8,12 +8,14 @@ namespace Netherlands3D.VISSIM
     /// <summary>
     /// Base class for all VISSIM entities (example car, truck, bike etc)
     /// </summary>
+    [AddComponentMenu("VISSIM/VISSIM Entity")] // Used to change the script inspector name
+    [RequireComponent(typeof(Animation))]
     public class Entity : MonoBehaviour
     {
         /// <summary>
         /// The data for the entity
         /// </summary>
-        public Data data;
+        public Data Data { get { return data; } }
 
 #pragma warning disable CS0108 // Member hides inherited member; missing new keyword (Unity deprecated)
         /// <summary>
@@ -25,6 +27,8 @@ namespace Netherlands3D.VISSIM
         /// The animation clip of the entity where its movement is in stored to animatie
         /// </summary>
         protected AnimationClip animationClip;
+
+        protected Data data;
 
         public void Initialize(Data data)
         {
@@ -48,22 +52,27 @@ namespace Netherlands3D.VISSIM
         
         }
 
+        public void UpdateData(Data data, bool updateNavigation = true)
+        {
+            this.data = data;
+            if(updateNavigation) UpdateNavigation();
+        }
+
         /// <summary>
         /// Move the entity based on its data
         /// </summary>
         public void UpdateNavigation()
         {
-            //// Calculate the right y axis coordinate for coordinatesFront
-            //if(Physics.Raycast(transform.position + Vector3.up * 50, Vector3.down, out Visualizer.Hit))
-            //{
-            //    //data.coordinates..y = Visualizer.Hit.point.y;
-            //}
+            // Loop through coordinates and calculate its correct y position
+            foreach(var item in data.coordinates)
+            {
+                if(Physics.Raycast(item.Value.center + new Vector3(0, 50, 0), Vector3.down, out Visualizer.Hit))
+                {
+                    item.Value.center.y = Visualizer.Hit.point.y;
+                }
+            }
 
-            //// Calculate the right y axis coordinate for coordinatesFront
-            //if(Physics.Raycast(data.coordinatesRear + Vector3.up * 50, Vector3.down, out Visualizer.Hit))
-            //{
-            //    //data.coordinatesFront.y = Visualizer.Hit.point.y;
-            //}
+
         }
     }
 }

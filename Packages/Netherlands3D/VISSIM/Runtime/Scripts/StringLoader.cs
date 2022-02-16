@@ -10,7 +10,7 @@ namespace Netherlands3D.VISSIM
     /// <summary>
     /// For handling a string event
     /// </summary>
-    public class StringLoader
+    public class StringLoader //TODO rename to FileImporter
     {
         /// <summary>
         /// An event that gets called if the database needs to be cleared
