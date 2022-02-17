@@ -5,6 +5,7 @@ using Netherlands3D.Events;
 using Netherlands3D.TileSystem;
 using System.Globalization;
 
+/* This namespace is maintained by: https://github.com/MrSliddes */
 namespace Netherlands3D.VISSIM
 {
     /// <summary>
@@ -30,10 +31,6 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         /// <remarks>-1 = max</remarks>
         public static int MaxDatasCount = -1;
-        /// <summary>
-        /// The template for VISSIM
-        /// </summary>
-        public static string RequiredTemplate { get { return "$VEHICLE:SIMSEC;NO;VEHTYPE;COORDFRONT;COORDREAR;WIDTH"; } }
         /// <summary>
         /// The parent transform of the visualizer script
         /// </summary>
@@ -112,10 +109,6 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         private Transform visualizerParentTransform;
         /// <summary>
-        /// For handling the string events
-        /// </summary>
-        private FileLoader fileLoader;
-        /// <summary>
         /// The VISSIM visualizer to show cars etc.
         /// </summary>
         private Visualizer visualizer;
@@ -123,11 +116,13 @@ namespace Netherlands3D.VISSIM
         private void OnEnable()
         {
             OnAddData += CallbackOnAddData;
+            eventFilesImported.started.AddListener(FileLoader.Load);
         }
 
         private void OnDisable()
         {
             OnAddData -= CallbackOnAddData;
+            eventFilesImported.started.RemoveListener(FileLoader.Load);
         }
 
         private void Awake()
@@ -144,7 +139,6 @@ namespace Netherlands3D.VISSIM
             // Set
             visualizerParentTransform = new GameObject("Visualizer Parent").GetComponent<Transform>();
             visualizerParentTransform.SetParent(transform);
-            fileLoader = new FileLoader(eventFilesImported, eventClearDatabase);
             visualizer = new Visualizer();
         }
 
@@ -239,14 +233,6 @@ namespace Netherlands3D.VISSIM
 
                 Instance.availableEntitiesData.Add(item.id, item.gameObjects);
             }
-        }
-
-        /// <summary>
-        /// Loads a file into VISSIM
-        /// </summary>
-        public static void LoadFile(string file)
-        {
-            Instance.fileLoader.LoadFile(file);
         }
 
         /// <summary>

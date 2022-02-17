@@ -100,7 +100,7 @@ namespace Netherlands3D.VISSIM
                 }
             }
 
-            if(VISSIMManager.ShowDebugLog) Debug.Log(string.Format("[VISSIM] Visualizer updated {0} entitie(s)", newData.Count));
+            if(VISSIMManager.ShowDebugLog) Debug.Log(string.Format("[VISSIM] Visualizer updated {0} entities", newData.Count));
         }
     }
 }

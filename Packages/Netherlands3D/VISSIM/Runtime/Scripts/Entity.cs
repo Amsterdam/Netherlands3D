@@ -149,7 +149,7 @@ namespace Netherlands3D.VISSIM
 
         private void OnDrawGizmosSelected()
         {
-            if(!VISSIMManager.VisualizeGizmosDataPoints || !Application.isPlaying) return;
+            if(!Application.isPlaying || !VISSIMManager.VisualizeGizmosDataPoints) return;
 
             // Draw each data coordinate
             if(data != null)

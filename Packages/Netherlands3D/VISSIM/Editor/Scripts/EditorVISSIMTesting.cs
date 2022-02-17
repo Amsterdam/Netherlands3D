@@ -34,7 +34,7 @@ namespace Netherlands3D.VISSIM.Editor
                 if(filePath.Length != 0)
                 {
                     if(VISSIMManager.ShowDebugLog) Debug.Log("[VISSIM Testing] Selected .fzp file from: " + filePath);
-                    VISSIMManager.LoadFile(filePath);
+                    FileLoader.Load(filePath);
                 }
             }
 
