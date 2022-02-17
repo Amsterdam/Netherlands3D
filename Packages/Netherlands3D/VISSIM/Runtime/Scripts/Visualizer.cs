@@ -29,10 +29,8 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         public Visualizer()
         {
-            defaultEntityPrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            defaultEntityPrefab.AddComponent<Entity>();
-            defaultEntityPrefab.name = "Default Entity";
-            defaultEntityPrefab.transform.SetParent(VISSIMManager.VisualizerParentTransform);
+            defaultEntityPrefab = Resources.Load<GameObject>("VISSIM Entity Default");
+
             VISSIMManager.OnAddData += UpdateEntities;
         }
 

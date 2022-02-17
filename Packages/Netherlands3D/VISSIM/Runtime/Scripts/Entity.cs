@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Netherlands3D.TileSystem;
+using UnityEditor;
 
 namespace Netherlands3D.VISSIM
 {
@@ -57,6 +58,10 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         protected AnimationCurve animationCurveRotationW;
         /// <summary>
+        /// The animationCurve for the entitys model
+        /// </summary>
+        protected AnimationCurve animationCurveModel;
+        /// <summary>
         /// The data of the entity
         /// </summary>
         protected Data data;
@@ -76,6 +81,7 @@ namespace Netherlands3D.VISSIM
             animationCurveRotationY = new AnimationCurve();
             animationCurveRotationZ = new AnimationCurve();
             animationCurveRotationW = new AnimationCurve();
+            animationCurveModel = new AnimationCurve();
 
             UpdateNavigation();
         }
@@ -85,18 +91,11 @@ namespace Netherlands3D.VISSIM
             animation = GetComponent<Animation>();
         }
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            
-        }
-
+        /// <summary>
+        /// Update the entity data
+        /// </summary>
+        /// <param name="data">The new data</param>
+        /// <param name="updateNavigation">When updating the data also call UpdateNavigation()</param>
         public void UpdateData(Data data, bool updateNavigation = true)
         {
             this.data = data;
@@ -132,15 +131,23 @@ namespace Netherlands3D.VISSIM
                 animationCurveRotationW.AddKey(item.Key, q.w);
             }
 
+            // Model
+            animationCurveModel.AddKey(new Keyframe(0, 0));
+            int keyFrameIndex = animationCurveModel.AddKey(new Keyframe(data.coordinates.First().Key, 1, 1, 0));
+            AnimationUtility.SetKeyLeftTangentMode(animationCurveModel, keyFrameIndex, AnimationUtility.TangentMode.Constant);
+
             // Set animation clip curve positions
             animationClip.SetCurve("", typeof(Transform), "localPosition.x", animationCurvePositionX);
             animationClip.SetCurve("", typeof(Transform), "localPosition.y", animationCurvePositionY);
             animationClip.SetCurve("", typeof(Transform), "localPosition.z", animationCurvePositionZ);
+
             animationClip.SetCurve("", typeof(Transform), "localRotation.x", animationCurveRotationX);
             animationClip.SetCurve("", typeof(Transform), "localRotation.y", animationCurveRotationY);
             animationClip.SetCurve("", typeof(Transform), "localRotation.z", animationCurveRotationZ);
             animationClip.SetCurve("", typeof(Transform), "localRotation.w", animationCurveRotationW);
             animationClip.EnsureQuaternionContinuity();
+
+            animationClip.SetCurve("Model", typeof(GameObject), "m_IsActive", animationCurveModel);            
 
             animation.clip = animationClip;
             animation.AddClip(animationClip, animationClip.name);
