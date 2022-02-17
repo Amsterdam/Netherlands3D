@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3] - 17-02-2022
+
+### Added
+
+- Added new event with GameObject as payload type
+- Added TextMeshPro 3.0.6 as package dependency because it is required by an example
+- Added correct path to repo CHANGELOG.MD file in package.json
+
 ## [0.0.2] - 10-02-2022
 ### Added
 - Added changelog file
