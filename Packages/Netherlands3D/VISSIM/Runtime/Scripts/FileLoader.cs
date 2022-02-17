@@ -8,9 +8,9 @@ using Netherlands3D.Events;
 namespace Netherlands3D.VISSIM
 {
     /// <summary>
-    /// For handling a string event
+    /// For loading files for VISSIM
     /// </summary>
-    public class StringLoader //TODO rename to FileImporter
+    public class FileLoader
     {
         /// <summary>
         /// An event that gets called if the database needs to be cleared
@@ -24,7 +24,7 @@ namespace Netherlands3D.VISSIM
         /// <summary>
         /// Class constructor
         /// </summary>
-        public StringLoader(StringEvent eventFilesImported, BoolEvent eventClearDatabase)
+        public FileLoader(StringEvent eventFilesImported, BoolEvent eventClearDatabase)
         {
             eventFilesImported.started.AddListener(FileImported);
             this.eventClearDatabase = eventClearDatabase;

@@ -55,11 +55,11 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         public static Dictionary<int, Data> Datas { get { return Instance.datas; } private set { } }
         /// <summary>
-        /// A list containing all entities that do not have a corresponding id from entitiesDatas
+        /// A list containing all entities that do not have a corresponding id from entitiesDatas for debugging purposes
         /// </summary>
         public static ref List<int> MissingEntityIDs { get { return ref Instance.missingEntityIDs; } } //TODO is ref needed here?
         /// <summary>
-        /// A list containing all entities that do not have a corresponding id from entitiesDatas
+        /// Contains all available enities ID's (cars/busses/bikes etc.) with corresponding gameobjects to spawn
         /// </summary>
         public static ref Dictionary<int, GameObject[]> AvailableEntitiesData { get { return ref Instance.availableEntitiesData; } }
 
@@ -71,11 +71,13 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         public Dictionary<int, Data> datas = new Dictionary<int, Data>(); //allVissimData
         /// <summary>
-        /// A list containing all entities that do not have a corresponding id from entitiesDatas
+        /// A list containing all entities that do not have a corresponding id from entitiesDatas for debugging purposes
         /// </summary>
         public List<int> missingEntityIDs = new List<int>(); //missingVissimTypes
-        public Dictionary<int, GameObject[]> availableEntitiesData = new Dictionary<int, GameObject[]>(); //vehicleTypes
-        public Dictionary<int, List<Data>> allVissimDataByVehicleID = new Dictionary<int, List<Data>>();//?? "Vehicle Sorting test, see SortDataByCar() function"
+        /// <summary>
+        /// Contains all available enities ID's (cars/busses/bikes etc.) with corresponding gameobjects to spawn
+        /// </summary>
+        public Dictionary<int, GameObject[]> availableEntitiesData = new Dictionary<int, GameObject[]>();
 
         [Header("Values")]
         [Tooltip("Show the Debug.Log() messages from VISSIM")]
@@ -112,7 +114,7 @@ namespace Netherlands3D.VISSIM
         /// <summary>
         /// For handling the string events
         /// </summary>
-        private StringLoader stringLoader;
+        private FileLoader fileLoader;
         /// <summary>
         /// The VISSIM visualizer to show cars etc.
         /// </summary>
@@ -142,7 +144,7 @@ namespace Netherlands3D.VISSIM
             // Set
             visualizerParentTransform = new GameObject("Visualizer Parent").GetComponent<Transform>();
             visualizerParentTransform.SetParent(transform);
-            stringLoader = new StringLoader(eventFilesImported, eventClearDatabase);
+            fileLoader = new FileLoader(eventFilesImported, eventClearDatabase);
             visualizer = new Visualizer();
         }
 
@@ -150,12 +152,6 @@ namespace Netherlands3D.VISSIM
         void Start()
         {
             LoadDefaultData();
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            visualizer.Update();
         }
 
         /// <summary>
@@ -250,7 +246,7 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         public static void LoadFile(string file)
         {
-            Instance.stringLoader.LoadFile(file);
+            Instance.fileLoader.LoadFile(file);
         }
 
         /// <summary>

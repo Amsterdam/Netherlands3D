@@ -45,14 +45,6 @@ namespace Netherlands3D.VISSIM
         }
 
         /// <summary>
-        /// Called from VISSIMManager.Update()
-        /// </summary>
-        public void Update()
-        {
-
-        }
-
-        /// <summary>
         /// Updates the entities dictionary with all data from VISSIMManager.Datas
         /// </summary>
         /// <param name="newData">Insert list of Data if you only want this list data to be updated</param>
