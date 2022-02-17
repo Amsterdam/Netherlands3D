@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Netherlands3D.TileSystem;
-using UnityEditor;
 
 namespace Netherlands3D.VISSIM
 {
@@ -72,7 +71,7 @@ namespace Netherlands3D.VISSIM
             animationClip = new AnimationClip();
             animationClip.name = "Movement";
             animationClip.legacy = true;
-            animation.wrapMode = WrapMode.Loop;
+            animation.wrapMode = WrapMode.Clamp;
 
             animationCurvePositionX = new AnimationCurve();
             animationCurvePositionY = new AnimationCurve();
@@ -132,9 +131,13 @@ namespace Netherlands3D.VISSIM
             }
 
             // Model
-            animationCurveModel.AddKey(new Keyframe(0, 0));
-            int keyFrameIndex = animationCurveModel.AddKey(new Keyframe(data.coordinates.First().Key, 1, 1, 0));
-            AnimationUtility.SetKeyLeftTangentMode(animationCurveModel, keyFrameIndex, AnimationUtility.TangentMode.Constant);
+            animationCurveModel.AddKey(new Keyframe(0, 0)); // Turn off model at start of animation
+            animationCurveModel.AddKey(new Keyframe(data.coordinates.First().Key - 0.01f, 0)); // Tell model to stay inactive just before the frame (since we cant use TangentMode.Constant)
+            animationCurveModel.AddKey(new Keyframe(data.coordinates.First().Key, 1, 1, 0)); // Turn on model
+            animationCurveModel.AddKey(new Keyframe(data.coordinates.Last().Key, 1, 1, 0)); // Turn off model at end of animation
+            // Set the animation curve to constant so the model only appears on its first coordiante keyframe
+            // https://docs.unity3d.com/ScriptReference/AnimationUtility.SetKeyLeftTangentMode.htmls
+            //UnityEditor.AnimationUtility.SetKeyLeftTangentMode(animationCurveModel, keyFrameIndex, AnimationUtility.TangentMode.Constant); // Cant use this since UnityEditor gets removed in build
 
             // Set animation clip curve positions
             animationClip.SetCurve("", typeof(Transform), "localPosition.x", animationCurvePositionX);

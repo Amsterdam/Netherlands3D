@@ -577,7 +577,6 @@ GameObject:
   - component: {fileID: 2094555474}
   - component: {fileID: 2094555475}
   - component: {fileID: 2094555476}
-  - component: {fileID: 2094555477}
   m_Layer: 0
   m_Name: VISSIM Entity
   m_TagString: Untagged
@@ -628,24 +627,6 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
---- !u!114 &2094555477
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2094555473}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 787e9afd508c2eb46bb88b5daaeb2188, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1001 &109916578289228812
 PrefabInstance:
   m_ObjectHideFlags: 0
