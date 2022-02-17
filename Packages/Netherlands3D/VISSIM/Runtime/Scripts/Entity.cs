@@ -53,6 +53,10 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         protected AnimationCurve animationCurveRotationZ;
         /// <summary>
+        /// The animationCurve for the entitys rotation w
+        /// </summary>
+        protected AnimationCurve animationCurveRotationW;
+        /// <summary>
         /// The data of the entity
         /// </summary>
         protected Data data;
@@ -71,6 +75,7 @@ namespace Netherlands3D.VISSIM
             animationCurveRotationX = new AnimationCurve();
             animationCurveRotationY = new AnimationCurve();
             animationCurveRotationZ = new AnimationCurve();
+            animationCurveRotationW = new AnimationCurve();
 
             UpdateNavigation();
         }
@@ -104,8 +109,6 @@ namespace Netherlands3D.VISSIM
         public void UpdateNavigation()
         {
             // Loop through coordinates and calculate its correct y position
-            float[] keys = data.coordinates.Keys.ToArray(); // For getting the next dictionary key
-            int keyIndex = 0;
             foreach(var item in data.coordinates)
             {
                 // Check for a raycast with ground
@@ -122,20 +125,11 @@ namespace Netherlands3D.VISSIM
                 animationCurvePositionZ.AddKey(item.Key, position.z);
 
                 // Rotation animation
-                // Rotate the entity towords its next data.coordinates point if the next point exists
-                if(keyIndex < keys.Length - 1)
-                {
-                    Vector3 nextPosition = data.coordinates[keys[keyIndex + 1]].center;
-                    nextPosition.y = position.y;
-                    Vector3 targetDir = nextPosition - position;
-                    Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, 999, 0.0f);
-                    Quaternion q = Quaternion.LookRotation(newDir);
-                    animationCurveRotationX.AddKey(item.Key, q.eulerAngles.x);
-                    animationCurveRotationY.AddKey(item.Key, q.eulerAngles.y);
-                    animationCurveRotationZ.AddKey(item.Key, q.eulerAngles.z);
-                }
-
-                keyIndex++;
+                Quaternion q = Quaternion.LookRotation(item.Value.direction, Vector3.up);
+                animationCurveRotationX.AddKey(item.Key, q.x);
+                animationCurveRotationY.AddKey(item.Key, q.y);
+                animationCurveRotationZ.AddKey(item.Key, q.z);
+                animationCurveRotationW.AddKey(item.Key, q.w);
             }
 
             // Set animation clip curve positions
@@ -145,6 +139,8 @@ namespace Netherlands3D.VISSIM
             animationClip.SetCurve("", typeof(Transform), "localRotation.x", animationCurveRotationX);
             animationClip.SetCurve("", typeof(Transform), "localRotation.y", animationCurveRotationY);
             animationClip.SetCurve("", typeof(Transform), "localRotation.z", animationCurveRotationZ);
+            animationClip.SetCurve("", typeof(Transform), "localRotation.w", animationCurveRotationW);
+            animationClip.EnsureQuaternionContinuity();
 
             animation.clip = animationClip;
             animation.AddClip(animationClip, animationClip.name);
@@ -156,12 +152,14 @@ namespace Netherlands3D.VISSIM
             if(!VISSIMManager.VisualizeGizmosDataPoints || !Application.isPlaying) return;
 
             // Draw each data coordinate
-            Gizmos.color = Color.blue;
             if(data != null)
             {
                 foreach(var item in data.coordinates)
                 {
+                    Gizmos.color = Color.yellow;
                     Gizmos.DrawCube(item.Value.center, Vector3.one);
+                    Gizmos.color = Color.blue;
+                    Gizmos.DrawLine(item.Value.center, item.Value.center + item.Value.direction * 2);
                 }
             }
         }

@@ -60,12 +60,17 @@ namespace Netherlands3D.VISSIM
             /// The entitys center of mass position calculated by front/rear
             /// </summary>
             public Vector3 center;
+            /// <summary>
+            /// The direction of the entity
+            /// </summary>
+            public Vector3 direction;
 
             public Coordinates(Vector3 coordinatesFront, Vector3 coordinatesRear)
             {
                 this.coordinatesFront = coordinatesFront;
                 this.coordinatesRear = coordinatesRear;
                 center = (coordinatesFront + coordinatesRear) / 2;
+                direction = (coordinatesFront - coordinatesRear).normalized;
             }
         }        
     }
