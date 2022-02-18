@@ -20,6 +20,12 @@ namespace Netherlands3D.VISSIM.Editor
 
         public override void OnInspectorGUI()
         {
+            if(!Application.isPlaying)
+            {
+                base.OnInspectorGUI();
+                return;
+            }
+
             // Display entity data
             GUILayout.Label("Data Values", EditorStyles.boldLabel);
             if(selected.Data == null) return;

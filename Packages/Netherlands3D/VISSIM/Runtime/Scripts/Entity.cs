@@ -91,6 +91,16 @@ namespace Netherlands3D.VISSIM
             UpdateNavigation();
         }
 
+        protected virtual void OnEnable()
+        {
+            VISSIMManager.OnSimulationTimeChanged += OnSimulationTimeChanged;
+        }
+
+        protected virtual void OnDisable()
+        {
+            VISSIMManager.OnSimulationTimeChanged -= OnSimulationTimeChanged;
+        }
+
         protected virtual void Awake()
         {
             animation = GetComponent<Animation>();
@@ -101,7 +111,7 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         /// <param name="data">The new data</param>
         /// <param name="updateNavigation">When updating the data also call UpdateNavigation()</param>
-        public void UpdateData(Data data, bool updateNavigation = true)
+        public virtual void UpdateData(Data data, bool updateNavigation = true)
         {
             this.data = data;
             if(updateNavigation) UpdateNavigation();
@@ -110,7 +120,7 @@ namespace Netherlands3D.VISSIM
         /// <summary>
         /// Move the entity based on its data
         /// </summary>
-        public void UpdateNavigation()
+        public virtual void UpdateNavigation()
         {
             // Loop through coordinates and calculate its correct y position
             foreach(var item in data.coordinates)
@@ -162,9 +172,19 @@ namespace Netherlands3D.VISSIM
             animation.AddClip(animationClip, animationClip.name);
             animation.Play();
         }
+
+        /// <summary>
+        /// Callback when the VISSIM.SimulationTime gets changed
+        /// </summary>
+        /// <param name="newTime"></param>
+        protected virtual void OnSimulationTimeChanged(float newTime)
+        {
+            if(animationClip == null) return;
+            animation["Movement"].time = newTime;
+        }
         
 #if UNITY_EDITOR
-        private void OnDrawGizmosSelected()
+        public virtual void OnDrawGizmosSelected()
         {
             if(!Application.isPlaying || !VISSIMManager.VisualizeGizmosDataPoints || UnityEditor.Selection.activeGameObject != gameObject) return;
 

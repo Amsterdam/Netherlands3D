@@ -32,6 +32,22 @@ namespace Netherlands3D.VISSIM
         /// <remarks>-1 = max</remarks>
         public static int MaxDatasCount = -1;
         /// <summary>
+        /// The current VISSIM simulation time starting from 0 - infinity
+        /// </summary>
+        public static float SimulationTime
+        {
+            get { return Instance.simulationTime; }
+            set
+            {
+                Instance.simulationTime = value;
+                OnSimulationTimeChanged?.Invoke(value);
+            }
+        }
+        /// <summary>
+        /// The state of the simulation time and how it gets updated
+        /// </summary>
+        public static SimulationTimeState SimulationTimeState { get { return Instance.simulationTimeState; } }
+        /// <summary>
         /// The parent transform of the visualizer script
         /// </summary>
         public static Transform VisualizerParentTransform { get { return Instance.visualizerParentTransform; } }
@@ -43,6 +59,10 @@ namespace Netherlands3D.VISSIM
         /// Callback that gets called when Data is added to Datas
         /// </summary>
         public static DelegateAddData OnAddData;
+        /// <summary>
+        /// Callback when the simulation time is changed
+        /// </summary>
+        public static DelegateChangeSimulationTime OnSimulationTimeChanged;
         /// <summary>
         /// The Visualizer script that visualizes the VISSIM data
         /// </summary>
@@ -62,7 +82,6 @@ namespace Netherlands3D.VISSIM
 
         private static VISSIMManager instance;
 
-        [Header("VISSIM Data")]
         /// <summary>
         /// All VISSIM Data, <ID, Data>
         /// </summary>
@@ -83,6 +102,10 @@ namespace Netherlands3D.VISSIM
         [SerializeField] private bool visualizeData = true;
         [Tooltip("When selecting an entity its data coordinates are drawn with gizmos")]
         [SerializeField] private bool visualizeGizmosDataPoints = true;
+        [Tooltip("The state of the simulation time and how it gets updated")]
+        [SerializeField] private SimulationTimeState simulationTimeState;
+        [Tooltip("The current VISSIM simulation time starting from 0 - infinity")]
+        [SerializeField] private float simulationTime = 0;
 
         [Header("Entity Data")]
         [Tooltip("List containing every available entity data (Scriptable Objects)")]
@@ -103,7 +126,15 @@ namespace Netherlands3D.VISSIM
         /// newDataKeys contains the keys of 'Datas' that have been added/updated
         /// </remarks>
         public delegate void DelegateAddData(List<int> newDataKeys);
+        /// <summary>
+        /// Delegate that gets called when the simulation time is changed
+        /// </summary>
+        public delegate void DelegateChangeSimulationTime(float newTime);
 
+        /// <summary>
+        /// Keeps track of the previous simulation time incase it gets changed via inspector by user
+        /// </summary>
+        private float previousSimulationTime;
         /// <summary>
         /// The parent transform of the visualizer script
         /// </summary>
@@ -116,12 +147,14 @@ namespace Netherlands3D.VISSIM
         private void OnEnable()
         {
             OnAddData += CallbackOnAddData;
+            OnSimulationTimeChanged += SimulationTimeChanged;
             eventFilesImported.started.AddListener(FileLoader.Load);
         }
 
         private void OnDisable()
         {
             OnAddData -= CallbackOnAddData;
+            OnSimulationTimeChanged -= SimulationTimeChanged;
             eventFilesImported.started.RemoveListener(FileLoader.Load);
         }
 
@@ -146,6 +179,11 @@ namespace Netherlands3D.VISSIM
         void Start()
         {
             LoadDefaultData();
+        }
+
+        private void Update()
+        {
+            UpdateSimulationTime();
         }
 
         /// <summary>
@@ -267,6 +305,52 @@ namespace Netherlands3D.VISSIM
             if(ShowDebugLog) Debug.Log(string.Format("[VISSIM] Added {0} data(s)", newDataKeys.Count));
         }
 
-        
+        /// <summary>
+        /// Update the simulation time value
+        /// </summary>
+        private void UpdateSimulationTime()
+        {
+            switch(simulationTimeState)
+            {
+                case SimulationTimeState.playing:
+                    simulationTime += Time.deltaTime;
+                    previousSimulationTime = simulationTime;
+                    break;
+                case SimulationTimeState.paused:
+                    break;
+                case SimulationTimeState.reversed:
+                    simulationTime -= Time.deltaTime;
+                    if(simulationTime < 0) simulationTime = 0;
+                    previousSimulationTime = simulationTime;
+                    break;
+                case SimulationTimeState.reset:
+                    simulationTime = 0;
+                    previousSimulationTime = 0;
+                    simulationTimeState = SimulationTimeState.paused;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Callback when the simulation time gets changed
+        /// </summary>
+        /// <param name="newTime"></param>
+        private void SimulationTimeChanged(float newTime)
+        {
+            if(showDebugLog) Debug.Log("[VISSIM] SimulationTime changed to " + newTime);
+        }
+
+        private void OnValidate()
+        {
+            // Check if user has changed simulation time in inspector
+            if(simulationTime != previousSimulationTime)
+            {
+                OnSimulationTimeChanged?.Invoke(simulationTime);
+                previousSimulationTime = simulationTime;
+            }
+        }
+
     }
 }
