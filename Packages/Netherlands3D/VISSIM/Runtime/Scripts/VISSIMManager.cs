@@ -56,9 +56,9 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         public static ref List<int> MissingEntityIDs { get { return ref Instance.missingEntityIDs; } } //TODO is ref needed here?
         /// <summary>
-        /// Contains all available enities ID's (cars/busses/bikes etc.) with corresponding gameobjects to spawn
+        /// Contains all available enities ID's (cars/busses/bikes etc.) with corresponding prefab to spawn
         /// </summary>
-        public static ref Dictionary<int, GameObject[]> AvailableEntitiesData { get { return ref Instance.availableEntitiesData; } }
+        public static ref Dictionary<int, GameObject> AvailableEntitiesData { get { return ref Instance.availableEntitiesData; } }
 
         private static VISSIMManager instance;
 
@@ -66,15 +66,15 @@ namespace Netherlands3D.VISSIM
         /// <summary>
         /// All VISSIM Data, <ID, Data>
         /// </summary>
-        public Dictionary<int, Data> datas = new Dictionary<int, Data>(); //allVissimData
+        public Dictionary<int, Data> datas = new Dictionary<int, Data>();
         /// <summary>
         /// A list containing all entities that do not have a corresponding id from entitiesDatas for debugging purposes
         /// </summary>
-        public List<int> missingEntityIDs = new List<int>(); //missingVissimTypes
+        private List<int> missingEntityIDs = new List<int>();
         /// <summary>
-        /// Contains all available enities ID's (cars/busses/bikes etc.) with corresponding gameobjects to spawn
+        /// Contains all available enities ID's (cars/busses/bikes etc.) with corresponding prefab to spawn
         /// </summary>
-        public Dictionary<int, GameObject[]> availableEntitiesData = new Dictionary<int, GameObject[]>();
+        public Dictionary<int, GameObject> availableEntitiesData = new Dictionary<int, GameObject>();
 
         [Header("Values")]
         [Tooltip("Show the Debug.Log() messages from VISSIM")]
@@ -231,7 +231,20 @@ namespace Netherlands3D.VISSIM
                     continue;
                 }
 
-                Instance.availableEntitiesData.Add(item.id, item.gameObjects);
+                Instance.availableEntitiesData.Add(item.id, item.prefabEntity);
+            }
+        }
+
+        /// <summary>
+        /// Check if the entity type index is available in availableEntitiesData
+        /// </summary>
+        /// <param name="index"></param>
+        public static void CheckEntityTypeIndex(int index)
+        {
+            if(!Instance.availableEntitiesData.ContainsKey(index) && !Instance.missingEntityIDs.Contains(index))
+            {
+                Debug.LogWarning(string.Format("[VISSIM] Missing entity id {0}", index));
+                Instance.missingEntityIDs.Add(index);
             }
         }
 
@@ -253,5 +266,7 @@ namespace Netherlands3D.VISSIM
         {
             if(ShowDebugLog) Debug.Log(string.Format("[VISSIM] Added {0} data(s)", newDataKeys.Count));
         }
+
+        
     }
 }

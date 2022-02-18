@@ -47,11 +47,15 @@ MonoBehaviour:
   missingEntityIDs: 
   showDebugLog: 1
   visualizeData: 1
-  visualizeGizmosDataPoints: 0
+  visualizeGizmosDataPoints: 1
   entitiesDatas:
+  - {fileID: 11400000, guid: 0d07d50f52868474e91f26a92a0a5383, type: 2}
   - {fileID: 11400000, guid: 554e16e731e104246ab9f60fb87e4eec, type: 2}
   - {fileID: 11400000, guid: 2cfb3438a36d9b24da4717d588f3968b, type: 2}
   - {fileID: 11400000, guid: c5fb47f0fb0cdff4491f9b4e1d475ad3, type: 2}
+  - {fileID: 11400000, guid: a573adc2e06b1e7469932dc2ec3a0e9f, type: 2}
+  - {fileID: 11400000, guid: f5bc34413cd370b498bc3c199cfcd6d4, type: 2}
+  - {fileID: 11400000, guid: e31f3c459c8361848acca4319e924a00, type: 2}
   eventFilesImported: {fileID: 11400000, guid: 8491950a9badaae46996777c747e43d1, type: 2}
   eventClearDatabase: {fileID: 11400000, guid: 3a9cdedad05358846955d9112acf117d, type: 2}
   binaryMeshLayer: {fileID: 0}

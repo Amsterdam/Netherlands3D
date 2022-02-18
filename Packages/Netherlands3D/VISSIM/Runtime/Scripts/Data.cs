@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Netherlands3D.VISSIM
@@ -15,18 +16,20 @@ namespace Netherlands3D.VISSIM
         /// <summary>
         /// Unique vehicle number (in data called "NO")
         /// </summary>
-        [Tooltip("Unique vehicle number (in data called \"NO\")")]
+        [Tooltip("Unique entity number (in data called \"NO\")")]
         public int id;
         /// <summary>
         /// The vehicle type 100 = Car; 200 = Truck; 300 = Bus; 400 = Tram; 500 = Pedestrian; 600 = Cycle; 700 = Van;
         /// </summary>
-        [Tooltip("The vehicle type 100 = Car; 200 = Truck; 300 = Bus; 400 = Tram; 500 = Pedestrian; 600 = Cycle; 700 = Van;")]
-        public int vehicleTypeIndex;
+        [Tooltip("The entity type 100 = Car; 200 = Truck; 300 = Bus; 400 = Tram; 500 = Pedestrian; 600 = Cycle; 700 = Van;")]
+        public int entityTypeIndex;
         /// <summary>
         /// Vehicle width in meters, depending on 2D/3D model distribution. The width is relevant for overtaking within the lane
         /// </summary>
-        [Tooltip("Vehicle width in meters, depending on 2D/3D model distribution. The width is relevant for overtaking within the lane")]
+        [Tooltip("Entity width in meters (x-axis), depending on 2D/3D model distribution. The width is relevant for overtaking within the lane")]
         public float width;
+        [Tooltip("The entity length in meters (z-axis)")]
+        public float length;
         /// <summary>
         /// The coordinates of the entity with corresponding key simulation second <simulationSecond, StartEndPos
         /// </summary>
@@ -36,11 +39,15 @@ namespace Netherlands3D.VISSIM
         /// </remarks>
         public Dictionary<float, Coordinates> coordinates; //TODO make this showup in inspector
 
-        public Data(int id, int vehicleTypeIndex, float width, Dictionary<float, Coordinates> coordinates)
+        public Data(int id, int entityTypeIndex, float width, Dictionary<float, Coordinates> coordinates)
         {
             this.id = id;
-            this.vehicleTypeIndex = vehicleTypeIndex;
+            this.entityTypeIndex = entityTypeIndex;
             this.width = width;
+            if(coordinates.ContainsKey(coordinates.First().Key))
+            {
+                this.length = Vector3.Distance(coordinates.First().Value.coordinatesRear, coordinates.First().Value.coordinatesFront);
+            }
             this.coordinates = coordinates;
         }
         

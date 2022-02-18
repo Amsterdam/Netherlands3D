@@ -18,6 +18,10 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         public Data Data { get { return data; } }
 
+        [Header("Components")]
+        [Tooltip("The default cube model in root > Model > Cube. Used to display the entity bounds")]
+        [SerializeField] protected Transform defaultCubeModel;
+
 #pragma warning disable CS0108 // Member hides inherited member; missing new keyword (Unity deprecated)
         /// <summary>
         /// The animation component
@@ -82,6 +86,8 @@ namespace Netherlands3D.VISSIM
             animationCurveRotationW = new AnimationCurve();
             animationCurveModel = new AnimationCurve();
 
+            if(defaultCubeModel != null) defaultCubeModel.localScale = new Vector3(data.width, 1, data.length);
+
             UpdateNavigation();
         }
 
@@ -133,8 +139,8 @@ namespace Netherlands3D.VISSIM
             // Model
             animationCurveModel.AddKey(new Keyframe(0, 0)); // Turn off model at start of animation
             animationCurveModel.AddKey(new Keyframe(data.coordinates.First().Key - 0.01f, 0)); // Tell model to stay inactive just before the frame (since we cant use TangentMode.Constant)
-            animationCurveModel.AddKey(new Keyframe(data.coordinates.First().Key, 1, 1, 0)); // Turn on model
-            animationCurveModel.AddKey(new Keyframe(data.coordinates.Last().Key, 1, 1, 0)); // Turn off model at end of animation
+            animationCurveModel.AddKey(new Keyframe(data.coordinates.First().Key, 1)); // Turn on model
+            animationCurveModel.AddKey(new Keyframe(data.coordinates.Last().Key, 0)); // Turn off model at end of animation
             // Set the animation curve to constant so the model only appears on its first coordiante keyframe
             // https://docs.unity3d.com/ScriptReference/AnimationUtility.SetKeyLeftTangentMode.htmls
             //UnityEditor.AnimationUtility.SetKeyLeftTangentMode(animationCurveModel, keyFrameIndex, AnimationUtility.TangentMode.Constant); // Cant use this since UnityEditor gets removed in build
@@ -156,14 +162,15 @@ namespace Netherlands3D.VISSIM
             animation.AddClip(animationClip, animationClip.name);
             animation.Play();
         }
-
+        
+#if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            if(!Application.isPlaying || !VISSIMManager.VisualizeGizmosDataPoints) return;
+            if(!Application.isPlaying || !VISSIMManager.VisualizeGizmosDataPoints || UnityEditor.Selection.activeGameObject != gameObject) return;
 
-            // Draw each data coordinate
             if(data != null)
             {
+                // Draw each data coordinate
                 foreach(var item in data.coordinates)
                 {
                     Gizmos.color = Color.yellow;
@@ -171,7 +178,15 @@ namespace Netherlands3D.VISSIM
                     Gizmos.color = Color.blue;
                     Gizmos.DrawLine(item.Value.center, item.Value.center + item.Value.direction * 2);
                 }
+
+                // Draw bounding box
+                Matrix4x4 m = Gizmos.matrix;
+                Gizmos.matrix = transform.localToWorldMatrix;
+                Gizmos.color = Color.magenta;
+                Gizmos.DrawWireCube(new Vector3(0, 0.5f, 0), new Vector3(data.width, 1, data.length));
+                Gizmos.matrix = m;
             }
         }
+#endif
     }
 }

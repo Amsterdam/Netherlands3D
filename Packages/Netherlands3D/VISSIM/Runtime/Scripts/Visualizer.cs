@@ -79,16 +79,16 @@ namespace Netherlands3D.VISSIM
                 else
                 {
                     // Entity prefab
-                    if(!VISSIMManager.AvailableEntitiesData.ContainsKey(data.Value.vehicleTypeIndex) || VISSIMManager.AvailableEntitiesData[data.Value.vehicleTypeIndex].Length == 0) //TODO if no available entites give different error msg
+                    if(!VISSIMManager.AvailableEntitiesData.ContainsKey(data.Value.entityTypeIndex) || VISSIMManager.AvailableEntitiesData[data.Value.entityTypeIndex] == null) //TODO if no available entites give different error msg
                     {
                         // No gameobjects to choose from
                         prefab = defaultEntityPrefab;
-                        Debug.LogWarning("[VISSIM] Entity has no gameobjects to choose from! Make sure that you assign a prefab in the entity Scriptable Object");
+                        Debug.LogWarning("[VISSIM] Entity has no prefabEntity assigned! Make sure that you assign a prefab in the entity Scriptable Object");
                     }
                     else
                     {
                         // Choose random prefab
-                        prefab = VISSIMManager.AvailableEntitiesData[data.Value.vehicleTypeIndex][Random.Range(0, VISSIMManager.AvailableEntitiesData[data.Value.vehicleTypeIndex].Length)];
+                        prefab = VISSIMManager.AvailableEntitiesData[data.Value.entityTypeIndex];
                     }
                     
                     // Create entity

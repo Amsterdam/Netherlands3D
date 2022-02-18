@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5af18673553cfb4abbcdedfa9a533ea, type: 3}
-  m_Name: VISSIM Entity Cars
+  m_Name: VISSIM Entity Bus
   m_EditorClassIdentifier: 
-  id: 100
-  displayName: Auto's
-  sprite: {fileID: 21300000, guid: 3456f042469565f418566fd475dfeee8, type: 3}
-  prefab: {fileID: 0}
+  id: 300
+  displayName: Vrachtwagen
+  sprite: {fileID: 0}
+  prefabEntity: {fileID: 0}

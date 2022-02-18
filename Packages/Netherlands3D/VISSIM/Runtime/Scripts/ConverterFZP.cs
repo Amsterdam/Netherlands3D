@@ -105,7 +105,7 @@ namespace Netherlands3D.VISSIM
             float simulationSeconds = float.Parse(array[0], CultureInfo.InvariantCulture);
             int vehicleTypeIndex = int.Parse(array[2]);
             // Check if ID isn't set, then store it in missingEntityIDs
-            if(!VISSIMManager.Instance.availableEntitiesData.ContainsKey(vehicleTypeIndex) && !VISSIMManager.Instance.missingEntityIDs.Contains(vehicleTypeIndex)) VISSIMManager.Instance.missingEntityIDs.Add(vehicleTypeIndex);
+            VISSIMManager.CheckEntityTypeIndex(vehicleTypeIndex);
 
             return new DataRaw(simulationSeconds, int.Parse(array[1]), vehicleTypeIndex, StringToVector3(array[3]), StringToVector3(array[4]), float.Parse(array[5])); //TODO error handling if parsing doesnt work
         }

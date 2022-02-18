@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5af18673553cfb4abbcdedfa9a533ea, type: 3}
-  m_Name: VISSIM Entity Pedestrians
+  m_Name: VISSIM Entity Cyclist
   m_EditorClassIdentifier: 
-  id: 500
-  displayName: Voetgangers
-  sprite: {fileID: 21300000, guid: d1773710be6075e4b9ffae8c836adf4d, type: 3}
+  id: 600
+  displayName: Fietsers
+  sprite: {fileID: 21300000, guid: f88afdb00751b444fa788a429c1fcaf1, type: 3}
   gameObjects: []

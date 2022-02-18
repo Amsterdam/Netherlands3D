@@ -23,7 +23,7 @@ namespace Netherlands3D.VISSIM
         public string displayName;
         [Tooltip("The sprite to be displayed to user")]
         public Sprite sprite;
-        [Tooltip("GameObjects that the entity can be")]
-        public GameObject[] gameObjects;
+        [Tooltip("The prefab of the entity (with entity component)")]
+        public GameObject prefabEntity;
     }
 }

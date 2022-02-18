@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
-using Netherlands3D.Events;
 
 namespace Netherlands3D.VISSIM
 {
