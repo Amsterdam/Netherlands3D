@@ -39,7 +39,9 @@ namespace Netherlands3D.VISSIM
             get { return Instance.simulationTime; }
             set
             {
+                if(value < 0) value = 0;
                 Instance.simulationTime = value;
+                Instance.previousSimulationTime = value;
                 OnSimulationTimeChanged?.Invoke(value);
             }
         }
@@ -347,8 +349,7 @@ namespace Netherlands3D.VISSIM
             // Check if user has changed simulation time in inspector
             if(simulationTime != previousSimulationTime)
             {
-                OnSimulationTimeChanged?.Invoke(simulationTime);
-                previousSimulationTime = simulationTime;
+                SimulationTime = simulationTime;
             }
         }
 
