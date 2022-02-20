@@ -116,7 +116,8 @@ namespace Netherlands3D.TileSystem
         {
             if (onReceiveIdsAndColors || onReceiveIdsAndFloats)
             {
-                //Colors are updated via event
+                //Colors are set via event.
+                UpdateColors();
                 return;
             }
 
