@@ -13,10 +13,11 @@ namespace Netherlands3D.TileSystem
     {
         private Dictionary<string, Color> idColors;
 
-        [Header("By event")]
+
         [SerializeField]
         private bool disableOnStart = false;
 
+        [Header("Listen to")]
         [SerializeField]
         private BoolEvent onEnableDrawingColors;
         [SerializeField]
@@ -28,6 +29,9 @@ namespace Netherlands3D.TileSystem
         private FloatEvent onReceiveMinRange;
         [SerializeField]
         private FloatEvent onReceiveMaxRange;
+
+        [SerializeField]
+        private TriggerEvent onClearData;
 
         [Header("Or from URL")]
         [SerializeField]
@@ -55,18 +59,20 @@ namespace Netherlands3D.TileSystem
         [SerializeField]
         private Color defaultColor;
 
-        public enum ColorInterpretation{
+        public enum ColorInterpretation
+        {
             HEX,
             INTERPOLATE
-		}
+        }
 
-        public class ColorAndValue{
+        public class ColorAndValue
+        {
             public float value = 0;
             public Color color;
-		}
+        }
 
-		private void Awake()
-		{
+        private void Awake()
+        {
             if (onReceiveIdsAndColors)
             {
                 onReceiveIdsAndColors.started.AddListener(SetIDsAndColors);
@@ -74,32 +80,39 @@ namespace Netherlands3D.TileSystem
                 this.enabled = true;
             }
 
-            if(onReceiveIdsAndFloats)
+            if (onReceiveIdsAndFloats)
             {
                 onReceiveIdsAndFloats.started.AddListener(SetIDsAndFloatsAsColors);
 
                 //If we can receive ids+floats, add listeners to determine the min and max of the range
-                if(onReceiveMinRange) onReceiveMinRange.started.AddListener(SetMinRange);
-                if(onReceiveMaxRange) onReceiveMaxRange.started.AddListener(SetMaxRange);
+                if (onReceiveMinRange) onReceiveMinRange.started.AddListener(SetMinRange);
+                if (onReceiveMaxRange) onReceiveMaxRange.started.AddListener(SetMaxRange);
                 onEnableDrawingColors.started.Invoke(true);
                 this.enabled = true;
             }
 
-            if(onEnableDrawingColors)
+            if (onEnableDrawingColors)
             {
                 onEnableDrawingColors.started.AddListener(EnableDrawingColors);
             }
+
+            if (onClearData)
+            {
+                onClearData.started.AddListener(ClearData);
+            }
         }
 
-        private void EnableDrawingColors(bool enable){
+        private void EnableDrawingColors(bool enable)
+        {
             this.enabled = enable;
-            if(!enable && idColors != null)
-            {
-                idColors.Clear();
-            }
-		}
+        }
 
-		private void OnEnable()
+        private void ClearData()
+        {
+            idColors.Clear();
+        }
+
+        private void OnEnable()
         {
             if (onReceiveIdsAndColors || onReceiveIdsAndFloats)
             {
@@ -139,7 +152,7 @@ namespace Netherlands3D.TileSystem
 
             idColors = new Dictionary<string, Color>();
             foreach (var keyValuePair in idFloats)
-            { 
+            {
                 Color colorFromGradient = gradientContainer.gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, keyValuePair.Value));
                 idColors.Add(keyValuePair.Key, colorFromGradient);
             }
@@ -182,26 +195,28 @@ namespace Netherlands3D.TileSystem
             }
         }
 
-        private void ParseColor(string colorInput, out Color color){
+        private void ParseColor(string colorInput, out Color color)
+        {
             color = Color.white;
-			switch (colorInterpretation)
-			{
-				case ColorInterpretation.HEX:
+            switch (colorInterpretation)
+            {
+                case ColorInterpretation.HEX:
                     ColorUtility.TryParseHtmlString(colorInput, out color);
                     break;
-				case ColorInterpretation.INTERPOLATE:
-                    if(float.TryParse(colorInput, out float parsed))
+                case ColorInterpretation.INTERPOLATE:
+                    if (float.TryParse(colorInput, out float parsed))
                     {
                         color = gradientContainer.gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, parsed));
-					}
-                    else{
+                    }
+                    else
+                    {
                         Debug.Log($"Cant parse {colorInput} as float");
                     }
-					break;
-				default:
-					break;
-			}
-		}
+                    break;
+                default:
+                    break;
+            }
+        }
 
         private void OnDisable()
         {
@@ -235,7 +250,8 @@ namespace Netherlands3D.TileSystem
                         subObjects.ColorObjectsByID(idColors, defaultColor);
                     }
                 }
-                else if(applyToExistingSubObjects){
+                else if (applyToExistingSubObjects)
+                {
                     subObjects.ColorObjectsByID(idColors, defaultColor);
                 }
             }

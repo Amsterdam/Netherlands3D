@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4] - 20-02-2022
+
+### Added
+
+- Removed nested empty readme and license duplicates
+- Added new event in ColorSubObjects to allow clearing data from memory
+
 ## [0.0.3] - 17-02-2022
 
 ### Added
