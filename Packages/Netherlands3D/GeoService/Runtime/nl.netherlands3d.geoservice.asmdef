@@ -1,12 +1,12 @@
 {
-    "name": "nl.netherlands3d.core",
+    "name": "nl.netherlands3d.geoservice",
     "rootNamespace": "",
     "references": [
-        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+        "GUID:9ca88277166fea644a31588b4f943acc"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": true,
+    "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
