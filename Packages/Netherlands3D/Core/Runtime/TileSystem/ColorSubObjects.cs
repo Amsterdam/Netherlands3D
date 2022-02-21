@@ -24,6 +24,8 @@ namespace Netherlands3D.TileSystem
         private ObjectEvent onReceiveIdsAndColors;
         [SerializeField]
         private ObjectEvent onReceiveIdsAndFloats;
+        [SerializeField]
+        private GradientContainerEvent onSetGradient;
 
         [SerializeField]
         private FloatEvent onReceiveMinRange;
@@ -100,9 +102,20 @@ namespace Netherlands3D.TileSystem
             {
                 onClearData.started.AddListener(ClearData);
             }
+
+            if(onSetGradient)
+            {
+                onSetGradient.started.AddListener(SwapGradient);
+            }
         }
 
-        private void EnableDrawingColors(bool enable)
+		public void SwapGradient(GradientContainer newGradientContainer)
+		{
+            gradientContainer = newGradientContainer;
+            UpdateColors(true);
+        }
+
+		private void EnableDrawingColors(bool enable)
         {
             this.enabled = enable;
         }
