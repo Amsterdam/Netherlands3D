@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: textureProjetion
+  m_Name: TextureProjection
   m_Shader: {fileID: 4800000, guid: 356dd3c07cba20549a6d8cfaf4616457, type: 3}
   m_ShaderKeywords: _UnityFogEnable
   m_LightmapFlags: 4
