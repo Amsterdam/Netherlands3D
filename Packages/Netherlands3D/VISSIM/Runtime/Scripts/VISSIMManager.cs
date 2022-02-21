@@ -23,6 +23,19 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         public static bool ShowDebugLog { get { return Instance.showDebugLog; } set { Instance.showDebugLog = value; } }
         /// <summary>
+        /// Visualize the VISSIM Data
+        /// </summary>
+        public static bool VisualizeData
+        {
+            get { return Instance.visualizeData; }
+            set
+            {
+                Instance.visualizeData = value;
+                Instance.previousVisualizeData = value;
+                Instance.visualizerParentTransform.gameObject.SetActive(value);
+            }
+        }
+        /// <summary>
         /// When selecting an entity its data coordinates are drawn with gizmos
         /// </summary>
         public static bool VisualizeGizmosDataPoints { get { return Instance.visualizeGizmosDataPoints; } set { Instance.visualizeGizmosDataPoints = value; } }
@@ -62,8 +75,8 @@ namespace Netherlands3D.VISSIM
         /// <summary>
         /// The state of the simulation time and how it gets updated
         /// </summary>
-        public static SimulationState SimulationState 
-        { 
+        public static SimulationState SimulationState
+        {
             get { return Instance.simulationState; }
             set
             {
@@ -181,13 +194,17 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         private bool firstDataAdded = true;
         /// <summary>
-        /// Keeps track of the previous simulation time incase it gets changed via inspector by user
+        /// Keep track of the previous visualize data incase it gets changed in the inspector
+        /// </summary>
+        private bool previousVisualizeData = true;
+        /// <summary>
+        /// Keeps track of the previous simulation time incase it gets changed in the inspector
         /// </summary>
         private float previousSimulationTime;
         /// <summary>
-        /// Keeps track of the previous simulation speed incase it gets changed in inspector
+        /// Keeps track of the previous simulation speed incase it gets changed in the inspector
         /// </summary>
-        private float previousSimulationSpeed = 1;
+        private float previousSimulationSpeed;
         /// <summary>
         /// Keeps track of the previous simulation State incase it gets changed via inspector
         /// </summary>
@@ -215,6 +232,9 @@ namespace Netherlands3D.VISSIM
             OnSimulationTimeChanged -= SimulationTimeChanged;
             OnSimulationSpeedChanged -= SimulationSpeedChanged;
             eventFilesImported.started.RemoveListener(FileLoader.Load);
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.delayCall -= _OnValidate;
+#endif
         }
 
         private void Awake()
@@ -231,8 +251,10 @@ namespace Netherlands3D.VISSIM
             // Set
             visualizerParentTransform = new GameObject("Visualizer Parent").GetComponent<Transform>();
             visualizerParentTransform.SetParent(transform);
-            visualizer = new Visualizer();
+            VisualizeData = visualizeData;
+            SimulationSpeed = simulationSpeed;
             SimulationState = SimulationState.paused;
+            visualizer = new Visualizer();
         }
 
         // Start is called before the first frame update
@@ -416,9 +438,23 @@ namespace Netherlands3D.VISSIM
             if(showDebugLog) Debug.Log("[VISSIM] SimulationSpeed changed to " + newSpeed);
         }
 
-        private void OnValidate()
+#if UNITY_EDITOR
+
+        // Unity has a nice bug with OnValidate that will spam the Console with log warnings with the message
+        // 'SendMessage cannot be called during Awake, CheckConsistency, or OnValidate'
+        // thats why we can't directly use OnValidate(), instead use _OnValidate()
+        // Reference problem: https://forum.unity.com/threads/sendmessage-cannot-be-called-during-awake-checkconsistency-or-onvalidate-can-we-suppress.537265/
+
+        void OnValidate() => UnityEditor.EditorApplication.delayCall += _OnValidate;
+        void _OnValidate()
         {
-            if(Instance == null) return;
+            if(Instance == null || !Application.isPlaying) return;
+
+            // Check if user has changed visualize data in inspector
+            if(VisualizeData != previousVisualizeData)
+            {
+                VisualizeData = visualizeData;
+            }
 
             // Check if user has changed simulation state in inspector
             if(simulationState != previousSimulationState)
@@ -438,6 +474,7 @@ namespace Netherlands3D.VISSIM
                 SimulationSpeed = simulationSpeed;
             }
         }
+#endif
 
     }
 }

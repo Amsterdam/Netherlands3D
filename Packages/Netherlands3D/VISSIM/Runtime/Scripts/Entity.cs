@@ -97,6 +97,14 @@ namespace Netherlands3D.VISSIM
             VISSIMManager.OnSimulationTimeChanged += OnSimulationTimeChanged;
             VISSIMManager.OnSimulationSpeedChanged += OnSimulationSpeedChanged;
             VISSIMManager.OnSimulationStateChanged += OnSimulationStateChanged;
+
+            // If turned off and then turned back on update its values
+            if(data != null)
+            {
+                OnSimulationTimeChanged(VISSIMManager.SimulationTime);
+                OnSimulationSpeedChanged(VISSIMManager.SimulationSpeed);
+                OnSimulationStateChanged(VISSIMManager.SimulationState);
+            }
         }
 
         protected virtual void OnDisable()
