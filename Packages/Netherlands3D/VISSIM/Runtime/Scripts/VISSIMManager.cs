@@ -48,7 +48,16 @@ namespace Netherlands3D.VISSIM
         /// <summary>
         /// The state of the simulation time and how it gets updated
         /// </summary>
-        public static SimulationTimeState SimulationTimeState { get { return Instance.simulationTimeState; } }
+        public static SimulationState SimulationState 
+        { 
+            get { return Instance.simulationState; }
+            set
+            {
+                Instance.simulationState = value;
+                Instance.previousSimulationState = value;
+                OnSimulationStateChanged?.Invoke(value);
+            }
+        }
         /// <summary>
         /// The parent transform of the visualizer script
         /// </summary>
@@ -64,7 +73,11 @@ namespace Netherlands3D.VISSIM
         /// <summary>
         /// Callback when the simulation time is changed
         /// </summary>
-        public static DelegateChangeSimulationTime OnSimulationTimeChanged;
+        public static DelegateSimulationTimeChanged OnSimulationTimeChanged;
+        /// <summary>
+        /// Callback when the simulation state is changed
+        /// </summary>
+        public static DelegateSimulationStateChanged OnSimulationStateChanged;
         /// <summary>
         /// The Visualizer script that visualizes the VISSIM data
         /// </summary>
@@ -105,7 +118,7 @@ namespace Netherlands3D.VISSIM
         [Tooltip("When selecting an entity its data coordinates are drawn with gizmos")]
         [SerializeField] private bool visualizeGizmosDataPoints = true;
         [Tooltip("The state of the simulation time and how it gets updated")]
-        [SerializeField] private SimulationTimeState simulationTimeState;
+        [SerializeField] private SimulationState simulationState;
         [Tooltip("The current VISSIM simulation time starting from 0 - infinity")]
         [SerializeField] private float simulationTime = 0;
 
@@ -131,12 +144,25 @@ namespace Netherlands3D.VISSIM
         /// <summary>
         /// Delegate that gets called when the simulation time is changed
         /// </summary>
-        public delegate void DelegateChangeSimulationTime(float newTime);
+        public delegate void DelegateSimulationTimeChanged(float newTime);
+        /// <summary>
+        /// Delegate that gets called if the Simulation State is changed
+        /// </summary>
+        /// <param name="newState"></param>
+        public delegate void DelegateSimulationStateChanged(SimulationState newState);
 
+        /// <summary>
+        /// Keeps track of data had already been added or not, if not reset simulationTime
+        /// </summary>
+        private bool firstDataAdded = true;
         /// <summary>
         /// Keeps track of the previous simulation time incase it gets changed via inspector by user
         /// </summary>
         private float previousSimulationTime;
+        /// <summary>
+        /// Keeps track of the previous simulation State incase it gets changed via inspector
+        /// </summary>
+        private SimulationState previousSimulationState;
         /// <summary>
         /// The parent transform of the visualizer script
         /// </summary>
@@ -148,14 +174,14 @@ namespace Netherlands3D.VISSIM
 
         private void OnEnable()
         {
-            OnAddData += CallbackOnAddData;
+            OnAddData += OnAddDataCallback;
             OnSimulationTimeChanged += SimulationTimeChanged;
             eventFilesImported.started.AddListener(FileLoader.Load);
         }
 
         private void OnDisable()
         {
-            OnAddData -= CallbackOnAddData;
+            OnAddData -= OnAddDataCallback;
             OnSimulationTimeChanged -= SimulationTimeChanged;
             eventFilesImported.started.RemoveListener(FileLoader.Load);
         }
@@ -175,6 +201,7 @@ namespace Netherlands3D.VISSIM
             visualizerParentTransform = new GameObject("Visualizer Parent").GetComponent<Transform>();
             visualizerParentTransform.SetParent(transform);
             visualizer = new Visualizer();
+            SimulationState = SimulationState.paused;
         }
 
         // Start is called before the first frame update
@@ -302,9 +329,14 @@ namespace Netherlands3D.VISSIM
         /// Called when new data has been added to datas
         /// </summary>
         /// <param name="newDataKeys">The keys that have been updated from Datas</param>
-        private void CallbackOnAddData(List<int> newDataKeys)
+        private void OnAddDataCallback(List<int> newDataKeys)
         {
             if(ShowDebugLog) Debug.Log(string.Format("[VISSIM] Added {0} data(s)", newDataKeys.Count));
+            if(firstDataAdded)
+            {
+                firstDataAdded = false;
+                SimulationState = SimulationState.play;
+            }
         }
 
         /// <summary>
@@ -312,23 +344,23 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         private void UpdateSimulationTime()
         {
-            switch(simulationTimeState)
+            switch(simulationState)
             {
-                case SimulationTimeState.playing:
+                case SimulationState.play:
                     simulationTime += Time.deltaTime;
                     previousSimulationTime = simulationTime;
                     break;
-                case SimulationTimeState.paused:
+                case SimulationState.paused:
                     break;
-                case SimulationTimeState.reversed:
+                case SimulationState.reversed:
                     simulationTime -= Time.deltaTime;
                     if(simulationTime < 0) simulationTime = 0;
                     previousSimulationTime = simulationTime;
                     break;
-                case SimulationTimeState.reset:
+                case SimulationState.reset:
                     simulationTime = 0;
                     previousSimulationTime = 0;
-                    simulationTimeState = SimulationTimeState.paused;
+                    simulationState = SimulationState.paused;
                     break;
                 default:
                     break;
@@ -350,6 +382,12 @@ namespace Netherlands3D.VISSIM
             if(simulationTime != previousSimulationTime)
             {
                 SimulationTime = simulationTime;
+            }
+
+            // Check if user has changed simulation state in inspector
+            if(simulationState != previousSimulationState)
+            {
+                SimulationState = simulationState;
             }
         }
 

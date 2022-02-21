@@ -63,7 +63,6 @@ namespace Netherlands3D.VISSIM
                         convertedData.Add(dataRaw.id, new Data(dataRaw.id, dataRaw.vehicleTypeIndex, dataRaw.width,
                             new Dictionary<float, Data.Coordinates>()
                             { { dataRaw.simulationSecond, new Data.Coordinates(dataRaw.coordinatesFront, dataRaw.coordinatesRear) } }));
-                        Debug.Log("add data");
                     }
 
                     //yield return null; // Wait a frame to not make the project freeze // Not needed since its fast now, maybe toggle it when handing very large data all at once?

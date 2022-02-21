@@ -22,6 +22,7 @@ namespace Netherlands3D.VISSIM
         [Tooltip("The default cube model in root > Model > Cube. Used to display the entity bounds")]
         [SerializeField] protected Transform defaultCubeModel;
 
+        protected readonly string animationName = "Movement";
 #pragma warning disable CS0108 // Member hides inherited member; missing new keyword (Unity deprecated)
         /// <summary>
         /// The animation component
@@ -73,7 +74,7 @@ namespace Netherlands3D.VISSIM
         {
             this.data = data;
             animationClip = new AnimationClip();
-            animationClip.name = "Movement";
+            animationClip.name = animationName;
             animationClip.legacy = true;
             animation.wrapMode = WrapMode.Clamp;
 
@@ -94,11 +95,13 @@ namespace Netherlands3D.VISSIM
         protected virtual void OnEnable()
         {
             VISSIMManager.OnSimulationTimeChanged += OnSimulationTimeChanged;
+            VISSIMManager.OnSimulationStateChanged += OnSimulationStateChanged;
         }
 
         protected virtual void OnDisable()
         {
             VISSIMManager.OnSimulationTimeChanged -= OnSimulationTimeChanged;
+            VISSIMManager.OnSimulationStateChanged -= OnSimulationStateChanged;
         }
 
         protected virtual void Awake()
@@ -180,7 +183,40 @@ namespace Netherlands3D.VISSIM
         protected virtual void OnSimulationTimeChanged(float newTime)
         {
             if(animationClip == null) return;
-            animation["Movement"].time = newTime;
+            animation[animationName].time = newTime;
+        }
+
+        /// <summary>
+        /// Callback when the VISSIM.SimulationState gets changed
+        /// </summary>
+        /// <param name="newState"></param>
+        protected virtual void OnSimulationStateChanged(SimulationState newState)
+        {
+            if(animationClip == null) return;
+            switch(newState)
+            {
+                case SimulationState.play:
+                    //animation.clip = animationClip;
+                    animation[animationName].speed = 1;
+                    animation[animationName].time = VISSIMManager.SimulationTime;
+                    animation.Play();
+                    break;
+                case SimulationState.paused:
+                    animation[animationName].speed = 0;
+                    break;
+                case SimulationState.reversed:
+                    animation[animationName].speed = -1;
+                    animation.Play();
+                    //animation.Rewind();
+                    break;
+                case SimulationState.reset:
+                    animation[animationName].time = 0;
+                    animation.Stop();
+                    break;
+                default:
+                    break;
+            }
+            print("callback");
         }
         
 #if UNITY_EDITOR
