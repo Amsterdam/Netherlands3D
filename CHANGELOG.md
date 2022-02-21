@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.5] - 21-02-2022
+
+### Removed
+
+- Removed GeoService from package untill feature is complete
+- Removed empty TrafficSimulation folder
+
 ## [0.0.4] - 20-02-2022
 
 ### Added
