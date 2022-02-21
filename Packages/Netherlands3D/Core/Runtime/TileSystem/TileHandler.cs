@@ -22,6 +22,7 @@ using UnityEngine;
 using Netherlands3D.Core;
 using System.Linq;
 using UnityEngine.Networking;
+using UnityEditor;
 
 namespace Netherlands3D.TileSystem
 {
@@ -45,9 +46,10 @@ namespace Netherlands3D.TileSystem
 
 		[SerializeField]
 		private bool filterByCameraFrustum = true;
-
+		
 		public List<Layer> layers = new List<Layer>();
 		
+
 		private List<int> tileSizes = new List<int>();
 		/// <summary>
 		/// contains, for each tilesize in tileSizes, al list with tilecoordinates an distance to camera
