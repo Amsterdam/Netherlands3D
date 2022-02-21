@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.6] - 21-02-2022
+
+### Added
+
+- Added ColorPalette and GradientContainer events for passing their ScriptableObject data
+- Added listener to ColorSubObjects for setting GradientContainer objects
+
 ## [0.0.5] - 21-02-2022
 
 ### Removed
