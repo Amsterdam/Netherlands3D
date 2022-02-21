@@ -46,6 +46,20 @@ namespace Netherlands3D.VISSIM
             }
         }
         /// <summary>
+        /// The speed multiplier to how fast the simulation is running. 1 = normal
+        /// </summary>
+        public static float SimulationSpeed
+        {
+            get { return Instance.simulationSpeed; }
+            set
+            {
+                if(value < 0.01f) value = 0.01f;
+                Instance.simulationSpeed = value;
+                Instance.previousSimulationSpeed = value;
+                OnSimulationSpeedChanged?.Invoke(value);
+            }
+        }
+        /// <summary>
         /// The state of the simulation time and how it gets updated
         /// </summary>
         public static SimulationState SimulationState 
@@ -74,6 +88,10 @@ namespace Netherlands3D.VISSIM
         /// Callback when the simulation time is changed
         /// </summary>
         public static DelegateSimulationTimeChanged OnSimulationTimeChanged;
+        /// <summary>
+        /// Callback when the simulation speed is changed
+        /// </summary>
+        public static DelegateSimulationSpeedChanged OnSimulationSpeedChanged;
         /// <summary>
         /// Callback when the simulation state is changed
         /// </summary>
@@ -121,6 +139,8 @@ namespace Netherlands3D.VISSIM
         [SerializeField] private SimulationState simulationState;
         [Tooltip("The current VISSIM simulation time starting from 0 - infinity")]
         [SerializeField] private float simulationTime = 0;
+        [Tooltip("The speed multiplier to how fast the simulation is running. 1 = normal")]
+        [SerializeField] private float simulationSpeed = 1;
 
         [Header("Entity Data")]
         [Tooltip("List containing every available entity data (Scriptable Objects)")]
@@ -146,6 +166,11 @@ namespace Netherlands3D.VISSIM
         /// </summary>
         public delegate void DelegateSimulationTimeChanged(float newTime);
         /// <summary>
+        /// Delegate that gets called when the simulation speed is changed
+        /// </summary>
+        /// <param name="newSpeed"></param>
+        public delegate void DelegateSimulationSpeedChanged(float newSpeed);
+        /// <summary>
         /// Delegate that gets called if the Simulation State is changed
         /// </summary>
         /// <param name="newState"></param>
@@ -159,6 +184,10 @@ namespace Netherlands3D.VISSIM
         /// Keeps track of the previous simulation time incase it gets changed via inspector by user
         /// </summary>
         private float previousSimulationTime;
+        /// <summary>
+        /// Keeps track of the previous simulation speed incase it gets changed in inspector
+        /// </summary>
+        private float previousSimulationSpeed = 1;
         /// <summary>
         /// Keeps track of the previous simulation State incase it gets changed via inspector
         /// </summary>
@@ -176,6 +205,7 @@ namespace Netherlands3D.VISSIM
         {
             OnAddData += OnAddDataCallback;
             OnSimulationTimeChanged += SimulationTimeChanged;
+            OnSimulationSpeedChanged += SimulationSpeedChanged;
             eventFilesImported.started.AddListener(FileLoader.Load);
         }
 
@@ -183,6 +213,7 @@ namespace Netherlands3D.VISSIM
         {
             OnAddData -= OnAddDataCallback;
             OnSimulationTimeChanged -= SimulationTimeChanged;
+            OnSimulationSpeedChanged -= SimulationSpeedChanged;
             eventFilesImported.started.RemoveListener(FileLoader.Load);
         }
 
@@ -347,13 +378,13 @@ namespace Netherlands3D.VISSIM
             switch(simulationState)
             {
                 case SimulationState.play:
-                    simulationTime += Time.deltaTime;
+                    simulationTime += Time.deltaTime * simulationSpeed;
                     previousSimulationTime = simulationTime;
                     break;
                 case SimulationState.paused:
                     break;
                 case SimulationState.reversed:
-                    simulationTime -= Time.deltaTime;
+                    simulationTime -= Time.deltaTime * simulationSpeed;
                     if(simulationTime < 0) simulationTime = 0;
                     previousSimulationTime = simulationTime;
                     break;
@@ -376,18 +407,35 @@ namespace Netherlands3D.VISSIM
             if(showDebugLog) Debug.Log("[VISSIM] SimulationTime changed to " + newTime);
         }
 
+        /// <summary>
+        /// Callback when the simulation speed gets changed
+        /// </summary>
+        /// <param name="newSpeed"></param>
+        private void SimulationSpeedChanged(float newSpeed)
+        {
+            if(showDebugLog) Debug.Log("[VISSIM] SimulationSpeed changed to " + newSpeed);
+        }
+
         private void OnValidate()
         {
+            if(Instance == null) return;
+
+            // Check if user has changed simulation state in inspector
+            if(simulationState != previousSimulationState)
+            {
+                SimulationState = simulationState;
+            }
+
             // Check if user has changed simulation time in inspector
             if(simulationTime != previousSimulationTime)
             {
                 SimulationTime = simulationTime;
             }
 
-            // Check if user has changed simulation state in inspector
-            if(simulationState != previousSimulationState)
+            // Check if user has changed simulation speed in inspector
+            if(simulationSpeed != previousSimulationSpeed)
             {
-                SimulationState = simulationState;
+                SimulationSpeed = simulationSpeed;
             }
         }
 

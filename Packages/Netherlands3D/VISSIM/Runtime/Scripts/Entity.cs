@@ -95,12 +95,14 @@ namespace Netherlands3D.VISSIM
         protected virtual void OnEnable()
         {
             VISSIMManager.OnSimulationTimeChanged += OnSimulationTimeChanged;
+            VISSIMManager.OnSimulationSpeedChanged += OnSimulationSpeedChanged;
             VISSIMManager.OnSimulationStateChanged += OnSimulationStateChanged;
         }
 
         protected virtual void OnDisable()
         {
             VISSIMManager.OnSimulationTimeChanged -= OnSimulationTimeChanged;
+            VISSIMManager.OnSimulationSpeedChanged -= OnSimulationSpeedChanged;
             VISSIMManager.OnSimulationStateChanged -= OnSimulationStateChanged;
         }
 
@@ -153,6 +155,7 @@ namespace Netherlands3D.VISSIM
             animationCurveModel.AddKey(new Keyframe(0, 0)); // Turn off model at start of animation
             animationCurveModel.AddKey(new Keyframe(data.coordinates.First().Key - 0.01f, 0)); // Tell model to stay inactive just before the frame (since we cant use TangentMode.Constant)
             animationCurveModel.AddKey(new Keyframe(data.coordinates.First().Key, 1)); // Turn on model
+            animationCurveModel.AddKey(new Keyframe(data.coordinates.Last().Key - 0.01f, 1)); // Keep model turned on just before end frame
             animationCurveModel.AddKey(new Keyframe(data.coordinates.Last().Key, 0)); // Turn off model at end of animation
             // Set the animation curve to constant so the model only appears on its first coordiante keyframe
             // https://docs.unity3d.com/ScriptReference/AnimationUtility.SetKeyLeftTangentMode.htmls
@@ -187,6 +190,30 @@ namespace Netherlands3D.VISSIM
         }
 
         /// <summary>
+        /// Callback when the VISSIM.SimulationSpeed gets changed
+        /// </summary>
+        /// <param name="newSpeed"></param>
+        protected virtual void OnSimulationSpeedChanged(float newSpeed)
+        {
+            if(animationClip == null) return;
+            switch(VISSIMManager.SimulationState)
+            {
+                case SimulationState.play:
+                    animation[animationName].speed = newSpeed;
+                    break;
+                case SimulationState.paused:
+                    break;
+                case SimulationState.reversed:
+                    animation[animationName].speed = -newSpeed;
+                    break;
+                case SimulationState.reset:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
         /// Callback when the VISSIM.SimulationState gets changed
         /// </summary>
         /// <param name="newState"></param>
@@ -197,7 +224,7 @@ namespace Netherlands3D.VISSIM
             {
                 case SimulationState.play:
                     //animation.clip = animationClip;
-                    animation[animationName].speed = 1;
+                    animation[animationName].speed = VISSIMManager.SimulationSpeed;
                     animation[animationName].time = VISSIMManager.SimulationTime;
                     animation.Play();
                     break;
@@ -205,7 +232,8 @@ namespace Netherlands3D.VISSIM
                     animation[animationName].speed = 0;
                     break;
                 case SimulationState.reversed:
-                    animation[animationName].speed = -1;
+                    animation[animationName].speed = -VISSIMManager.SimulationSpeed;
+                    animation[animationName].time = VISSIMManager.SimulationTime;
                     animation.Play();
                     //animation.Rewind();
                     break;
@@ -216,7 +244,6 @@ namespace Netherlands3D.VISSIM
                 default:
                     break;
             }
-            print("callback");
         }
         
 #if UNITY_EDITOR
