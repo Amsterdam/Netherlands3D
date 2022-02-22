@@ -32,12 +32,6 @@
 	"description": "runtime tooling for correct wms-url's for use in the WMS-Layer",
 	"path": "getWMSUrl/GeoService/Samples~/WMSSelector"
 }
-,
-{
-	"displayName": "WMS-layer",
-	"description": "example of a wms-layer",
-	"path": "WMSLayer/Samples~/wmsLayer"
-}
   ],
   "hideInEditor": false,
   "author": {

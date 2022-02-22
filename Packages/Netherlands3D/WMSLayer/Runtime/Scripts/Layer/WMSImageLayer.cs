@@ -11,8 +11,8 @@ namespace Netherlands3D.Geoservice
     public class WMSImageLayer : Layer
     {
         
-        private int BuildingStencilID=7;
-        private int TerrainStencilID = 6;
+        private int BuildingStencilID=0;
+        private int TerrainStencilID = 0;
         [SerializeField]
         private int activeStencilID = 0;
         private int activeStencilMask = 255;

@@ -1065,18 +1065,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   layer: {fileID: 0}
-  TilePrefab: {fileID: 5158941830003718476, guid: 5e3f935bb9fb84b48afceafca8415105, type: 3}
+  TilePrefab: {fileID: 5158941830003718476, guid: 616c1bd220ce58340aca5b841fcbb4d3, type: 3}
   buildingsLayer:
     serializedVersion: 2
     m_Bits: 128
   terrainLayer:
     serializedVersion: 2
     m_Bits: 64
-  OnWMSUrlDefined_String: {fileID: 11400000, guid: dc15fdffeedf9e648bd96a2b9549e0b4, type: 2}
-  ShowWMSOnBuildings: {fileID: 11400000, guid: 4c4b4ff0964406e4688f51a49b07584d, type: 2}
-  ShowWMSOnTerrain: {fileID: 11400000, guid: a0fc74e3e7950664b9c645cc22ca9156, type: 2}
-  ShowWMSOnBuildingsAndTerrain: {fileID: 11400000, guid: 9e21ae51c829bea4ea674dbe93725e89, type: 2}
-  UnloadWMSService: {fileID: 11400000, guid: 0330b0ad9cc660848a187e2188e0f3c5, type: 2}
+  OnWMSUrlDefined_String: {fileID: 11400000, guid: c8719babe877f4f4eae101179a660069, type: 2}
+  ShowWMSOnBuildings: {fileID: 11400000, guid: 13735b800e3c4b04cbaaba3f27a557e6, type: 2}
+  ShowWMSOnTerrain: {fileID: 11400000, guid: 5a7a900965172f142bd1e646995d5b78, type: 2}
+  ShowWMSOnBuildingsAndTerrain: {fileID: 11400000, guid: 8394613e38f476e4f8fa59e6fb826662, type: 2}
+  UnloadWMSService: {fileID: 11400000, guid: 983acf4a3bbae6f4b8d0c4c3aa6e2c17, type: 2}
 --- !u!4 &1154597152
 Transform:
   m_ObjectHideFlags: 0
