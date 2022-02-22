@@ -139,11 +139,11 @@ namespace Netherlands3D.Geoservice
                 yield return null;
         }
 
-        public void ProjectOnBuildings(LayerMask buildingsLayerMask)
+        public void ProjectOnBuildings(int buildingStencilID)
         {
             if (BuildingStencilID==0)
             {
-                BuildingStencilID = buildingsLayerMask;
+                BuildingStencilID = buildingStencilID;
                 
             }
             activeStencilMask = 255;
@@ -151,11 +151,11 @@ namespace Netherlands3D.Geoservice
             setProjectorStencilSettings();
 
         }
-        public void ProjectOnTerrain(LayerMask terrainLayerMask)
+        public void ProjectOnTerrain(int terrainStencilID)
         {
             if (TerrainStencilID == 0)
             {
-                TerrainStencilID = LayerMask.NameToLayer("Terrrain");
+                TerrainStencilID = terrainStencilID;
 
             }
             activeStencilMask = 255;
@@ -163,15 +163,15 @@ namespace Netherlands3D.Geoservice
             setProjectorStencilSettings();
 
         }
-        public void ProjectOnBoth(LayerMask buildingsLayerMask, LayerMask terrainLayerMask)
+        public void ProjectOnBoth(int buildingStencilID, int terrainStencilID)
         {
             if (BuildingStencilID == 0)
             {
-                BuildingStencilID = buildingsLayerMask;
+                BuildingStencilID = buildingStencilID;
             }
             if (TerrainStencilID == 0)
             {
-                TerrainStencilID = terrainLayerMask;
+                TerrainStencilID = terrainStencilID;
             }
 
 

@@ -13,9 +13,9 @@ namespace Netherlands3D.Geoservice
         public GameObject TilePrefab;
         private TileSystem.TileHandler tileHandler;
         [SerializeField]
-        private LayerMask buildingsLayer;
+        private int buildingStencilID;
         [SerializeField]
-        private LayerMask terrainLayer;
+        private int terrainStencilID;
         [Header("Events")]
         public StringEvent OnWMSUrlDefined_String;
         public TriggerEvent ShowWMSOnBuildings;
@@ -62,21 +62,21 @@ namespace Netherlands3D.Geoservice
         {
             if (layer)
             {
-               layer.ProjectOnBuildings(buildingsLayer);
+               layer.ProjectOnBuildings(buildingStencilID);
                             }
         }
         void showWMSOnTerrain()
         {
             if (layer)
             {
-                layer.ProjectOnTerrain(terrainLayer);
+                layer.ProjectOnTerrain(terrainStencilID);
             }
         }
         void showWMSOnBuildingsAndTerrain()
         {
             if (layer)
             {
-                layer.ProjectOnBoth(buildingsLayer,terrainLayer);
+                layer.ProjectOnBoth(buildingStencilID, terrainStencilID);
             }
         }
 
@@ -104,7 +104,7 @@ namespace Netherlands3D.Geoservice
             }
             layer = layercontainer.AddComponent<WMSImageLayer>();
             layer.tileSize = 1500;
-            layer.ProjectOnTerrain(terrainLayer);
+            layer.ProjectOnTerrain(terrainStencilID);
             DataSet dataSet = new DataSet();
             string datasetURL = baseURL.Replace("{Width}", "16");
             datasetURL = datasetURL.Replace("{Height}", "16");
