@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added WMS-Layer
+- Added SampleScene with tooling to find wms-url's for use in the WMS-layer
+
 ## [0.0.6] - 21-02-2022
 
 ### Added
