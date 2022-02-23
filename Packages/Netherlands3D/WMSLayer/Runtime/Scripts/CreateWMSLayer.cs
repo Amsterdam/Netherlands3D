@@ -19,6 +19,7 @@ namespace Netherlands3D.Geoservice
         [Header("Events")]
         public StringEvent OnWMSUrlDefined_String;
         public BoolEvent AleenOpMaaiveld_Bool;
+        public BoolEvent ShowLayer_Bool;
         public TriggerEvent ShowWMSOnBuildings;
         public TriggerEvent ShowWMSOnTerrain;
         public TriggerEvent ShowWMSOnBuildingsAndTerrain;
@@ -55,6 +56,10 @@ namespace Netherlands3D.Geoservice
             if (AleenOpMaaiveld_Bool)
             {
                 AleenOpMaaiveld_Bool.started.AddListener(ShowOnlyOnTerrain);
+            }
+            if (ShowLayer_Bool)
+            {
+                ShowLayer_Bool.started.AddListener(ShowLayer);
             }
         }
         /// <summary>
