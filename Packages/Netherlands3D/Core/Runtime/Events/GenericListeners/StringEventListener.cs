@@ -18,7 +18,7 @@ public class StringEventListener : MonoBehaviour
         onEvent.started.AddListener(Invoke);
     }
 
-	private void Invoke(string arg0)
+	public void Invoke(string arg0)
 	{
         trigger.Invoke(arg0);
     }

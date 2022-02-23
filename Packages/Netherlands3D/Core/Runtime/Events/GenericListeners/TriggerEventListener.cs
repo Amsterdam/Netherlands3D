@@ -18,7 +18,7 @@ namespace Netherlands3D.Core
             onEvent.started.AddListener(Invoke);
         }
 
-        private void Invoke()
+        public void Invoke()
         {
             trigger.Invoke(true);
         }

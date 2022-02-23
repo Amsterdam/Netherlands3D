@@ -26,7 +26,7 @@ namespace Netherlands3D.Core
             onEvent.started.AddListener(Invoke);
         }
 
-        private void Invoke(bool arg0)
+        public void Invoke(bool arg0)
         {
             onTriggered.Invoke(arg0);
             if (arg0==true)
