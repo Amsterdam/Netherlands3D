@@ -18,6 +18,7 @@ namespace Netherlands3D.Geoservice
         private int terrainStencilID;
         [Header("Events")]
         public StringEvent OnWMSUrlDefined_String;
+        public BoolEvent AleenOpMaaiveld_Bool;
         public TriggerEvent ShowWMSOnBuildings;
         public TriggerEvent ShowWMSOnTerrain;
         public TriggerEvent ShowWMSOnBuildingsAndTerrain;
@@ -50,12 +51,28 @@ namespace Netherlands3D.Geoservice
             {
                 UnloadWMSService.started.AddListener(UnloadLayer);
             }
+            if (AleenOpMaaiveld_Bool)
+            {
+                AleenOpMaaiveld_Bool.started.AddListener(ShowOnlyOnTerrain);
+            }
         }
 
         void UnloadLayer()
         {
             tileHandler.RemoveLayer(layer);
             layer = null;
+        }
+
+        void ShowOnlyOnTerrain(bool toggleValue)
+        {
+            if (toggleValue)
+            {
+                showWMSOnTerrain();
+            }
+            else
+            {
+                showWMSOnBuildingsAndTerrain();
+            }
         }
 
         void showWMSOnBuildings()
@@ -104,7 +121,7 @@ namespace Netherlands3D.Geoservice
             }
             layer = layercontainer.AddComponent<WMSImageLayer>();
             layer.tileSize = 1500;
-            layer.ProjectOnTerrain(terrainStencilID);
+            showWMSOnBuildingsAndTerrain();
             DataSet dataSet = new DataSet();
             string datasetURL = baseURL.Replace("{Width}", "16");
             datasetURL = datasetURL.Replace("{Height}", "16");
