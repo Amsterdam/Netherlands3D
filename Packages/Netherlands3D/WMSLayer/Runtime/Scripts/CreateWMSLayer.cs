@@ -57,8 +57,11 @@ namespace Netherlands3D.Geoservice
                 AleenOpMaaiveld_Bool.started.AddListener(ShowOnlyOnTerrain);
             }
         }
-
-        void ShowLayer(bool OnOff)
+        /// <summary>
+        /// turn the layer on or off
+        /// </summary>
+        /// <param name="OnOff"></param>
+        public void ShowLayer(bool OnOff)
         {
             if (layer)
             {
