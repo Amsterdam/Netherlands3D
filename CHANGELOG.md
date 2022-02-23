@@ -7,14 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- moved all the shaders into their corresponding samples, when updating, make sure to open the samples and copy the shaders into your assets-folder.
+
+### Added
+- added improved UI to WMS-Layer Sample 
 
 ### [0.0.8] - 23-02-2022
 
 - Keep track of SubObjects coroutine so it can be interupted before calling a new coloring process
 
-### Added
+## [0.0.7] - 23-02-2022
 
-### [0.0.7] - 23-02-2022
+### Added
 
 - Added WMS-Layer
 - Added SampleScene with tooling to find wms-url's for use in the WMS-layer
