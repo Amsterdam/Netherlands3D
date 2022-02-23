@@ -12,21 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d82941a0f4c37d479bd9551591d4965, type: 3}
   m_Name: TileHandlerConfig
   m_EditorClassIdentifier: 
-  configFile: TileHandlerConfig.json
   dataChanged:
     m_PersistentCalls:
       m_Calls: []
+  rdCenterX: 121000
+  rdCenterY: 487000
+  groundYZero: 0
   binaryMeshLayers:
   - layerName: Buildings
     priority: 2
     selectableSubobjects: 0
     lods:
     - LOD: 
-      sourcePath: https://acc.3d.amsterdam.nl/web/data/develop/binary2/buildings1.0/buildings_{x}_{y}.1.2.bin
+      sourcePath: https://3d.amsterdam.nl/data/buildings1.1/buildings_{x}_{y}.1.2.bin
       drawDistance: 6000
     - LOD: 
-      sourcePath: https://acc.3d.amsterdam.nl/web/data/develop/binary2/buildings1.0/buildings_{x}_{y}.2.2.bin
+      sourcePath: https://3d.amsterdam.nl/data/buildings1.1/buildings_{x}_{y}.2.2.bin
       drawDistance: 3000
+    brotliCompressedExtention: .unityweb
     materialLibraryIndices: 0e000000
     visible: 1
   - layerName: Terrain
@@ -34,11 +37,12 @@ MonoBehaviour:
     selectableSubobjects: 0
     lods:
     - LOD: 
-      sourcePath: https://acc.3d.amsterdam.nl/web/data/develop/binary2/terrain1.0/terrain_{x}-{y}-lod0.bin
+      sourcePath: https://3d.amsterdam.nl/data/terrain1.1/terrain_{x}-{y}-lod0.bin
       drawDistance: 6000
     - LOD: 
-      sourcePath: https://acc.3d.amsterdam.nl/web/data/develop/binary2/terrain1.0/terrain_{x}-{y}-lod1.bin
+      sourcePath: https://3d.amsterdam.nl/data/terrain1.1/terrain_{x}-{y}-lod1.bin
       drawDistance: 3000
+    brotliCompressedExtention: .unityweb
     materialLibraryIndices: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d000000
     visible: 1
   - layerName: Trees
@@ -46,8 +50,9 @@ MonoBehaviour:
     selectableSubobjects: 0
     lods:
     - LOD: 
-      sourcePath: https://acc.3d.amsterdam.nl/web/data/develop/binary2/trees1.0/trees_{x}-{y}-lod1.bin
+      sourcePath: https://3d.amsterdam.nl/data/trees1.1/trees_{x}-{y}-lod1.bin
       drawDistance: 3000
+    brotliCompressedExtention: .unityweb
     materialLibraryIndices: 0f000000
     visible: 1
   geoJsonLayers:
@@ -70,7 +75,7 @@ MonoBehaviour:
       - 0
       - 15
       - 0
-    visible: 1
+    visible: 0
   - layerName: Wijknamen
     priority: 2
     sourcePath: https://geodata.nationaalgeoregister.nl/wijkenbuurten2020/wfs?service=WFS&version=2.0.0&request=GetFeature&outputFormat=json&typeName=wijkenbuurten2020:cbs_wijken_2020&propertyName=wijknaam,geom&bbox=
@@ -90,7 +95,7 @@ MonoBehaviour:
       - 0
       - 60
       - 0
-    visible: 1
+    visible: 0
   - layerName: StreetNames
     priority: 2
     sourcePath: https://geodata.nationaalgeoregister.nl/kadastralekaart/wfs/v4_0?service=WFS&version=2.0.0&request=GetFeature&TypeNames=kadastralekaartv4:openbareruimtenaam&&propertyName=plaatsingspunt,tekst,hoek,relatieveHoogteligging,openbareRuimteType&outputformat=geojson&srs=EPSG:28992&bbox=
@@ -110,4 +115,4 @@ MonoBehaviour:
       - 0
       - 10
       - 0
-    visible: 1
+    visible: 0

@@ -20,8 +20,8 @@ namespace Netherlands3D.Core
 
         [SerializeField]
         private BoolValueUnityEvent onFalse;
-        // Start is called before the first frame update
-        void Start()
+        
+        void Awake()
         {
             onEvent.started.AddListener(Invoke);
         }

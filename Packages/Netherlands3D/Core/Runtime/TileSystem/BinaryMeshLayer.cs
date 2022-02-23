@@ -9,8 +9,8 @@ using UnityEngine.Rendering;
 
 namespace Netherlands3D.TileSystem
 {
-    public class BinaryMeshLayer : Layer
-    {
+	public class BinaryMeshLayer : Layer
+	{
 		public List<Material> DefaultMaterialList = new List<Material>();
 		public bool createMeshcollider = false;
 		public ShadowCastingMode tileShadowCastingMode = ShadowCastingMode.On;
@@ -79,7 +79,7 @@ namespace Netherlands3D.TileSystem
 				{
 					DestroyImmediate(tile.gameObject.GetComponent<MeshFilter>().sharedMesh, true);
 				}
-				Destroy(tiles[tileKey].gameObject);		
+				Destroy(tiles[tileKey].gameObject);
 			}
 		}
 		private IEnumerator DownloadBinaryMesh(TileChange tileChange, System.Action<TileChange> callback = null)
@@ -87,8 +87,8 @@ namespace Netherlands3D.TileSystem
 			var tileKey = new Vector2Int(tileChange.X, tileChange.Y);
 			int lod = tiles[tileKey].LOD;
 			string url = Datasets[lod].path;
-            if (Datasets[lod].path.StartsWith("https://") || Datasets[lod].path.StartsWith("file://"))
-            {
+			if (Datasets[lod].path.StartsWith("https://") || Datasets[lod].path.StartsWith("file://"))
+			{
 				url = Datasets[lod].path;
 			}
 
@@ -119,12 +119,12 @@ namespace Netherlands3D.TileSystem
 				byte[] results = webRequest.downloadHandler.data;
 
 				yield return new WaitUntil(() => pauseLoading == false);
-				GameObject newGameobject = CreateNewGameObject(url,results, tileChange);
+				GameObject newGameobject = CreateNewGameObject(url, results, tileChange);
 				if (newGameobject != null)
 				{
 					if (TileHasSubObjectAltered(tileChange))
 					{
-						yield return SyncSubObjects(tileChange, newGameobject,callback);
+						yield return SyncSubObjects(tileChange, newGameobject, callback);
 					}
 					else
 					{
@@ -145,7 +145,7 @@ namespace Netherlands3D.TileSystem
 			tileShadowCastingMode = (enabled) ? ShadowCastingMode.On : ShadowCastingMode.Off;
 
 			MeshRenderer[] existingTiles = GetComponentsInChildren<MeshRenderer>();
-			foreach(var renderer in existingTiles)
+			foreach (var renderer in existingTiles)
 			{
 				renderer.shadowCastingMode = tileShadowCastingMode;
 			}
@@ -188,15 +188,15 @@ namespace Netherlands3D.TileSystem
 			callback(tileChange);
 		}
 
-		private GameObject CreateNewGameObject(string source,byte[] binaryMeshData, TileChange tileChange)
+		private GameObject CreateNewGameObject(string source, byte[] binaryMeshData, TileChange tileChange)
 		{
 			container = new GameObject();
-			
+
 			container.name = tileChange.X.ToString() + "-" + tileChange.Y.ToString();
 			container.transform.parent = transform.gameObject.transform;
 			container.layer = container.transform.parent.gameObject.layer;
-			container.transform.position = CoordConvert.RDtoUnity(new Vector2(tileChange.X + (tileSize/2), tileChange.Y + (tileSize/2)));
-			
+			container.transform.position = CoordConvert.RDtoUnity(new Vector2(tileChange.X + (tileSize / 2), tileChange.Y + (tileSize / 2)));
+
 			container.SetActive(isEnabled);
 
 			mesh = BinaryMeshConversion.ReadBinaryMesh(binaryMeshData, out int[] submeshIndices);
