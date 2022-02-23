@@ -48,11 +48,19 @@ namespace Netherlands3D.TileSystem
             //Invoke enabled/disabled event
             if (isEnabled)
             {
-                onLayerEnabled.Invoke();
+                if (onLayerEnabled!=null)
+                {
+                    onLayerEnabled.Invoke();
+                }
+                
             }
             else
             {
-                onLayerDisabled.Invoke();
+                if (onLayerDisabled!=null)
+                {
+                    onLayerDisabled.Invoke();
+                }
+                
             }
 
             //Activate children accordingly

@@ -26,6 +26,7 @@ namespace Netherlands3D.Geoservice
         public TriggerEvent UnloadWMSService;
 
         private bool OnlyOnTerrain_Memory = false;
+        private bool DisplayState = true;
         //public List<LayerMask> layermasks;
         
         // Start is called before the first frame update
@@ -68,6 +69,7 @@ namespace Netherlands3D.Geoservice
         /// <param name="OnOff"></param>
         public void ShowLayer(bool OnOff)
         {
+            DisplayState = OnOff;
             if (layer)
             {
                 layer.isEnabled = OnOff;
@@ -78,6 +80,7 @@ namespace Netherlands3D.Geoservice
         void UnloadLayer()
         {
             tileHandler.RemoveLayer(layer);
+            Destroy(layer.gameObject);
             layer = null;
         }
 
@@ -149,6 +152,7 @@ namespace Netherlands3D.Geoservice
                 showWMSOnBuildingsAndTerrain();
             }
             
+
             DataSet dataSet = new DataSet();
             string datasetURL = baseURL.Replace("{Width}", "16");
             datasetURL = datasetURL.Replace("{Height}", "16");
@@ -176,6 +180,9 @@ namespace Netherlands3D.Geoservice
             layer.TilePrefab = TilePrefab;
             layer.Datasets.Add(dataSet);
             tileHandler.AddLayer(layer);
+
+
+            ShowLayer(DisplayState);
         }
 
         
