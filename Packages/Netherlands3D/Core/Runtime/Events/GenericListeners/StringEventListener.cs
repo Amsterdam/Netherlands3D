@@ -15,10 +15,13 @@ public class StringEventListener : MonoBehaviour
 
     void Awake()
     {
-        onEvent.started.AddListener(Invoke);
+        if (onEvent)
+        {
+            onEvent.started.AddListener(Invoke);
+        }
     }
 
-	private void Invoke(string arg0)
+	public void Invoke(string arg0)
 	{
         trigger.Invoke(arg0);
     }
