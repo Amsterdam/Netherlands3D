@@ -142,7 +142,7 @@ namespace Netherlands3D.VISSIM
                 if(Physics.Raycast(item.Value.center + new Vector3(0, 50, 0), Vector3.down, out Visualizer.Hit)) //TODO add layermask?
                 {
                     item.Value.center.y = Visualizer.Hit.point.y;
-                }
+                }//TODO Add binary mesh layer collider
 
                 // Add animation keyframe to clip
                 // Position animation
