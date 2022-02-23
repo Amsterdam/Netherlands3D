@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+### [0.0.8] - 23-02-2022
+
+- Keep track of SubObjects coroutine so it can be interupted before calling a new coloring process
+
 ### Added
 
 ### [0.0.7] - 23-02-2022
