@@ -9,12 +9,16 @@ namespace Netherlands3D.Traffic
     /// Visualizer for Traffic
     /// </summary>
     [AddComponentMenu("Traffic/Traffic Visualizer")]
-    public class Visualizer
+    public class Visualizer : MonoBehaviour
     {
         /// <summary>
         /// Static raycasthit used by entities
         /// </summary>
         public static RaycastHit Hit;
+
+        [Header("Entity Data")]
+        [Tooltip("List containing every available entity data (Scriptable Objects)")]
+        public List<EntityData> entitiesDatas = new List<EntityData>();
 
         /// <summary>
         /// Dictionary containing all entites <Data.id, Entity>
@@ -25,6 +29,23 @@ namespace Netherlands3D.Traffic
         /// </summary>
         private GameObject defaultEntityPrefab;
 
+        public bool showDebugLog = true;
+        public DictionaryVariable<int, Data> datas;
+        /// <summary>
+        /// A list containing all entities that do not have a corresponding id from entitiesDatas for debugging purposes
+        /// </summary>
+        private List<int> missingEntityIDs = new List<int>(); //TODO to so
+        /// <summary>
+        /// Contains all available enities ID's (cars/busses/bikes etc.) with corresponding prefab to spawn
+        /// </summary>
+        public Dictionary<int, GameObject> availableEntitiesData = new Dictionary<int, GameObject>(); //TODO to so
+
+
+        private void Start()
+        {
+            LoadDefaultData();
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -32,7 +53,7 @@ namespace Netherlands3D.Traffic
         {
             defaultEntityPrefab = Resources.Load<GameObject>("VISSIM Entity Default");
 
-            VISSIMManager.OnAddData += UpdateEntities;
+            //VISSIMManager.OnAddData += UpdateEntities; TODO
         }
 
         /// <summary>
@@ -40,7 +61,7 @@ namespace Netherlands3D.Traffic
         /// </summary>
         ~Visualizer()
         {
-            VISSIMManager.OnAddData -= UpdateEntities;
+            //VISSIMManager.OnAddData -= UpdateEntities;
         }
 
         /// <summary>
@@ -56,14 +77,14 @@ namespace Netherlands3D.Traffic
             if(dataKeysUpdated == null)
             {
                 // Update from entire VISSIMManager.Datas
-                newData = VISSIMManager.Datas;
+                newData = datas.Value;
             }
             else
             {
                 // Get updated data
                 foreach(var item in dataKeysUpdated)
                 {
-                    newData.Add(item, VISSIMManager.Datas[item]);
+                    newData.Add(item, datas.Value[item]);
                 }
             }
 
@@ -80,7 +101,7 @@ namespace Netherlands3D.Traffic
                 else
                 {
                     // Entity prefab
-                    if(!VISSIMManager.AvailableEntitiesData.ContainsKey(data.Value.entityTypeIndex) || VISSIMManager.AvailableEntitiesData[data.Value.entityTypeIndex] == null) //TODO if no available entites give different error msg
+                    if(availableEntitiesData.ContainsKey(data.Value.entityTypeIndex) || availableEntitiesData[data.Value.entityTypeIndex] == null) //TODO if no available entites give different error msg
                     {
                         // No gameobjects to choose from
                         prefab = defaultEntityPrefab;
@@ -89,17 +110,37 @@ namespace Netherlands3D.Traffic
                     else
                     {
                         // Choose random prefab
-                        prefab = VISSIMManager.AvailableEntitiesData[data.Value.entityTypeIndex];
+                        prefab = availableEntitiesData[data.Value.entityTypeIndex];
                     }
                     
                     // Create entity
-                    Entity entity = Object.Instantiate(prefab, VISSIMManager.VisualizerParentTransform).GetComponent<Entity>();
+                    Entity entity = Object.Instantiate(prefab, transform).GetComponent<Entity>();
                     entities.Add(data.Key, entity);
                     entity.Initialize(data.Value);
                 }
             }
 
-            if(VISSIMManager.ShowDebugLog) Debug.Log(string.Format("[VISSIM] Visualizer updated {0} entities", newData.Count));
+            if(showDebugLog) Debug.Log(string.Format("[VISSIM] Visualizer updated {0} entities", newData.Count));
+        }
+
+        /// <summary>
+        /// Load the default VISSIM data
+        /// </summary>
+        private void LoadDefaultData()
+        {
+            missingEntityIDs.Clear();
+            availableEntitiesData.Clear();
+
+            foreach(var item in entitiesDatas)
+            {
+                if(availableEntitiesData.ContainsKey(item.id))
+                {
+                    Debug.LogError(string.Format("[VISSIM] VISSIM Entity with ID {0} has already been added. Check your entity data for duplicates with same ID", item.id));
+                    continue;
+                }
+
+                availableEntitiesData.Add(item.id, item.prefabEntity);
+            }
         }
     }
 }

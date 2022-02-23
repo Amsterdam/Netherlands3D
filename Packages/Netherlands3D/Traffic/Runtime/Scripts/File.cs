@@ -16,6 +16,8 @@ namespace Netherlands3D.Traffic
         [Tooltip("Show the debug messages")]
         [SerializeField] private bool showDebugLog;
 
+        [SerializeField] private int maxDataCount = 200;
+
         [Header("Components")]
         [Tooltip("Event that fires when files are imported")]
         [SerializeField] private StringEvent eventFilesImported;
@@ -62,7 +64,7 @@ namespace Netherlands3D.Traffic
                 switch(pathExtension)
                 {
                     case ".fzp":
-                        yield return ConverterFZP.Convert(path);
+                        yield return ConverterFZP.Convert(path, maxDataCount);
                         break;
                     default:
                         failedFiles++;

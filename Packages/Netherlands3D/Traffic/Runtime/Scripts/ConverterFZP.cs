@@ -24,7 +24,7 @@ namespace Netherlands3D.Traffic
         /// Reads the file.fzp with VISSIM data and converts it to useable vissim data
         /// </summary>
         /// <param name="file"></param>
-        public static IEnumerator Convert(string filePath)
+        public static IEnumerator Convert(string filePath, int maxDataCount)
         {
             // Convert filePath to fileContent
             using StreamReader sr = new StreamReader(filePath);
@@ -36,7 +36,7 @@ namespace Netherlands3D.Traffic
             while((line = sr.ReadLine()) != null)
             {
                 // Check if limit has been reached
-                if(VISSIMManager.MaxDatasCount != -1 && convertedData.Count >= VISSIMManager.MaxDatasCount) break;
+                if(maxDataCount != -1 && convertedData.Count >= maxDataCount) break;
 
                 // Check line contents
                 if(readyToConvert && !string.IsNullOrEmpty(line))
@@ -78,17 +78,17 @@ namespace Netherlands3D.Traffic
             }
 
             // Add data to VISSIM
-            VISSIMManager.AddData(convertedData);
+            yield return convertedData;
 
             // Check if there are missing Vissim entity ids //TODO move to mangager.add?
-            if(VISSIMManager.MissingEntityIDs.Count > 0)
-            {
-                //vissimConfiguration.OpenInterface(missingVissimTypes); // opens missing visism interface
-            }
-            else
-            {
-                //StartVissim(); // starts animation
-            }
+            //if(VISSIMManager.MissingEntityIDs.Count > 0)
+            //{
+            //    //vissimConfiguration.OpenInterface(missingVissimTypes); // opens missing visism interface
+            //}
+            //else
+            //{
+            //    //StartVissim(); // starts animation
+            //}
 
             yield break;
         }
@@ -104,7 +104,7 @@ namespace Netherlands3D.Traffic
             float simulationSeconds = float.Parse(array[0], CultureInfo.InvariantCulture);
             int vehicleTypeIndex = int.Parse(array[2]);
             // Check if ID isn't set, then store it in missingEntityIDs
-            VISSIMManager.CheckEntityTypeIndex(vehicleTypeIndex);
+            //VISSIMManager.CheckEntityTypeIndex(vehicleTypeIndex); TODO
 
             return new DataRaw(simulationSeconds, int.Parse(array[1]), vehicleTypeIndex, StringToVector3(array[3]), StringToVector3(array[4]), float.Parse(array[5])); //TODO error handling if parsing doesnt work
         }
