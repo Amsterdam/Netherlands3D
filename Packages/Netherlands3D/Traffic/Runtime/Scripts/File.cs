@@ -24,6 +24,8 @@ namespace Netherlands3D.Traffic
         [Tooltip("Event that fires when the database needs to be cleared")]
         [SerializeField] private BoolEvent eventClearDatabase;
 
+        [SerializeField] private DataDatabase dataDatabase;
+
         private void OnEnable()
         {
             eventFilesImported.started.AddListener(Load);
@@ -53,6 +55,7 @@ namespace Netherlands3D.Traffic
             Stopwatch sw = new Stopwatch();
             sw.Start();
             int failedFiles = 0;
+            System.Action<Dictionary<int, Data>> convertedData = null;
 
             // Check if there are multiple files
             string[] paths = filePaths.Split(',');
@@ -64,7 +67,10 @@ namespace Netherlands3D.Traffic
                 switch(pathExtension)
                 {
                     case ".fzp":
-                        yield return ConverterFZP.Convert(path, maxDataCount);
+                        yield return ConverterFZP.Convert(path, maxDataCount, convertedData => 
+                        {
+                            dataDatabase.AddData(convertedData);
+                        });
                         break;
                     default:
                         failedFiles++;

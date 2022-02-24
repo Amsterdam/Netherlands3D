@@ -199,8 +199,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   showDebugLog: 0
   maxDataCount: 200
-  eventFilesImported: {fileID: 0}
-  eventClearDatabase: {fileID: 0}
+  eventFilesImported: {fileID: 11400000, guid: 8491950a9badaae46996777c747e43d1, type: 2}
+  eventClearDatabase: {fileID: 11400000, guid: 3a9cdedad05358846955d9112acf117d, type: 2}
+  dataDatabase: {fileID: 11400000, guid: 0c7b59f8d6cc82046a448b240c6183d3, type: 2}
 --- !u!4 &538340954
 Transform:
   m_ObjectHideFlags: 0
@@ -588,9 +589,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0131ebea36aa07443ac4c6b4372f9f66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entitiesDatas: []
+  entitiesDatas:
+  - {fileID: 11400000, guid: 20d7d988f78d49742999abe6f0e93f3c, type: 2}
+  - {fileID: 11400000, guid: f332c2bfe813b534b870178d076f8da8, type: 2}
+  - {fileID: 11400000, guid: 3d5763c091c2ba2418ffaee13504b37f, type: 2}
+  - {fileID: 11400000, guid: bca234faa15cad240a18b915accd54b9, type: 2}
+  - {fileID: 11400000, guid: 568c237735c3a404aad6c3834762233c, type: 2}
+  - {fileID: 11400000, guid: 2968661f991c8e548acf22059160d266, type: 2}
+  - {fileID: 11400000, guid: e292eb682656a7e4ab4cd8a41ad30936, type: 2}
   showDebugLog: 1
-  datas: {fileID: 0}
+  datas: {fileID: 11400000, guid: 0c7b59f8d6cc82046a448b240c6183d3, type: 2}
 --- !u!1001 &109916578289228812
 PrefabInstance:
   m_ObjectHideFlags: 0

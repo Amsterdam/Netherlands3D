@@ -4,7 +4,7 @@ VISSIM stands for:
 "Verkehr In Städten - SIMulationsmodell"
 And was created in germany.
 
-## Traffic.File
+## Traffic.File (Traffic File Importer)
 Loads files used for traffic (VISSIM)
 - When loaded it invokes SO with data
 

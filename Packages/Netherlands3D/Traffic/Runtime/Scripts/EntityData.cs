@@ -8,7 +8,7 @@ namespace Netherlands3D.Traffic
     /// <summary>
     /// An scriptable object containing data for its VISSIM entity (Example a human, car, truck, bus etc.)
     /// </summary>
-    [CreateAssetMenu(fileName = "VISSIM Entity", menuName = "ScriptableObjects/VISSIM Entity Data", order = 1)]
+    [CreateAssetMenu(fileName = "Traffic Entity Data", menuName = "ScriptableObjects/Traffic/Entity Data", order = 1)]
     public class EntityData : ScriptableObject
     {
         [Tooltip("The corresponding key value of this entity. 100 = Car; 200 = Truck; 300 = Bus; 400 = Tram; 500 = Pedestrian; 600 = Cycle; 700 = Van;")]

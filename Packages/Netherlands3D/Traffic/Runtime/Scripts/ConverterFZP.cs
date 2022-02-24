@@ -24,7 +24,7 @@ namespace Netherlands3D.Traffic
         /// Reads the file.fzp with VISSIM data and converts it to useable vissim data
         /// </summary>
         /// <param name="file"></param>
-        public static IEnumerator Convert(string filePath, int maxDataCount)
+        public static IEnumerator Convert(string filePath, int maxDataCount, System.Action<Dictionary<int, Data>> callback)
         {
             // Convert filePath to fileContent
             using StreamReader sr = new StreamReader(filePath);
@@ -78,7 +78,7 @@ namespace Netherlands3D.Traffic
             }
 
             // Add data to VISSIM
-            yield return convertedData;
+            callback(convertedData);
 
             // Check if there are missing Vissim entity ids //TODO move to mangager.add?
             //if(VISSIMManager.MissingEntityIDs.Count > 0)

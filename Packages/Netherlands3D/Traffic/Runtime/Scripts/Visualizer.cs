@@ -30,7 +30,7 @@ namespace Netherlands3D.Traffic
         private GameObject defaultEntityPrefab;
 
         public bool showDebugLog = true;
-        public DictionaryVariable<int, Data> datas;
+        public DataDatabase datas;
         /// <summary>
         /// A list containing all entities that do not have a corresponding id from entitiesDatas for debugging purposes
         /// </summary>
@@ -41,28 +41,39 @@ namespace Netherlands3D.Traffic
         public Dictionary<int, GameObject> availableEntitiesData = new Dictionary<int, GameObject>(); //TODO to so
 
 
+        private void OnEnable()
+        {
+            datas.OnAddData.AddListener(UpdateEntities);
+        }
+
+        private void OnDisable()
+        {
+            datas.OnAddData.RemoveListener(UpdateEntities);
+        }
+
         private void Start()
         {
             LoadDefaultData();
+            defaultEntityPrefab = Resources.Load<GameObject>("VISSIM Entity Default");
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public Visualizer()
-        {
-            defaultEntityPrefab = Resources.Load<GameObject>("VISSIM Entity Default");
+        //public Visualizer()
+        //{
+        //    defaultEntityPrefab = Resources.Load<GameObject>("VISSIM Entity Default");
 
-            //VISSIMManager.OnAddData += UpdateEntities; TODO
-        }
+        //    //VISSIMManager.OnAddData += UpdateEntities; TODO
+        //}
 
         /// <summary>
         /// Deconstructor
         /// </summary>
-        ~Visualizer()
-        {
-            //VISSIMManager.OnAddData -= UpdateEntities;
-        }
+        //~Visualizer()
+        //{
+        //    //VISSIMManager.OnAddData -= UpdateEntities;
+        //}
 
         /// <summary>
         /// Updates the entities dictionary with all data from VISSIMManager.Datas
