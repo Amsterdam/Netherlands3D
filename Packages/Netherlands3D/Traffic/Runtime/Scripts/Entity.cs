@@ -10,7 +10,7 @@ namespace Netherlands3D.Traffic
     /// <summary>
     /// Base class for all Traffic entities (example car, truck, bike etc)
     /// </summary>
-    [AddComponentMenu("VISSIM/VISSIM Entity")] // Used to change the script inspector name
+    [AddComponentMenu("Traffic/Traffic Entity")] // Used to change the script inspector name
     [RequireComponent(typeof(Animation))]
     public class Entity : MonoBehaviour
     {
@@ -24,13 +24,17 @@ namespace Netherlands3D.Traffic
         [SerializeField] protected Transform defaultCubeModel;
 
         [Header("Scriptable Objects")]
+        [Tooltip("Event that gets triggerd if the simulation time changes")]
         [SerializeField] protected FloatEvent eventSimulationTimeChanged;
+        [Tooltip("Event that gets triggerd if the simulation speed changes")]
         [SerializeField] protected FloatEvent eventSimulationSpeedChanged;
+        [Tooltip("Event that gets triggerd if the simulation state changes")]
         [SerializeField] protected IntEvent eventSimulationStateChanged;
-
+        [Tooltip("The current VISSIM simulation time starting from 0 - infinity")]
         [SerializeField] protected FloatVariable simulationTime;
+        [Tooltip("The speed multiplier to how fast the simulation is running. 1 = normal")]
         [SerializeField] protected FloatVariable simulationSpeed;
-        [Tooltip("0 = paused, 1 = play, -1 = reversed, -2 = reset")]
+        [Tooltip("The state of the simulation time and how it gets updated. 0 = paused, 1 = play, -1 = reversed, -2 = reset")]
         [SerializeField] protected IntVariable simulationState;
 
         protected readonly string animationName = "Movement";
@@ -81,14 +85,27 @@ namespace Netherlands3D.Traffic
         /// </summary>
         protected Data data;
 
-        public void Initialize(Data data)
+        public void Initialize(Data data, EntityScriptableObjects so)
         {
             this.data = data;
+
+            // So
+            eventSimulationTimeChanged = so.eventSimulationTimeChanged;
+            eventSimulationSpeedChanged = so.eventSimulationSpeedChanged;
+            eventSimulationStateChanged = so.eventSimulationStateChanged;
+            simulationSpeed = so.simulationSpeed;
+            simulationTime = so.simulationTime;
+            simulationState = so.simulationState;
+
+            eventSimulationTimeChanged.started.AddListener(OnSimulationTimeChanged);
+            eventSimulationSpeedChanged.started.AddListener(OnSimulationSpeedChanged);
+            eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
+
+            // Animation
             animationClip = new AnimationClip();
             animationClip.name = animationName;
             animationClip.legacy = true;
             animation.wrapMode = WrapMode.Clamp;
-
             animationCurvePositionX = new AnimationCurve();
             animationCurvePositionY = new AnimationCurve();
             animationCurvePositionZ = new AnimationCurve();
@@ -105,10 +122,6 @@ namespace Netherlands3D.Traffic
 
         protected virtual void OnEnable()
         {
-            eventSimulationTimeChanged.started.AddListener(OnSimulationTimeChanged);
-            eventSimulationSpeedChanged.started.AddListener(OnSimulationSpeedChanged);
-            eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
-
             // If turned off and then turned back on update its values
             if(data != null)
             {

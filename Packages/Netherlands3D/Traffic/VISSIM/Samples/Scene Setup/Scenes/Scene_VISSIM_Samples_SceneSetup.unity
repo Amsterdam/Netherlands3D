@@ -178,6 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 538340954}
   - component: {fileID: 538340953}
+  - component: {fileID: 538340955}
   m_Layer: 0
   m_Name: Traffic
   m_TagString: Untagged
@@ -217,6 +218,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &538340955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538340952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9eb5797fe92cd744a97a9acceaabf850, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1253586905
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -599,6 +612,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e292eb682656a7e4ab4cd8a41ad30936, type: 2}
   showDebugLog: 1
   datas: {fileID: 11400000, guid: 0c7b59f8d6cc82046a448b240c6183d3, type: 2}
+  entitySO:
+    eventSimulationTimeChanged: {fileID: 11400000, guid: 7cbbabc4c6ca5f044a5492fb55a52b94, type: 2}
+    eventSimulationSpeedChanged: {fileID: 11400000, guid: 221a2b2e7995a9940a2b93b76f04d386, type: 2}
+    eventSimulationStateChanged: {fileID: 11400000, guid: 93027ea80592f354c9f4b393f8881da0, type: 2}
+    simulationTime: {fileID: 11400000, guid: 45384d89a76d18340bbcb11dfc8b8f82, type: 2}
+    simulationSpeed: {fileID: 11400000, guid: b62124e41bd8f704fbd00b900dc9778d, type: 2}
+    simulationState: {fileID: 11400000, guid: 2f0f64cea92c55a4b845d4667baaf80f, type: 2}
 --- !u!1001 &109916578289228812
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -609,6 +629,14 @@ PrefabInstance:
     - target: {fileID: 109916578899901664, guid: c6419fc1b0508ed488d582afea07c210, type: 3}
       propertyPath: m_Name
       value: '[VISSIM Manager]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 109916578899901664, guid: c6419fc1b0508ed488d582afea07c210, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 109916578899901665, guid: c6419fc1b0508ed488d582afea07c210, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 109916578899901666, guid: c6419fc1b0508ed488d582afea07c210, type: 3}
       propertyPath: m_RootOrder
@@ -652,6 +680,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 109916578899901666, guid: c6419fc1b0508ed488d582afea07c210, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 109916578899901667, guid: c6419fc1b0508ed488d582afea07c210, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

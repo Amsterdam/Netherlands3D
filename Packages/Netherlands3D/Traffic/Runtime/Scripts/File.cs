@@ -40,7 +40,7 @@ namespace Netherlands3D.Traffic
         /// Load a file for traffic
         /// </summary>
         /// <param name="filePaths">The filepaths of files to load</param>
-        private void Load(string filePaths)
+        public void Load(string filePaths)
         {
             StartCoroutine(LoadAsync(filePaths));
         }

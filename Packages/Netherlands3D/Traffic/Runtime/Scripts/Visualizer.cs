@@ -40,6 +40,8 @@ namespace Netherlands3D.Traffic
         /// </summary>
         public Dictionary<int, GameObject> availableEntitiesData = new Dictionary<int, GameObject>(); //TODO to so
 
+        [Header("Scriptable Objects")]
+        public EntityScriptableObjects entitySO;
 
         private void OnEnable()
         {
@@ -127,7 +129,10 @@ namespace Netherlands3D.Traffic
                     // Create entity
                     Entity entity = Object.Instantiate(prefab, transform).GetComponent<Entity>();
                     entities.Add(data.Key, entity);
-                    entity.Initialize(data.Value);
+                    print(data);
+                    print(data.Key);
+                    print(data.Value);
+                    entity.Initialize(data.Value, entitySO);
                 }
             }
 

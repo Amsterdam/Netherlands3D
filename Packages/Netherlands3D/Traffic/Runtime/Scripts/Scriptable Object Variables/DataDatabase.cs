@@ -17,7 +17,7 @@ namespace Netherlands3D.Traffic
 
         public int maxDatabaseCount = -1;
 
-        public Dictionary<int, Data> Value;
+        public Dictionary<int, Data> Value = new Dictionary<int, Data>();
 
         /// <summary>
         /// Add VISSIM data to VISSIMManager.datas

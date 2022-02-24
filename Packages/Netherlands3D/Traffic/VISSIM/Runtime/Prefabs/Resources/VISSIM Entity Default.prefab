@@ -121,7 +121,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5537717927713023185}
-  - component: {fileID: 8844841367039735350}
+  - component: {fileID: 5785735367068612527}
   - component: {fileID: 155323662574190005}
   - component: {fileID: 7358881121595154889}
   m_Layer: 0
@@ -146,7 +146,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8844841367039735350
+--- !u!114 &5785735367068612527
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -155,10 +155,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 7484077656226668725}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6ab12317087a2940a28d74e39a01d96, type: 3}
+  m_Script: {fileID: 11500000, guid: a6f19f99e752b3349be2fd87acd4b148, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   defaultCubeModel: {fileID: 5874098943357162302}
+  eventSimulationTimeChanged: {fileID: 0}
+  eventSimulationSpeedChanged: {fileID: 0}
+  eventSimulationStateChanged: {fileID: 0}
+  simulationTime: {fileID: 0}
+  simulationSpeed: {fileID: 0}
+  simulationState: {fileID: 0}
 --- !u!111 &155323662574190005
 Animation:
   m_ObjectHideFlags: 0
