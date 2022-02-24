@@ -100,7 +100,11 @@ namespace Netherlands3D.TileSystem
 			if(brotliCompressedExtention.Length>0)
 				url += brotliCompressedExtention;
 #endif
+			
 			var webRequest = UnityWebRequest.Get(url);
+#if !UNITY_EDITOR && UNITY_WEBGL
+			webRequest.SetRequestHeader("Accept-Encoding", "br");
+#endif
 
 			tiles[tileKey].runningWebRequest = webRequest;
 			yield return webRequest.SendWebRequest();
