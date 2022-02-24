@@ -11,8 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - added improved UI to WMS-Layer Sample 
+- added ADD_BROTLI_ACCEPT_ENCODING_HEADER scripting define symbol to enable adding the Accept-Encoding header for brotli files
 
 ### [0.0.8] - 23-02-2022
+
+### Changed
 
 - Keep track of SubObjects coroutine so it can be interupted before calling a new coloring process
 

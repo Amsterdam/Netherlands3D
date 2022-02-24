@@ -102,7 +102,7 @@ namespace Netherlands3D.TileSystem
 #endif
 			
 			var webRequest = UnityWebRequest.Get(url);
-#if !UNITY_EDITOR && UNITY_WEBGL
+#if !UNITY_EDITOR && UNITY_WEBGL && ADD_BROTLI_ACCEPT_ENCODING_HEADER
 			webRequest.SetRequestHeader("Accept-Encoding", "br");
 #endif
 
