@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Traffic Entity Data Cyclist
   m_EditorClassIdentifier: 
   id: 600
+  averageHeight: 1.7
   displayName: Fietser
   sprite: {fileID: 0}
-  prefabEntity: {fileID: 0}
+  prefabEntity: {fileID: 5884110521630467394, guid: 508b947dd55fddf43ac4ca673f543cbe, type: 3}

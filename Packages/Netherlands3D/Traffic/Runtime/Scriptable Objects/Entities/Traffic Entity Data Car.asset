@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Traffic Entity Data Car
   m_EditorClassIdentifier: 
   id: 100
+  averageHeight: 1.5
   displayName: Auto
   sprite: {fileID: 0}
-  prefabEntity: {fileID: 0}
+  prefabEntity: {fileID: 8823164296100017700, guid: 90114d2112b489a40a5620a6ceceb9ab, type: 3}

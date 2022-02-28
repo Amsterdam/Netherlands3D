@@ -115,7 +115,11 @@ namespace Netherlands3D.Traffic
             animationCurveRotationW = new AnimationCurve();
             animationCurveModel = new AnimationCurve();
 
-            if(defaultCubeModel != null) defaultCubeModel.localScale = new Vector3(data.width, 1, data.length);
+            if(defaultCubeModel != null)
+            {
+                defaultCubeModel.localScale = new Vector3(data.width, data.height, data.length);
+                defaultCubeModel.localPosition = new Vector3(0, data.height * 0.5f, 0);
+            }
 
             UpdateNavigation();
         }
@@ -133,9 +137,12 @@ namespace Netherlands3D.Traffic
 
         protected virtual void OnDisable()
         {
-            eventSimulationTimeChanged.started.RemoveListener(OnSimulationTimeChanged);
-            eventSimulationSpeedChanged.started.RemoveListener(OnSimulationSpeedChanged);
-            eventSimulationStateChanged.started.RemoveListener(OnSimulationStateChanged);
+            if(data != null)
+            {
+                eventSimulationTimeChanged.started.RemoveListener(OnSimulationTimeChanged);
+                eventSimulationSpeedChanged.started.RemoveListener(OnSimulationSpeedChanged);
+                eventSimulationStateChanged.started.RemoveListener(OnSimulationStateChanged);
+            }
         }
 
         protected virtual void Awake()
@@ -298,7 +305,7 @@ namespace Netherlands3D.Traffic
                 Matrix4x4 m = Gizmos.matrix;
                 Gizmos.matrix = transform.localToWorldMatrix;
                 Gizmos.color = Color.magenta;
-                Gizmos.DrawWireCube(new Vector3(0, 0.5f, 0), new Vector3(data.width, 1, data.length));
+                Gizmos.DrawWireCube(new Vector3(0, 0.5f, 0), new Vector3(data.width, data.height, data.length));
                 Gizmos.matrix = m;
             }
         }

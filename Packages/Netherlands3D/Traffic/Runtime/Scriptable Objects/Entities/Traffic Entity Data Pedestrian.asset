@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Traffic Entity Data Pedestrian
   m_EditorClassIdentifier: 
   id: 500
+  averageHeight: 1.8
   displayName: Voetganger
   sprite: {fileID: 0}
-  prefabEntity: {fileID: 0}
+  prefabEntity: {fileID: 4429143569246135177, guid: 45c3f714694ab154fb1eb57fbda7b1a8, type: 3}

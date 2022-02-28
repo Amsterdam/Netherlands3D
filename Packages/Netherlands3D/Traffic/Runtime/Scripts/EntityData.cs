@@ -18,7 +18,9 @@ namespace Netherlands3D.Traffic
         /// <remarks>
         /// 100 = Car; 200 = Truck; 300 = Bus; 400 = Tram; 500 = Pedestrian; 600 = Cycle; 700 = Van;
         /// </remarks>
-        public int id; //TODO make this a dropdown menu for user
+        public int id;
+        [Tooltip("The average hight in meters of the entity to be used if it has no prefabEntity")]
+        public float averageHeight = 1;
         [Tooltip("The name to be displayed to user")]
         public string displayName;
         [Tooltip("The sprite to be displayed to user")]

@@ -12,4 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2844bf434f477104290a020d1c91745b, type: 3}
   m_Name: Simulation State
   m_EditorClassIdentifier: 
-  Value: 0
+  value: 1
+  description: 'The state of the simulation.
+
+    -2 = reset and stop
+
+    -1 = reversed
+    play
+
+    0 = stop
+
+    1 = play'
+  onValueChanged: {fileID: 11400000, guid: 93027ea80592f354c9f4b393f8881da0, type: 2}

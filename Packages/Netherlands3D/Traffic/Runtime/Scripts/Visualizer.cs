@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Netherlands3D.TileSystem;
+using System.Linq;
 
 namespace Netherlands3D.Traffic
 {
@@ -14,11 +15,21 @@ namespace Netherlands3D.Traffic
         /// <summary>
         /// Static raycasthit used by entities
         /// </summary>
-        public static RaycastHit Hit;
+        public static RaycastHit Hit;//TODO remove (no instancing)
 
-        [Header("Entity Data")]
+        [Header("Options")]
+        [Tooltip("Show debug.log messages from this class")]
+        public bool showDebugLog = true;
+        [Tooltip("Should the Scriptable Objects Variables be reset on start to default?")]
+        [SerializeField] private bool resetSOVOnStart = true;
+
+        [Header("Scriptable Objects")]
+        [Tooltip("The database for Data")]
+        public DataDatabase datas;
         [Tooltip("List containing every available entity data (Scriptable Objects)")]
         public List<EntityData> entitiesDatas = new List<EntityData>();
+        [Tooltip("The scriptable objects for an entity")]
+        public EntityScriptableObjects entitySO;
 
         /// <summary>
         /// Dictionary containing all entites <Data.id, Entity>
@@ -29,8 +40,6 @@ namespace Netherlands3D.Traffic
         /// </summary>
         private GameObject defaultEntityPrefab;
 
-        public bool showDebugLog = true;
-        public DataDatabase datas;
         /// <summary>
         /// A list containing all entities that do not have a corresponding id from entitiesDatas for debugging purposes
         /// </summary>
@@ -40,23 +49,27 @@ namespace Netherlands3D.Traffic
         /// </summary>
         public Dictionary<int, GameObject> availableEntitiesData = new Dictionary<int, GameObject>(); //TODO to so
 
-        [Header("Scriptable Objects")]
-        public EntityScriptableObjects entitySO;
-
         private void OnEnable()
         {
             datas.OnAddData.AddListener(UpdateEntities);
+            entitySO.eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
         }
 
         private void OnDisable()
         {
             datas.OnAddData.RemoveListener(UpdateEntities);
+            entitySO.eventSimulationStateChanged.started.RemoveListener(OnSimulationStateChanged);
         }
 
         private void Start()
         {
             LoadDefaultData();
-            defaultEntityPrefab = Resources.Load<GameObject>("VISSIM Entity Default");
+            defaultEntityPrefab = Resources.Load<GameObject>("Traffic Entity Default");
+        }
+
+        private void Update()
+        {
+            UpdateSimulationTime();
         }
 
         /// <summary>
@@ -114,24 +127,25 @@ namespace Netherlands3D.Traffic
                 else
                 {
                     // Entity prefab
-                    if(availableEntitiesData.ContainsKey(data.Value.entityTypeIndex) || availableEntitiesData[data.Value.entityTypeIndex] == null) //TODO if no available entites give different error msg
+                    if(!availableEntitiesData.ContainsKey(data.Value.entityTypeIndex) || availableEntitiesData[data.Value.entityTypeIndex] == null) //TODO if no available entites give different error msg
                     {
                         // No gameobjects to choose from
-                        prefab = defaultEntityPrefab;
+                        prefab = defaultEntityPrefab;                        
                         Debug.LogWarning("[VISSIM] Entity has no prefabEntity assigned! Make sure that you assign a prefab in the entity Scriptable Object");
                     }
                     else
                     {
-                        // Choose random prefab
+                        // Get entity prefab
                         prefab = availableEntitiesData[data.Value.entityTypeIndex];
                     }
-                    
+
+                    // Set entity height
+                    EntityData ed = entitiesDatas.Single(x => x.id == data.Value.entityTypeIndex);
+                    if(ed != null) data.Value.height = ed.averageHeight;
+
                     // Create entity
                     Entity entity = Object.Instantiate(prefab, transform).GetComponent<Entity>();
                     entities.Add(data.Key, entity);
-                    print(data);
-                    print(data.Key);
-                    print(data.Value);
                     entity.Initialize(data.Value, entitySO);
                 }
             }
@@ -156,6 +170,55 @@ namespace Netherlands3D.Traffic
                 }
 
                 availableEntitiesData.Add(item.id, item.prefabEntity);
+            }
+        }
+
+        /// <summary>
+        /// Update the simulation time value
+        /// </summary>
+        private void UpdateSimulationTime()
+        {
+            switch(entitySO.simulationState.Value)
+            {
+                case -1: // Reversed
+                    if(entitySO.simulationTime.Value > 0)
+                    {
+                        // Note that it is updating the value and not Value, we dont need a callback here every frame that it updates the value
+                        entitySO.simulationTime.value -= Time.deltaTime * entitySO.simulationSpeed.Value;
+                        if(entitySO.simulationTime.Value < 0) entitySO.simulationTime.Value = 0;
+                    }
+                    break;
+                case 0: // Paused
+                    break;
+                case 1: // Play
+                    entitySO.simulationTime.value += Time.deltaTime * entitySO.simulationSpeed.Value;
+                    break;
+                case -2: // Reset
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Callback when the VISSIM.SimulationState gets changed
+        /// </summary>
+        /// <param name="newState"></param>
+        protected virtual void OnSimulationStateChanged(int newState)
+        {
+            switch(newState)
+            {
+                case 1: // Play
+                    break;
+                case 0: // Paused
+                    break;
+                case -1: // Reversed                    
+                    break;
+                case -2: // Reset
+                    entitySO.simulationTime.Value = 0;
+                    break;
+                default:
+                    break;
             }
         }
     }

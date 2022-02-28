@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 068070d8d5197ce4d80d66ccdba0f364, type: 3}
-  m_Name: Traffic Entity Data Van
+  m_Name: Traffic Entity Data Tram
   m_EditorClassIdentifier: 
-  id: 700
-  averageHeight: 2.8
-  displayName: Busje
+  id: 400
+  averageHeight: 3.7
+  displayName: Trams
   sprite: {fileID: 0}
-  prefabEntity: {fileID: 575235714235746927, guid: e3b2d0ea8183c854e8abbf228c6cb3b8, type: 3}
+  prefabEntity: {fileID: 1530715839484889679, guid: 4fb757703c542344f81d4908da6d9661, type: 3}

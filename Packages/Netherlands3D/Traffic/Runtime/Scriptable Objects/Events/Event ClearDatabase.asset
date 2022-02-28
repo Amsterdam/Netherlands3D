@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 068070d8d5197ce4d80d66ccdba0f364, type: 3}
-  m_Name: Traffic Entity Data Van
+  m_Script: {fileID: 11500000, guid: cb96d9d462cb74a419a01a4c68a90f32, type: 3}
+  m_Name: Event ClearDatabase
   m_EditorClassIdentifier: 
-  id: 700
-  averageHeight: 2.8
-  displayName: Busje
-  sprite: {fileID: 0}
-  prefabEntity: {fileID: 575235714235746927, guid: e3b2d0ea8183c854e8abbf228c6cb3b8, type: 3}
+  eventName: 
+  description: 
+  started:
+    m_PersistentCalls:
+      m_Calls: []

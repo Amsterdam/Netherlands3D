@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Traffic Entity Data Truck
   m_EditorClassIdentifier: 
   id: 200
+  averageHeight: 4
   displayName: Vrachtwagen
   sprite: {fileID: 0}
-  prefabEntity: {fileID: 0}
+  prefabEntity: {fileID: 5458467475016053672, guid: 44ff006ef340e434ea806aed92b65b67, type: 3}

@@ -11,7 +11,7 @@ namespace Netherlands3D.Traffic
     [System.Serializable]
     public class Data
     {
-        // $VEHICLE:SIMSEC;NO;VEHTYPE;COORDFRONT;COORDREAR;WIDTH
+        // (VISSIM) $VEHICLE:SIMSEC;NO;VEHTYPE;COORDFRONT;COORDREAR;WIDTH
                 
         /// <summary>
         /// Unique vehicle number (in data called "NO")
@@ -30,6 +30,8 @@ namespace Netherlands3D.Traffic
         public float width;
         [Tooltip("The entity length in meters (z-axis)")]
         public float length;
+        [Tooltip("The entity hight in meters (y-axis)")]
+        public float height;
         /// <summary>
         /// The coordinates of the entity with corresponding key simulation second <simulationSecond, StartEndPos
         /// </summary>
