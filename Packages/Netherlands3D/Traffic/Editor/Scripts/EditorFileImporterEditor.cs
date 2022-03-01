@@ -34,7 +34,7 @@ namespace Netherlands3D.Traffic.Editor
                 if(filePath.Length != 0)
                 {
                     Debug.Log("[VISSIM Testing] Selected .fzp file from: " + filePath);
-                    selected.file.Load(filePath);
+                    selected.File.Load(filePath);
                 }
             }
 

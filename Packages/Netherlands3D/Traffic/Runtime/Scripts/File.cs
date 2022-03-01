@@ -15,7 +15,7 @@ namespace Netherlands3D.Traffic
         [Header("Options")]
         [Tooltip("Show the debug messages")]
         [SerializeField] private bool showDebugLog;
-
+        [Tooltip("The max amount of data that can be loaded")]
         [SerializeField] private int maxDataCount = 200;
 
         [Header("Components")]
@@ -23,7 +23,7 @@ namespace Netherlands3D.Traffic
         [SerializeField] private StringEvent eventFilesImported;
         [Tooltip("Event that fires when the database needs to be cleared")]
         [SerializeField] private BoolEvent eventClearDatabase;
-
+        [Tooltip("The database holding 'Data' classes")]
         [SerializeField] private DataDatabase dataDatabase;
 
         private void OnEnable()
@@ -55,7 +55,6 @@ namespace Netherlands3D.Traffic
             Stopwatch sw = new Stopwatch();
             sw.Start();
             int failedFiles = 0;
-            System.Action<Dictionary<int, Data>> convertedData = null;
 
             // Check if there are multiple files
             string[] paths = filePaths.Split(',');

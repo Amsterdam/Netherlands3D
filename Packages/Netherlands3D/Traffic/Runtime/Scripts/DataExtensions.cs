@@ -12,8 +12,8 @@ namespace Netherlands3D.Traffic
         /// <summary>
         /// Add coordinates to a data class
         /// </summary>
-        /// <param name="data"></param>
-        /// <param name="newCoordinates"></param>
+        /// <param name="data">The data class to add it to</param>
+        /// <param name="newCoordinates">The new Data.coordinates</param>
         public static void AddCoordinates(this Data data, Dictionary<float, Data.Coordinates> newCoordinates)
         {
             foreach(var item in newCoordinates)

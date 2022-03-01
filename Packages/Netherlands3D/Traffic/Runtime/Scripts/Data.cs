@@ -23,15 +23,8 @@ namespace Netherlands3D.Traffic
         /// </summary>
         [Tooltip("The entity type 100 = Car; 200 = Truck; 300 = Bus; 400 = Tram; 500 = Pedestrian; 600 = Cycle; 700 = Van;")]
         public int entityTypeIndex;
-        /// <summary>
-        /// Vehicle width in meters, depending on 2D/3D model distribution. The width is relevant for overtaking within the lane
-        /// </summary>
-        [Tooltip("Entity width in meters (x-axis), depending on 2D/3D model distribution. The width is relevant for overtaking within the lane")]
-        public float width;
-        [Tooltip("The entity length in meters (z-axis)")]
-        public float length;
-        [Tooltip("The entity hight in meters (y-axis)")]
-        public float height;
+        [Tooltip("The entity size in x = width, y = height, z = length (meters)")]
+        public Vector3 size;
         /// <summary>
         /// The coordinates of the entity with corresponding key simulation second <simulationSecond, StartEndPos
         /// </summary>
@@ -45,10 +38,10 @@ namespace Netherlands3D.Traffic
         {
             this.id = id;
             this.entityTypeIndex = entityTypeIndex;
-            this.width = width;
+            size.x = width;
             if(coordinates.ContainsKey(coordinates.First().Key))
             {
-                this.length = Vector3.Distance(coordinates.First().Value.coordinatesRear, coordinates.First().Value.coordinatesFront);
+                size.z = Vector3.Distance(coordinates.First().Value.coordinatesRear, coordinates.First().Value.coordinatesFront);
             }
             this.coordinates = coordinates;
         }

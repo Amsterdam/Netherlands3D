@@ -23,8 +23,10 @@ namespace Netherlands3D.Traffic
         /// <summary>
         /// Reads the file.fzp with VISSIM data and converts it to useable vissim data
         /// </summary>
-        /// <param name="file"></param>
-        public static IEnumerator Convert(string filePath, int maxDataCount, System.Action<Dictionary<int, Data>> callback)
+        /// <param name="file">The file to convert</param>
+        /// <param name="maxDataCount">The max amount of data to be extracted. -1 = infinity</param>
+        /// <param name="callback">The callback that gets triggerd when the data is collected.</param>
+        public static IEnumerator Convert(string filePath, int maxDataCount, Action<Dictionary<int, Data>> callback)
         {
             // Convert filePath to fileContent
             using StreamReader sr = new StreamReader(filePath);
@@ -49,12 +51,13 @@ namespace Netherlands3D.Traffic
                         // But check if coordinates arent already filled in if file contains data bugs/duplicates
                         if(convertedData[dataRaw.id].coordinates.ContainsKey(dataRaw.simulationSecond))
                         {
-                            Debug.LogWarning("[VISSIM] Found a coordination duplicate.");
+                            Debug.LogWarning("[VISSIM] Found a coordination duplicate. Make sure that each entity has its own unique simulation seconds.");
                             // This is caused by the entity id having 2 of the same simulation seconds in the data
                             // Make sure that each entity id has unique simsec (simulation seconds)
                             continue;
                         }
 
+                        // Add the new simulation second to its coordinates
                         convertedData[dataRaw.id].coordinates.Add(dataRaw.simulationSecond, new Data.Coordinates(dataRaw.coordinatesFront, dataRaw.coordinatesRear));
                     }
                     else
@@ -73,22 +76,10 @@ namespace Netherlands3D.Traffic
                 {
                     readyToConvert = true;
                 }
-
-
             }
 
             // Add data to VISSIM
             callback(convertedData);
-
-            // Check if there are missing Vissim entity ids //TODO move to mangager.add?
-            //if(VISSIMManager.MissingEntityIDs.Count > 0)
-            //{
-            //    //vissimConfiguration.OpenInterface(missingVissimTypes); // opens missing visism interface
-            //}
-            //else
-            //{
-            //    //StartVissim(); // starts animation
-            //}
 
             yield break;
         }
@@ -96,9 +87,9 @@ namespace Netherlands3D.Traffic
         /// <summary>
         /// Converts a data string to data
         /// </summary>
-        /// <param name="dataString"></param>
-        /// <returns>Data</returns>
-        public static DataRaw ConvertToDataRaw(string dataString)
+        /// <param name="dataString">The string containing data to be converted</param>
+        /// <returns>DataRaw</returns>
+        private static DataRaw ConvertToDataRaw(string dataString)
         {
             string[] array = dataString.Split(';');
             float simulationSeconds = float.Parse(array[0], CultureInfo.InvariantCulture);
@@ -114,7 +105,7 @@ namespace Netherlands3D.Traffic
         /// </summary>
         /// <param name="s">The string to convert</param>
         /// <returns>Vector3</returns>
-        public static Vector3 StringToVector3(string s)
+        private static Vector3 StringToVector3(string s)
         {
             //0 value is X
             //1 value is Y

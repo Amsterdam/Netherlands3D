@@ -15,6 +15,11 @@ namespace Netherlands3D.Traffic
     public class Entity : MonoBehaviour
     {
         /// <summary>
+        /// Static raycasthit used by entities
+        /// </summary>
+        public static RaycastHit Hit;
+
+        /// <summary>
         /// The data for the entity
         /// </summary>
         public Data Data { get { return data; } }
@@ -24,19 +29,11 @@ namespace Netherlands3D.Traffic
         [SerializeField] protected Transform defaultCubeModel;
 
         [Header("Scriptable Objects")]
-        [Tooltip("Event that gets triggerd if the simulation time changes")]
-        [SerializeField] protected FloatEvent eventSimulationTimeChanged;
-        [Tooltip("Event that gets triggerd if the simulation speed changes")]
-        [SerializeField] protected FloatEvent eventSimulationSpeedChanged;
-        [Tooltip("Event that gets triggerd if the simulation state changes")]
-        [SerializeField] protected IntEvent eventSimulationStateChanged;
-        [Tooltip("The current VISSIM simulation time starting from 0 - infinity")]
-        [SerializeField] protected FloatVariable simulationTime;
-        [Tooltip("The speed multiplier to how fast the simulation is running. 1 = normal")]
-        [SerializeField] protected FloatVariable simulationSpeed;
-        [Tooltip("The state of the simulation time and how it gets updated. 0 = paused, 1 = play, -1 = reversed, -2 = reset")]
-        [SerializeField] protected IntVariable simulationState;
+        [SerializeField] protected EntityScriptableObjects so;
 
+        /// <summary>
+        /// The entity animation name
+        /// </summary>
         protected readonly string animationName = "Movement";
 #pragma warning disable CS0108 // Member hides inherited member; missing new keyword (Unity deprecated)
         /// <summary>
@@ -85,21 +82,26 @@ namespace Netherlands3D.Traffic
         /// </summary>
         protected Data data;
 
+        /// <summary>
+        /// Initialize the entity
+        /// </summary>
+        /// <param name="data">Data of the entity</param>
+        /// <param name="so">EntityScriptableObjects</param>
         public void Initialize(Data data, EntityScriptableObjects so)
         {
             this.data = data;
 
             // So
-            eventSimulationTimeChanged = so.eventSimulationTimeChanged;
-            eventSimulationSpeedChanged = so.eventSimulationSpeedChanged;
-            eventSimulationStateChanged = so.eventSimulationStateChanged;
-            simulationSpeed = so.simulationSpeed;
-            simulationTime = so.simulationTime;
-            simulationState = so.simulationState;
+            this.so.eventSimulationTimeChanged = so.eventSimulationTimeChanged;
+            this.so.eventSimulationSpeedChanged = so.eventSimulationSpeedChanged;
+            this.so.eventSimulationStateChanged = so.eventSimulationStateChanged;
+            this.so.simulationSpeed = so.simulationSpeed;
+            this.so.simulationTime = so.simulationTime;
+            this.so.simulationState = so.simulationState;
 
-            eventSimulationTimeChanged.started.AddListener(OnSimulationTimeChanged);
-            eventSimulationSpeedChanged.started.AddListener(OnSimulationSpeedChanged);
-            eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
+            this.so.eventSimulationTimeChanged.started.AddListener(OnSimulationTimeChanged);
+            this.so.eventSimulationSpeedChanged.started.AddListener(OnSimulationSpeedChanged);
+            this.so.eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
 
             // Animation
             animationClip = new AnimationClip();
@@ -115,10 +117,11 @@ namespace Netherlands3D.Traffic
             animationCurveRotationW = new AnimationCurve();
             animationCurveModel = new AnimationCurve();
 
+            // Set default cube size
             if(defaultCubeModel != null)
             {
-                defaultCubeModel.localScale = new Vector3(data.width, data.height, data.length);
-                defaultCubeModel.localPosition = new Vector3(0, data.height * 0.5f, 0);
+                defaultCubeModel.localScale = new Vector3(data.size.x, data.size.y, data.size.z);
+                defaultCubeModel.localPosition = new Vector3(0, data.size.y * 0.5f, 0);
             }
 
             UpdateNavigation();
@@ -129,9 +132,9 @@ namespace Netherlands3D.Traffic
             // If turned off and then turned back on update its values
             if(data != null)
             {
-                OnSimulationTimeChanged(simulationTime.Value);
-                OnSimulationSpeedChanged(simulationSpeed.Value);
-                OnSimulationStateChanged(simulationState.Value);
+                OnSimulationTimeChanged(so.simulationTime.Value);
+                OnSimulationSpeedChanged(so.simulationSpeed.Value);
+                OnSimulationStateChanged(so.simulationState.Value);
             }
         }
 
@@ -139,9 +142,9 @@ namespace Netherlands3D.Traffic
         {
             if(data != null)
             {
-                eventSimulationTimeChanged.started.RemoveListener(OnSimulationTimeChanged);
-                eventSimulationSpeedChanged.started.RemoveListener(OnSimulationSpeedChanged);
-                eventSimulationStateChanged.started.RemoveListener(OnSimulationStateChanged);
+                so.eventSimulationTimeChanged.started.RemoveListener(OnSimulationTimeChanged);
+                so.eventSimulationSpeedChanged.started.RemoveListener(OnSimulationSpeedChanged);
+                so.eventSimulationStateChanged.started.RemoveListener(OnSimulationStateChanged);
             }
         }
 
@@ -170,9 +173,9 @@ namespace Netherlands3D.Traffic
             foreach(var item in data.coordinates)
             {
                 // Check for a raycast with ground
-                if(Physics.Raycast(item.Value.center + new Vector3(0, 50, 0), Vector3.down, out Visualizer.Hit)) //TODO add layermask?
+                if(Physics.Raycast(item.Value.center + new Vector3(0, 50, 0), Vector3.down, out Hit)) //TODO add layermask?
                 {
-                    item.Value.center.y = Visualizer.Hit.point.y;
+                    item.Value.center.y = Hit.point.y;
                 }//TODO Add binary mesh layer collider
 
                 // Add animation keyframe to clip
@@ -235,7 +238,7 @@ namespace Netherlands3D.Traffic
         protected virtual void OnSimulationSpeedChanged(float newSpeed)
         {
             if(animationClip == null) return;
-            switch(simulationState.Value)
+            switch(so.simulationState.Value)
             {
                 case 1:
                     animation[animationName].speed = newSpeed;
@@ -263,16 +266,16 @@ namespace Netherlands3D.Traffic
             {
                 case 1:
                     //animation.clip = animationClip;
-                    animation[animationName].speed = simulationSpeed.Value;
-                    animation[animationName].time = simulationTime.Value;
+                    animation[animationName].speed = so.simulationSpeed.Value;
+                    animation[animationName].time = so.simulationTime.Value;
                     animation.Play();
                     break;
                 case 0:
                     animation[animationName].speed = 0;
                     break;
                 case -1:
-                    animation[animationName].speed = -simulationSpeed.Value;
-                    animation[animationName].time = simulationTime.Value;
+                    animation[animationName].speed = -so.simulationSpeed.Value;
+                    animation[animationName].time = so.simulationTime.Value;
                     animation.Play();
                     //animation.Rewind();
                     break;
@@ -305,7 +308,7 @@ namespace Netherlands3D.Traffic
                 Matrix4x4 m = Gizmos.matrix;
                 Gizmos.matrix = transform.localToWorldMatrix;
                 Gizmos.color = Color.magenta;
-                Gizmos.DrawWireCube(new Vector3(0, 0.5f, 0), new Vector3(data.width, data.height, data.length));
+                Gizmos.DrawWireCube(new Vector3(0, data.size.y * 0.5f, 0), data.size);
                 Gizmos.matrix = m;
             }
         }

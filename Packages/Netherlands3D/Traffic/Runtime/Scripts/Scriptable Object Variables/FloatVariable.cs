@@ -5,6 +5,9 @@ using Netherlands3D.Events;
 
 namespace Netherlands3D.Traffic
 {
+    /// <summary>
+    /// A scriptable object variable of type float
+    /// </summary>
     [CreateAssetMenu(fileName = "Float Variable", menuName = "ScriptableObjects/Traffic/Float Variable", order = 1)]
     public class FloatVariable : ScriptableObject
     {

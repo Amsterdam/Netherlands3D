@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,15 +13,31 @@ namespace Netherlands3D.Traffic
         /// If the Datas list has reached its max count
         /// </summary>
         public bool DatasReachedMaxCount { get { return maxDatabaseCount > 0 && Value.Count >= maxDatabaseCount; } }
-
-        public UnityEvent<List<int>> OnAddData = new UnityEvent<List<int>>();
-
+        
+        /// <summary>
+        /// The max amount of data the database can contain
+        /// </summary>
         public int maxDatabaseCount = -1;
+        /// <summary>
+        /// The data <Data.id, Data>
+        /// </summary>
+        public Dictionary<int, Data> Value { get; private set; }
+        /// <summary>
+        /// Called when data is added. Contains the int indexes of new/updated Data values of Value
+        /// </summary>
+        public UnityEvent<List<int>> OnAddData = new UnityEvent<List<int>>();
+        /// <summary>
+        /// Called when data is removed. Contains the int indexes of removed data values of Value
+        /// </summary>
+        public UnityEvent<List<int>> OnRemoveData = new UnityEvent<List<int>>();
 
-        public Dictionary<int, Data> Value = new Dictionary<int, Data>();
+        private void OnEnable()
+        {
+            if(Value == null) Value = new Dictionary<int, Data>();
+        }
 
         /// <summary>
-        /// Add VISSIM data to VISSIMManager.datas
+        /// Add Data to the database
         /// </summary>
         /// <param name="data">The Data class to add</param>
         public void AddData(Data data)
@@ -34,9 +51,9 @@ namespace Netherlands3D.Traffic
         }
 
         /// <summary>
-        /// Add VISSIM data to VISSIMManager.datas
+        /// Add Data to the database
         /// </summary>
-        /// <param name="datas">The Data list to add</param>
+        /// <param name="newDatas">The Data dictionary to add</param>
         public void AddData(Dictionary<int, Data> newDatas)
         {
             // Keep track of what datas keys have been added/updated
@@ -61,6 +78,38 @@ namespace Netherlands3D.Traffic
             }
 
             OnAddData?.Invoke(dataKeysUpdated);
+        }
+
+        /// <summary>
+        /// Clears the database of all data
+        /// </summary>
+        public void Clear()
+        {
+            OnRemoveData?.Invoke(Value.Keys.ToList());
+            Value.Clear();
+        }
+
+        /// <summary>
+        /// Remove a specific instance of data
+        /// </summary>
+        /// <param name="data">The data to remove</param>
+        public void RemoveData(Data data)
+        {
+            OnRemoveData?.Invoke(new List<int>() { data.id });
+            Value.Remove(data.id);
+        }
+
+        /// <summary>
+        /// Remove specific instances of data
+        /// </summary>
+        /// <param name="datas">The datas to remove</param>
+        public void RemoveData(Dictionary<int, Data> datas)
+        {
+            OnRemoveData?.Invoke(datas.Keys.ToList());
+            foreach(var item in datas)
+            {
+                Value.Remove(item.Key);
+            }
         }
     }
 }

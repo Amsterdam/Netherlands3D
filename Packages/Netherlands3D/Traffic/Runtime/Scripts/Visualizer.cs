@@ -12,11 +12,6 @@ namespace Netherlands3D.Traffic
     [AddComponentMenu("Traffic/Traffic Visualizer")]
     public class Visualizer : MonoBehaviour
     {
-        /// <summary>
-        /// Static raycasthit used by entities
-        /// </summary>
-        public static RaycastHit Hit;//TODO remove (no instancing)
-
         [Header("Options")]
         [Tooltip("Show debug.log messages from this class")]
         public bool showDebugLog = true;
@@ -48,6 +43,7 @@ namespace Netherlands3D.Traffic
         /// Contains all available enities ID's (cars/busses/bikes etc.) with corresponding prefab to spawn
         /// </summary>
         public Dictionary<int, GameObject> availableEntitiesData = new Dictionary<int, GameObject>(); //TODO to so
+               
 
         private void OnEnable()
         {
@@ -65,30 +61,19 @@ namespace Netherlands3D.Traffic
         {
             LoadDefaultData();
             defaultEntityPrefab = Resources.Load<GameObject>("Traffic Entity Default");
+
+            if(resetSOVOnStart)
+            {
+                entitySO.simulationTime.value = 0;
+                entitySO.simulationState.value = 1;
+                entitySO.simulationSpeed.value = 1;
+            }
         }
 
         private void Update()
         {
             UpdateSimulationTime();
         }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        //public Visualizer()
-        //{
-        //    defaultEntityPrefab = Resources.Load<GameObject>("VISSIM Entity Default");
-
-        //    //VISSIMManager.OnAddData += UpdateEntities; TODO
-        //}
-
-        /// <summary>
-        /// Deconstructor
-        /// </summary>
-        //~Visualizer()
-        //{
-        //    //VISSIMManager.OnAddData -= UpdateEntities;
-        //}
 
         /// <summary>
         /// Updates the entities dictionary with all data from VISSIMManager.Datas
@@ -141,7 +126,7 @@ namespace Netherlands3D.Traffic
 
                     // Set entity height
                     EntityData ed = entitiesDatas.Single(x => x.id == data.Value.entityTypeIndex);
-                    if(ed != null) data.Value.height = ed.averageHeight;
+                    if(ed != null) data.Value.size.y = ed.averageHeight;
 
                     // Create entity
                     Entity entity = Object.Instantiate(prefab, transform).GetComponent<Entity>();
@@ -178,6 +163,8 @@ namespace Netherlands3D.Traffic
         /// </summary>
         private void UpdateSimulationTime()
         {
+            if(datas.Value == null || datas.Value.Count < 1) return;
+
             switch(entitySO.simulationState.Value)
             {
                 case -1: // Reversed
