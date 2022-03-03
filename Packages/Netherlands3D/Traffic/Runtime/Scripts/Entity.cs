@@ -206,9 +206,6 @@ namespace Netherlands3D.Traffic
                     }
                 }
 
-                // Get direction (already calculated in data but now readjust to raycast hit point y
-                item.Value.direction = Hit.point.normalized;
-
                 // Add animation keyframe to clip
                 // Position animation
                 Vector3 position = new Vector3(item.Value.center.x, item.Value.center.y, item.Value.center.z);
@@ -216,12 +213,34 @@ namespace Netherlands3D.Traffic
                 animationCurvePositionY.AddKey(item.Key, position.y);
                 animationCurvePositionZ.AddKey(item.Key, position.z);
 
-                // Rotation animation
-                Quaternion q = Quaternion.LookRotation(item.Value.direction, Vector3.up);
-                animationCurveRotationX.AddKey(item.Key, q.x);
-                animationCurveRotationY.AddKey(item.Key, q.y);
-                animationCurveRotationZ.AddKey(item.Key, q.z);
-                animationCurveRotationW.AddKey(item.Key, q.w);
+                // Rotation animation (commented out since we also need to recalulate the direction based on raycast y value (see below))
+                //Quaternion q = Quaternion.LookRotation(item.Value.direction, Vector3.up);                
+                //animationCurveRotationX.AddKey(item.Key, q.x);
+                //animationCurveRotationY.AddKey(item.Key, q.y);
+                //animationCurveRotationZ.AddKey(item.Key, q.z);
+                //animationCurveRotationW.AddKey(item.Key, q.w);
+            }
+
+            // Loop trough coordinate key values and calculate rotation (this should be done in loop above but i suck at quaterions/vector math)
+            float[] keys = data.coordinates.Keys.ToArray();
+            for(int i = 0; i < keys.Length; i++)
+            {
+                float keyFloat = keys[i];
+                Vector3 dir;
+                // Check for out of range exeption
+                if(i >= keys.Length - 1)
+                {
+                    break;
+                }
+
+                dir = data.coordinates[keyFloat + 1].center - data.coordinates[keyFloat].center;
+                data.coordinates[keyFloat].direction = dir;
+                Data.Coordinates item = data.coordinates[keys[i]];
+                Quaternion q = Quaternion.LookRotation(item.direction, Vector3.up);
+                animationCurveRotationX.AddKey(keyFloat, q.x);
+                animationCurveRotationY.AddKey(keyFloat, q.y);
+                animationCurveRotationZ.AddKey(keyFloat, q.z);
+                animationCurveRotationW.AddKey(keyFloat, q.w);
             }
 
             // Model
