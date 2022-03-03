@@ -18,6 +18,12 @@ namespace Netherlands3D.Traffic
         [Tooltip("Should the Scriptable Objects Variables be reset on start to default?")]
         [SerializeField] private bool resetSOVOnStart = true;
 
+        [Header("Layer Masks")]
+        [Tooltip("The layer mask used for collision detection for traffic entities")]
+        [SerializeField] private LayerMask layerMask;
+        [Tooltip("For raycasting purposes. Does not need to be assigned")]
+        [SerializeField] private BinaryMeshLayer binaryMeshLayer;
+
         [Header("Scriptable Objects")]
         [Tooltip("The database for Data")]
         public DataDatabase datas;
@@ -49,6 +55,7 @@ namespace Netherlands3D.Traffic
         {
             datas.OnAddData.AddListener(UpdateEntities);
             entitySO.eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
+            print(layerMask.value);
         }
 
         private void OnDisable()
@@ -116,7 +123,7 @@ namespace Netherlands3D.Traffic
                     {
                         // No gameobjects to choose from
                         prefab = defaultEntityPrefab;                        
-                        Debug.LogWarning("[VISSIM] Entity has no prefabEntity assigned! Make sure that you assign a prefab in the entity Scriptable Object");
+                        Debug.LogWarning("[Traffic] Entity has no prefabEntity assigned! Make sure that you assign a prefab in the entity Scriptable Object");
                     }
                     else
                     {
@@ -131,11 +138,11 @@ namespace Netherlands3D.Traffic
                     // Create entity
                     Entity entity = Object.Instantiate(prefab, transform).GetComponent<Entity>();
                     entities.Add(data.Key, entity);
-                    entity.Initialize(data.Value, entitySO);
+                    entity.Initialize(data.Value, entitySO, layerMask, binaryMeshLayer);
                 }
             }
 
-            if(showDebugLog) Debug.Log(string.Format("[VISSIM] Visualizer updated {0} entities", newData.Count));
+            if(showDebugLog) Debug.Log(string.Format("[Traffic] Visualizer updated {0} entities", newData.Count));
         }
 
         /// <summary>

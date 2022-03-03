@@ -6,6 +6,7 @@ using Netherlands3D.Core;
 using System.Linq;
 using System.IO;
 using System;
+using Netherlands3D.Events;
 
 namespace Netherlands3D.Traffic
 {
@@ -23,7 +24,7 @@ namespace Netherlands3D.Traffic
         /// <summary>
         /// Reads the file.fzp with VISSIM data and converts it to useable vissim data
         /// </summary>
-        /// <param name="file">The file to convert</param>
+        /// <param name="filePath">The file to convert</param>
         /// <param name="maxDataCount">The max amount of data to be extracted. -1 = infinity</param>
         /// <param name="callback">The callback that gets triggerd when the data is collected.</param>
         public static IEnumerator Convert(string filePath, int maxDataCount, Action<Dictionary<int, Data>> callback)
@@ -51,7 +52,7 @@ namespace Netherlands3D.Traffic
                         // But check if coordinates arent already filled in if file contains data bugs/duplicates
                         if(convertedData[dataRaw.id].coordinates.ContainsKey(dataRaw.simulationSecond))
                         {
-                            Debug.LogWarning("[VISSIM] Found a coordination duplicate. Make sure that each entity has its own unique simulation seconds.");
+                            Debug.LogWarning("[Traffic] Found a coordination duplicate. Make sure that each entity has its own unique simulation seconds.");
                             // This is caused by the entity id having 2 of the same simulation seconds in the data
                             // Make sure that each entity id has unique simsec (simulation seconds)
                             continue;

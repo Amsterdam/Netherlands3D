@@ -23,6 +23,12 @@ namespace Netherlands3D.Traffic
         [SerializeField] private StringEvent eventFilesImported;
         [Tooltip("Event that fires when the database needs to be cleared")]
         [SerializeField] private BoolEvent eventClearDatabase;
+        [Tooltip("The loading process expressed in a float ranging 0 to 1 with 1 being completed")]
+        /// <remarks>
+        /// Currently only displays the progress of files being loaded (x of total), if it where to show on what line it is off the file it would slow down the loading alot
+        /// Would need to create a more raw loading float that invokes every x lines of a file
+        /// </remarks>
+        [SerializeField] private FloatEvent eventLoadingProgress;
         [Tooltip("The database holding 'Data' classes")]
         [SerializeField] private DataDatabase dataDatabase;
 
@@ -56,9 +62,13 @@ namespace Netherlands3D.Traffic
             sw.Start();
             int failedFiles = 0;
 
+            // Loading event
+            int fileIndex = 1;
+            eventLoadingProgress.started.Invoke(0);
+
             // Check if there are multiple files
             string[] paths = filePaths.Split(',');
-            if(showDebugLog) UnityEngine.Debug.Log(string.Format("[File Importer] Loading {0} file(s)...", paths.Length));
+            if(showDebugLog) UnityEngine.Debug.Log(string.Format("[Traffic File Importer] Loading {0} file(s)...", paths.Length));
             foreach(string path in paths)
             {
                 // Check if we can load the file based on file extension
@@ -73,14 +83,17 @@ namespace Netherlands3D.Traffic
                         break;
                     default:
                         failedFiles++;
-                        UnityEngine.Debug.LogError(string.Format("[File Importer] Cannot load file because {0} isn't supported", pathExtension));
+                        UnityEngine.Debug.LogError(string.Format("[Traffic File Importer] Cannot load file because {0} isn't supported", pathExtension));
                         break;
                 }
+
+                eventLoadingProgress.started.Invoke(fileIndex / paths.Length);
+                fileIndex++;
             }
 
             eventClearDatabase.started.Invoke(true);
             sw.Stop();
-            if(showDebugLog) UnityEngine.Debug.Log(string.Format("[File Importer] Loaded {0} file(s) in {1}ms", paths.Length - failedFiles, sw.ElapsedMilliseconds));
+            if(showDebugLog) UnityEngine.Debug.Log(string.Format("[Traffic File Importer] Loaded {0} file(s) in {1}ms", paths.Length - failedFiles, sw.ElapsedMilliseconds));
             yield break;
         }
     }

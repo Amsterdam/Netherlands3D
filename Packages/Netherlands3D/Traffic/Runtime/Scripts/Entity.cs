@@ -78,16 +78,27 @@ namespace Netherlands3D.Traffic
         /// </summary>
         protected AnimationCurve animationCurveModel;
         /// <summary>
+        /// The binary mesh layer to check raycast hits with
+        /// </summary>
+        /// <remarks>
+        /// If left null it will not be used
+        /// </remarks>
+        protected BinaryMeshLayer binaryMeshLayer;
+        /// <summary>
         /// The data of the entity
         /// </summary>
         protected Data data;
+        /// <summary>
+        /// The layermask to detect collisions with
+        /// </summary>
+        protected LayerMask layerMask;
 
         /// <summary>
         /// Initialize the entity
         /// </summary>
         /// <param name="data">Data of the entity</param>
         /// <param name="so">EntityScriptableObjects</param>
-        public void Initialize(Data data, EntityScriptableObjects so)
+        public void Initialize(Data data, EntityScriptableObjects so, LayerMask layerMask, BinaryMeshLayer binaryMeshLayer = null)
         {
             this.data = data;
 
@@ -102,6 +113,10 @@ namespace Netherlands3D.Traffic
             this.so.eventSimulationTimeChanged.started.AddListener(OnSimulationTimeChanged);
             this.so.eventSimulationSpeedChanged.started.AddListener(OnSimulationSpeedChanged);
             this.so.eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
+
+            // Layer masks
+            this.layerMask = layerMask;
+            this.binaryMeshLayer = binaryMeshLayer;
 
             // Animation
             animationClip = new AnimationClip();
@@ -173,10 +188,26 @@ namespace Netherlands3D.Traffic
             foreach(var item in data.coordinates)
             {
                 // Check for a raycast with ground
-                if(Physics.Raycast(item.Value.center + new Vector3(0, 50, 0), Vector3.down, out Hit)) //TODO add layermask?
+                if(Physics.Raycast(item.Value.center + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
                 {
                     item.Value.center.y = Hit.point.y;
-                }//TODO Add binary mesh layer collider
+                }
+                else
+                {
+                    // Tell the binary mesh layer (if assigned) to add mesh colliders to the binary mesh layer to enable raycast collision
+                    if(binaryMeshLayer != null)
+                    {
+                        binaryMeshLayer.AddMeshColliders(Hit.point);
+                        // Cast the raycast again for a y axis point
+                        if(Physics.Raycast(item.Value.center + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
+                        {
+                            item.Value.center.y = Hit.point.y;
+                        }
+                    }
+                }
+
+                // Get direction (already calculated in data but now readjust to raycast hit point y
+                item.Value.direction = Hit.point.normalized;
 
                 // Add animation keyframe to clip
                 // Position animation
@@ -298,8 +329,10 @@ namespace Netherlands3D.Traffic
                 // Draw each data coordinate
                 foreach(var item in data.coordinates)
                 {
+                    // Draw cube of position
                     Gizmos.color = Color.yellow;
                     Gizmos.DrawCube(item.Value.center, Vector3.one);
+                    // Draw line of direction
                     Gizmos.color = Color.blue;
                     Gizmos.DrawLine(item.Value.center, item.Value.center + item.Value.direction * 2);
                 }

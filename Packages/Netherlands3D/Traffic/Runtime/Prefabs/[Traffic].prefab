@@ -45,6 +45,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   showDebugLog: 1
   resetSOVOnStart: 1
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  binaryMeshLayer: {fileID: 0}
   datas: {fileID: 11400000, guid: 0c7b59f8d6cc82046a448b240c6183d3, type: 2}
   entitiesDatas:
   - {fileID: 11400000, guid: 20d7d988f78d49742999abe6f0e93f3c, type: 2}
@@ -106,10 +110,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 129cefa9debd37740b481190a74220df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showDebugLog: 0
-  maxDataCount: 200
+  showDebugLog: 1
+  maxDataCount: -1
   eventFilesImported: {fileID: 11400000, guid: 8491950a9badaae46996777c747e43d1, type: 2}
   eventClearDatabase: {fileID: 11400000, guid: 3a9cdedad05358846955d9112acf117d, type: 2}
+  eventLoadingProgress: {fileID: 11400000, guid: 469d72f256b2f454dacfa55bd6eb1573, type: 2}
   dataDatabase: {fileID: 11400000, guid: 0c7b59f8d6cc82046a448b240c6183d3, type: 2}
 --- !u!114 &8334449571815547991
 MonoBehaviour:
