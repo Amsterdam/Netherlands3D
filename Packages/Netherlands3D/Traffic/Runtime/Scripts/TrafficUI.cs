@@ -27,6 +27,9 @@ namespace Netherlands3D.Traffic
         [Tooltip("The database containing the traffic data")]
         [SerializeField] private DataDatabase dataDatabase;
 
+        [Header("Components")]
+        [SerializeField] private EntityCamera entityCamera;
+
         [Header("UI Components")]
         [SerializeField] private TMP_InputField simulationTimeInputField;
         [SerializeField] private TMP_InputField simulationSpeedInputField;
@@ -56,6 +59,20 @@ namespace Netherlands3D.Traffic
         public void Clear()
         {
             dataDatabase.Clear();
+        }
+
+        /// <summary>
+        /// Follow an random entity
+        /// </summary>
+        public void FollowRandomEntity()
+        {
+            if(entityCamera != null)
+            {
+                Visualizer v = FindObjectOfType<Visualizer>();
+                if(v == null) return;
+                if(v.transform.childCount == 0) return;
+                entityCamera.SetTarget(v.transform.GetChild(Random.Range(0, v.transform.childCount)));
+            }
         }
 
         /// <summary>
