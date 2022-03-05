@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c342922c018cd5a47a21e82e5926dced, type: 3}
   m_Name: Simulation Time
   m_EditorClassIdentifier: 
-  value: 29.075232
+  value: 0
   description: The current simulation time
   onValueChanged: {fileID: 11400000, guid: 7cbbabc4c6ca5f044a5492fb55a52b94, type: 2}

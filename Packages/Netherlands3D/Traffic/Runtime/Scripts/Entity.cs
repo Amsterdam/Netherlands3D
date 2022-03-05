@@ -266,6 +266,7 @@ namespace Netherlands3D.Traffic
         protected virtual void OnSimulationTimeChanged(float newTime)
         {
             if(animationClip == null) return;
+            print("yo");
             animation[animationName].time = newTime;
         }
 
@@ -302,24 +303,23 @@ namespace Netherlands3D.Traffic
             if(animationClip == null) return;
             switch(newState)
             {
-                case 1:
-                    //animation.clip = animationClip;
+                case 1: // Play
                     animation[animationName].speed = so.simulationSpeed.Value;
                     animation[animationName].time = so.simulationTime.Value;
                     animation.Play();
                     break;
-                case 0:
+                case 0: // Paused
                     animation[animationName].speed = 0;
                     break;
-                case -1:
+                case -1: // Reverse Play
                     animation[animationName].speed = -so.simulationSpeed.Value;
                     animation[animationName].time = so.simulationTime.Value;
                     animation.Play();
-                    //animation.Rewind();
                     break;
-                case -2:
+                case -2: // Reset
+                    animation[animationName].speed = 1;
                     animation[animationName].time = 0;
-                    animation.Stop();
+                    animation[animationName].speed = 0;
                     break;
                 default:
                     break;

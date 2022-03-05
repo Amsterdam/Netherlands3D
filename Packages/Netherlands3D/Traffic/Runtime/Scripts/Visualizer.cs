@@ -205,7 +205,7 @@ namespace Netherlands3D.Traffic
                     break;
                 case 0: // Paused
                     break;
-                case -1: // Reversed                    
+                case -1: // Reversed
                     break;
                 case -2: // Reset
                     entitySO.simulationTime.Value = 0;

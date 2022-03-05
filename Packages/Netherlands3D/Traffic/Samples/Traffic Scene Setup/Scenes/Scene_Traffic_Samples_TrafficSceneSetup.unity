@@ -987,7 +987,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 447240877}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 747666801}
+        m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
+        m_MethodName: Rewind
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &447240877
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1228,7 +1240,7 @@ GameObject:
   - component: {fileID: 588809832}
   - component: {fileID: 588809833}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Slider Simulation Speed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1306,7 +1318,19 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 747666801}
+        m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
+        m_MethodName: OnSimulationSpeedChanged
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &596405831
 GameObject:
   m_ObjectHideFlags: 0
@@ -1600,7 +1624,7 @@ GameObject:
   - component: {fileID: 696421794}
   - component: {fileID: 696421795}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Slider Simulation Time
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1673,12 +1697,24 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1569786722}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
+  m_MaxValue: 300
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 747666801}
+        m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
+        m_MethodName: OnSimulationTimeChanged
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &747666799
 GameObject:
   m_ObjectHideFlags: 0
@@ -1728,6 +1764,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46b298351ac3ef34f91a54eaffca1c52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entitySO:
+    eventSimulationTimeChanged: {fileID: 11400000, guid: 7cbbabc4c6ca5f044a5492fb55a52b94, type: 2}
+    eventSimulationSpeedChanged: {fileID: 11400000, guid: 221a2b2e7995a9940a2b93b76f04d386, type: 2}
+    eventSimulationStateChanged: {fileID: 11400000, guid: 93027ea80592f354c9f4b393f8881da0, type: 2}
+    simulationTime: {fileID: 11400000, guid: 45384d89a76d18340bbcb11dfc8b8f82, type: 2}
+    simulationSpeed: {fileID: 11400000, guid: b62124e41bd8f704fbd00b900dc9778d, type: 2}
+    simulationState: {fileID: 11400000, guid: 2f0f64cea92c55a4b845d4667baaf80f, type: 2}
+  simulationTimeInputField: {fileID: 1514440908}
+  simulationSpeedInputField: {fileID: 1063258644}
+  sliderSimulationTime: {fileID: 696421795}
+  sliderSimulationSpeed: {fileID: 588809833}
 --- !u!1 &750370633
 GameObject:
   m_ObjectHideFlags: 0
@@ -2413,7 +2460,7 @@ GameObject:
   - component: {fileID: 1063258645}
   - component: {fileID: 1063258644}
   m_Layer: 5
-  m_Name: InputField (TMP)
+  m_Name: Simulation Speed InputField (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2500,7 +2547,19 @@ MonoBehaviour:
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 747666801}
+        m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
+        m_MethodName: OnSimulationSpeedInputFieldChanged
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
@@ -3414,7 +3473,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1257771065}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 747666801}
+        m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1257771065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3646,7 +3717,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1348131999}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 747666801}
+        m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
+        m_MethodName: Pause
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1348131999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4117,7 +4200,7 @@ GameObject:
   - component: {fileID: 1514440909}
   - component: {fileID: 1514440908}
   m_Layer: 5
-  m_Name: InputField (TMP)
+  m_Name: Simulation Time InputField (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4204,7 +4287,19 @@ MonoBehaviour:
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 747666801}
+        m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
+        m_MethodName: OnSimulationTimeInputFieldChanged
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
@@ -4955,7 +5050,7 @@ GameObject:
   - component: {fileID: 1647459149}
   - component: {fileID: 1647459148}
   m_Layer: 5
-  m_Name: Pause Button
+  m_Name: Reset Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5024,7 +5119,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1647459149}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 747666801}
+        m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
+        m_MethodName: ResetPlay
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1647459149
 MonoBehaviour:
   m_ObjectHideFlags: 0
