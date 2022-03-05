@@ -55,7 +55,6 @@ namespace Netherlands3D.Traffic
         {
             datas.OnAddData.AddListener(UpdateEntities);
             entitySO.eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
-            print(layerMask.value);
         }
 
         private void OnDisable()

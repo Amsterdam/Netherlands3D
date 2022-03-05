@@ -30,12 +30,7 @@ namespace Netherlands3D.Traffic.Editor
             // Import .fpz
             if(GUILayout.Button(new GUIContent("Import .FZP", "Import a .FPZ file to test"), GUILayout.Height(32)))
             {
-                string filePath = EditorUtility.OpenFilePanel("Select .FZP File", "", "fzp");
-                if(filePath.Length != 0)
-                {
-                    Debug.Log("[Traffic Testing] Selected .fzp file from: " + filePath);
-                    selected.File.Load(filePath);
-                }
+                selected.File.Open();
             }
 
             GUI.enabled = true;

@@ -72,7 +72,7 @@ namespace Netherlands3D.Traffic
                 this.coordinatesFront = coordinatesFront;
                 this.coordinatesRear = coordinatesRear;
                 center = (coordinatesFront + coordinatesRear) / 2;
-                direction = (coordinatesFront - coordinatesRear).normalized;
+                //direction = (coordinatesFront - coordinatesRear).normalized; Calculated in Entity.UpdateNavigation()
             }
         }        
     }

@@ -184,13 +184,19 @@ namespace Netherlands3D.Traffic
         /// </summary>
         public virtual void UpdateNavigation()
         {
-            // Loop through coordinates and calculate its correct y position
-            foreach(var item in data.coordinates)
+            // Loop through coordinates backwards and calculate its correct y position
+            // We need to loop backwards through the coordiantes because we need to get the correct height and
+            // we use the height for rotation direction calculation
+            float[] coordinatesKeys = data.coordinates.Keys.ToArray();
+            for(int i = coordinatesKeys.Length - 1; i >= 0; i--)
             {
+                float key = coordinatesKeys[i];
+                float nextKey = i == coordinatesKeys.Length - 1 ? key : coordinatesKeys[i + 1];
+                Data.Coordinates item = data.coordinates[key];
                 // Check for a raycast with ground
-                if(Physics.Raycast(item.Value.center + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
+                if(Physics.Raycast(item.center + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
                 {
-                    item.Value.center.y = Hit.point.y;
+                    item.center.y = Hit.point.y;
                 }
                 else
                 {
@@ -199,50 +205,32 @@ namespace Netherlands3D.Traffic
                     {
                         binaryMeshLayer.AddMeshColliders(Hit.point);
                         // Cast the raycast again for a y axis point
-                        if(Physics.Raycast(item.Value.center + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
+                        if(Physics.Raycast(item.center + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
                         {
-                            item.Value.center.y = Hit.point.y;
+                            item.center.y = Hit.point.y;
                         }
                     }
                 }
 
                 // Add animation keyframe to clip
                 // Position animation
-                Vector3 position = new Vector3(item.Value.center.x, item.Value.center.y, item.Value.center.z);
-                animationCurvePositionX.AddKey(item.Key, position.x);
-                animationCurvePositionY.AddKey(item.Key, position.y);
-                animationCurvePositionZ.AddKey(item.Key, position.z);
+                Vector3 position = new Vector3(item.center.x, item.center.y, item.center.z);
+                animationCurvePositionX.AddKey(key, position.x);
+                animationCurvePositionY.AddKey(key, position.y);
+                animationCurvePositionZ.AddKey(key, position.z);
+                
+                // Rotation animation
+                // Check if distance between next point is smaller than 1 meter (in case of center points not being correct/too close which causes visual rotation bugs)
+                if(i == coordinatesKeys.Length - 1 || i == 0 || Vector3.Distance(data.coordinates[key].center, data.coordinates[nextKey].center) < 1) continue;
 
-                // Rotation animation (commented out since we also need to recalulate the direction based on raycast y value (see below))
-                //Quaternion q = Quaternion.LookRotation(item.Value.direction, Vector3.up);                
-                //animationCurveRotationX.AddKey(item.Key, q.x);
-                //animationCurveRotationY.AddKey(item.Key, q.y);
-                //animationCurveRotationZ.AddKey(item.Key, q.z);
-                //animationCurveRotationW.AddKey(item.Key, q.w);
+                item.direction = (data.coordinates[nextKey].center - data.coordinates[key].center).normalized;
+                Quaternion q = Quaternion.LookRotation(item.direction, Vector3.up); //IMPROVE the rotation is not purpendicular to that of the raycast normal
+                animationCurveRotationX.AddKey(key, q.x);
+                animationCurveRotationY.AddKey(key, q.y);
+                animationCurveRotationZ.AddKey(key, q.z);
+                animationCurveRotationW.AddKey(key, q.w);
             }
-
-            // Loop trough coordinate key values and calculate rotation (this should be done in loop above but i suck at quaterions/vector math)
-            float[] keys = data.coordinates.Keys.ToArray();
-            for(int i = 0; i < keys.Length; i++)
-            {
-                float keyFloat = keys[i];
-                Vector3 dir;
-                // Check for out of range exeption
-                if(i >= keys.Length - 1)
-                {
-                    break;
-                }
-
-                dir = data.coordinates[keyFloat + 1].center - data.coordinates[keyFloat].center;
-                data.coordinates[keyFloat].direction = dir;
-                Data.Coordinates item = data.coordinates[keys[i]];
-                Quaternion q = Quaternion.LookRotation(item.direction, Vector3.up);
-                animationCurveRotationX.AddKey(keyFloat, q.x);
-                animationCurveRotationY.AddKey(keyFloat, q.y);
-                animationCurveRotationZ.AddKey(keyFloat, q.z);
-                animationCurveRotationW.AddKey(keyFloat, q.w);
-            }
-
+            
             // Model
             animationCurveModel.AddKey(new Keyframe(0, 0)); // Turn off model at start of animation
             animationCurveModel.AddKey(new Keyframe(data.coordinates.First().Key - 0.01f, 0)); // Tell model to stay inactive just before the frame (since we cant use TangentMode.Constant)

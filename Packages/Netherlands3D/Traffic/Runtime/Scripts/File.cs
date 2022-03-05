@@ -52,6 +52,24 @@ namespace Netherlands3D.Traffic
         }
 
         /// <summary>
+        /// Open a file and on success load it
+        /// </summary>
+        public void Open()
+        {
+#if UNITY_EDITOR
+            // For unity editor opening
+            string filePath = UnityEditor.EditorUtility.OpenFilePanel("Select .FZP File", "", "fzp");
+            if(filePath.Length != 0)
+            {
+                UnityEngine.Debug.Log("[Traffic Testing] Selected .fzp file from: " + filePath);
+                Load(filePath);
+            }
+            return;
+#endif
+            // The actual opening/loading (in a build) of a file is triggerd by the StringEvent eventFilesImported
+        }
+
+        /// <summary>
         /// Load a file for traffic
         /// </summary>
         /// <param name="filePaths"></param>
