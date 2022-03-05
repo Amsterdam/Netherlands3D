@@ -6,6 +6,9 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Traffic
 {
+    /// <summary>
+    /// Data base containing Traffic data
+    /// </summary>
     [CreateAssetMenu(fileName = "Traffic Data Database", menuName = "ScriptableObjects/Traffic/Data Database", order = 1)]
     public class DataDatabase : ScriptableObject
     {
@@ -13,7 +16,11 @@ namespace Netherlands3D.Traffic
         /// If the Datas list has reached its max count
         /// </summary>
         public bool DatasReachedMaxCount { get { return maxDatabaseCount > 0 && Value.Count >= maxDatabaseCount; } }
-        
+        /// <summary>
+        /// The max simulation time in seconds this database has
+        /// </summary>
+        public float MaxSimulationTime { get; private set; }
+
         /// <summary>
         /// The max amount of data the database can contain
         /// </summary>
@@ -46,6 +53,7 @@ namespace Netherlands3D.Traffic
             if(DatasReachedMaxCount) return;
 
             Value.Add(data.id, data);
+            CheckMaxSimulationTime(data);
 
             OnAddData?.Invoke(new List<int>() { data.id });
         }
@@ -68,11 +76,13 @@ namespace Netherlands3D.Traffic
                 {
                     // Key already present, update it
                     Value[data.Key].AddCoordinates(data.Value.coordinates);
+                    CheckMaxSimulationTime(data.Value);
                 }
                 else
                 {
                     // Add new key
                     Value.Add(data.Key, data.Value);
+                    CheckMaxSimulationTime(data.Value);
                 }
                 dataKeysUpdated.Add(data.Key);
             }
@@ -87,6 +97,7 @@ namespace Netherlands3D.Traffic
         {
             OnRemoveData?.Invoke(Value.Keys.ToList());
             Value.Clear();
+            MaxSimulationTime = 0;
         }
 
         /// <summary>
@@ -110,6 +121,15 @@ namespace Netherlands3D.Traffic
             {
                 Value.Remove(item.Key);
             }
+        }
+
+        /// <summary>
+        /// Check if the data contains a higher simulation time then the max and if so set the new max
+        /// </summary>
+        /// <param name="data"></param>
+        private void CheckMaxSimulationTime(Data data)
+        {
+            if(data.coordinates.Last().Key > MaxSimulationTime) MaxSimulationTime = data.coordinates.Last().Key;
         }
     }
 }

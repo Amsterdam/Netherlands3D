@@ -1312,16 +1312,16 @@ MonoBehaviour:
   m_FillRect: {fileID: 768795899}
   m_HandleRect: {fileID: 1336023093}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
+  m_MinValue: 0.01
+  m_MaxValue: 20
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.01
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 747666801}
         m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
-        m_MethodName: OnSimulationSpeedChanged
+        m_MethodName: OnSimulationSpeedSliderChanged
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1705,7 +1705,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 747666801}
         m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
-        m_MethodName: OnSimulationTimeChanged
+        m_MethodName: OnSimulationTimeSliderChanged
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1771,6 +1771,7 @@ MonoBehaviour:
     simulationTime: {fileID: 11400000, guid: 45384d89a76d18340bbcb11dfc8b8f82, type: 2}
     simulationSpeed: {fileID: 11400000, guid: b62124e41bd8f704fbd00b900dc9778d, type: 2}
     simulationState: {fileID: 11400000, guid: 2f0f64cea92c55a4b845d4667baaf80f, type: 2}
+  dataDatabase: {fileID: 11400000, guid: 0c7b59f8d6cc82046a448b240c6183d3, type: 2}
   simulationTimeInputField: {fileID: 1514440908}
   simulationSpeedInputField: {fileID: 1063258644}
   sliderSimulationTime: {fileID: 696421795}
@@ -2565,10 +2566,34 @@ MonoBehaviour:
       m_Calls: []
   m_OnSelect:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 747666801}
+        m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
+        m_MethodName: set_SimulationSpeedInputFieldSelected
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 747666801}
+        m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
+        m_MethodName: set_SimulationSpeedInputFieldSelected
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -3938,13 +3963,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1397222828}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 134.9, y: 241.2, z: -101.82}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2036227359}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &1397222832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4305,10 +4330,34 @@ MonoBehaviour:
       m_Calls: []
   m_OnSelect:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 747666801}
+        m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
+        m_MethodName: set_SimulationTimeInputFieldSelected
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
   m_OnDeselect:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 747666801}
+        m_TargetAssemblyTypeName: Netherlands3D.Traffic.TrafficUI, Netherlands3D.Traffic
+        m_MethodName: set_SimulationTimeInputFieldSelected
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnTextSelection:
     m_PersistentCalls:
       m_Calls: []
@@ -6275,7 +6324,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8334449571815547988, guid: 309a4e65127e29740a92518cdbe7b44f, type: 3}
       propertyPath: m_Name
-      value: '[Traffic]'
+      value: Traffic
       objectReference: {fileID: 0}
     - target: {fileID: 8334449571815547990, guid: 309a4e65127e29740a92518cdbe7b44f, type: 3}
       propertyPath: m_RootOrder

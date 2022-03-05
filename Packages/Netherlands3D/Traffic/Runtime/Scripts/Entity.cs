@@ -266,7 +266,6 @@ namespace Netherlands3D.Traffic
         protected virtual void OnSimulationTimeChanged(float newTime)
         {
             if(animationClip == null) return;
-            print("yo");
             animation[animationName].time = newTime;
         }
 
