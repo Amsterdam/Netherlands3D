@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using Netherlands3D.Core;
+using SimpleJSON;
 
 namespace Netherlands3D.Traffic.Simulation
 {
@@ -24,31 +25,45 @@ namespace Netherlands3D.Traffic.Simulation
         // Start is called before the first frame update
         void Start()
         {
-        
+            GetRoadData();
         }
 
-        // Update is called once per frame
-        void Update()
+        /// <summary>
+        /// Generate roads from json data
+        /// </summary>
+        /// <param name="json"></param>
+        /// <see cref="GetRoadData"/>
+        private void GenerateRoadsFromData(string json)
         {
-        
+            JSONNode n = JSON.Parse(json);
+            for(int i = 0; i < n["elements"].Count; i++)
+            {
+                roads.Add(new Road(n["elements"][i]));
+            }
+        }
+
+        private void GetRoadData()
+        {
+            StartCoroutine(GetRoadDataAysnc());
         }
 
         /// <summary>
         /// Get road data from Open Street Maps
         /// </summary>
         /// <returns>yield break. On WebRequest success it generates roads</returns>
-        private IEnumerator GetRoadData()
+        private IEnumerator GetRoadDataAysnc()
         {
-            string uri = string.Format("{0}{1}({2},{3},{4},{5},{6});",
+            string uri = string.Format("{0}{1}({2},{3},{4},{5});{6}",
                 requestPrefix,
                 requestParam,
-                wgsBottomLeft.lat,
-                wgsBottomLeft.lon,
-                wgsTopRight.lat,
-                wgsTopRight.lon,
+                52.0899704821154, 5.12129160852116, 52.0908725582746, 5.12274540980247,
+                //wgsBottomLeft.lat,
+                //wgsBottomLeft.lon,
+                //wgsTopRight.lat,
+                //wgsTopRight.lon,
                 requestSuffix);
-            Debug.Log("[Simulator] GetRoadData: " + uri);
-            UnityWebRequest request = UnityWebRequest.Get(uri);                
+            Debug.Log("[Simulator] UnityWebRequest: " + uri);
+            UnityWebRequest request = UnityWebRequest.Get(uri);
             {
                 yield return request.SendWebRequest();
 
@@ -59,7 +74,7 @@ namespace Netherlands3D.Traffic.Simulation
                         break;
                     case UnityWebRequest.Result.Success:
                         Debug.Log("[Simulator] UnityWebRequest Success");
-
+                        GenerateRoadsFromData(request.downloadHandler.text);
                         break;
                     case UnityWebRequest.Result.ConnectionError:
                         Debug.LogWarning("[Simulator] ConnectionError: " + request.error);
@@ -67,7 +82,7 @@ namespace Netherlands3D.Traffic.Simulation
                     case UnityWebRequest.Result.ProtocolError:
                         Debug.LogWarning("[Simulator] ProtocolError: " + request.error);
                         break;
-                    case UnityWebRequest.Result.DataProcessingError: 
+                    case UnityWebRequest.Result.DataProcessingError:
                         Debug.LogWarning("[Simulator] DataProcessingError: " + request.error);
                         break;
                     default:
@@ -77,5 +92,20 @@ namespace Netherlands3D.Traffic.Simulation
 
             yield break;
         }
+
+#if UNITY_EDITOR
+        private void OnDrawGizmosSelected()
+        {
+            // Draw each road point
+            Gizmos.color = Color.blue;
+            foreach(var road in roads)
+            {
+                foreach(var point in road.points)
+                {
+                    Gizmos.DrawSphere(point.coordinate, 1);
+                }
+            }
+        }
+#endif
     }
 }

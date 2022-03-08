@@ -76,6 +76,7 @@ GameObject:
   - component: {fileID: 8334449571815547990}
   - component: {fileID: 8334449571815547989}
   - component: {fileID: 8334449571815547991}
+  - component: {fileID: 4387080457431655685}
   m_Layer: 0
   m_Name: Traffic
   m_TagString: Untagged
@@ -128,3 +129,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9eb5797fe92cd744a97a9acceaabf850, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4387080457431655685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8334449571815547988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac62c956896071942b19b868b9445aa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roads: []
