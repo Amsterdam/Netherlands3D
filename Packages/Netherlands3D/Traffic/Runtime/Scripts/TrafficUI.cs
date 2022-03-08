@@ -28,13 +28,16 @@ namespace Netherlands3D.Traffic
         [SerializeField] private DataDatabase dataDatabase;
 
         [Header("Components")]
-        [SerializeField] private EntityCamera entityCamera;
+        [Tooltip("The camera gameobject with the entitycamera attached")]
+        [SerializeField] private GameObject prefabEntityCamera;
 
         [Header("UI Components")]
         [SerializeField] private TMP_InputField simulationTimeInputField;
         [SerializeField] private TMP_InputField simulationSpeedInputField;
         [SerializeField] private Slider sliderSimulationTime;
         [SerializeField] private Slider sliderSimulationSpeed;
+
+        private EntityCamera entityCamera;
 
         private void OnEnable()
         {
@@ -46,6 +49,14 @@ namespace Netherlands3D.Traffic
         {
             dataDatabase.OnAddData.RemoveListener(OnAddData);
             entitySO.eventSimulationSpeedChanged.started.RemoveListener(OnSimulationSpeedChange);
+        }
+
+        private void Start()
+        {
+            if(entityCamera == null)
+            {
+                entityCamera = Instantiate(prefabEntityCamera).GetComponent<EntityCamera>();
+            }
         }
 
         private void Update()
