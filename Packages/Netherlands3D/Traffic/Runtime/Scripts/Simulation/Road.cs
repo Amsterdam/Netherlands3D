@@ -58,9 +58,9 @@ namespace Netherlands3D.Traffic.Simulation
 
             public Point(double longitude, double latitude, Vector3 roadCoord)
             {
-                coordinate = CoordConvert.WGS84toUnity(longitude, latitude);
-                //coords.y = Config.activeConfiguration.zeroGroundLevelY; TODO the config script is not found
-                coordinateUnity = CoordConvert.RDtoUnity(coordinate);
+                coordinate = new Vector3((float)longitude, 0, (float)latitude);
+                coordinate.y = CoordConvert.zeroGroundLevelY;
+                coordinateUnity = CoordConvert.WGS84toUnity(longitude, latitude);
             }
         }
     }

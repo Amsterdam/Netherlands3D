@@ -102,27 +102,18 @@ namespace Netherlands3D.Traffic
         }
 
         /// <summary>
-        /// Converts the VISSIM RD coordinate string into a Vector3.
+        /// Get the vector3 from a string
         /// </summary>
         /// <param name="s">The string to convert</param>
         /// <returns>Vector3</returns>
         private static Vector3 StringToVector3(string s)
         {
-            //0 value is X
-            //1 value is Y
-            //2 value is Z
-            //stringVector = stringVector.Replace(".", ","); // Transforms decimal from US standard which uses a Period to European with a Comma
-
             string[] splitString = s.Split(' '); // Splits the string into individual vectors
             double x = double.Parse(splitString[0], CultureInfo.InvariantCulture);
             double y = double.Parse(splitString[1], CultureInfo.InvariantCulture);
             double z = double.Parse(splitString[2], CultureInfo.InvariantCulture);
-            Vector3RD rdVector = new Vector3RD(x, y, z); // Creates the Double Vector
-            // Convert fzp vector3(x,z,y) to unity vector3(x,y,z)
-            Vector3 convertedCoordinates = CoordConvert.RDtoUnity(rdVector);
-            // Y Coordinates will be calculated by the vehicle to connect with the Map (Maaiveld).
 
-            return convertedCoordinates;
+            return new Vector3((float)x, (float)z, (float)y);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Netherlands3D.TileSystem;
-using Netherlands3D.Events;
+using Netherlands3D.Core;
 
 namespace Netherlands3D.Traffic
 {
@@ -193,6 +193,7 @@ namespace Netherlands3D.Traffic
                 float key = coordinatesKeys[i];
                 float nextKey = i == coordinatesKeys.Length - 1 ? key : coordinatesKeys[i + 1];
                 Data.Coordinates item = data.coordinates[key];
+
                 // Check for a raycast with ground
                 if(Physics.Raycast(item.center + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
                 {
@@ -215,6 +216,7 @@ namespace Netherlands3D.Traffic
                 // Add animation keyframe to clip
                 // Position animation
                 Vector3 position = new Vector3(item.center.x, item.center.y, item.center.z);
+                //position = CoordConvert.(position);
                 animationCurvePositionX.AddKey(key, position.x);
                 animationCurvePositionY.AddKey(key, position.y);
                 animationCurvePositionZ.AddKey(key, position.z);

@@ -102,7 +102,7 @@ namespace Netherlands3D.Traffic.Simulation
             {
                 foreach(var point in road.points)
                 {
-                    Gizmos.DrawSphere(point.coordinate, 1);
+                    Gizmos.DrawSphere(point.coordinateUnity, 1);
                 }
             }
         }
