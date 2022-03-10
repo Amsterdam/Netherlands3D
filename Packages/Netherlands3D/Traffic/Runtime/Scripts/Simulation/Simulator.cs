@@ -17,7 +17,7 @@ namespace Netherlands3D.Traffic.Simulation
         private static readonly string requestParam = "way[highway~\"motorway|trunk|primary|secondary|tertiary|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link|unclassified|residential|living_street|track|road\"]";
         private static readonly string requestSuffix = "out geom;";
 
-        public List<Road> roads = new List<Road>();
+        [SerializeField] private RoadsData roadsData;
 
         private Vector3WGS wgsBottomLeft;
         private Vector3WGS wgsTopRight;
@@ -38,7 +38,7 @@ namespace Netherlands3D.Traffic.Simulation
             JSONNode n = JSON.Parse(json);
             for(int i = 0; i < n["elements"].Count; i++)
             {
-                roads.Add(new Road(n["elements"][i]));
+                roadsData.Add(new Road(n["elements"][i]));
             }
         }
 
@@ -98,7 +98,7 @@ namespace Netherlands3D.Traffic.Simulation
         {
             // Draw each road point
             Gizmos.color = Color.blue;
-            foreach(var road in roads)
+            foreach(var road in roadsData.Roads)
             {
                 foreach(var point in road.points)
                 {
