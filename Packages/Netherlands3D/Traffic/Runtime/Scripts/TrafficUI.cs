@@ -20,6 +20,24 @@ namespace Netherlands3D.Traffic
         /// If the inputfield is selected by user
         /// </summary>
         public bool SimulationSpeedInputFieldSelected { get; set; }
+        /// <summary>
+        /// If the entity camera should be used
+        /// </summary>
+        public bool UseEntityCamera 
+        { 
+            get { return useEntityCamera; }
+            set
+            {
+                useEntityCamera = value;
+                if(value)
+                {
+                    CreateEntityCamera();
+                }
+            }
+        }
+
+        [Header("Values")]
+        [SerializeField] private bool useEntityCamera;
 
         [Header("Scriptable Objects")]
         [Tooltip("The scriptable objects for an entity")]
@@ -53,15 +71,24 @@ namespace Netherlands3D.Traffic
 
         private void Start()
         {
-            if(entityCamera == null)
-            {
-                entityCamera = Instantiate(prefabEntityCamera).GetComponent<EntityCamera>();
-            }
+            CreateEntityCamera();
         }
 
         private void Update()
         {
             UpdateVisualSimulationTime();
+        }
+
+        /// <summary>
+        /// Create an entity camera if it doesnt exist
+        /// </summary>
+        private void CreateEntityCamera()
+        {
+            if(!UseEntityCamera || !Application.isPlaying) return;
+            if(entityCamera == null)
+            {
+                entityCamera = Instantiate(prefabEntityCamera).GetComponent<EntityCamera>();
+            }
         }
 
         /// <summary>
@@ -183,6 +210,11 @@ namespace Netherlands3D.Traffic
         {
             sliderSimulationSpeed.SetValueWithoutNotify(value);
             simulationSpeedInputField.text = value.ToString();
+        }
+
+        private void OnValidate()
+        {
+            UseEntityCamera = useEntityCamera;
         }
     }
 }

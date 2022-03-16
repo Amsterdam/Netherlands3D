@@ -9,7 +9,7 @@ namespace Netherlands3D.Traffic
     /// <summary>
     /// Visualizer for Traffic
     /// </summary>
-    [AddComponentMenu("Traffic/Traffic Visualizer")]
+    [AddComponentMenu("Netherlands3D/Traffic/Traffic Visualizer")]
     public class Visualizer : MonoBehaviour
     {
         [Header("Options")]
