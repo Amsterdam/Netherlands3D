@@ -4605,8 +4605,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46b298351ac3ef34f91a54eaffca1c52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useEntityCamera: 0
+  useEntityCamera: 1
   entitySO:
+    eventUpdateRealtime: {fileID: 11400000, guid: 0a2ae6a8ef751564c8e9090ba927b3f8, type: 2}
     eventSimulationTimeChanged: {fileID: 11400000, guid: 7cbbabc4c6ca5f044a5492fb55a52b94, type: 2}
     eventSimulationSpeedChanged: {fileID: 11400000, guid: 221a2b2e7995a9940a2b93b76f04d386, type: 2}
     eventSimulationStateChanged: {fileID: 11400000, guid: 93027ea80592f354c9f4b393f8881da0, type: 2}

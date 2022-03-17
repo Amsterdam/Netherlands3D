@@ -15,6 +15,13 @@ namespace Netherlands3D.Traffic
         [Tooltip("The target of the camera to follow")]
         public Transform target;
 
+        [HideInInspector] public new Camera camera;
+
+        private void Awake()
+        {
+            camera = GetComponent<Camera>();
+        }
+
         private void FixedUpdate()
         {
             Follow();
@@ -22,11 +29,20 @@ namespace Netherlands3D.Traffic
 
         public void SetTarget(Transform t)
         {
-            target = t;
-            transform.SetParent(target);
-            transform.localPosition = offset;
-            GetComponent<Camera>().depth = Camera.main.depth + 1; //TODO improve this with a better switch
+            if(t != null)
+            {
+                target = t;
+                transform.SetParent(target);
+                transform.localPosition = offset;
+                if(camera != Camera.main)
+                    camera.depth = Camera.main.depth + 1; //TODO improve this with a better switch
+            }
+            else
+            {
+                camera.depth = -10;
+            }
         }
+
 
         private void Follow()
         {

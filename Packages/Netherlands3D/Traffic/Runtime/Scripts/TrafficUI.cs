@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Netherlands3D.Events;
 using TMPro;
+using System.Linq;
 
 namespace Netherlands3D.Traffic
 {
@@ -88,6 +89,7 @@ namespace Netherlands3D.Traffic
             if(entityCamera == null)
             {
                 entityCamera = Instantiate(prefabEntityCamera).GetComponent<EntityCamera>();
+                entityCamera.camera.depth = -10;
             }
         }
 
@@ -111,6 +113,15 @@ namespace Netherlands3D.Traffic
                 if(v.transform.childCount == 0) return;
                 entityCamera.SetTarget(v.transform.GetChild(Random.Range(0, v.transform.childCount)));
             }
+        }
+
+        /// <summary>
+        /// Stop following an random entity
+        /// </summary>
+        public void StopFollowRandomEntity()
+        {
+            if(entityCamera != null)
+                entityCamera.SetTarget(null);
         }
 
         /// <summary>
