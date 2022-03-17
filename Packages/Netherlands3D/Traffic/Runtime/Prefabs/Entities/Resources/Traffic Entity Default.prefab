@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5874098943357162302}
   - component: {fileID: 4005419088027100309}
   - component: {fileID: 2950087073334489683}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Default Cube Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4740593554191104737}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 5537717927713023185}
   - component: {fileID: 5785735367068612527}
   - component: {fileID: 155323662574190005}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Traffic Entity Default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -158,12 +158,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultCubeModel: {fileID: 5874098943357162302}
-  eventSimulationTimeChanged: {fileID: 0}
-  eventSimulationSpeedChanged: {fileID: 0}
-  eventSimulationStateChanged: {fileID: 0}
-  simulationTime: {fileID: 0}
-  simulationSpeed: {fileID: 0}
-  simulationState: {fileID: 0}
+  so:
+    eventUpdateRealtime: {fileID: 0}
+    eventSimulationTimeChanged: {fileID: 0}
+    eventSimulationSpeedChanged: {fileID: 0}
+    eventSimulationStateChanged: {fileID: 0}
+    simulationTime: {fileID: 0}
+    simulationSpeed: {fileID: 0}
+    simulationState: {fileID: 0}
 --- !u!111 &155323662574190005
 Animation:
   m_ObjectHideFlags: 0

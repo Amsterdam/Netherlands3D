@@ -12,11 +12,23 @@ namespace Netherlands3D.Traffic
     [AddComponentMenu("Netherlands3D/Traffic/Traffic Visualizer")]
     public class Visualizer : MonoBehaviour
     {
+        public bool UpdateEntitiesRealtime 
+        { 
+            get { return updateEntitiesRealtime; }
+            set
+            {
+                updateEntitiesRealtime = value;
+                entitySO.eventUpdateRealtime.started.Invoke(value);
+            }
+        }
+
         [Header("Options")]
         [Tooltip("Show debug.log messages from this class")]
         public bool showDebugLog = true;
         [Tooltip("Should the Scriptable Objects Variables be reset on start to default?")]
         [SerializeField] private bool resetSOVOnStart = true;
+        [Tooltip("Should the entities update themself in realtime?")]
+        [SerializeField] private bool updateEntitiesRealtime;
 
         [Header("Layer Masks")]
         [Tooltip("The layer mask used for collision detection for traffic entities")]
@@ -137,7 +149,7 @@ namespace Netherlands3D.Traffic
                     // Create entity
                     Entity entity = Object.Instantiate(prefab, transform).GetComponent<Entity>();
                     entities.Add(data.Key, entity);
-                    entity.Initialize(data.Value, entitySO, layerMask, binaryMeshLayer);
+                    entity.Initialize(data.Value, entitySO, layerMask, updateEntitiesRealtime, binaryMeshLayer);
                 }
             }
 
@@ -213,6 +225,11 @@ namespace Netherlands3D.Traffic
                 default:
                     break;
             }
+        }
+
+        private void OnValidate()
+        {
+            UpdateEntitiesRealtime = updateEntitiesRealtime;
         }
     }
 }

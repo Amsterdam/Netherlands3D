@@ -32,6 +32,10 @@ namespace Netherlands3D.Traffic
         [SerializeField] protected EntityScriptableObjects so;
 
         /// <summary>
+        /// Should the entity update itself in realtime?
+        /// </summary>
+        protected bool updateRealtime;
+        /// <summary>
         /// The entity animation name
         /// </summary>
         protected readonly string animationName = "Movement";
@@ -98,18 +102,13 @@ namespace Netherlands3D.Traffic
         /// </summary>
         /// <param name="data">Data of the entity</param>
         /// <param name="so">EntityScriptableObjects</param>
-        public void Initialize(Data data, EntityScriptableObjects so, LayerMask layerMask, BinaryMeshLayer binaryMeshLayer = null)
+        public void Initialize(Data data, EntityScriptableObjects so, LayerMask layerMask, bool updateRealtime = false, BinaryMeshLayer binaryMeshLayer = null)
         {
             this.data = data;
 
             // So
-            this.so.eventSimulationTimeChanged = so.eventSimulationTimeChanged;
-            this.so.eventSimulationSpeedChanged = so.eventSimulationSpeedChanged;
-            this.so.eventSimulationStateChanged = so.eventSimulationStateChanged;
-            this.so.simulationSpeed = so.simulationSpeed;
-            this.so.simulationTime = so.simulationTime;
-            this.so.simulationState = so.simulationState;
-
+            this.so = so;
+            this.so.eventUpdateRealtime.started.AddListener(OnUpdateRealtimeChanged);
             this.so.eventSimulationTimeChanged.started.AddListener(OnSimulationTimeChanged);
             this.so.eventSimulationSpeedChanged.started.AddListener(OnSimulationSpeedChanged);
             this.so.eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
@@ -139,6 +138,9 @@ namespace Netherlands3D.Traffic
                 defaultCubeModel.localPosition = new Vector3(0, data.size.y * 0.5f, 0);
             }
 
+            // Realtime
+            this.updateRealtime = updateRealtime;
+
             UpdateNavigation();
         }
 
@@ -157,6 +159,7 @@ namespace Netherlands3D.Traffic
         {
             if(data != null)
             {
+                so.eventUpdateRealtime.started.RemoveListener(OnUpdateRealtimeChanged);
                 so.eventSimulationTimeChanged.started.RemoveListener(OnSimulationTimeChanged);
                 so.eventSimulationSpeedChanged.started.RemoveListener(OnSimulationSpeedChanged);
                 so.eventSimulationStateChanged.started.RemoveListener(OnSimulationStateChanged);
@@ -166,6 +169,11 @@ namespace Netherlands3D.Traffic
         protected virtual void Awake()
         {
             animation = GetComponent<Animation>();
+        }
+
+        protected void LateUpdate()
+        {
+            UpdateNavigationRealtime();
         }
 
         /// <summary>
@@ -216,11 +224,10 @@ namespace Netherlands3D.Traffic
                 // Add animation keyframe to clip
                 // Position animation
                 Vector3 position = new Vector3(item.center.x, item.center.y, item.center.z);
-                //position = CoordConvert.(position);
                 animationCurvePositionX.AddKey(key, position.x);
-                animationCurvePositionY.AddKey(key, position.y);
+                if(!updateRealtime) animationCurvePositionY.AddKey(key, position.y);
                 animationCurvePositionZ.AddKey(key, position.z);
-                
+
                 // Rotation animation
                 // Check if distance between next point is smaller than 1 meter (in case of center points not being correct/too close which causes visual rotation bugs)
                 if(i == coordinatesKeys.Length - 1 || i == 0 || Vector3.Distance(data.coordinates[key].center, data.coordinates[nextKey].center) < 1) continue;
@@ -231,6 +238,7 @@ namespace Netherlands3D.Traffic
                 animationCurveRotationY.AddKey(key, q.y);
                 animationCurveRotationZ.AddKey(key, q.z);
                 animationCurveRotationW.AddKey(key, q.w);
+                
             }
             
             // Model
@@ -245,7 +253,7 @@ namespace Netherlands3D.Traffic
 
             // Set animation clip curve positions
             animationClip.SetCurve("", typeof(Transform), "localPosition.x", animationCurvePositionX);
-            animationClip.SetCurve("", typeof(Transform), "localPosition.y", animationCurvePositionY);
+            if(!updateRealtime) animationClip.SetCurve("", typeof(Transform), "localPosition.y", animationCurvePositionY);
             animationClip.SetCurve("", typeof(Transform), "localPosition.z", animationCurvePositionZ);
 
             animationClip.SetCurve("", typeof(Transform), "localRotation.x", animationCurveRotationX);
@@ -253,12 +261,51 @@ namespace Netherlands3D.Traffic
             animationClip.SetCurve("", typeof(Transform), "localRotation.z", animationCurveRotationZ);
             animationClip.SetCurve("", typeof(Transform), "localRotation.w", animationCurveRotationW);
             animationClip.EnsureQuaternionContinuity();
+            
 
             animationClip.SetCurve("Model", typeof(GameObject), "m_IsActive", animationCurveModel);            
 
             animation.clip = animationClip;
             animation.AddClip(animationClip, animationClip.name);
             animation.Play();
+        }
+
+        /// <summary>
+        /// Updates the navigation in realtime for height/rotation
+        /// </summary>
+        public virtual void UpdateNavigationRealtime()
+        {
+            if(!updateRealtime) return;
+
+            // Y position
+            // Check for a raycast with ground
+            if(Physics.Raycast(transform.position + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
+            {
+                transform.position = new Vector3(transform.position.x, Hit.point.y + defaultCubeModel.localScale.y, transform.position.z);
+            }
+            else
+            {
+                // Tell the binary mesh layer (if assigned) to add mesh colliders to the binary mesh layer to enable raycast collision
+                if(binaryMeshLayer != null)
+                {
+                    binaryMeshLayer.AddMeshColliders(Hit.point);
+                    // Cast the raycast again for a y axis point
+                    if(Physics.Raycast(transform.position + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
+                    {
+                        transform.position = new Vector3(transform.position.x, Hit.point.y + defaultCubeModel.localScale.y, transform.position.z);
+                    }
+                }
+            }
+
+            // Normal direction
+            transform.rotation = Quaternion.FromToRotation(transform.up, Hit.normal) * transform.rotation;
+        }
+
+        protected virtual void OnUpdateRealtimeChanged(bool value)
+        {
+            updateRealtime = value;
+            UpdateNavigation();
+            OnSimulationTimeChanged(so.simulationTime.Value);
         }
 
         /// <summary>

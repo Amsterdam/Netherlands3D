@@ -92,6 +92,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   showDebugLog: 1
   resetSOVOnStart: 1
+  updateEntitiesRealtime: 1
   layerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -106,6 +107,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2968661f991c8e548acf22059160d266, type: 2}
   - {fileID: 11400000, guid: e292eb682656a7e4ab4cd8a41ad30936, type: 2}
   entitySO:
+    eventUpdateRealtime: {fileID: 11400000, guid: 0a2ae6a8ef751564c8e9090ba927b3f8, type: 2}
     eventSimulationTimeChanged: {fileID: 11400000, guid: 7cbbabc4c6ca5f044a5492fb55a52b94, type: 2}
     eventSimulationSpeedChanged: {fileID: 11400000, guid: 221a2b2e7995a9940a2b93b76f04d386, type: 2}
     eventSimulationStateChanged: {fileID: 11400000, guid: 93027ea80592f354c9f4b393f8881da0, type: 2}

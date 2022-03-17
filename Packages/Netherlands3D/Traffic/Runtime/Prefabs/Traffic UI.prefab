@@ -1764,8 +1764,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 9100130316838734263}
   m_HandleRect: {fileID: 9100130316838734260}
   m_Direction: 0
-  m_Value: 0
-  m_Size: 0.99999994
+  m_Value: 1
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2792,7 +2792,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Simulatie Tijd:'
+  m_text: 'Simulatie Snelheid:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4171,8 +4171,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 101.44423, y: -29}
-  m_SizeDelta: {x: -266.8885, y: 30}
+  m_AnchoredPosition: {x: 105.99614, y: -29}
+  m_SizeDelta: {x: -275.9921, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9100130318562379863
 CanvasRenderer:
@@ -4605,6 +4605,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46b298351ac3ef34f91a54eaffca1c52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  useEntityCamera: 0
   entitySO:
     eventSimulationTimeChanged: {fileID: 11400000, guid: 7cbbabc4c6ca5f044a5492fb55a52b94, type: 2}
     eventSimulationSpeedChanged: {fileID: 11400000, guid: 221a2b2e7995a9940a2b93b76f04d386, type: 2}
@@ -5440,7 +5441,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Volg Random Voertuig
+  m_text: Volg Willekeurig Voertuig
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

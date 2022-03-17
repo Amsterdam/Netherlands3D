@@ -132,8 +132,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isEnabled: 1
   sensitivity: 900
-  ascendSpeed: 4
-  descendSpeed: 4
   normalSpeed: 20
   slowSpeedMultiplier: 0.25
   fastSpeedMultiplier: 3

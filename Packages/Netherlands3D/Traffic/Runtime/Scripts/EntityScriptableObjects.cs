@@ -11,6 +11,8 @@ namespace Netherlands3D.Traffic
     [System.Serializable]
     public class EntityScriptableObjects
     {
+        [Tooltip("If the entity should update itself in realtime on enviroment")]
+        public BoolEvent eventUpdateRealtime;
         [Tooltip("Event that gets triggerd if the simulation time changes")]
         public FloatEvent eventSimulationTimeChanged;
         [Tooltip("Event that gets triggerd if the simulation speed changes")]

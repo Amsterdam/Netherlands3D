@@ -15,7 +15,8 @@ namespace Netherlands3D.Cameras
     /// R: Ascend locally -
     /// F: Descend locally -
     /// Shift: Move faster -
-    /// Control: Move slower
+    /// Control: Move slower -
+    /// L: Toggle lockmode
     /// </remarks>
     [AddComponentMenu("Netherlands3D/Cameras/Free Roaming Camera")]
     [RequireComponent(typeof(Camera))]
@@ -32,8 +33,11 @@ namespace Netherlands3D.Cameras
                 isEnabled = value;
                 if(isEnabled)
                 {
-                    previousCursorLockMode = Cursor.lockState;
-                    Cursor.lockState = CursorLockMode.Locked;
+                    if(isLocked)
+                    {
+                        previousCursorLockMode = Cursor.lockState;
+                        Cursor.lockState = CursorLockMode.Locked;
+                    }
                     if(camera != null) camera.enabled = true;
                 }
                 else
@@ -60,6 +64,10 @@ namespace Netherlands3D.Cameras
         public float fastSpeedMultiplier = 3;
 
         /// <summary>
+        /// Is the cursor locked
+        /// </summary>
+        private bool isLocked;
+        /// <summary>
         /// The input of the player
         /// </summary>
         private Vector2 input;
@@ -70,7 +78,7 @@ namespace Netherlands3D.Cameras
         /// <summary>
         /// The lockmode before FreeRoamingCamera was enabled to reset when FRC is d
         /// </summary>
-        private CursorLockMode previousCursorLockMode;
+        private CursorLockMode previousCursorLockMode = CursorLockMode.None;
         /// <summary>
         /// The camera attached to this gameobject
         /// </summary>
@@ -121,6 +129,13 @@ namespace Netherlands3D.Cameras
             // Ascend / Descend worldspace
             if(Input.GetKey(KeyCode.E)) transform.position += currentSpeed * Time.deltaTime * Vector3.up;
             else if(Input.GetKey(KeyCode.Q)) transform.position -= currentSpeed * Time.deltaTime * Vector3.up;
+            
+            // Toggle lockmode
+            if(Input.GetKeyDown(KeyCode.L))
+            {
+                isLocked = !isLocked;
+                Cursor.lockState = isLocked ? CursorLockMode.None : CursorLockMode.Locked;
+            }
         }
 
         private void OnValidate()
