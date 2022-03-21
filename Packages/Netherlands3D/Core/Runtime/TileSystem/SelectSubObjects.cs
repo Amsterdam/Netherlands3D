@@ -31,25 +31,23 @@ namespace Netherlands3D.TileSystem
         [SerializeField]
         [ColorUsage(true, true, 0f, 8f, 0.125f, 3f)]
         private Color selectionVertexColor;
-        [SerializeField]
-        private Material exclusiveSelectedShader;
 
-        public List<string> selectedIDs;
-        public List<string> hiddenIDs;
+        private List<string> selectedIDs;
+        private List<string> hiddenIDs;
 
         private bool doingMultiselect = false;
         private bool pauseSelectHighlighting = false;
 
+        [Header("Invoke events")]
         [SerializeField]
         private StringListEvent selectedBuildings;
+
+        [Header("Listen to events")]
         [SerializeField]
         private BoolEvent onColoringSubobjects;
 
         private void Awake()
         {
-            if (exclusiveSelectedShader)
-                exclusiveSelectedShader.SetColor("_HighlightColor", selectionVertexColor);
-
             selectedIDs = new List<string>();
             hiddenIDs = new List<string>();
 
