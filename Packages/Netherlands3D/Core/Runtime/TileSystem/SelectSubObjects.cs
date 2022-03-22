@@ -29,6 +29,9 @@ namespace Netherlands3D.TileSystem
         private int submeshIndex = 0;
 
         [SerializeField]
+        private float maxSelectDistance = 8000;
+
+        [SerializeField]
         [ColorUsage(true, true, 0f, 8f, 0.125f, 3f)]
         private Color selectionVertexColor;
 
@@ -44,6 +47,8 @@ namespace Netherlands3D.TileSystem
 
         [Header("Listen to events")]
         [SerializeField]
+        private Vector3Event clickedOnPosition;
+        [SerializeField]
         private BoolEvent onColoringSubobjects;
 
         private void Awake()
@@ -53,8 +58,18 @@ namespace Netherlands3D.TileSystem
 
             if(onColoringSubobjects)
                 onColoringSubobjects.started.AddListener(DisableWhileColoring);
-             
+
+            if (clickedOnPosition)
+                clickedOnPosition.started.AddListener(ShootRayAtPosition);
+
             containerLayer = gameObject.GetComponent<BinaryMeshLayer>();
+        }
+
+		private void ShootRayAtPosition(Vector3 screenPosition)
+		{
+            var ray = Camera.main.ScreenPointToRay(screenPosition);
+            print($"Selecting subobjects underneath {screenPosition}");
+            SelectWithInputs(ray,false,false);
         }
 
 		private void DisableWhileColoring(bool coloring)
@@ -62,7 +77,8 @@ namespace Netherlands3D.TileSystem
             pauseSelectHighlighting = coloring;
         }
 
-		public void SelectWithInputs(Ray inputRay, bool multiSelect, bool secondary = false){
+
+        public void SelectWithInputs(Ray inputRay, bool multiSelect, bool secondary = false){
             if (pauseSelectHighlighting) 
                 return;
 
@@ -265,8 +281,10 @@ namespace Netherlands3D.TileSystem
         IEnumerator FindSelectedSubObjectID(Ray ray, System.Action<string> callback)
         {
             //Check area that we clicked, and add the (heavy) mesh collider there
-            Vector3 planeHit = Vector3.zero; //CameraModeChanger.Instance.CurrentCameraControls.GetPointerPositionInWorld();
-            containerLayer.AddMeshColliders(planeHit);
+            Plane worldPlane = new Plane(Vector3.up, new Vector3(0, 0, 0));
+            worldPlane.Raycast(ray, out float distance);
+            var samplePoint = ray.GetPoint(Mathf.Min(maxSelectDistance, distance));
+            containerLayer.AddMeshColliders(samplePoint);
 
             yield return new WaitForEndOfFrame();
 
