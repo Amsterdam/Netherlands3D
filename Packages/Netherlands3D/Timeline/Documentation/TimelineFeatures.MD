@@ -5,6 +5,6 @@ A simple document to descripe features needed for timeline
 2. Switch function from year to year to specifics of a year
 3. A year has layers (for trees, buildings, events etc.) A layer is color coded
 4. A moveable line that the user can drag to see the changes in the scene
-
+5. dropdown to change persision, years, months, days
 
 Event: startdate-enddate, category, name, description
