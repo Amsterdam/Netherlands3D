@@ -68,7 +68,6 @@ namespace Netherlands3D.TileSystem
 		private void ShootRayAtPosition(Vector3 screenPosition)
 		{
             var ray = Camera.main.ScreenPointToRay(screenPosition);
-            print($"Selecting subobjects underneath {screenPosition}");
             SelectWithInputs(ray,false,false);
         }
 
