@@ -109,7 +109,16 @@ namespace Netherlands3D.TileSystem
             }
         }
 
-		public void SwapGradient(GradientContainer newGradientContainer)
+        private void Start()
+        {
+            if (disableOnStart)
+            {
+                this.enabled = false;
+                onEnableDrawingColors.started.Invoke(false);
+            }
+        }
+
+        public void SwapGradient(GradientContainer newGradientContainer)
 		{
             gradientContainer = newGradientContainer;
             UpdateColors(true);
