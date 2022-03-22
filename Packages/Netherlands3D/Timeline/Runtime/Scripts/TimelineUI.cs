@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,6 +22,8 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private int mostLeftIndex;
         private int mostRightIndex;
+
+        private int[] barIndexes;
 
         // Start is called before the first frame update
         void Start()
@@ -48,57 +51,46 @@ namespace Netherlands3D.Timeline
             if(scrollAmount < 0)
             {
                 // Scrolling left
+                int leaderIndex = barIndexes[0];
+
                 // Update the first in line panel
-                timeBars[mostLeftIndex].localPosition += Vector3.right * scrollAmount;
+                timeBars[leaderIndex].localPosition += Vector3.right * scrollAmount;
 
                 // If first in line is out of bounds set new first in line
-                if(timeBars[mostLeftIndex].localPosition.x < timeBarParent.localPosition.x + TimeBarParentWidth * -1)
+                if(timeBars[leaderIndex].localPosition.x <= timeBarParent.localPosition.x + TimeBarParentWidth * -1)
                 {
-                    mostLeftIndex = mostLeftIndex >= timeBars.Length - 1 ? 0 : mostLeftIndex + 1;
+                    // Circular rotate array left
+                    ShiftArray.Rotate(barIndexes, -1);
                 }
 
-                // Update rest of panels based on first in line position
-                for(int i = 0; i < timeBars.Length; i++)
+                // Update remaining indexes positions
+                for(int i = 1; i < barIndexes.Length; i++)
                 {
-                    if(i == mostLeftIndex) continue;
-                    int increment = i > mostLeftIndex ? i - mostLeftIndex : (timeBars.Length - mostLeftIndex) + i;
-                    timeBars[i].localPosition = new Vector3(timeBars[mostLeftIndex].localPosition.x + increment * TimeBarParentWidth, 0, 0);
-                }
+                    int index = barIndexes[i];
+                    timeBars[index].localPosition = new Vector3(timeBars[leaderIndex].localPosition.x + i * TimeBarParentWidth, 0, 0);
+                }                
             }
             else
             {
                 // Scrolling right
-                // Update the last in line panel
-                timeBars[mostRightIndex].localPosition += Vector3.right * scrollAmount;
+                int leaderIndex = barIndexes[barIndexes.Length - 1];
+
+                // Update the leader position
+                timeBars[leaderIndex].localPosition += Vector3.right * scrollAmount;
 
                 // If last in line is out of bounds set new last in line
-                if(timeBars[mostRightIndex].localPosition.x >= TimeBarParentWidth)
+                if(timeBars[leaderIndex].localPosition.x >= timeBarParent.localPosition.x + TimeBarParentWidth)
                 {
-                    mostRightIndex = mostRightIndex <= 0 ? timeBars.Length - 1 : mostRightIndex - 1;
-                    print(mostRightIndex);
+                    // Circular rotate array right
+                    ShiftArray.Rotate(barIndexes, 1);
                 }
 
-                // Update rest of panels based on last in line position
-                for(int i = 0; i < timeBars.Length; i++)
+                // Update remaining indexes positions
+                for(int i = 0; i < barIndexes.Length - 1; i++)
                 {
-                    if(i == mostRightIndex) continue;
-                    //int increment = i < mostRightIndex ? i - mostRightIndex : i - mostRightIndex - 1;
-                    // need to do something with an array, that just pushes it to the next and loops index around
-                    // [0, 1, 2] [2, 1, 0] then based on left or right get its index in the array of how much increment it needs
-                    int increment = 0;
-                    switch(mostRightIndex) // This should be possible to do in a 1 liner as seen above but i cant wrap my head around it so hardcoded 4 now
-                    {
-                        default:
-                            if(i == 2) increment = 1; else increment = 2;
-                            break;
-                        case 1:
-                            if(i == 0) increment = 1; else increment = 2;
-                            break;
-                        case 2:
-                            if(i == 1) increment = 1; else increment = 2;
-                            break;
-                    }
-                    timeBars[i].localPosition = new Vector3(timeBars[mostRightIndex].localPosition.x + increment * TimeBarParentWidth, 0, 0);
+                    print(i);
+                    int index = barIndexes[i];
+                    timeBars[index].localPosition = new Vector3(timeBars[leaderIndex].localPosition.x - (2 - i) * TimeBarParentWidth, 0, 0);
                 }
             }            
         }
@@ -110,7 +102,7 @@ namespace Netherlands3D.Timeline
             timeBars[0].SetRect(0, 0, -timeBarParent.rect.width, timeBarParent.rect.width);
             timeBars[1].SetRect(0, 0, 0, 0);
             timeBars[2].SetRect(0, 0, timeBarParent.rect.width, -timeBarParent.rect.width);
-            mostRightIndex = 2;
+            barIndexes = new int[] { 0, 1, 2 };
         }
     }
 }
