@@ -82,7 +82,22 @@ namespace Netherlands3D.Timeline
                 for(int i = 0; i < timeBars.Length; i++)
                 {
                     if(i == mostRightIndex) continue;
-                    int increment = i < mostRightIndex ? i - mostRightIndex : -mostRightIndex - 1;
+                    //int increment = i < mostRightIndex ? i - mostRightIndex : i - mostRightIndex - 1;
+                    // need to do something with an array, that just pushes it to the next and loops index around
+                    // [0, 1, 2] [2, 1, 0] then based on left or right get its index in the array of how much increment it needs
+                    int increment = 0;
+                    switch(mostRightIndex) // This should be possible to do in a 1 liner as seen above but i cant wrap my head around it so hardcoded 4 now
+                    {
+                        default:
+                            if(i == 2) increment = 1; else increment = 2;
+                            break;
+                        case 1:
+                            if(i == 0) increment = 1; else increment = 2;
+                            break;
+                        case 2:
+                            if(i == 1) increment = 1; else increment = 2;
+                            break;
+                    }
                     timeBars[i].localPosition = new Vector3(timeBars[mostRightIndex].localPosition.x + increment * TimeBarParentWidth, 0, 0);
                 }
             }            
