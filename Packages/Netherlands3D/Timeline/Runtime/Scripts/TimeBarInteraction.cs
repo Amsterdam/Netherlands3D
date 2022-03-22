@@ -5,8 +5,10 @@ using UnityEngine.EventSystems;
 
 namespace Netherlands3D.Timeline
 {
-    public class TimeBarInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+    public class TimeBarInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
     {
+        [SerializeField] private float sensitivity = 1000;
+
         [Header("Components")]
         [Tooltip("The timeline UI this interaction is part of")]
         public TimelineUI timelineUI;
@@ -43,6 +45,13 @@ namespace Netherlands3D.Timeline
             mouseDownPosition = Input.mousePosition;
         }
 
+        public void OnPointerStay()
+        {
+            if(!isDragging) return;
+
+            timelineUI.ScrollTimeBar(Vector3.Distance(mouseDownPosition, Input.mousePosition) * sensitivity * Time.deltaTime);
+        }
+
         /// <summary>
         /// User presses mouse up on time bar
         /// </summary>
@@ -52,12 +61,16 @@ namespace Netherlands3D.Timeline
             print("up");
             isDragging = false;
         }
+                
 
-        private void OnPointerStay()
+        public void OnPointerEnter(PointerEventData eventData)
         {
-            if(!isDragging) return;
+            
+        }
 
-            timelineUI.ScrollTimeBar(Vector3.Distance(mouseDownPosition, Input.mousePosition) * Time.deltaTime);
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            
         }
     }
 }

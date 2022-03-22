@@ -16,7 +16,11 @@ namespace Netherlands3D.Timeline
         public RectTransform timeBarParent;
         public RectTransform[] timeBars = new RectTransform[3];
 
-        private int firstInLineIndex;
+        /// <summary>
+        /// At time bar setup this is the most left bar
+        /// </summary>
+        private int mostLeftIndex;
+        private int mostRightIndex;
 
         // Start is called before the first frame update
         void Start()
@@ -40,29 +44,48 @@ namespace Netherlands3D.Timeline
 
         public void ScrollTimeBar(float scrollAmount)
         {
-            // Update the first in line panel
-            timeBars[firstInLineIndex].localPosition += Vector3.right * scrollAmount;
+            // Check scroll direction
+            if(scrollAmount < 0)
+            {
+                // Scrolling left
+                // Update the first in line panel
+                timeBars[mostLeftIndex].localPosition += Vector3.right * scrollAmount;
 
-            // If first in line is out of bounds set new first in line
-            // Scrolling left
-            if(timeBars[firstInLineIndex].localPosition.x < timeBarParent.localPosition.x + TimeBarParentWidth * -1)
-            {
-                firstInLineIndex = firstInLineIndex >= timeBars.Length - 1 ? 0 : firstInLineIndex + 1;
-            }
-            // Scrolling right
-            else if(timeBars[firstInLineIndex].localPosition.x > timeBarParent.localPosition.x + TimeBarParentWidth)
-            {
-                firstInLineIndex = firstInLineIndex <= 0 ? timeBars.Length - 1 : firstInLineIndex - 1;
-            }
+                // If first in line is out of bounds set new first in line
+                if(timeBars[mostLeftIndex].localPosition.x < timeBarParent.localPosition.x + TimeBarParentWidth * -1)
+                {
+                    mostLeftIndex = mostLeftIndex >= timeBars.Length - 1 ? 0 : mostLeftIndex + 1;
+                }
 
-            // Update rest of panels based on first in line position
-            for(int i = 0; i < timeBars.Length; i++)
-            {
-                if(i == firstInLineIndex) continue;
-                int increment = i > firstInLineIndex ? i - firstInLineIndex : (timeBars.Length - firstInLineIndex) + i;
-                timeBars[i].localPosition = new Vector3(timeBars[firstInLineIndex].localPosition.x + increment * TimeBarParentWidth, 0, 0);
-                //timeBars[i].SetRect(0, 0, -timeBars[firstInLineIndex].position.x + increment * TimeBarParentWidth, timeBars[firstInLineIndex].position.x + increment * TimeBarParentWidth);
+                // Update rest of panels based on first in line position
+                for(int i = 0; i < timeBars.Length; i++)
+                {
+                    if(i == mostLeftIndex) continue;
+                    int increment = i > mostLeftIndex ? i - mostLeftIndex : (timeBars.Length - mostLeftIndex) + i;
+                    timeBars[i].localPosition = new Vector3(timeBars[mostLeftIndex].localPosition.x + increment * TimeBarParentWidth, 0, 0);
+                }
             }
+            else
+            {
+                // Scrolling right
+                // Update the last in line panel
+                timeBars[mostRightIndex].localPosition += Vector3.right * scrollAmount;
+
+                // If last in line is out of bounds set new last in line
+                if(timeBars[mostRightIndex].localPosition.x >= TimeBarParentWidth)
+                {
+                    mostRightIndex = mostRightIndex <= 0 ? timeBars.Length - 1 : mostRightIndex - 1;
+                    print(mostRightIndex);
+                }
+
+                // Update rest of panels based on last in line position
+                for(int i = 0; i < timeBars.Length; i++)
+                {
+                    if(i == mostRightIndex) continue;
+                    int increment = i < mostRightIndex ? i - mostRightIndex : -mostRightIndex - 1;
+                    timeBars[i].localPosition = new Vector3(timeBars[mostRightIndex].localPosition.x + increment * TimeBarParentWidth, 0, 0);
+                }
+            }            
         }
 
         private void SetupTimeBars()
@@ -72,6 +95,7 @@ namespace Netherlands3D.Timeline
             timeBars[0].SetRect(0, 0, -timeBarParent.rect.width, timeBarParent.rect.width);
             timeBars[1].SetRect(0, 0, 0, 0);
             timeBars[2].SetRect(0, 0, timeBarParent.rect.width, -timeBarParent.rect.width);
+            mostRightIndex = 2;
         }
     }
 }
