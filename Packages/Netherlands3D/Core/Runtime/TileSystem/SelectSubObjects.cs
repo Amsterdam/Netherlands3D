@@ -43,7 +43,9 @@ namespace Netherlands3D.TileSystem
 
         [Header("Invoke events")]
         [SerializeField]
-        private StringListEvent selectedBuildings;
+        private BoolEvent clickedOnObject;
+        [SerializeField]
+        private StringListEvent selectedIdsOnClick;
 
         [Header("Listen to events")]
         [SerializeField]
@@ -140,6 +142,7 @@ namespace Netherlands3D.TileSystem
             if (id == emptyID && doingMultiselect)
             {
                 ClearSelection();
+                clickedOnObject.Invoke(false);
             }
             else
             {
@@ -154,6 +157,7 @@ namespace Netherlands3D.TileSystem
                     singleIdList.Add(id);
                 }
                 HighlightObjectsWithIDs(singleIdList);
+                clickedOnObject.Invoke(true);
             }
         }
 
@@ -187,7 +191,7 @@ namespace Netherlands3D.TileSystem
 
 			HighlightSelectedWithColor(selectionVertexColor);
 
-            selectedBuildings.started.Invoke(selectedIDs);
+            selectedIdsOnClick.started.Invoke(selectedIDs);
         }
 
 		private void HighlightSelectedWithColor(Color highlightColor)
