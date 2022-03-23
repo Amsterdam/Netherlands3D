@@ -1,18 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UI_KeyValuePair : MonoBehaviour
 {
-    
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    private Text keyText;
 
-    // Update is called once per frame
-    void Update()
+    [SerializeField]
+    private Text valueText;
+
+    public void SetValues(string key, string value)
     {
-        
+        keyText.text = key;
+        valueText.text = value;
     }
 }

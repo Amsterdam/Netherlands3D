@@ -7,8 +7,9 @@ using UnityEngine;
 public class UI_DrawKeyAndValue : MonoBehaviour
 {
     [SerializeField]
-    private UI_KeyValuePair keyValuePair;
+    private UI_KeyValuePair keyValuePairTemplate;
 
+    [Header("Listen to")]
     [SerializeField]
     private StringListEvent onReceivedKeyValuePair;
 
@@ -22,12 +23,8 @@ public class UI_DrawKeyAndValue : MonoBehaviour
 
 	private void DrawKeyValuePair(List<string> keyValuePair)
 	{
-		
-	}
-
-	// Update is called once per frame
-	void Update()
-    {
-        
+        var newKeyValuePair = Instantiate(keyValuePairTemplate, keyValuePairTemplate.transform.parent);
+        newKeyValuePair.SetValues(keyValuePair[0], keyValuePair[1]);
+        newKeyValuePair.gameObject.SetActive(true);
     }
 }
