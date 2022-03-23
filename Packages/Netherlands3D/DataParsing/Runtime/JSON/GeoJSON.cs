@@ -569,11 +569,13 @@ namespace Netherlands3D.Utilities
                 var sub = geoJSONString.Substring(startread, endprop - startread);
 
                 var kv = sub.Split(':');
-                var key = kv[0].Replace("\"", "").Trim();
-                var val = kv[1].Replace("\"", "").Replace("}", "").Trim();
-                
-                properties.Add(key, val);
+                if (kv.Length > 1)
+                {
+                    var key = kv[0].Replace("\"", "").Trim();
+                    var val = kv[1].Replace("\"", "").Replace("}", "").Trim();
 
+                    properties.Add(key, val);
+                }
                 if (endprop > endproperties)
                 {
                     break;
