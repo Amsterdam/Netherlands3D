@@ -139,7 +139,7 @@ namespace Netherlands3D.TileSystem
         {
             if (!enabled) return;
 
-            if (id == emptyID && doingMultiselect)
+            if (id == emptyID && !doingMultiselect)
             {
                 ClearSelection();
                 clickedOnObject.Invoke(false);
