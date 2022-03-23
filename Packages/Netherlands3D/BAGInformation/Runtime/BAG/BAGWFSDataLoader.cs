@@ -41,21 +41,21 @@ public class BAGWFSDataLoader : MonoBehaviour
 			{
 				StopCoroutine(downloadProcess);
 			}
-
 			downloadProcess = StartCoroutine(GetIDData(ID));
         }
 	}
 
 	IEnumerator GetIDData(string bagID)
 	{
-		yield return new WaitForEndOfFrame();
+		print($"Load BAG data for {bagID}");
 
-		var requestUrl = buildingWFSRequestURL.Replace("{BagID},", bagID);
+		var requestUrl = buildingWFSRequestURL.Replace("{BagID}", bagID);
 		var webRequest = UnityWebRequest.Get(requestUrl);
 		yield return webRequest.SendWebRequest();
 
 		if (webRequest.result == UnityWebRequest.Result.Success)
 		{
+			print(requestUrl);
 			GeoJSON customJsonHandler = new GeoJSON(webRequest.downloadHandler.text);
 			while (customJsonHandler.GotoNextFeature())
 			{
@@ -63,6 +63,7 @@ public class BAGWFSDataLoader : MonoBehaviour
 				foreach(KeyValuePair<string,object> propertyKeyAndValue in properties)
 				{
 					var propertyAndValue = new List<string>();
+					print($"{propertyKeyAndValue.Key}:{propertyKeyAndValue.Value}");
 					propertyAndValue.Capacity = 2;
 					propertyAndValue.Add(propertyKeyAndValue.Key);
 					propertyAndValue.Add(propertyKeyAndValue.Value.ToString());
