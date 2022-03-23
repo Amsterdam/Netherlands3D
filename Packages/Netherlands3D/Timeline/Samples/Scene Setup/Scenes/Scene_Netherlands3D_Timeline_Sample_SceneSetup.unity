@@ -173,7 +173,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 0}
-  v: 1000
+  v: 0
   timeBarParent: {fileID: 247540033}
   timeBars:
   - {fileID: 1887117467829963282}
@@ -1618,7 +1618,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94b9531d1195edf499bdfbd528121dc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensitivity: 1000
+  sensitivity: 10
   timelineUI: {fileID: 55796640}
 --- !u!1 &1131504803
 GameObject:

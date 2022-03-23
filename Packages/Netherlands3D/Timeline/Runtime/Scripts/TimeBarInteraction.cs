@@ -49,7 +49,8 @@ namespace Netherlands3D.Timeline
         {
             if(!isDragging) return;
 
-            timelineUI.ScrollTimeBar(Vector3.Distance(mouseDownPosition, Input.mousePosition) * sensitivity * Time.deltaTime);
+            int dir = mouseDownPosition.x < Input.mousePosition.x ? 1 : -1;
+            timelineUI.ScrollTimeBar(Vector3.Distance(mouseDownPosition, Input.mousePosition) * dir * sensitivity * Time.deltaTime);
         }
 
         /// <summary>

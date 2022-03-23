@@ -18,11 +18,8 @@ namespace Netherlands3D.Timeline
         public RectTransform[] timeBars = new RectTransform[3];
 
         /// <summary>
-        /// At time bar setup this is the most left bar
+        /// Array int holding the order of the indexes of timeBars in which they appear/move
         /// </summary>
-        private int mostLeftIndex;
-        private int mostRightIndex;
-
         private int[] barIndexes;
 
         // Start is called before the first frame update
@@ -34,7 +31,7 @@ namespace Netherlands3D.Timeline
         // Update is called once per frame
         void Update()
         {
-            ScrollTimeBar(v * Time.deltaTime);
+            //ScrollTimeBar(v * Time.deltaTime);
         }
 
         /// <summary>
@@ -61,14 +58,15 @@ namespace Netherlands3D.Timeline
                 {
                     // Circular rotate array left
                     ShiftArray.Rotate(barIndexes, -1);
+                    leaderIndex = barIndexes[0];
                 }
 
                 // Update remaining indexes positions
                 for(int i = 1; i < barIndexes.Length; i++)
                 {
-                    int index = barIndexes[i];
+                    int index = barIndexes[i];                    
                     timeBars[index].localPosition = new Vector3(timeBars[leaderIndex].localPosition.x + i * TimeBarParentWidth, 0, 0);
-                }                
+                }
             }
             else
             {
@@ -83,12 +81,12 @@ namespace Netherlands3D.Timeline
                 {
                     // Circular rotate array right
                     ShiftArray.Rotate(barIndexes, 1);
+                    leaderIndex = barIndexes[barIndexes.Length - 1];
                 }
 
                 // Update remaining indexes positions
                 for(int i = 0; i < barIndexes.Length - 1; i++)
                 {
-                    print(i);
                     int index = barIndexes[i];
                     timeBars[index].localPosition = new Vector3(timeBars[leaderIndex].localPosition.x - (2 - i) * TimeBarParentWidth, 0, 0);
                 }
