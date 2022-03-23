@@ -8,3 +8,11 @@ A simple document to descripe features needed for timeline
 5. dropdown to change persision, years, months, days
 
 Event: startdate-enddate, category, name, description
+
+
+---
+Development
+
+- Time bar has a width, based on a hardcoded width the time bar width gets devided to place its dates on it evenly. 
+- The current center bar, based on its x position from 0, produces its selected pixel value.
+Then in getting the info from the date bar get the assosiated date through the pixel value
