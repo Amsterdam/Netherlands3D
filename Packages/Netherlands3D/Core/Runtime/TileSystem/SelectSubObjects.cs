@@ -34,17 +34,22 @@ namespace Netherlands3D.TileSystem
         [SerializeField]
         [ColorUsage(true, true, 0f, 8f, 0.125f, 3f)]
         private Color selectionVertexColor;
-        [SerializeField]
-        private Material exclusiveSelectedShader;
 
-        public List<string> selectedIDs;
-        public List<string> hiddenIDs;
+        private List<string> selectedIDs;
+        private List<string> hiddenIDs;
 
         private bool doingMultiselect = false;
         private bool pauseSelectHighlighting = false;
 
+        [Header("Invoke events")]
         [SerializeField]
-        private StringListEvent selectedBuildings;
+        private BoolEvent clickedOnObject;
+        [SerializeField]
+        private StringListEvent selectedIdsOnClick;
+
+        [Header("Listen to events")]
+        [SerializeField]
+        private Vector3Event clickedOnPosition;
         [SerializeField]
         private Vector3Event clickedOnPosition;
         [SerializeField]
@@ -52,9 +57,6 @@ namespace Netherlands3D.TileSystem
 
         private void Awake()
         {
-            if (exclusiveSelectedShader)
-                exclusiveSelectedShader.SetColor("_HighlightColor", selectionVertexColor);
-
             selectedIDs = new List<string>();
             hiddenIDs = new List<string>();
 
@@ -70,7 +72,6 @@ namespace Netherlands3D.TileSystem
 		private void ShootRayAtPosition(Vector3 screenPosition)
 		{
             var ray = Camera.main.ScreenPointToRay(screenPosition);
-            print($"Selecting subobjects underneath {screenPosition}");
             SelectWithInputs(ray,false,false);
         }
 
@@ -140,9 +141,10 @@ namespace Netherlands3D.TileSystem
         {
             if (!enabled) return;
 
-            if (id == emptyID && doingMultiselect)
+            if (id == emptyID && !doingMultiselect)
             {
                 ClearSelection();
+                clickedOnObject.Invoke(false);
             }
             else
             {
@@ -157,6 +159,7 @@ namespace Netherlands3D.TileSystem
                     singleIdList.Add(id);
                 }
                 HighlightObjectsWithIDs(singleIdList);
+                clickedOnObject.Invoke(true);
             }
         }
 
@@ -190,7 +193,7 @@ namespace Netherlands3D.TileSystem
 
 			HighlightSelectedWithColor(selectionVertexColor);
 
-            selectedBuildings.started.Invoke(selectedIDs);
+            selectedIdsOnClick.started.Invoke(selectedIDs);
         }
 
 		private void HighlightSelectedWithColor(Color highlightColor)
