@@ -21,33 +21,33 @@ using UnityEngine;
 namespace Netherlands3D.Interface
 {
 	/// <summary>
-	/// Enables this behaviours GameObject based on a bool event trigger
+	/// Instantiates a new GameObject on a event trigger
 	/// </summary>
-	public class UI_EnableGameObject : MonoBehaviour
+	public class UI_SpawnGameObject : MonoBehaviour
 	{
 		[Header("Listen to")]
 		[SerializeField]
-		private BoolEvent enableGameObject;
+		private TriggerEvent onSpawnGameObject;
 
 		[SerializeField]
-		private bool disableOnStart = false;
+		private GameObject gameObjectTemplate;
+
+		[SerializeField]
+		private Transform targetContainer;
 
 		private void Awake()
 		{
-			enableGameObject.started.AddListener(EnableGameObject);
-		}
-
-		private void EnableGameObject(bool enable)
-		{
-			this.gameObject.SetActive(enable);
-		}
-
-		private void Start()
-		{
-			if (disableOnStart)
+			if (!targetContainer)
 			{
-				this.gameObject.SetActive(false);
+				targetContainer = this.transform;
 			}
+			onSpawnGameObject.started.AddListener(Spawn);
+		}
+
+		private void Spawn()
+		{
+			var newGameObject = Instantiate(gameObjectTemplate, targetContainer);
+			newGameObject.SetActive(true);
 		}
 	}
 }

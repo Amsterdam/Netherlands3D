@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88c4bb8a02c143a418fdaa1ee4f297d1, type: 3}
-  m_Name: LoadedBagProperty
+  m_Script: {fileID: 11500000, guid: 82f328a3b0832b641bb6be0a57ec68a9, type: 3}
+  m_Name: LoadedNewAddress
   m_EditorClassIdentifier: 
   eventName: 
   description: 
