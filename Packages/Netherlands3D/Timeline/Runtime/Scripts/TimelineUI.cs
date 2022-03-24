@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using SLIDDES.UI;
 using TMPro;
@@ -97,7 +98,21 @@ namespace Netherlands3D.Timeline
                     int index = barIndexes[i];
                     timeBars[index].rectTransform.localPosition = new Vector3(timeBars[leaderIndex].rectTransform.localPosition.x - (2 - i) * TimeBarParentWidth, 0, 0);
                 }
-            }            
+            }
+
+            // Get currentDate from middle bar
+            currentDate = GetFocusedBar().GetCurrentDateTime();
+            UpdateCurrentDate();
+        }
+
+        /// <summary>
+        /// Get the focused bar
+        /// </summary>
+        /// <returns></returns>
+        private TimeBar GetFocusedBar()
+        {
+            // Based on time bar which is closest to position.x 0
+            return timeBars.OrderBy(x => Math.Abs(0 - x.transform.localPosition.x)).FirstOrDefault();
         }
 
         private void SetupCurrentDate()
@@ -124,6 +139,7 @@ namespace Netherlands3D.Timeline
 
         private void UpdateCurrentDate()
         {
+            // Set text
             currentDateText.text = currentDate.ToString("dd/MM/yyyy");
         }
     }

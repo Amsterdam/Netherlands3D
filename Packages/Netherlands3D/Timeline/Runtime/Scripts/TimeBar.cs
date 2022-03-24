@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Netherlands3D.Timeline
@@ -21,6 +22,11 @@ namespace Netherlands3D.Timeline
         /// </summary>
         [HideInInspector] public RectTransform rectTransform;
 
+        /// <summary>
+        /// The pixel position and the corresponding dateTime
+        /// </summary>
+        private Dictionary<float, DateTime> dateTimePositions = new Dictionary<float, DateTime>();
+
         private void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
@@ -39,6 +45,18 @@ namespace Netherlands3D.Timeline
         }
 
         /// <summary>
+        /// Get the current selected dateTime from the time bar based on its local x position
+        /// </summary>
+        /// <returns></returns>
+        public DateTime GetCurrentDateTime()
+        {
+            float posX = transform.localPosition.x * -1;
+            // Get the closest dictionary value to posX
+            var bestMatch = dateTimePositions.OrderBy(x => Math.Abs(x.Key - posX)).FirstOrDefault();
+            return bestMatch.Value;
+        }
+
+        /// <summary>
         /// Update the timebars visuals that are displaying time
         /// </summary>
         public void UpdateVisuals(DateTime dateTimeLeaderIndex, int barIndex)
@@ -48,6 +66,7 @@ namespace Netherlands3D.Timeline
             {
                 Destroy(child.gameObject);
             }
+            dateTimePositions.Clear();
 
             // Calculate space
             float width = rectTransform.rect.width;
@@ -58,13 +77,13 @@ namespace Netherlands3D.Timeline
             switch(barIndex)
             {
                 default: // 0 (left bar)
-                    dateTimeLeaderIndex.AddYears(-datesToPlace);
+                    dateTimeLeaderIndex = dateTimeLeaderIndex.AddYears(-datesToPlace);
                     break;
                 case 1: // 1 (middle bar)
 
                     break;
                 case 2: // 2 (right bar)
-                    dateTimeLeaderIndex.AddYears(datesToPlace);
+                    dateTimeLeaderIndex = dateTimeLeaderIndex.AddYears(datesToPlace);
                     break;
             }
 
@@ -72,8 +91,15 @@ namespace Netherlands3D.Timeline
             for(int i = 0; i < datesToPlace; i++)
             {
                 TimeBarDate a = Instantiate(prefabTimeBarDate, parentDates).GetComponent<TimeBarDate>();
-                a.transform.localPosition = new Vector3(-(width / 2) + (spaceBetween * i) + spaceBetween * 0.5f, 0, 0);
-                a.field.text = dateTimeLeaderIndex.AddYears(i).ToString("yyyy");
+                float posX = -(width / 2) + (spaceBetween * i) + spaceBetween * 0.5f;
+                DateTime dateTime = dateTimeLeaderIndex.AddYears(i);
+                a.transform.localPosition = new Vector3(posX, 0, 0);
+                a.field.text = dateTime.ToString("yyyy");
+                dateTimePositions.Add(posX, dateTime);
+            }
+            foreach(var item in dateTimePositions.ToArray())
+            {
+                Debug.Log(item);
             }
         }
     }
