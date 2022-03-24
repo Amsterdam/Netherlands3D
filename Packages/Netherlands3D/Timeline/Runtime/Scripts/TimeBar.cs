@@ -21,6 +21,10 @@ namespace Netherlands3D.Timeline
         /// The rect transform of the time bar
         /// </summary>
         [HideInInspector] public RectTransform rectTransform;
+        /// <summary>
+        /// The most left dateTime of this timebar
+        /// </summary>
+        public DateTime startDateTime { get; private set; }
 
         /// <summary>
         /// The pixel position and the corresponding dateTime
@@ -59,6 +63,8 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// Update the timebars visuals that are displaying time
         /// </summary>
+        /// <param name="dateTimeLeaderIndex">The dateTime of the leader</param>
+        /// <param name="barIndex">The index of the bar (based from its position 0-1-2)</param>
         public void UpdateVisuals(DateTime dateTimeLeaderIndex, int barIndex)
         {
             // Clear old
@@ -86,6 +92,7 @@ namespace Netherlands3D.Timeline
                     dateTimeLeaderIndex = dateTimeLeaderIndex.AddYears(datesToPlace);
                     break;
             }
+            startDateTime = dateTimeLeaderIndex;
 
             // Space dates evenly
             for(int i = 0; i < datesToPlace; i++)
@@ -96,10 +103,6 @@ namespace Netherlands3D.Timeline
                 a.transform.localPosition = new Vector3(posX, 0, 0);
                 a.field.text = dateTime.ToString("yyyy");
                 dateTimePositions.Add(posX, dateTime);
-            }
-            foreach(var item in dateTimePositions.ToArray())
-            {
-                Debug.Log(item);
             }
         }
     }

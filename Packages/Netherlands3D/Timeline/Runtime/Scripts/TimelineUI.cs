@@ -67,6 +67,8 @@ namespace Netherlands3D.Timeline
                     // Circular rotate array left
                     ShiftArray.Rotate(barIndexes, -1);
                     leaderIndex = barIndexes[0];
+                    // Update visuals of previous leader bar
+                    timeBars[barIndexes.Last()].UpdateVisuals(timeBars[barIndexes[1]].startDateTime, 2);
                 }
 
                 // Update remaining indexes positions
@@ -90,6 +92,8 @@ namespace Netherlands3D.Timeline
                     // Circular rotate array right
                     ShiftArray.Rotate(barIndexes, 1);
                     leaderIndex = barIndexes[barIndexes.Length - 1];
+                    // Update visuals of previous leader bar
+                    timeBars[barIndexes.First()].UpdateVisuals(timeBars[barIndexes[1]].startDateTime, 0);
                 }
 
                 // Update remaining indexes positions
