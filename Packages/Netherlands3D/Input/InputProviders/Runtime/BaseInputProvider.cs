@@ -7,6 +7,8 @@ public class BaseInputProvider : MonoBehaviour
 {
     public FloatEvent horizontalInput;
     public FloatEvent verticalInput;
+    public Vector3Event lookInput;
+
     public FloatEvent zoomInput;
     public FloatEvent upDownInput;
     public FloatEvent zoomToPointerInput;

@@ -66,6 +66,10 @@ public class InputSystemProvider : BaseInputProvider
         {
             zoomInput.started.Invoke(zoom.y);
         }
+        if (look.magnitude > 0)
+        {
+            lookInput.started.Invoke(look);
+        }
 
         if (up)
         {

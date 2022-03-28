@@ -1127,6 +1127,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1107191816428015819, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
+      propertyPath: rotateSpeed
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_DefaultActionMap
       value: Camera

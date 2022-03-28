@@ -44,6 +44,8 @@ public class FreeCamera : MonoBehaviour
     private FloatEvent verticalInput;
     [SerializeField]
     private FloatEvent upDownInput;
+    [SerializeField]
+    private Vector3Event lookInput;
 
     [SerializeField]
     private FloatEvent zoomToPointerInput;
@@ -58,15 +60,18 @@ public class FreeCamera : MonoBehaviour
     private BoolEvent firstPersonModifier;
 
     private Vector3 lastPointerPosition;
+    private Vector3 pointerDelta;
     private Vector3 zoomTarget;
     private Camera cameraComponent;
     private Plane worldPlane;
 
-
     private Vector3 dragStart;
     private Vector3 dragVelocity;
-    [SerializeField]
+
     private bool dragging = false;
+    private bool rotate = false;
+    private bool rotating = false;
+    private bool firstPersonRotate = false;
 
     void Awake()
     {
@@ -76,20 +81,57 @@ public class FreeCamera : MonoBehaviour
         horizontalInput.started.AddListener(MoveHorizontally);
         verticalInput.started.AddListener(MoveForwardBackwards);
         upDownInput.started.AddListener(MoveUpDown);
+        lookInput.started.AddListener(PointerDelta);
 
         zoomToPointerInput.started.AddListener(ZoomToPointer);
         pointerPosition.started.AddListener(SetPointerPosition);
 
         dragModifier.started.AddListener(Drag);
+        rotateModifier.started.AddListener(Rotate);
     }
 
-    void Update()
+	private void PointerDelta(Vector3 pointerDelta)
 	{
-		//Dragging ease out
-		EaseDragTarget();
+        if (rotate)
+        {
+            if(!rotating)
+            {
+                dragStart = GetWorldPoint();
+            }
+            rotating = true;
+
+            this.transform.RotateAround(dragStart, Vector3.up, pointerDelta.x * rotateSpeed);
+            this.transform.RotateAround(dragStart, this.transform.right, -pointerDelta.y * rotateSpeed);
+        }
+        else if (firstPersonRotate)
+        {
+            FirstPersonRotate();
+        }
+    }
+
+	private void Rotate(bool rotate)
+	{
+        this.rotate = rotate;
+        if (!rotate) rotating = false;
+
+    }
+
+	void Update()
+	{
+        EaseDragTarget();
 	}
 
-	private void EaseDragTarget()
+    private void RotateAroundPoint()
+    {
+        
+	}
+
+    private void FirstPersonRotate()
+    {
+
+    }
+
+    private void EaseDragTarget()
 	{
         dragVelocity = new Vector3(Mathf.Lerp(dragVelocity.x,0, Time.deltaTime * easing), 0, Mathf.Lerp(dragVelocity.z, 0, Time.deltaTime * easing));
         if (!dragging & dragVelocity.magnitude > 0)
@@ -105,6 +147,8 @@ public class FreeCamera : MonoBehaviour
 
 	private void Drag(bool isDragging)
 	{
+        if (!dragToMoveCamera) return;
+
 		if(!dragging && isDragging)
         {
             dragStart = GetWorldPoint();
@@ -134,8 +178,15 @@ public class FreeCamera : MonoBehaviour
 
 	private void OnDrawGizmos()
 	{
-        Gizmos.DrawSphere(zoomTarget, 1.0f);
-	}
+        if (dragging || rotating)
+        {
+            Gizmos.DrawSphere(dragStart, 1.0f);
+        }
+        else
+        {
+            Gizmos.DrawSphere(zoomTarget, 1.0f);
+        }
+    }
 
 	/// <summary>
 	/// Returns a position on the world 0 plane
