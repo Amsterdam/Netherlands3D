@@ -45,6 +45,9 @@ namespace Netherlands3D.Timeline
         // Start is called before the first frame update
         void Start()
         {
+            currentDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            SetupTimeBars();
+            //UpdateTimeBarsVisuals();
             SetCurrentDate(DateTime.Now);
         }
 
@@ -110,7 +113,7 @@ namespace Netherlands3D.Timeline
                 if(timeBars[leaderIndex].rectTransform.localPosition.x <= timeBarParent.localPosition.x + TimeBarParentWidth * -1)
                 {
                     // Circular rotate array left
-                    ShiftArray.Rotate(barIndexes, -1);
+                    ArrayExtention.Rotate(barIndexes, -1);
                     leaderIndex = barIndexes[0];
                     // Update visuals of previous leader bar
                     timeBars[barIndexes.Last()].UpdateVisuals(timeBars[barIndexes[1]].startDateTime, 2, timeUnit);
@@ -135,7 +138,7 @@ namespace Netherlands3D.Timeline
                 if(timeBars[leaderIndex].rectTransform.localPosition.x >= timeBarParent.localPosition.x + TimeBarParentWidth)
                 {
                     // Circular rotate array right
-                    ShiftArray.Rotate(barIndexes, 1);
+                    ArrayExtention.Rotate(barIndexes, 1);
                     leaderIndex = barIndexes[barIndexes.Length - 1];
                     // Update visuals of previous leader bar
                     timeBars[barIndexes.First()].UpdateVisuals(timeBars[barIndexes[1]].startDateTime, 0, timeUnit);
@@ -160,8 +163,19 @@ namespace Netherlands3D.Timeline
         public void SetCurrentDate(DateTime newDate)
         {
             currentDate = newDate;
-            UpdateTimeBars();
+            //UpdateTimeBars();
+
+            print(currentDate);
+            print(GetFocusedBar());
+            print(GetFocusedBar().GetDatePosition(currentDate));
+
+            //SetupTimeBars();
+            //UpdateTimeBarsVisuals();
+            SetupTimeBars();
+            //SetFocusedBarPosition(TimeBarParentWidth * 0.5f);
             SetFocusedBarPosition(GetFocusedBar().GetDatePosition(currentDate));
+            //UpdateTimeBarsVisuals();
+            UpdateCurrentDateVisual();
         }
 
         /// <summary>
@@ -190,8 +204,9 @@ namespace Netherlands3D.Timeline
         /// <param name="valueToAdd">The value to add to currentDateTimeUnit</param>
         public void SetTimeUnit(int valueToAdd)
         {
+            if(timeUnit + valueToAdd < 0 || timeUnit + valueToAdd > 2) return;
             timeUnit = Mathf.Clamp(timeUnit + valueToAdd, 0, 2);
-            UpdateTimeBars();
+            SetCurrentDate(currentDate);
             UpdateCurrentDateVisual();
         }
 
@@ -205,8 +220,10 @@ namespace Netherlands3D.Timeline
             return timeBars.OrderBy(x => Math.Abs(0 - x.transform.localPosition.x)).FirstOrDefault();
         }
 
-
-        private void UpdateTimeBars()
+        /// <summary>
+        /// Setup the time bars
+        /// </summary>
+        private void SetupTimeBars()
         {
             // Position the time bars correctly
             // Hardcoded 3 time bars, as there is no need for more than 3
@@ -215,6 +232,14 @@ namespace Netherlands3D.Timeline
             timeBars[2].rectTransform.SetRect(0, 0, timeBarParent.rect.width, -timeBarParent.rect.width);
             barIndexes = new int[] { 0, 1, 2 };
 
+            UpdateTimeBarsVisuals();
+        }
+
+        /// <summary>
+        /// Update the displayed data on the bars
+        /// </summary>
+        private void UpdateTimeBarsVisuals()
+        {
             // Time bar visual setup
             for(int i = 0; i < 3; i++)
             {

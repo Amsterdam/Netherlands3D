@@ -42,12 +42,6 @@ namespace Netherlands3D.Timeline
         
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-        
-        }
-
         /// <summary>
         /// Get the current selected dateTime from the time bar based on its local x position
         /// </summary>
@@ -66,7 +60,14 @@ namespace Netherlands3D.Timeline
         /// <returns>local position x, 0 if the date is not in this timebar</returns>
         public float GetDatePosition(DateTime dateTime)
         {
-            return dateTimePositions.FirstOrDefault(x => x.Value == dateTime).Key * -1; // have to invert number positivity
+            // Get the date closest to the dateTime to fetch
+            //var k = dateTimePositions.OrderBy(x => (x.Value - dateTime)).FirstOrDefault();
+            //print(k.Value);
+            //return dateTimePositions.OrderBy(x => (x.Value - dateTime)).FirstOrDefault().Key;
+            var k = ArrayExtention.MinBy(dateTimePositions, x => Math.Abs((x.Value - dateTime).Ticks));
+            print(k.Value);
+            return k.Key * -1;
+            //return dateTimePositions.FirstOrDefault(x => x.Value == dateTime).Key * -1; // have to invert number positivity
         }
 
         /// <summary>
@@ -88,54 +89,75 @@ namespace Netherlands3D.Timeline
             float width = rectTransform.rect.width;
             int datesToPlace = (int)(width / pixelDistanceDates);
             float spaceBetween = width / datesToPlace;
-            string format;
 
             // Calc bar starting date, and based on timeUnit
-            switch(timeUnit)
+            dateTimeLeaderIndex = timeUnit switch
             {
-                default: // yyyy
-                    format = "yyyy";
-                    switch(barIndex)
-                    {
-                        default: // 0 (left bar)
-                            dateTimeLeaderIndex = dateTimeLeaderIndex.AddYears(-datesToPlace);
-                            break;
-                        case 1: // 1 (middle bar)
-                            break;
-                        case 2: // 2 (right bar)
-                            dateTimeLeaderIndex = dateTimeLeaderIndex.AddYears(datesToPlace);
-                            break;
-                    }
-                    break;
-                case 1: // MM/yyyy
-                    format = "MM";
-                    switch(barIndex)
-                    {
-                        default: // 0 (left bar)
-                            dateTimeLeaderIndex = dateTimeLeaderIndex.AddMonths(-datesToPlace);
-                            break;
-                        case 1: // 1 (middle bar)
-                            break;
-                        case 2: // 2 (right bar)
-                            dateTimeLeaderIndex = dateTimeLeaderIndex.AddMonths(datesToPlace);
-                            break;
-                    }
-                    break;
-                case 2: // dd/MM/yyyy
-                    format = "dd/MM";
-                    switch(barIndex)
-                    {
-                        default: // 0 (left bar)
-                            dateTimeLeaderIndex = dateTimeLeaderIndex.AddDays(-datesToPlace);
-                            break;
-                        case 1: // 1 (middle bar)
-                            break;
-                        case 2: // 2 (right bar)
-                            dateTimeLeaderIndex = dateTimeLeaderIndex.AddDays(datesToPlace);
-                            break;
-                    }
-                    break;
-            }
+                1 => barIndex switch
+                {
+                    2 => dateTimeLeaderIndex.AddMonths(datesToPlace),
+                    1 => dateTimeLeaderIndex,
+                    _ => dateTimeLeaderIndex.AddMonths(-datesToPlace)
+                },
+                2 => barIndex switch
+                {
+                    2 => dateTimeLeaderIndex.AddDays(datesToPlace),
+                    1 => dateTimeLeaderIndex,
+                    _ => dateTimeLeaderIndex.AddDays(-datesToPlace)
+                },
+                _ => barIndex switch
+                {
+                    2 => dateTimeLeaderIndex.AddYears(datesToPlace),
+                    1 => dateTimeLeaderIndex,
+                    _ => dateTimeLeaderIndex.AddYears(-datesToPlace)
+                }
+            };
+
+            //switch(timeUnit)
+            //{
+            //    default: // yyyy
+            //        format = "yyyy";
+            //        switch(barIndex)
+            //        {
+            //            default: // 0 (left bar)
+            //                dateTimeLeaderIndex = dateTimeLeaderIndex.AddYears(-datesToPlace);
+            //                break;
+            //            case 1: // 1 (middle bar)
+            //                break;
+            //            case 2: // 2 (right bar)
+            //                dateTimeLeaderIndex = dateTimeLeaderIndex.AddYears(datesToPlace);
+            //                break;
+            //        }
+            //        break;
+            //    case 1: // MM/yyyy
+            //        format = "MM";
+            //        switch(barIndex)
+            //        {
+            //            default: // 0 (left bar)
+            //                dateTimeLeaderIndex = dateTimeLeaderIndex.AddMonths(-datesToPlace);
+            //                break;
+            //            case 1: // 1 (middle bar)
+            //                break;
+            //            case 2: // 2 (right bar)
+            //                dateTimeLeaderIndex = dateTimeLeaderIndex.AddMonths(datesToPlace);
+            //                break;
+            //        }
+            //        break;
+            //    case 2: // dd/MM/yyyy
+            //        format = "dd/MM";
+            //        switch(barIndex)
+            //        {
+            //            default: // 0 (left bar)
+            //                dateTimeLeaderIndex = dateTimeLeaderIndex.AddDays(-datesToPlace);
+            //                break;
+            //            case 1: // 1 (middle bar)
+            //                break;
+            //            case 2: // 2 (right bar)
+            //                dateTimeLeaderIndex = dateTimeLeaderIndex.AddDays(datesToPlace);
+            //                break;
+            //        }
+            //        break;
+            //}
             startDateTime = dateTimeLeaderIndex;
 
             // Space dates evenly
@@ -151,6 +173,12 @@ namespace Netherlands3D.Timeline
 
                 };
                 a.transform.localPosition = new Vector3(posX, a.transform.localPosition.y, 0);
+                string format = timeUnit switch
+                {
+                    1 => "MM",
+                    2 => "dd/MM",
+                    _ => "yyyy",
+                };
                 a.field.text = dateTime.ToString(format);
                 dateTimePositions.Add(posX, dateTime);
             }
