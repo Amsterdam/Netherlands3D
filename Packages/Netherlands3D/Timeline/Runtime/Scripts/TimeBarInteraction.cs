@@ -44,11 +44,13 @@ namespace Netherlands3D.Timeline
         /// <param name="eventData"></param>
         public void OnPointerDown(PointerEventData eventData)
         {
-            print("down");
             isDragging = true;
             mouseDownPosition = Input.mousePosition;
         }
 
+        /// <summary>
+        /// The mouse is on the ui
+        /// </summary>
         public void OnPointerStay()
         {
             if(isDragging)
@@ -59,12 +61,12 @@ namespace Netherlands3D.Timeline
 
             if(mouseIsOn)
             {
-                if(Input.mouseScrollDelta.y > 0)
+                if(Input.mouseScrollDelta.y < 0)
                 {
                     // Up
                     timelineUI.SetTimeUnit(-1);
                 }
-                else if(Input.mouseScrollDelta.y < 0)
+                else if(Input.mouseScrollDelta.y > 0)
                 {
                     // Down
                     timelineUI.SetTimeUnit(1);
@@ -78,10 +80,9 @@ namespace Netherlands3D.Timeline
         /// <param name="eventData"></param>
         public void OnPointerUp(PointerEventData eventData)
         {
-            print("up");
             isDragging = false;
         }
-                
+        
 
         public void OnPointerEnter(PointerEventData eventData)
         {

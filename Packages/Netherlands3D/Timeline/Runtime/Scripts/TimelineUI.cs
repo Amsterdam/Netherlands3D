@@ -46,8 +46,6 @@ namespace Netherlands3D.Timeline
         void Start()
         {
             currentDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-            SetupTimeBars();
-            //UpdateTimeBarsVisuals();
             SetCurrentDate(DateTime.Now);
         }
 
@@ -163,18 +161,9 @@ namespace Netherlands3D.Timeline
         public void SetCurrentDate(DateTime newDate)
         {
             currentDate = newDate;
-            //UpdateTimeBars();
 
-            print(currentDate);
-            print(GetFocusedBar());
-            print(GetFocusedBar().GetDatePosition(currentDate));
-
-            //SetupTimeBars();
-            //UpdateTimeBarsVisuals();
-            SetupTimeBars();
-            //SetFocusedBarPosition(TimeBarParentWidth * 0.5f);
+            UpdateTimeBars();
             SetFocusedBarPosition(GetFocusedBar().GetDatePosition(currentDate));
-            //UpdateTimeBarsVisuals();
             UpdateCurrentDateVisual();
         }
 
@@ -223,7 +212,7 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// Setup the time bars
         /// </summary>
-        private void SetupTimeBars()
+        private void UpdateTimeBars()
         {
             // Position the time bars correctly
             // Hardcoded 3 time bars, as there is no need for more than 3
@@ -232,15 +221,7 @@ namespace Netherlands3D.Timeline
             timeBars[2].rectTransform.SetRect(0, 0, timeBarParent.rect.width, -timeBarParent.rect.width);
             barIndexes = new int[] { 0, 1, 2 };
 
-            UpdateTimeBarsVisuals();
-        }
-
-        /// <summary>
-        /// Update the displayed data on the bars
-        /// </summary>
-        private void UpdateTimeBarsVisuals()
-        {
-            // Time bar visual setup
+            // Time bar visual
             for(int i = 0; i < 3; i++)
             {
                 timeBars[i].UpdateVisuals(currentDate, i, timeUnit);
