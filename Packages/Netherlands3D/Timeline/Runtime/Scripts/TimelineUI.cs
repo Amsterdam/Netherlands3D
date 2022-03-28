@@ -13,27 +13,40 @@ namespace Netherlands3D.Timeline
     /// </summary>
     public class TimelineUI : MonoBehaviour
     {
+        /// <summary>
+        /// The width of the parent rect
+        /// </summary>
         public float TimeBarParentWidth { get { return timeBarParent.rect.width; } }
 
+        [Tooltip("The scriptable so data")]
         public TimelineData data;
 
         [Header("UI Components")]
         public RectTransform timeBarParent;
+        [Tooltip("The 3 timebar script components")]
         public TimeBar[] timeBars = new TimeBar[3];
-        public TextMeshProUGUI currentDateText;
+        [Tooltip("The input field of the current date")]
+        public TMP_InputField inputFieldCurrentDate;
 
+        /// <summary>
+        /// 0 = dd/mm/yyyy, 1 = mm/yyyy, 2 = yyyy
+        /// </summary>
+        private int currentDateTimeUnit = 2;
         /// <summary>
         /// Array int holding the order of the indexes of timeBars in which they appear/move
         /// </summary>
         private int[] barIndexes;
-
+        /// <summary>
+        /// The current time line date
+        /// </summary>
         private DateTime currentDate;
 
         // Start is called before the first frame update
         void Start()
         {
-            SetupCurrentDate();
-            SetupTimeBars();
+            currentDate = DateTime.Now;
+            UpdateTimeBars();
+            SetCurrentDate(currentDate);
         }
 
         // Update is called once per frame
@@ -50,6 +63,29 @@ namespace Netherlands3D.Timeline
 
         }
 
+        /// <summary>
+        /// When the input field receives a new date
+        /// </summary>
+        public void OnInputFieldCurrentDateChanged()
+        {
+            // Try to parse the new date
+            print(inputFieldCurrentDate.text);
+            if(DateTime.TryParse(inputFieldCurrentDate.text, out DateTime result))
+            {
+                print("parse");
+                SetCurrentDate(result);
+            }
+            else
+            {
+                print("not correct");
+                UpdateCurrentDateVisual();
+            }
+        }
+
+        /// <summary>
+        /// Scroll the time bar horizontally by a amount
+        /// </summary>
+        /// <param name="scrollAmount"></param>
         public void ScrollTimeBar(float scrollAmount)
         {
             // Check scroll direction
@@ -106,7 +142,47 @@ namespace Netherlands3D.Timeline
 
             // Get currentDate from middle bar
             currentDate = GetFocusedBar().GetCurrentDateTime();
-            UpdateCurrentDate();
+            UpdateCurrentDateVisual();
+        }
+
+        /// <summary>
+        /// Set the current date of the time line and go to that date
+        /// </summary>
+        public void SetCurrentDate(DateTime newDate)
+        {
+            currentDate = newDate;
+            UpdateTimeBars();
+            SetFocusedBarPosition(GetFocusedBar().GetDatePosition(currentDate));
+        }
+
+        /// <summary>
+        /// Set the focused bar local position.
+        /// </summary>
+        /// <example>
+        /// When setting the currentDate the bar will not center itself on the set date, thats where this funtion comes in place to move the local x positions
+        /// </example>
+        /// <param name="localPosX">The local x position to set the bar to</param>
+        private void SetFocusedBarPosition(float localPosX)
+        {
+            // Middle bar
+            TimeBar t1 = timeBars[barIndexes[1]]; 
+            t1.transform.localPosition = new Vector3(localPosX, t1.transform.localPosition.y, t1.transform.localPosition.z);
+            // Left bar
+            TimeBar t0 = timeBars[barIndexes[0]];
+            t0.transform.localPosition = new Vector3(localPosX - TimeBarParentWidth, t0.transform.localPosition.y, t0.transform.localPosition.z);
+            // Right bar
+            TimeBar t2 = timeBars[barIndexes[2]];
+            t2.transform.localPosition = new Vector3(localPosX + TimeBarParentWidth, t2.transform.localPosition.y, t2.transform.localPosition.z);
+        }
+
+        /// <summary>
+        /// Set the timeline currentDateTimeUnit
+        /// </summary>
+        /// <param name="valueToAdd">The value to add to currentDateTimeUnit</param>
+        public void SetTimeUnit(int valueToAdd)
+        {
+            currentDateTimeUnit = Mathf.Clamp(currentDateTimeUnit + valueToAdd, 0, 2);
+            UpdateCurrentDateVisual();
         }
 
         /// <summary>
@@ -119,13 +195,8 @@ namespace Netherlands3D.Timeline
             return timeBars.OrderBy(x => Math.Abs(0 - x.transform.localPosition.x)).FirstOrDefault();
         }
 
-        private void SetupCurrentDate()
-        {
-            currentDate = DateTime.Now;
-            UpdateCurrentDate();
-        }
 
-        private void SetupTimeBars()
+        private void UpdateTimeBars()
         {
             // Position the time bars correctly
             // Hardcoded 3 time bars, as there is no need for more than 3
@@ -137,14 +208,28 @@ namespace Netherlands3D.Timeline
             // Time bar visual setup
             for(int i = 0; i < 3; i++)
             {
+                print(currentDate);
                 timeBars[i].UpdateVisuals(currentDate, i);
             }
         }
 
-        private void UpdateCurrentDate()
+        private void UpdateCurrentDateVisual()
         {
             // Set text
-            currentDateText.text = currentDate.ToString("dd/MM/yyyy");
+            string format;
+            switch(currentDateTimeUnit)
+            {
+                default:
+                    format = "dd/MM/yyyy";
+                    break;
+                case 1:
+                    format = "MM/yyyy";
+                    break;
+                case 2:
+                    format = "yyyy";
+                    break;
+            }
+            inputFieldCurrentDate.text = currentDate.ToString(format);
         }
     }
 }

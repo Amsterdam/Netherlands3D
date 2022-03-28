@@ -61,6 +61,15 @@ namespace Netherlands3D.Timeline
         }
 
         /// <summary>
+        /// Get the x position of a date in this time bar if it is available
+        /// </summary>
+        /// <returns>local position x, 0 if the date is not in this timebar</returns>
+        public float GetDatePosition(DateTime dateTime)
+        {
+            return dateTimePositions.FirstOrDefault(x => x.Value == dateTime).Key * -1; // have to invert number positivity
+        }
+
+        /// <summary>
         /// Update the timebars visuals that are displaying time
         /// </summary>
         /// <param name="dateTimeLeaderIndex">The dateTime of the leader</param>
@@ -100,7 +109,7 @@ namespace Netherlands3D.Timeline
                 TimeBarDate a = Instantiate(prefabTimeBarDate, parentDates).GetComponent<TimeBarDate>();
                 float posX = -(width / 2) + (spaceBetween * i) + spaceBetween * 0.5f;
                 DateTime dateTime = dateTimeLeaderIndex.AddYears(i);
-                a.transform.localPosition = new Vector3(posX, 0, 0);
+                a.transform.localPosition = new Vector3(posX, a.transform.localPosition.y, 0);
                 a.field.text = dateTime.ToString("yyyy");
                 dateTimePositions.Add(posX, dateTime);
             }

@@ -18,6 +18,10 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private bool isDragging;
         /// <summary>
+        /// Is the mouse on the ui?
+        /// </summary>
+        private bool mouseIsOn;
+        /// <summary>
         /// The position of the mouse when left input was pressed
         /// </summary>
         private Vector3 mouseDownPosition;
@@ -47,10 +51,25 @@ namespace Netherlands3D.Timeline
 
         public void OnPointerStay()
         {
-            if(!isDragging) return;
+            if(isDragging)
+            {
+                int dir = mouseDownPosition.x < Input.mousePosition.x ? 1 : -1;
+                timelineUI.ScrollTimeBar(Vector3.Distance(mouseDownPosition, Input.mousePosition) * dir * sensitivity * Time.deltaTime);
+            }
 
-            int dir = mouseDownPosition.x < Input.mousePosition.x ? 1 : -1;
-            timelineUI.ScrollTimeBar(Vector3.Distance(mouseDownPosition, Input.mousePosition) * dir * sensitivity * Time.deltaTime);
+            if(mouseIsOn)
+            {
+                if(Input.mouseScrollDelta.y > 0)
+                {
+                    // Up
+                    timelineUI.SetTimeUnit(-1);
+                }
+                else if(Input.mouseScrollDelta.y < 0)
+                {
+                    // Down
+                    timelineUI.SetTimeUnit(1);
+                }
+            }
         }
 
         /// <summary>
@@ -66,12 +85,12 @@ namespace Netherlands3D.Timeline
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            
+            mouseIsOn = true;
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            
+            mouseIsOn = false;
         }
     }
 }
