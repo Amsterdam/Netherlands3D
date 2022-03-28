@@ -11,12 +11,26 @@ public class FreeCamera : MonoBehaviour
     private bool moveForwardOnPlane = true;
     [SerializeField]
     private bool dragToMoveCamera = true;
+    [SerializeField]
+    private bool multiplySpeedBasedOnHeight = true;
 
     [Header("Speed")]
     [SerializeField]
     private float moveSpeed = 1.0f;
     [SerializeField]
+    private float zoomSpeed = 1.0f;
+    private float speed = 1.0f;
+    private float speedZoom = 1.0f;
+
+    [SerializeField]
+    private float minimumSpeed = 5.0f;
+    [SerializeField]
+    private float maximumSpeed = 1000.0f;
+    [SerializeField]
     private float rotateSpeed = 1.0f;
+
+    [Header("Limits")]
+    private float maxPointerDistance = 10000;
 
     [Header("Listen to input events")]
     [SerializeField]
@@ -32,15 +46,22 @@ public class FreeCamera : MonoBehaviour
     private Vector3Event pointerPosition;
 
     [SerializeField]
+    private BoolEvent dragModifier;
+    [SerializeField]
     private BoolEvent rotateModifier;
-
     [SerializeField]
     private BoolEvent firstPersonModifier;
 
     private Vector3 lastPointerPosition;
+    private Vector3 zoomTarget;
+    private Camera cameraComponent;
+    private Plane worldPlane;
 
     void Awake()
     {
+        cameraComponent = GetComponent<Camera>();
+        worldPlane = new Plane(Vector3.up, Vector3.zero);
+
         horizontalInput.started.AddListener(MoveHorizontally);
         verticalInput.started.AddListener(MoveForwardBackwards);
         upDownInput.started.AddListener(MoveUpDown);
@@ -48,35 +69,75 @@ public class FreeCamera : MonoBehaviour
         zoomToPointerInput.started.AddListener(ZoomToPointer);
         pointerPosition.started.AddListener(SetPointerPosition);
     }
-
+    
     public void ZoomToPointer(float amount)
-    {
-        //lastPointerPosition
+	{
+        CalculateSpeed();
+        Debug.Log(amount);
+        zoomTarget = GetWorldPoint();
+        var direction = zoomTarget - this.transform.position;
+        this.transform.Translate(direction.normalized * speedZoom * amount, Space.World);
+	}
 
-    }
-    public void SetPointerPosition(Vector3 pointerPosition)
+	private void OnDrawGizmos()
+	{
+        Gizmos.DrawSphere(zoomTarget, 1.0f);
+	}
+
+	/// <summary>
+	/// Returns a position on the world 0 plane
+	/// </summary>
+	/// <param name="screenPoint">Optional screen position. Defaults to pointer input position.</param>
+	/// <returns>World position</returns>
+	private Vector3 GetWorldPoint(Vector3 screenPoint = default)
+	{
+		if (screenPoint == default) 
+        {
+            screenPoint = lastPointerPosition;
+        }
+
+		var screenRay = cameraComponent.ScreenPointToRay(screenPoint);
+		worldPlane.Raycast(screenRay, out float distance);
+		var samplePoint = screenRay.GetPoint(Mathf.Min(maxPointerDistance, distance));
+
+        return samplePoint;
+	}
+
+	public void SetPointerPosition(Vector3 pointerPosition)
     {
         lastPointerPosition = pointerPosition;
     }
 
     public void MoveHorizontally(float amount)
-    {
-        this.transform.Translate(Vector3.left * amount * moveSpeed * Time.deltaTime, Space.Self);
+	{
+		CalculateSpeed();
+		this.transform.Translate(Vector3.right * amount * speed * Time.deltaTime, Space.Self);
 	}
 
-    public void MoveForwardBackwards(float amount)
+	public void MoveForwardBackwards(float amount)
     {
+        CalculateSpeed();
         var forwardDirection = this.transform.forward;
         if(moveForwardOnPlane)
         {
             forwardDirection.y = 0;
         }
-        this.transform.Translate(forwardDirection.normalized * amount * moveSpeed * Time.deltaTime, Space.Self);
+        this.transform.Translate(forwardDirection.normalized * amount * moveSpeed * Time.deltaTime, Space.World);
     }
 
     public void MoveUpDown(float amount)
     {
-        this.transform.Translate(Vector3.up * amount * moveSpeed * Time.deltaTime, Space.Self);
+        this.transform.Translate(Vector3.up * amount * moveSpeed * Time.deltaTime, Space.World);
+    }
+
+    private void CalculateSpeed()
+    {
+        speed = (multiplySpeedBasedOnHeight) ? moveSpeed * this.transform.position.y : moveSpeed;
+        speedZoom = (multiplySpeedBasedOnHeight) ? zoomSpeed * this.transform.position.y : zoomSpeed;
+        
+        //Clamp speeds
+        speed = Mathf.Clamp(speed, minimumSpeed, maximumSpeed);
+        speedZoom = Mathf.Clamp(speedZoom, minimumSpeed, maximumSpeed);
     }
 
     void Update()
