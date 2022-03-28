@@ -5,13 +5,16 @@ using UnityEngine;
 
 public class FreeCamera : MonoBehaviour
 {
+    [Header("Options")]
     [Tooltip("Move forward on world plane instead of camera forward")]
     [SerializeField]
     private bool moveForwardOnPlane = true;
+    [SerializeField]
+    private bool dragToMoveCamera = true;
 
+    [Header("Speed")]
     [SerializeField]
     private float moveSpeed = 1.0f;
-
     [SerializeField]
     private float rotateSpeed = 1.0f;
 
@@ -20,6 +23,8 @@ public class FreeCamera : MonoBehaviour
     private FloatEvent horizontalInput;
     [SerializeField]
     private FloatEvent verticalInput;
+    [SerializeField]
+    private FloatEvent upDownInput;
 
     [SerializeField]
     private FloatEvent zoomToPointerInput;
@@ -37,7 +42,8 @@ public class FreeCamera : MonoBehaviour
     void Awake()
     {
         horizontalInput.started.AddListener(MoveHorizontally);
-        verticalInput.started.AddListener(MoveForward);
+        verticalInput.started.AddListener(MoveForwardBackwards);
+        upDownInput.started.AddListener(MoveUpDown);
 
         zoomToPointerInput.started.AddListener(ZoomToPointer);
         pointerPosition.started.AddListener(SetPointerPosition);
@@ -55,17 +61,22 @@ public class FreeCamera : MonoBehaviour
 
     public void MoveHorizontally(float amount)
     {
-        this.transform.Translate(Vector3.left * amount * Time.deltaTime, Space.Self);
+        this.transform.Translate(Vector3.left * amount * moveSpeed * Time.deltaTime, Space.Self);
 	}
 
-    public void MoveForward(float amount)
+    public void MoveForwardBackwards(float amount)
     {
         var forwardDirection = this.transform.forward;
         if(moveForwardOnPlane)
         {
             forwardDirection.y = 0;
         }
-        this.transform.Translate(forwardDirection.normalized * amount * Time.deltaTime, Space.Self);
+        this.transform.Translate(forwardDirection.normalized * amount * moveSpeed * Time.deltaTime, Space.Self);
+    }
+
+    public void MoveUpDown(float amount)
+    {
+        this.transform.Translate(Vector3.up * amount * moveSpeed * Time.deltaTime, Space.Self);
     }
 
     void Update()
