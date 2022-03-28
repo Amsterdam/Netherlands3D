@@ -1101,11 +1101,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.8721202
+      value: 0.9248081
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.48929176
+      value: 0.38043404
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_LocalRotation.y
@@ -1117,7 +1117,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 58.588
+      value: 44.721
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -1126,10 +1126,6 @@ PrefabInstance:
     - target: {fileID: 1107191816428015817, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1107191816428015819, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
-      propertyPath: rotateSpeed
-      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_DefaultActionMap
@@ -1141,7 +1137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_ActionEvents.Array.size
-      value: 16
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_ActionEvents.Array.data[14].m_ActionId
@@ -1152,12 +1148,36 @@ PrefabInstance:
       value: c193886e-6d95-4875-a5dc-5c2d7f0bba32
       objectReference: {fileID: 0}
     - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_ActionId
+      value: 4aa66dc8-128f-4bfb-9b60-6c9c5c91b6b3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_ActionId
+      value: 52c16aa0-20d8-4e13-88eb-fb80ad21aa53
+      objectReference: {fileID: 0}
+    - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
+      propertyPath: m_ActionEvents.Array.data[18].m_ActionId
+      value: 8728acb1-10a7-4293-8145-71c7a6e8179a
+      objectReference: {fileID: 0}
+    - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_ActionEvents.Array.data[14].m_ActionName
       value: FreeCamera/Point[/Mouse/position]
       objectReference: {fileID: 0}
     - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_ActionEvents.Array.data[15].m_ActionName
       value: FreeCamera/Drag[/Mouse/leftButton]
+      objectReference: {fileID: 0}
+    - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_ActionName
+      value: Camera/RotateModifier[/Mouse/middleButton]
+      objectReference: {fileID: 0}
+    - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_ActionName
+      value: Camera/FirstPersonModifier[/Keyboard/ctrl]
+      objectReference: {fileID: 0}
+    - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
+      propertyPath: m_ActionEvents.Array.data[18].m_ActionName
+      value: Camera/Zoom[/Mouse/scroll]
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}

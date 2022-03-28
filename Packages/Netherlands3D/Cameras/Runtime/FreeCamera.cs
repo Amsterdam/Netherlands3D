@@ -36,6 +36,12 @@ public class FreeCamera : MonoBehaviour
 
     [Header("Limits")]
     private float maxPointerDistance = 10000;
+    [SerializeField]
+    private bool useRotationLimits = true;
+    [SerializeField]
+    private float rotateMinLimit = -90;
+    private float rotateMaxLimit = 90;
+    private float pitchRotation;
 
     [Header("Listen to input events")]
     [SerializeField]
@@ -73,10 +79,13 @@ public class FreeCamera : MonoBehaviour
     private bool rotating = false;
     private bool firstPersonRotate = false;
 
+
     void Awake()
     {
         cameraComponent = GetComponent<Camera>();
         worldPlane = new Plane(Vector3.up, Vector3.zero);
+
+        pitchRotation = this.transform.localEulerAngles.x;
 
         horizontalInput.started.AddListener(MoveHorizontally);
         verticalInput.started.AddListener(MoveForwardBackwards);
@@ -100,13 +109,25 @@ public class FreeCamera : MonoBehaviour
             }
             rotating = true;
 
-            this.transform.RotateAround(dragStart, Vector3.up, pointerDelta.x * rotateSpeed);
-            this.transform.RotateAround(dragStart, this.transform.right, -pointerDelta.y * rotateSpeed);
+            pitchRotation += pointerDelta.y * rotateSpeed;
+            print(this.transform.localEulerAngles.x);
+            //ClampXRotation(90);
+            print("Clamped" + this.transform.localEulerAngles.x);
+
+            this.transform.localEulerAngles = new Vector3(pitchRotation, this.transform.localEulerAngles.y, this.transform.localEulerAngles.z);
+            this.transform.RotateAround(dragStart, Vector3.up, -pointerDelta.x * rotateSpeed);
+
+            ClampXRotation();
         }
         else if (firstPersonRotate)
         {
             FirstPersonRotate();
         }
+    }
+
+    private void ClampXRotation(float clampAngle = 90)
+    {
+        pitchRotation = Mathf.Clamp(pitchRotation, rotateMinLimit, rotateMaxLimit);
     }
 
 	private void Rotate(bool rotate)
