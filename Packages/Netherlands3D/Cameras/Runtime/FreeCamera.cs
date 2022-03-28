@@ -1,4 +1,5 @@
 using Netherlands3D.Events;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +18,10 @@ public class FreeCamera : MonoBehaviour
     [Header("Speed")]
     [SerializeField]
     private float moveSpeed = 1.0f;
+    [SerializeField]
+    private float dragSpeed = 1.0f;
+    [SerializeField]
+    private float easing = 1.0f;
     [SerializeField]
     private float zoomSpeed = 1.0f;
     private float speed = 1.0f;
@@ -57,6 +62,12 @@ public class FreeCamera : MonoBehaviour
     private Camera cameraComponent;
     private Plane worldPlane;
 
+
+    private Vector3 dragStart;
+    private Vector3 dragVelocity;
+    [SerializeField]
+    private bool dragging = false;
+
     void Awake()
     {
         cameraComponent = GetComponent<Camera>();
@@ -68,9 +79,51 @@ public class FreeCamera : MonoBehaviour
 
         zoomToPointerInput.started.AddListener(ZoomToPointer);
         pointerPosition.started.AddListener(SetPointerPosition);
+
+        dragModifier.started.AddListener(Drag);
     }
-    
-    public void ZoomToPointer(float amount)
+
+    void Update()
+	{
+		//Dragging ease out
+		EaseDragTarget();
+	}
+
+	private void EaseDragTarget()
+	{
+        dragVelocity = new Vector3(Mathf.Lerp(dragVelocity.x,0, Time.deltaTime * easing), 0, Mathf.Lerp(dragVelocity.z, 0, Time.deltaTime * easing));
+        if (!dragging & dragVelocity.magnitude > 0)
+        {
+            this.transform.Translate(-dragVelocity * Time.deltaTime * dragSpeed,Space.World);
+		}
+	}
+
+    private void StopEasing()
+    {
+        dragVelocity = Vector3.zero;
+    }
+
+	private void Drag(bool isDragging)
+	{
+		if(!dragging && isDragging)
+        {
+            dragStart = GetWorldPoint();
+            dragStart.y = this.transform.position.y;
+        }
+        else if(dragging)
+        {
+            var cameraPlanePoint = GetWorldPoint();
+            cameraPlanePoint.y = this.transform.position.y;
+            var dragDirection = cameraPlanePoint - dragStart;
+
+            this.transform.Translate(-dragDirection * Time.deltaTime * dragSpeed, Space.World);
+
+            dragVelocity = cameraPlanePoint - dragStart;
+        }
+        dragging = isDragging;
+    }
+
+	public void ZoomToPointer(float amount)
 	{
         CalculateSpeed();
         Debug.Log(amount);
@@ -138,10 +191,5 @@ public class FreeCamera : MonoBehaviour
         //Clamp speeds
         speed = Mathf.Clamp(speed, minimumSpeed, maximumSpeed);
         speedZoom = Mathf.Clamp(speedZoom, minimumSpeed, maximumSpeed);
-    }
-
-    void Update()
-    {
-        
     }
 }

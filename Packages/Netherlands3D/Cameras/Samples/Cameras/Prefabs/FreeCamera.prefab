@@ -103,6 +103,8 @@ MonoBehaviour:
   dragToMoveCamera: 1
   multiplySpeedBasedOnHeight: 1
   moveSpeed: 1
+  dragSpeed: 100
+  easing: 10
   zoomSpeed: 0.001
   minimumSpeed: 0.001
   maximumSpeed: 1000
@@ -115,6 +117,7 @@ MonoBehaviour:
   dragModifier: {fileID: 11400000, guid: 8d6fa7b43c0e19d478efb3e4bde47f75, type: 2}
   rotateModifier: {fileID: 11400000, guid: 61a4ba0ce1e595d458619e2b56009ce9, type: 2}
   firstPersonModifier: {fileID: 11400000, guid: 78ca7e79ff1e06c4db8fffc011f68a8b, type: 2}
+  dragging: 0
 --- !u!114 &1107191816428015818
 MonoBehaviour:
   m_ObjectHideFlags: 0
