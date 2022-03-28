@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using SLIDDES.UI;
 using TMPro;
+using System.Globalization;
 
 namespace Netherlands3D.Timeline
 {
@@ -29,9 +30,9 @@ namespace Netherlands3D.Timeline
         public TMP_InputField inputFieldCurrentDate;
 
         /// <summary>
-        /// 0 = dd/mm/yyyy, 1 = mm/yyyy, 2 = yyyy
+        /// The time unit used for the timeline. 0 = yyyy, 1 = mm/yyyy, 2 = dd/mm/yyyy
         /// </summary>
-        private int currentDateTimeUnit = 2;
+        private int timeUnit = 0;
         /// <summary>
         /// Array int holding the order of the indexes of timeBars in which they appear/move
         /// </summary>
@@ -44,9 +45,7 @@ namespace Netherlands3D.Timeline
         // Start is called before the first frame update
         void Start()
         {
-            currentDate = DateTime.Now;
-            UpdateTimeBars();
-            SetCurrentDate(currentDate);
+            SetCurrentDate(DateTime.Now);
         }
 
         // Update is called once per frame
@@ -69,10 +68,20 @@ namespace Netherlands3D.Timeline
         public void OnInputFieldCurrentDateChanged()
         {
             // Try to parse the new date
-            print(inputFieldCurrentDate.text);
-            if(DateTime.TryParse(inputFieldCurrentDate.text, out DateTime result))
+            DateTime result;
+            if(DateTime.TryParseExact(inputFieldCurrentDate.text, "yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
             {
-                print("parse");
+                timeUnit = 0;
+                SetCurrentDate(result);
+            }
+            else if(DateTime.TryParseExact(inputFieldCurrentDate.text, "MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+            {
+                timeUnit = 1;
+                SetCurrentDate(result);
+            }
+            else if(DateTime.TryParseExact(inputFieldCurrentDate.text, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+            {
+                timeUnit = 2;
                 SetCurrentDate(result);
             }
             else
@@ -104,7 +113,7 @@ namespace Netherlands3D.Timeline
                     ShiftArray.Rotate(barIndexes, -1);
                     leaderIndex = barIndexes[0];
                     // Update visuals of previous leader bar
-                    timeBars[barIndexes.Last()].UpdateVisuals(timeBars[barIndexes[1]].startDateTime, 2);
+                    timeBars[barIndexes.Last()].UpdateVisuals(timeBars[barIndexes[1]].startDateTime, 2, timeUnit);
                 }
 
                 // Update remaining indexes positions
@@ -129,7 +138,7 @@ namespace Netherlands3D.Timeline
                     ShiftArray.Rotate(barIndexes, 1);
                     leaderIndex = barIndexes[barIndexes.Length - 1];
                     // Update visuals of previous leader bar
-                    timeBars[barIndexes.First()].UpdateVisuals(timeBars[barIndexes[1]].startDateTime, 0);
+                    timeBars[barIndexes.First()].UpdateVisuals(timeBars[barIndexes[1]].startDateTime, 0, timeUnit);
                 }
 
                 // Update remaining indexes positions
@@ -181,7 +190,8 @@ namespace Netherlands3D.Timeline
         /// <param name="valueToAdd">The value to add to currentDateTimeUnit</param>
         public void SetTimeUnit(int valueToAdd)
         {
-            currentDateTimeUnit = Mathf.Clamp(currentDateTimeUnit + valueToAdd, 0, 2);
+            timeUnit = Mathf.Clamp(timeUnit + valueToAdd, 0, 2);
+            UpdateTimeBars();
             UpdateCurrentDateVisual();
         }
 
@@ -208,27 +218,21 @@ namespace Netherlands3D.Timeline
             // Time bar visual setup
             for(int i = 0; i < 3; i++)
             {
-                print(currentDate);
-                timeBars[i].UpdateVisuals(currentDate, i);
+                timeBars[i].UpdateVisuals(currentDate, i, timeUnit);
             }
         }
 
+        /// <summary>
+        /// Updates the current date inputfield text to currentDate datetime value
+        /// </summary>
         private void UpdateCurrentDateVisual()
         {
-            // Set text
-            string format;
-            switch(currentDateTimeUnit)
+            string format = timeUnit switch
             {
-                default:
-                    format = "dd/MM/yyyy";
-                    break;
-                case 1:
-                    format = "MM/yyyy";
-                    break;
-                case 2:
-                    format = "yyyy";
-                    break;
-            }
+                1 => "MM/yyyy",
+                2 => "dd/MM/yyyy",
+                _ => "yyyy",
+            };
             inputFieldCurrentDate.text = currentDate.ToString(format);
         }
     }

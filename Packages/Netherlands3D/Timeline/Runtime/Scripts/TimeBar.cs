@@ -74,7 +74,8 @@ namespace Netherlands3D.Timeline
         /// </summary>
         /// <param name="dateTimeLeaderIndex">The dateTime of the leader</param>
         /// <param name="barIndex">The index of the bar (based from its position 0-1-2)</param>
-        public void UpdateVisuals(DateTime dateTimeLeaderIndex, int barIndex)
+        /// <param name="timeUnit">The unit of time used on the bar. 0 = yyyy, 1 = MM/yyyy, 2 = dd/MM/yyyy</param>
+        public void UpdateVisuals(DateTime dateTimeLeaderIndex, int barIndex, int timeUnit)
         {
             // Clear old
             foreach(Transform child in parentDates.transform)
@@ -87,18 +88,52 @@ namespace Netherlands3D.Timeline
             float width = rectTransform.rect.width;
             int datesToPlace = (int)(width / pixelDistanceDates);
             float spaceBetween = width / datesToPlace;
+            string format;
 
-            // Calc bar starting date
-            switch(barIndex)
+            // Calc bar starting date, and based on timeUnit
+            switch(timeUnit)
             {
-                default: // 0 (left bar)
-                    dateTimeLeaderIndex = dateTimeLeaderIndex.AddYears(-datesToPlace);
+                default: // yyyy
+                    format = "yyyy";
+                    switch(barIndex)
+                    {
+                        default: // 0 (left bar)
+                            dateTimeLeaderIndex = dateTimeLeaderIndex.AddYears(-datesToPlace);
+                            break;
+                        case 1: // 1 (middle bar)
+                            break;
+                        case 2: // 2 (right bar)
+                            dateTimeLeaderIndex = dateTimeLeaderIndex.AddYears(datesToPlace);
+                            break;
+                    }
                     break;
-                case 1: // 1 (middle bar)
-
+                case 1: // MM/yyyy
+                    format = "MM";
+                    switch(barIndex)
+                    {
+                        default: // 0 (left bar)
+                            dateTimeLeaderIndex = dateTimeLeaderIndex.AddMonths(-datesToPlace);
+                            break;
+                        case 1: // 1 (middle bar)
+                            break;
+                        case 2: // 2 (right bar)
+                            dateTimeLeaderIndex = dateTimeLeaderIndex.AddMonths(datesToPlace);
+                            break;
+                    }
                     break;
-                case 2: // 2 (right bar)
-                    dateTimeLeaderIndex = dateTimeLeaderIndex.AddYears(datesToPlace);
+                case 2: // dd/MM/yyyy
+                    format = "dd/MM";
+                    switch(barIndex)
+                    {
+                        default: // 0 (left bar)
+                            dateTimeLeaderIndex = dateTimeLeaderIndex.AddDays(-datesToPlace);
+                            break;
+                        case 1: // 1 (middle bar)
+                            break;
+                        case 2: // 2 (right bar)
+                            dateTimeLeaderIndex = dateTimeLeaderIndex.AddDays(datesToPlace);
+                            break;
+                    }
                     break;
             }
             startDateTime = dateTimeLeaderIndex;
@@ -108,9 +143,15 @@ namespace Netherlands3D.Timeline
             {
                 TimeBarDate a = Instantiate(prefabTimeBarDate, parentDates).GetComponent<TimeBarDate>();
                 float posX = -(width / 2) + (spaceBetween * i) + spaceBetween * 0.5f;
-                DateTime dateTime = dateTimeLeaderIndex.AddYears(i);
+                var dateTime = timeUnit switch
+                {
+                    1 => dateTimeLeaderIndex.AddMonths(i),
+                    2 => dateTimeLeaderIndex.AddDays(i),
+                    _ => dateTimeLeaderIndex.AddYears(i)
+
+                };
                 a.transform.localPosition = new Vector3(posX, a.transform.localPosition.y, 0);
-                a.field.text = dateTime.ToString("yyyy");
+                a.field.text = dateTime.ToString(format);
                 dateTimePositions.Add(posX, dateTime);
             }
         }
