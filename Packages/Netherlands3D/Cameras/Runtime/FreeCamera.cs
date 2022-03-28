@@ -163,24 +163,30 @@ public class FreeCamera : MonoBehaviour
 
     public void MoveHorizontally(float amount)
 	{
-		CalculateSpeed();
+        StopEasing();
+
+        CalculateSpeed();
 		this.transform.Translate(Vector3.right * amount * speed * Time.deltaTime, Space.Self);
 	}
 
 	public void MoveForwardBackwards(float amount)
     {
+        StopEasing();
+
         CalculateSpeed();
         var forwardDirection = this.transform.forward;
         if(moveForwardOnPlane)
         {
             forwardDirection.y = 0;
         }
-        this.transform.Translate(forwardDirection.normalized * amount * moveSpeed * Time.deltaTime, Space.World);
+        this.transform.Translate(forwardDirection.normalized * amount * speed * Time.deltaTime, Space.World);
     }
 
     public void MoveUpDown(float amount)
     {
-        this.transform.Translate(Vector3.up * amount * moveSpeed * Time.deltaTime, Space.World);
+        StopEasing();
+
+        this.transform.Translate(Vector3.up * amount * speed * Time.deltaTime, Space.World);
     }
 
     private void CalculateSpeed()
