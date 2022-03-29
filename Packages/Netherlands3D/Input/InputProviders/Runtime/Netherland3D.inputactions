@@ -426,6 +426,39 @@
                     "isPartOfComposite": false
                 },
                 {
+                    "name": "One Modifier",
+                    "id": "9d9ad211-9ec1-4083-9c19-16eb9ace0e92",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateModifier",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "ac56cd1b-9bce-402d-88ae-5210cfb63cc3",
+                    "path": "<Keyboard>/alt",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateModifier",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "c8d08a01-6728-4fdf-95b7-5e1acedcc42e",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateModifier",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
                     "name": "",
                     "id": "d5d2a399-7dfc-4127-bc5b-d22bddc0e028",
                     "path": "<Keyboard>/ctrl",

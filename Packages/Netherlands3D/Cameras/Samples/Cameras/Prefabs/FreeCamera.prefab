@@ -103,17 +103,17 @@ MonoBehaviour:
   dragToMoveCamera: 1
   multiplySpeedBasedOnHeight: 1
   moveSpeed: 1
-  gamepadMoveSpeed: 10
   upAndDownSpeed: 30
   dragSpeed: 100
   easing: 10
   zoomSpeed: 0.001
   minimumSpeed: 0.001
   maximumSpeed: 1000
-  rotateSpeed: 50
+  dragRotateSpeed: 0.08
   rotateAroundPointSpeed: 0.1
+  gamepadRotateSpeed: 50
+  gamepadMoveSpeed: 10
   useRotationLimits: 1
-  rotateMinLimit: -90
   horizontalInput: {fileID: 11400000, guid: 47fdda6b64fb95e49b5a0ad3df35497e, type: 2}
   verticalInput: {fileID: 11400000, guid: 962e73377a6e8f44aa81cda26eaf96e2, type: 2}
   upDownInput: {fileID: 11400000, guid: 5f9176915754b054ab92230b32ec4a6b, type: 2}

@@ -19,8 +19,6 @@ public class FreeCamera : MonoBehaviour
     [SerializeField]
     private float moveSpeed = 1.0f;
     [SerializeField]
-    private float gamepadMoveSpeed = 1.0f;
-    [SerializeField]
     private float upAndDownSpeed = 10.0f;
     [SerializeField]
     private float dragSpeed = 1.0f;
@@ -36,17 +34,22 @@ public class FreeCamera : MonoBehaviour
     [SerializeField]
     private float maximumSpeed = 1000.0f;
     [SerializeField]
-    private float rotateSpeed = 1.0f;
+    private float dragRotateSpeed = 1.0f;
+
     [SerializeField]
     private float rotateAroundPointSpeed = 1.0f;
 
+    [Header("Gamepad")]
+    [SerializeField]
+    private float gamepadRotateSpeed = 1.0f;
+    [SerializeField]
+    private float gamepadMoveSpeed = 1.0f;
+
     [Header("Limits")]
+    [SerializeField]
     private float maxPointerDistance = 10000;
     [SerializeField]
     private bool useRotationLimits = true;
-    [SerializeField]
-    private float rotateMinLimit = -90;
-    private float rotateMaxLimit = 90;
 
     [Header("Listen to input events")]
     [SerializeField]
@@ -85,9 +88,11 @@ public class FreeCamera : MonoBehaviour
 
     private bool dragging = false;
     private bool rotate = false;
-    private bool rotating = false;
+    private bool rotatingAroundPoint = false;
     private bool firstPersonRotate = false;
 
+    private Quaternion previousRotation;
+    private Vector3 previousPosition;
 
     void Awake()
     {
@@ -108,76 +113,111 @@ public class FreeCamera : MonoBehaviour
 
         dragModifier.started.AddListener(Drag);
         rotateModifier.started.AddListener(Rotate);
+        firstPersonModifier.started.AddListener(RotateFirstPerson);
     }
 
 	private void PointerDelta(Vector3 pointerDelta)
 	{
         if (rotate)
 		{
-			if (!rotating)
+			if (!rotatingAroundPoint)
 			{
 				dragStart = GetWorldPoint();
 			}
-			rotating = true;
-
+			rotatingAroundPoint = true;
 			RotateAroundPoint(pointerDelta);
 		}
-		else if (firstPersonRotate)
+		else if (dragging && firstPersonRotate)
         {
-            FirstPersonRotate();
+            pointerDelta.x = -pointerDelta.x;
+            DragRotateAroundOwnAxis(pointerDelta);
         }
     }
 
-    private void FreeFly(Vector3 value)
-    {
-        StopEasing();
-        CalculateSpeed();
-        this.transform.Translate(value.x * gamepadMoveSpeed * Time.deltaTime,0, value.y * gamepadMoveSpeed * Time.deltaTime, Space.Self);
-    }
+    /// <summary>
+    /// Drag rotate via pointer delta
+    /// </summary>
+    /// <param name="value"></param>
+    private void DragRotateAroundOwnAxis(Vector3 value)
+	{
+		StopEasing();
+		CalculateSpeed();
+
+		StorePreviousTransform();
+
+		this.transform.Rotate(0, value.x * dragRotateSpeed, 0, Space.World);
+		this.transform.Rotate(value.y * dragRotateSpeed, 0, 0, Space.Self);
+
+		RevertIfOverAxis();
+	}
 
     private void RotateAroundOwnAxis(Vector3 value)
     {
         StopEasing();
         CalculateSpeed();
 
-        this.transform.Rotate(0,value.x * rotateSpeed * Time.deltaTime, 0,Space.World);
-        this.transform.Rotate(value.y * rotateSpeed * Time.deltaTime,0, 0,Space.Self);
+        StorePreviousTransform();
+
+        this.transform.Rotate(0, value.x * gamepadRotateSpeed * Time.deltaTime, 0, Space.World);
+        this.transform.Rotate(value.y * gamepadRotateSpeed * Time.deltaTime, 0, 0, Space.Self);
+
+        RevertIfOverAxis();
     }
+
+    private void StorePreviousTransform()
+	{
+		previousRotation = this.transform.rotation;
+		previousPosition = this.transform.position;
+	}
 
     private void RotateAroundPoint(Vector3 pointerDelta)
 	{
-		//pitchRotation += pointerDelta.y * rotateSpeed;
+        StopEasing();
 
-		this.transform.RotateAround(dragStart, this.transform.right, -pointerDelta.y * rotateAroundPointSpeed);
+        StorePreviousTransform();
+
+        this.transform.RotateAround(dragStart, this.transform.right, -pointerDelta.y * rotateAroundPointSpeed);
 		this.transform.RotateAround(dragStart, Vector3.up, pointerDelta.x * rotateAroundPointSpeed);
 
-        ClampXRotation();
+        RevertIfOverAxis();
     }
 
-	private void ClampXRotation(float clampAngle = 90)
-    {
+    /// <summary>
+    /// If we use rotation limits, restore previous position/rotation if we passed straight up or down.
+    /// This avoids getting upside down.
+    /// </summary>
+	private void RevertIfOverAxis()
+	{
+        if (!useRotationLimits) return;
+
         var overAxis = Vector3.Dot(Vector3.up, this.transform.up);
-        if(overAxis < 0)
+        if (overAxis < 0)
         {
-            //Force back
-            //this.transform.RotateAround(dragStart, Vector3.right, -pointerDelta.x * rotateSpeed);
+            this.transform.SetPositionAndRotation(previousPosition, previousRotation);
         }
+    }
+
+	private void FreeFly(Vector3 value)
+    {
+        StopEasing();
+        CalculateSpeed();
+        this.transform.Translate(value.x * gamepadMoveSpeed * Time.deltaTime, 0, value.y * gamepadMoveSpeed * Time.deltaTime, Space.Self);
     }
 
 	private void Rotate(bool rotate)
 	{
         this.rotate = rotate;
-        if (!rotate) rotating = false;
+        if (!rotate) rotatingAroundPoint = false;
+    }
+    private void RotateFirstPerson(bool rotateFirstPerson)
+    {
+        this.firstPersonRotate = rotateFirstPerson;
     }
 
-	void Update()
+    void Update()
 	{
         EaseDragTarget();
 	}
-    private void FirstPersonRotate()
-    {
-
-    }
 
     private void EaseDragTarget()
 	{
@@ -202,7 +242,7 @@ public class FreeCamera : MonoBehaviour
             dragStart = GetWorldPoint();
             dragStart.y = this.transform.position.y;
         }
-        else if(dragging)
+        else if(dragging && !rotatingAroundPoint && !firstPersonRotate)
         {
             var cameraPlanePoint = GetWorldPoint();
             cameraPlanePoint.y = this.transform.position.y;
@@ -218,25 +258,13 @@ public class FreeCamera : MonoBehaviour
 	public void ZoomToPointer(float amount)
 	{
         dragging = false;
-        rotating = false;
+        rotatingAroundPoint = false;
 
         CalculateSpeed();
         zoomTarget = GetWorldPoint();
         var direction = zoomTarget - this.transform.position;
         this.transform.Translate(direction.normalized * speedZoom * amount, Space.World);
 	}
-
-	private void OnDrawGizmos()
-	{
-        if (dragging || rotating)
-        {
-            Gizmos.DrawSphere(dragStart, 1.0f);
-        }
-        else
-        {
-            Gizmos.DrawSphere(zoomTarget, 1.0f);
-        }
-    }
 
 	/// <summary>
 	/// Returns a position on the world 0 plane
@@ -297,5 +325,16 @@ public class FreeCamera : MonoBehaviour
         //Clamp speeds
         speed = Mathf.Clamp(speed, minimumSpeed, maximumSpeed);
         speedZoom = Mathf.Clamp(speedZoom, minimumSpeed, maximumSpeed);
+    }
+    private void OnDrawGizmos()
+    {
+        if (dragging || rotatingAroundPoint)
+        {
+            Gizmos.DrawSphere(dragStart, 1.0f);
+        }
+        else
+        {
+            Gizmos.DrawSphere(zoomTarget, 1.0f);
+        }
     }
 }
