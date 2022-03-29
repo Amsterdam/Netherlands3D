@@ -1137,7 +1137,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_ActionEvents.Array.size
-      value: 19
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
+      propertyPath: m_NeverAutoSwitchControlSchemes
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_ActionEvents.Array.data[14].m_ActionId
@@ -1160,6 +1164,14 @@ PrefabInstance:
       value: 8728acb1-10a7-4293-8145-71c7a6e8179a
       objectReference: {fileID: 0}
     - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
+      propertyPath: m_ActionEvents.Array.data[19].m_ActionId
+      value: d48b77d2-dd1f-4a34-ab48-39d36e7a2257
+      objectReference: {fileID: 0}
+    - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_ActionId
+      value: 23b620b5-431d-48b1-81f4-530237d06774
+      objectReference: {fileID: 0}
+    - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_ActionEvents.Array.data[14].m_ActionName
       value: FreeCamera/Point[/Mouse/position]
       objectReference: {fileID: 0}
@@ -1178,6 +1190,15 @@ PrefabInstance:
     - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
       propertyPath: m_ActionEvents.Array.data[18].m_ActionName
       value: Camera/Zoom[/Mouse/scroll]
+      objectReference: {fileID: 0}
+    - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
+      propertyPath: m_ActionEvents.Array.data[19].m_ActionName
+      value: Camera/Rotate[/Keyboard/f,/Keyboard/r,/Keyboard/q,/Keyboard/e,/Logitech
+        Logitech Dual Action/stick]
+      objectReference: {fileID: 0}
+    - target: {fileID: 6118155297958791837, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_ActionName
+      value: Camera/Fly
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf4c02669f957394f88ef63b877ba50a, type: 3}

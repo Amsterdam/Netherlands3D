@@ -15,9 +15,13 @@ public class FreeCamera : MonoBehaviour
     [SerializeField]
     private bool multiplySpeedBasedOnHeight = true;
 
-    [Header("Speed")]
+    [Header("Speeds")]
     [SerializeField]
     private float moveSpeed = 1.0f;
+    [SerializeField]
+    private float gamepadMoveSpeed = 1.0f;
+    [SerializeField]
+    private float upAndDownSpeed = 10.0f;
     [SerializeField]
     private float dragSpeed = 1.0f;
     [SerializeField]
@@ -33,6 +37,8 @@ public class FreeCamera : MonoBehaviour
     private float maximumSpeed = 1000.0f;
     [SerializeField]
     private float rotateSpeed = 1.0f;
+    [SerializeField]
+    private float rotateAroundPointSpeed = 1.0f;
 
     [Header("Limits")]
     private float maxPointerDistance = 10000;
@@ -41,7 +47,6 @@ public class FreeCamera : MonoBehaviour
     [SerializeField]
     private float rotateMinLimit = -90;
     private float rotateMaxLimit = 90;
-    private float pitchRotation;
 
     [Header("Listen to input events")]
     [SerializeField]
@@ -52,6 +57,10 @@ public class FreeCamera : MonoBehaviour
     private FloatEvent upDownInput;
     [SerializeField]
     private Vector3Event lookInput;
+    [SerializeField]
+    private Vector3Event flyInput;
+    [SerializeField]
+    private Vector3Event rotateInput;
 
     [SerializeField]
     private FloatEvent zoomToPointerInput;
@@ -85,12 +94,14 @@ public class FreeCamera : MonoBehaviour
         cameraComponent = GetComponent<Camera>();
         worldPlane = new Plane(Vector3.up, Vector3.zero);
 
-        pitchRotation = this.transform.localEulerAngles.x;
+        //pitchRotation = this.transform.localEulerAngles.x;
 
         horizontalInput.started.AddListener(MoveHorizontally);
         verticalInput.started.AddListener(MoveForwardBackwards);
         upDownInput.started.AddListener(MoveUpDown);
         lookInput.started.AddListener(PointerDelta);
+        flyInput.started.AddListener(FreeFly);
+        rotateInput.started.AddListener(RotateAroundOwnAxis);
 
         zoomToPointerInput.started.AddListener(ZoomToPointer);
         pointerPosition.started.AddListener(SetPointerPosition);
@@ -102,51 +113,67 @@ public class FreeCamera : MonoBehaviour
 	private void PointerDelta(Vector3 pointerDelta)
 	{
         if (rotate)
-        {
-            if(!rotating)
-            {
-                dragStart = GetWorldPoint();
-            }
-            rotating = true;
+		{
+			if (!rotating)
+			{
+				dragStart = GetWorldPoint();
+			}
+			rotating = true;
 
-            pitchRotation += pointerDelta.y * rotateSpeed;
-            print(this.transform.localEulerAngles.x);
-            //ClampXRotation(90);
-            print("Clamped" + this.transform.localEulerAngles.x);
-
-            this.transform.localEulerAngles = new Vector3(pitchRotation, this.transform.localEulerAngles.y, this.transform.localEulerAngles.z);
-            this.transform.RotateAround(dragStart, Vector3.up, -pointerDelta.x * rotateSpeed);
-
-            ClampXRotation();
-        }
-        else if (firstPersonRotate)
+			RotateAroundPoint(pointerDelta);
+		}
+		else if (firstPersonRotate)
         {
             FirstPersonRotate();
         }
     }
 
-    private void ClampXRotation(float clampAngle = 90)
+    private void FreeFly(Vector3 value)
     {
-        pitchRotation = Mathf.Clamp(pitchRotation, rotateMinLimit, rotateMaxLimit);
+        StopEasing();
+        CalculateSpeed();
+        this.transform.Translate(value.x * gamepadMoveSpeed * Time.deltaTime,0, value.y * gamepadMoveSpeed * Time.deltaTime, Space.Self);
+    }
+
+    private void RotateAroundOwnAxis(Vector3 value)
+    {
+        StopEasing();
+        CalculateSpeed();
+
+        this.transform.Rotate(0,value.x * rotateSpeed * Time.deltaTime, 0,Space.World);
+        this.transform.Rotate(value.y * rotateSpeed * Time.deltaTime,0, 0,Space.Self);
+    }
+
+    private void RotateAroundPoint(Vector3 pointerDelta)
+	{
+		//pitchRotation += pointerDelta.y * rotateSpeed;
+
+		this.transform.RotateAround(dragStart, this.transform.right, -pointerDelta.y * rotateAroundPointSpeed);
+		this.transform.RotateAround(dragStart, Vector3.up, pointerDelta.x * rotateAroundPointSpeed);
+
+        ClampXRotation();
+    }
+
+	private void ClampXRotation(float clampAngle = 90)
+    {
+        var overAxis = Vector3.Dot(Vector3.up, this.transform.up);
+        if(overAxis < 0)
+        {
+            //Force back
+            //this.transform.RotateAround(dragStart, Vector3.right, -pointerDelta.x * rotateSpeed);
+        }
     }
 
 	private void Rotate(bool rotate)
 	{
         this.rotate = rotate;
         if (!rotate) rotating = false;
-
     }
 
 	void Update()
 	{
         EaseDragTarget();
 	}
-
-    private void RotateAroundPoint()
-    {
-        
-	}
-
     private void FirstPersonRotate()
     {
 
@@ -155,7 +182,7 @@ public class FreeCamera : MonoBehaviour
     private void EaseDragTarget()
 	{
         dragVelocity = new Vector3(Mathf.Lerp(dragVelocity.x,0, Time.deltaTime * easing), 0, Mathf.Lerp(dragVelocity.z, 0, Time.deltaTime * easing));
-        if (!dragging & dragVelocity.magnitude > 0)
+        if (!dragging && dragVelocity.magnitude > 0)
         {
             this.transform.Translate(-dragVelocity * Time.deltaTime * dragSpeed,Space.World);
 		}
@@ -190,8 +217,10 @@ public class FreeCamera : MonoBehaviour
 
 	public void ZoomToPointer(float amount)
 	{
+        dragging = false;
+        rotating = false;
+
         CalculateSpeed();
-        Debug.Log(amount);
         zoomTarget = GetWorldPoint();
         var direction = zoomTarget - this.transform.position;
         this.transform.Translate(direction.normalized * speedZoom * amount, Space.World);
@@ -257,8 +286,7 @@ public class FreeCamera : MonoBehaviour
     public void MoveUpDown(float amount)
     {
         StopEasing();
-
-        this.transform.Translate(Vector3.up * amount * speed * Time.deltaTime, Space.World);
+        this.transform.Translate(Vector3.up * amount * upAndDownSpeed * Time.deltaTime, Space.World);
     }
 
     private void CalculateSpeed()

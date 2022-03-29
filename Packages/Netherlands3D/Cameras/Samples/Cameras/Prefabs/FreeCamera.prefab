@@ -103,16 +103,23 @@ MonoBehaviour:
   dragToMoveCamera: 1
   multiplySpeedBasedOnHeight: 1
   moveSpeed: 1
+  gamepadMoveSpeed: 10
+  upAndDownSpeed: 30
   dragSpeed: 100
   easing: 10
   zoomSpeed: 0.001
   minimumSpeed: 0.001
   maximumSpeed: 1000
-  rotateSpeed: 0.1
+  rotateSpeed: 50
+  rotateAroundPointSpeed: 0.1
+  useRotationLimits: 1
+  rotateMinLimit: -90
   horizontalInput: {fileID: 11400000, guid: 47fdda6b64fb95e49b5a0ad3df35497e, type: 2}
   verticalInput: {fileID: 11400000, guid: 962e73377a6e8f44aa81cda26eaf96e2, type: 2}
   upDownInput: {fileID: 11400000, guid: 5f9176915754b054ab92230b32ec4a6b, type: 2}
   lookInput: {fileID: 11400000, guid: 60a5d5ae948894a4b81ce19239f5fb71, type: 2}
+  flyInput: {fileID: 11400000, guid: edd75d8dd8d10e6469004c04033ef7ee, type: 2}
+  rotateInput: {fileID: 11400000, guid: 8176c5b23598cef4ab3ba31f324603c0, type: 2}
   zoomToPointerInput: {fileID: 11400000, guid: 1ed3a4566e400a645b226800ef524917, type: 2}
   pointerPosition: {fileID: 11400000, guid: e0761ef641ca8fe458adf20b533a9f89, type: 2}
   dragModifier: {fileID: 11400000, guid: 8d6fa7b43c0e19d478efb3e4bde47f75, type: 2}
@@ -252,6 +259,8 @@ MonoBehaviour:
   horizontalInput: {fileID: 11400000, guid: 47fdda6b64fb95e49b5a0ad3df35497e, type: 2}
   verticalInput: {fileID: 11400000, guid: 962e73377a6e8f44aa81cda26eaf96e2, type: 2}
   lookInput: {fileID: 11400000, guid: 60a5d5ae948894a4b81ce19239f5fb71, type: 2}
+  flyInput: {fileID: 11400000, guid: edd75d8dd8d10e6469004c04033ef7ee, type: 2}
+  rotateInput: {fileID: 11400000, guid: 8176c5b23598cef4ab3ba31f324603c0, type: 2}
   zoomInput: {fileID: 11400000, guid: 1ed3a4566e400a645b226800ef524917, type: 2}
   upDownInput: {fileID: 11400000, guid: 5f9176915754b054ab92230b32ec4a6b, type: 2}
   zoomToPointerInput: {fileID: 11400000, guid: 1ed3a4566e400a645b226800ef524917, type: 2}

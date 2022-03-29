@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputSystemProvider : BaseInputProvider
+public class CameraInputSystemProvider : BaseCameraInputProvider
 {
     private InputAction dragAction;
     private InputAction moveAction;
     private InputAction lookAction;
+    private InputAction flyAction;
+    private InputAction rotateAction;
     private InputAction upAction;
     private InputAction downAction;
     private InputAction zoomAction;
@@ -24,6 +26,8 @@ public class InputSystemProvider : BaseInputProvider
 
         moveAction = playerInput.actions["Move"];
         lookAction = playerInput.actions["Look"];
+        flyAction = playerInput.actions["Fly"];
+        rotateAction = playerInput.actions["Rotate"];
         upAction = playerInput.actions["Up"];
         downAction = playerInput.actions["Down"];
         zoomAction = playerInput.actions["Zoom"];
@@ -51,31 +55,41 @@ public class InputSystemProvider : BaseInputProvider
         pointerPosition.started.Invoke(pointer);
 
         //Transform inputs 
-        var move = moveAction.ReadValue<Vector2>();
-        var look = lookAction.ReadValue<Vector2>();
-        var zoom = zoomAction.ReadValue<Vector2>();
+        var moveValue = moveAction.ReadValue<Vector2>();
+        var lookValue = lookAction.ReadValue<Vector2>();
+        var zoomValue = zoomAction.ReadValue<Vector2>();
+        var flyValue = flyAction.ReadValue<Vector2>();
+        var rotateValue = rotateAction.ReadValue<Vector2>();
+        var upPressed = upAction.IsPressed();
+        var downPressed = downAction.IsPressed();
 
-        var up = upAction.IsPressed();
-        var down = downAction.IsPressed();
-        if (move.magnitude>0)
+        if (moveValue.magnitude>0)
         {
-            horizontalInput.started.Invoke(move.x);
-            verticalInput.started.Invoke(move.y);
+            horizontalInput.started.Invoke(moveValue.x);
+            verticalInput.started.Invoke(moveValue.y);
         }
-        if (zoom.magnitude > 0)
+        if(flyValue.magnitude>0)
         {
-            zoomInput.started.Invoke(zoom.y);
+            flyInput.started.Invoke(flyValue);
+		}
+        if (zoomValue.magnitude > 0)
+        {
+            zoomInput.started.Invoke(zoomValue.y);
         }
-        if (look.magnitude > 0)
+        if (lookValue.magnitude > 0)
         {
-            lookInput.started.Invoke(look);
+            lookInput.started.Invoke(lookValue);
+        }
+        if (rotateValue.magnitude > 0)
+        {
+            rotateInput.started.Invoke(rotateValue);
         }
 
-        if (up)
+        if (upPressed)
         {
             upDownInput.started.Invoke(1);
         }
-        else if(down)
+        else if(downPressed)
         {
             upDownInput.started.Invoke(-1);
         }
