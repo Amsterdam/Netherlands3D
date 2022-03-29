@@ -27,7 +27,7 @@ public class FreeCamera : MonoBehaviour
     [SerializeField]
     private float zoomSpeed = 1.0f;
     private float speed = 1.0f;
-    private float speedZoom = 1.0f;
+    private float dynamicZoomSpeed = 1.0f;
 
     [SerializeField]
     private float minimumSpeed = 5.0f;
@@ -48,6 +48,10 @@ public class FreeCamera : MonoBehaviour
     [Header("Limits")]
     [SerializeField]
     private float maxPointerDistance = 10000;
+    [SerializeField]
+    private float maxCameraHeight = 1500;
+    [SerializeField]
+    private float minCameraHeight = -500;
     [SerializeField]
     private bool useRotationLimits = true;
 
@@ -98,8 +102,6 @@ public class FreeCamera : MonoBehaviour
     {
         cameraComponent = GetComponent<Camera>();
         worldPlane = new Plane(Vector3.up, Vector3.zero);
-
-        //pitchRotation = this.transform.localEulerAngles.x;
 
         horizontalInput.started.AddListener(MoveHorizontally);
         verticalInput.started.AddListener(MoveForwardBackwards);
@@ -217,9 +219,23 @@ public class FreeCamera : MonoBehaviour
     void Update()
 	{
         EaseDragTarget();
+
+        Clamp();
 	}
 
-    private void EaseDragTarget()
+	private void Clamp()
+	{
+		if(this.transform.position.y > maxCameraHeight)
+        {
+            this.transform.position = new Vector3(this.transform.position.x, maxCameraHeight, this.transform.position.z);
+        }
+        else if (this.transform.position.y < minCameraHeight)
+        {
+            this.transform.position = new Vector3(this.transform.position.x, minCameraHeight, this.transform.position.z);
+        }
+    }
+
+	private void EaseDragTarget()
 	{
         dragVelocity = new Vector3(Mathf.Lerp(dragVelocity.x,0, Time.deltaTime * easing), 0, Mathf.Lerp(dragVelocity.z, 0, Time.deltaTime * easing));
         if (!dragging && dragVelocity.magnitude > 0)
@@ -263,7 +279,10 @@ public class FreeCamera : MonoBehaviour
         CalculateSpeed();
         zoomTarget = GetWorldPoint();
         var direction = zoomTarget - this.transform.position;
-        this.transform.Translate(direction.normalized * speedZoom * amount, Space.World);
+        var targetIsBehind = Vector3.Dot(this.transform.forward, direction) < 0;
+        if (targetIsBehind) direction = -direction;
+
+        this.transform.Translate(direction.normalized * dynamicZoomSpeed * amount, Space.World);
 	}
 
 	/// <summary>
@@ -319,12 +338,12 @@ public class FreeCamera : MonoBehaviour
 
     private void CalculateSpeed()
     {
-        speed = (multiplySpeedBasedOnHeight) ? moveSpeed * this.transform.position.y : moveSpeed;
-        speedZoom = (multiplySpeedBasedOnHeight) ? zoomSpeed * this.transform.position.y : zoomSpeed;
+        speed = (multiplySpeedBasedOnHeight) ? moveSpeed * Mathf.Abs(this.transform.position.y) : moveSpeed;
+        dynamicZoomSpeed = (multiplySpeedBasedOnHeight) ? zoomSpeed * Mathf.Abs(this.transform.position.y) : zoomSpeed;
         
         //Clamp speeds
         speed = Mathf.Clamp(speed, minimumSpeed, maximumSpeed);
-        speedZoom = Mathf.Clamp(speedZoom, minimumSpeed, maximumSpeed);
+        dynamicZoomSpeed = Mathf.Clamp(dynamicZoomSpeed, minimumSpeed, maximumSpeed);
     }
     private void OnDrawGizmos()
     {
