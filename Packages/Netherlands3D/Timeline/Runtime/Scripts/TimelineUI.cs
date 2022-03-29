@@ -41,11 +41,18 @@ namespace Netherlands3D.Timeline
         /// The current time line date
         /// </summary>
         private DateTime currentDate;
+        /// <summary>
+        /// The most visable date left
+        /// </summary>
+        private DateTime visableDateLeft;
+        /// <summary>
+        /// The most visable date right
+        /// </summary>
+        private DateTime visableDateRight;
 
         // Start is called before the first frame update
         void Start()
-        {
-            currentDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+        {            
             SetCurrentDate(DateTime.Now);
         }
 
@@ -87,7 +94,6 @@ namespace Netherlands3D.Timeline
             }
             else
             {
-                print("not correct");
                 UpdateCurrentDateVisual();
             }
         }
@@ -153,6 +159,7 @@ namespace Netherlands3D.Timeline
             // Get currentDate from middle bar
             currentDate = GetFocusedBar().GetCurrentDateTime();
             UpdateCurrentDateVisual();
+            UpdateVisableDateRange();
         }
 
         /// <summary>
@@ -165,6 +172,7 @@ namespace Netherlands3D.Timeline
             UpdateTimeBars();
             SetFocusedBarPosition(GetFocusedBar().GetDatePosition(currentDate));
             UpdateCurrentDateVisual();
+            UpdateVisableDateRange();
         }
 
         /// <summary>
@@ -210,6 +218,35 @@ namespace Netherlands3D.Timeline
         }
 
         /// <summary>
+        /// Get the visable date range the user can see
+        /// </summary>
+        /// <remarks>
+        /// We need the visable date range in order to know what loaded data we need to display
+        /// </remarks>
+        private void UpdateVisableDateRange()
+        {
+            int datesToPlace = (int)((TimeBarParentWidth / TimeBar.PixelDistanceDates) / 2) + 2;
+            // based on timeUnit & current date, get the most left and right date
+            switch(timeUnit) // 0 = yyyy, 1 = mm/yyyy, 2 = dd/mm/yyyy
+            {
+                default: //0
+                    visableDateLeft = currentDate.AddYears(-datesToPlace);
+                    visableDateRight = currentDate.AddYears(datesToPlace);
+                    break;
+                case 1: //1
+                    visableDateLeft = currentDate.AddMonths(-datesToPlace);
+                    visableDateRight = currentDate.AddMonths(datesToPlace);
+                    break;
+                case 2: //2
+                    visableDateLeft = currentDate.AddDays(-datesToPlace);
+                    visableDateRight = currentDate.AddDays(datesToPlace);
+                    break;
+            }
+            print(visableDateLeft);
+            print(visableDateRight);
+        }
+
+        /// <summary>
         /// Setup the time bars
         /// </summary>
         private void UpdateTimeBars()
@@ -241,5 +278,7 @@ namespace Netherlands3D.Timeline
             };
             inputFieldCurrentDate.text = currentDate.ToString(format);
         }
+
+
     }
 }

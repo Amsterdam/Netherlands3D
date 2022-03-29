@@ -11,7 +11,7 @@ namespace Netherlands3D.Timeline
     /// </summary>
     public class TimeBar : MonoBehaviour
     {
-        private static float pixelDistanceDates = 100;
+        public static readonly float PixelDistanceDates = 100;
 
         [Header("Components")]
         [SerializeField] private Transform parentDates;
@@ -87,7 +87,7 @@ namespace Netherlands3D.Timeline
 
             // Calculate space
             float width = rectTransform.rect.width;
-            int datesToPlace = (int)(width / pixelDistanceDates);
+            int datesToPlace = (int)(width / PixelDistanceDates);
             float spaceBetween = width / datesToPlace;
 
             // Calc bar starting date, and based on timeUnit
@@ -111,53 +111,7 @@ namespace Netherlands3D.Timeline
                     1 => dateTimeLeaderIndex,
                     _ => dateTimeLeaderIndex.AddYears(-datesToPlace)
                 }
-            };
-
-            //switch(timeUnit)
-            //{
-            //    default: // yyyy
-            //        format = "yyyy";
-            //        switch(barIndex)
-            //        {
-            //            default: // 0 (left bar)
-            //                dateTimeLeaderIndex = dateTimeLeaderIndex.AddYears(-datesToPlace);
-            //                break;
-            //            case 1: // 1 (middle bar)
-            //                break;
-            //            case 2: // 2 (right bar)
-            //                dateTimeLeaderIndex = dateTimeLeaderIndex.AddYears(datesToPlace);
-            //                break;
-            //        }
-            //        break;
-            //    case 1: // MM/yyyy
-            //        format = "MM";
-            //        switch(barIndex)
-            //        {
-            //            default: // 0 (left bar)
-            //                dateTimeLeaderIndex = dateTimeLeaderIndex.AddMonths(-datesToPlace);
-            //                break;
-            //            case 1: // 1 (middle bar)
-            //                break;
-            //            case 2: // 2 (right bar)
-            //                dateTimeLeaderIndex = dateTimeLeaderIndex.AddMonths(datesToPlace);
-            //                break;
-            //        }
-            //        break;
-            //    case 2: // dd/MM/yyyy
-            //        format = "dd/MM";
-            //        switch(barIndex)
-            //        {
-            //            default: // 0 (left bar)
-            //                dateTimeLeaderIndex = dateTimeLeaderIndex.AddDays(-datesToPlace);
-            //                break;
-            //            case 1: // 1 (middle bar)
-            //                break;
-            //            case 2: // 2 (right bar)
-            //                dateTimeLeaderIndex = dateTimeLeaderIndex.AddDays(datesToPlace);
-            //                break;
-            //        }
-            //        break;
-            //}
+            };            
             startDateTime = dateTimeLeaderIndex;
 
             // Space dates evenly
