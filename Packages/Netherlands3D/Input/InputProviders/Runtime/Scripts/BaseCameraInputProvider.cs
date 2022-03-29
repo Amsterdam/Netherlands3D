@@ -13,7 +13,6 @@ public class BaseCameraInputProvider : MonoBehaviour
 
     public FloatEvent zoomInput;
     public FloatEvent upDownInput;
-    public FloatEvent zoomToPointerInput;
     public Vector3Event pointerPosition;
 
     public BoolEvent draggingModifier;
