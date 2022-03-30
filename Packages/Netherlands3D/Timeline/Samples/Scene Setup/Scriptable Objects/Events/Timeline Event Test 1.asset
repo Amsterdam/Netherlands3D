@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: adf17790ea2eb03499567d0855648d67, type: 3}
-  m_Name: Timeline Event Test 0
+  m_Name: Timeline Event Test 1
   m_EditorClassIdentifier: 
   name: Naam
   description: Test
   startDate:
-    dateTimeString: 2010/02/01 00:00
+    dateTimeString: 2020/02/01 00:00
   endDate:
-    dateTimeString: 2020/01/01 00:00
-  category: Bomen
+    dateTimeString: 2021/01/01 00:00
+  category: Auto's

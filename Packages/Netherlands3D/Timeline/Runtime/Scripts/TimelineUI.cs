@@ -29,6 +29,13 @@ namespace Netherlands3D.Timeline
         [Tooltip("The input field of the current date")]
         public TMP_InputField inputFieldCurrentDate;
 
+        [Header("Timeline Components")]
+        [SerializeField] private GameObject prefabEventLayer;
+        [SerializeField] private GameObject prefabEventUI;
+        [SerializeField] private GameObject prefabCategory;
+        [SerializeField] private Transform parentEventLayers;
+        [SerializeField] private Transform parentCategories;
+
         /// <summary>
         /// The time unit used for the timeline. 0 = yyyy, 1 = mm/yyyy, 2 = dd/mm/yyyy
         /// </summary>
@@ -49,11 +56,20 @@ namespace Netherlands3D.Timeline
         /// The most visable date right
         /// </summary>
         private DateTime visableDateRight;
+        /// <summary>
+        /// List of all categories scripts
+        /// </summary>
+        private List<Category> categories = new List<Category>();
+        /// <summary>
+        /// String of each event layer with as key category name
+        /// </summary>
+        private Dictionary<string, EventLayer> eventLayers = new Dictionary<string, EventLayer>();
 
         // Start is called before the first frame update
         void Start()
         {            
             SetCurrentDate(DateTime.Now);
+            LoadData();
         }
 
         // Update is called once per frame
@@ -67,7 +83,31 @@ namespace Netherlands3D.Timeline
         /// </summary>
         public void LoadData()
         {
+            if(data == null)
+            {
+                Debug.LogError("[TimelineUI] Data not assigned");
+                return;
+            }
 
+            // Clear old
+            foreach(Transform item in parentEventLayers.transform) Destroy(item.gameObject);
+            foreach(Transform item in parentCategories.transform) Destroy(item.gameObject);
+            categories.Clear();
+            eventLayers.Clear();
+
+            // Order all events based on category
+            data.OrderEvents();
+
+            // Create each category & event layer
+            string[] keys = data.data.Keys.ToArray();
+            foreach(string item in keys)
+            {
+                Category c = Instantiate(prefabCategory, parentCategories).GetComponent<Category>();
+                c.Initialize(item);
+                categories.Add(c);
+                EventLayer e = Instantiate(prefabEventLayer, parentEventLayers).GetComponent<EventLayer>();
+                eventLayers.Add(item, e);
+            }
         }
 
         /// <summary>
@@ -242,8 +282,40 @@ namespace Netherlands3D.Timeline
                     visableDateRight = currentDate.AddDays(datesToPlace);
                     break;
             }
-            print(visableDateLeft);
-            print(visableDateRight);
+
+            // Based on whats visable, show corresponding events
+            // Reset values
+            foreach(var item in eventLayers.Values)
+            {
+                foreach(Transform item1 in item.transform)
+                {
+                    Destroy(item1.gameObject);
+                }
+                item.events.Clear();
+            }
+
+            // For each category, loop trough events to check if the event dates are in the visable range
+            foreach(var item in data.data.Keys)
+            {
+                foreach(var dEvent in data.data[item])
+                {
+                    // Check if event is in visable range
+                    if(dEvent.startDate >= visableDateLeft && dEvent.startDate <= visableDateRight || dEvent.endDate >= visableDateLeft && dEvent.endDate <= visableDateRight)
+                    {
+                        // Event is visable, show it & add to event layer
+                        eventLayers[dEvent.category].AddEvent(dEvent, prefabEventUI);
+                    }
+                }
+            }
+
+            // For each event in event layers show it
+            foreach(var item in eventLayers.Values)
+            {
+                foreach(var item1 in item.events)
+                {
+
+                }
+            }
         }
 
         /// <summary>
