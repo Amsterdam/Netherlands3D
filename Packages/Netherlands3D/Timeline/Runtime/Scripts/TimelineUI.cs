@@ -265,7 +265,7 @@ namespace Netherlands3D.Timeline
         /// </remarks>
         private void UpdateVisableDateRange()
         {
-            int datesToPlace = (int)((TimeBarParentWidth / TimeBar.PixelDistanceDates) / 2) + 2;
+            int datesToPlace = (int)((TimeBarParentWidth / TimeBar.PixelDistanceDates) / 2) + 1;
             // based on timeUnit & current date, get the most left and right date
             switch(timeUnit) // 0 = yyyy, 1 = mm/yyyy, 2 = dd/mm/yyyy
             {
@@ -282,6 +282,9 @@ namespace Netherlands3D.Timeline
                     visableDateRight = currentDate.AddDays(datesToPlace);
                     break;
             }
+            // Correct dates
+            visableDateLeft = new DateTime(visableDateLeft.Year, visableDateLeft.Month, visableDateLeft.Day, 0, 0, 0);
+            visableDateRight = new DateTime(visableDateRight.Year, visableDateRight.Month, visableDateRight.Day, 0, 0, 0);
 
             // Based on whats visable, show corresponding events
             // Reset values
@@ -321,20 +324,65 @@ namespace Netherlands3D.Timeline
         /// Get the local x position of a date from the timeBars
         /// </summary>
         /// <param name="dateTime"></param>
-        /// <returns>The local x position for the dateTime</returns>
+        /// <returns>The rect left or right value<returns>
         private float EventUIGetPosX(DateTime dateTime)
         {
-            // Loop through timebars to check if the date is available
-            for(int i = 0; i < timeBars.Length; i++)
+            // Correct dateTime
+            dateTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0);
+
+            // based on current data which lays in center calculate where the dateTime lays from center
+            float width = TimeBarParentWidth;
+            int datesToPlace = (int)(width / TimeBar.PixelDistanceDates);
+            float spaceBetween = width / datesToPlace;
+
+            Dictionary<DateTime, float> dates = new Dictionary<DateTime, float>();
+            DateTime increment = visableDateLeft;
+            float posX = TimeBarParentWidth * -1; //~900, the time local x position
+            while(increment < visableDateRight) 
             {
-                float value = timeBars[i].GetDatePosition(dateTime);
-                if(value == 0.123f) continue;
-                else
+                switch(timeUnit) // 0 = yyyy, 1 = mm/yyyy, 2 = dd/mm/yyyy
                 {
-                    return value;
+                    default: // yyyy
+                        increment = increment.AddYears(1);
+                        break;
+                    case 1: // mm/yyyy
+                        increment = increment.AddMonths(1);
+                        break;
+                    case 2: // dd/mm/yyyy
+                        increment = increment.AddDays(1);
+                        break;
                 }
+                dates.Add(increment, posX);
+                print(increment);
+                posX += spaceBetween;
             }
-            return 0;
+            print("DateTime: " + dateTime);
+
+            // Check if dateTime is in dates (get closests
+            //var k = ArrayExtention.MinBy(dateTimePositions, x => Math.Abs((x.Value - dateTime).Ticks));
+            var k = dates.Where(x => x.Key.Year == dateTime.Year).First();
+            if(k.Key != null)
+            {
+                // Return key value
+                Debug.LogWarning("found");
+                return k.Value;
+            }
+            else
+            {
+                // The date rect value is out of screen
+                return 0;
+            }
+
+            // Loop through timebars to check if the date is available
+            //for(int i = 0; i < timeBars.Length; i++)
+            //{
+            //    float value = timeBars[i].GetDatePosition(dateTime);
+            //    if(value == 0.123f) continue;
+            //    else
+            //    {
+            //        return value;
+            //    }
+            //}
         }
 
         /// <summary>

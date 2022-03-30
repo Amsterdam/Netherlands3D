@@ -15,7 +15,7 @@ MonoBehaviour:
   name: Naam
   description: Test
   startDate:
-    dateTimeString: 2020/02/01 00:00
+    dateTimeString: 2018/02/01 00:00
   endDate:
-    dateTimeString: 2021/01/01 00:00
+    dateTimeString: 2024/01/01 00:00
   category: Auto's

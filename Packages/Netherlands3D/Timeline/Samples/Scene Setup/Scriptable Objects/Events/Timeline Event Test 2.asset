@@ -15,7 +15,7 @@ MonoBehaviour:
   name: Naam
   description: Test
   startDate:
-    dateTimeString: 2022/03/30 00:00
+    dateTimeString: 1800/03/30 00:00
   endDate:
-    dateTimeString: 2022/03/31 00:00
+    dateTimeString: 1801/03/31 00:00
   category: Huizen
