@@ -201,7 +201,7 @@ namespace Netherlands3D.TileSystem
                     foreach (var line in lines)
                     {
                         Color color = Color.magenta;
-                        string id = line[0];
+                        string id = line[idColumn];
                         ParseColor(line[colorColumn], out color);
 
                         if (idColors.ContainsKey(id))
