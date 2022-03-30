@@ -102,6 +102,7 @@ public class FreeCamera : MonoBehaviour
 
     private Vector3 dragStart;
     private Vector3 dragVelocity;
+    private Vector3 currentPointerDelta;
 
     private bool dragging = false;
     private bool rotate = false;
@@ -137,6 +138,8 @@ public class FreeCamera : MonoBehaviour
     /// <param name="pointerDelta">Pointer delta input</param>
 	public void PointerDelta(Vector3 pointerDelta)
 	{
+        currentPointerDelta = pointerDelta;
+            
         if (rotate)
 		{
 			if (!rotatingAroundPoint)
@@ -312,7 +315,7 @@ public class FreeCamera : MonoBehaviour
             dragStart = GetWorldPoint();
             dragStart.y = this.transform.position.y;
         }
-        else if(dragging && !rotatingAroundPoint && !firstPersonRotate)
+        else if(dragging && !rotatingAroundPoint && currentPointerDelta .magnitude > 0 && !firstPersonRotate)
         {
             var cameraPlanePoint = GetWorldPoint();
             cameraPlanePoint.y = this.transform.position.y;
