@@ -57,7 +57,7 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// Get the x position of a date in this time bar if it is available
         /// </summary>
-        /// <returns>local position x, 0 if the date is not in this timebar</returns>
+        /// <returns>local position x, 0.123f if the date is not in this timebar</returns>
         public float GetDatePosition(DateTime dateTime)
         {
             // Get the date closest to the dateTime to fetch
@@ -65,7 +65,10 @@ namespace Netherlands3D.Timeline
             //print(k.Value);
             //return dateTimePositions.OrderBy(x => (x.Value - dateTime)).FirstOrDefault().Key;
             var k = ArrayExtention.MinBy(dateTimePositions, x => Math.Abs((x.Value - dateTime).Ticks));
-            print(k.Value);
+            if(k.Value == null)
+            {
+                return 0.123f;
+            }
             return k.Key * -1;
             //return dateTimePositions.FirstOrDefault(x => x.Value == dateTime).Key * -1; // have to invert number positivity
         }

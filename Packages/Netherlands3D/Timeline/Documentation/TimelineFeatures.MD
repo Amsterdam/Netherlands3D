@@ -26,3 +26,4 @@ event update
 - check if we need to add or remove events based on minmax date
 - loop trough all events
 - for each event get corresponding -x / x position based on its date
+- dictionary that keeps track off all visable dates, and its corresponding local x positions

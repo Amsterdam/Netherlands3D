@@ -300,22 +300,41 @@ namespace Netherlands3D.Timeline
                 foreach(var dEvent in data.data[item])
                 {
                     // Check if event is in visable range
-                    if(dEvent.startDate >= visableDateLeft && dEvent.startDate <= visableDateRight || dEvent.endDate >= visableDateLeft && dEvent.endDate <= visableDateRight)
+                    if(//dEvent.startDate <= visableDateLeft && dEvent.endDate >= visableDateRight)// ||     // 0---[-------]---0
+                        //dEvent.startDate <= visableDateLeft && dEvent.endDate <= visableDateRight ||    // 0---[---0   ]
+                        //dEvent.startDate >= visableDateLeft && dEvent.endDate >= visableDateRight ||    //     [   0---]---0
+                        dEvent.startDate >= visableDateLeft && dEvent.endDate <= visableDateRight)      //     [0-----0]                    
                     {
                         // Event is visable, show it & add to event layer
-                        eventLayers[dEvent.category].AddEvent(dEvent, prefabEventUI);
+                        float xL = EventUIGetPosX(dEvent.startDate);
+                        print("XL " + xL);
+                        float xR = EventUIGetPosX(dEvent.endDate);
+                        print("XR " + xR);
+                        eventLayers[dEvent.category].AddEvent(dEvent, prefabEventUI, xL, xR);
                     }
                 }
             }
 
-            // For each event in event layers show it
-            foreach(var item in eventLayers.Values)
-            {
-                foreach(var item1 in item.events)
-                {
+        }
 
+        /// <summary>
+        /// Get the local x position of a date from the timeBars
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns>The local x position for the dateTime</returns>
+        private float EventUIGetPosX(DateTime dateTime)
+        {
+            // Loop through timebars to check if the date is available
+            for(int i = 0; i < timeBars.Length; i++)
+            {
+                float value = timeBars[i].GetDatePosition(dateTime);
+                if(value == 0.123f) continue;
+                else
+                {
+                    return value;
                 }
             }
+            return 0;
         }
 
         /// <summary>

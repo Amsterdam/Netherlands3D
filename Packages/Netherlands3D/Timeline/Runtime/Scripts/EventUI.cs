@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SLIDDES.UI;
 
 namespace Netherlands3D.Timeline
 {
@@ -13,9 +14,10 @@ namespace Netherlands3D.Timeline
 
         public RectTransform rectTransform;
 
-        public void Initialize(Event dEvent)
+        public void Initialize(Event dEvent, float posXLeft, float posXRight)
         {
             this.dEvent = dEvent;
+            rectTransform.SetRect(0, 0, posXLeft, posXRight);
         }
 
         // Start is called before the first frame update

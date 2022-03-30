@@ -28,10 +28,10 @@ namespace Netherlands3D.Timeline
         /// </summary>
         /// <param name="dEvent"></param>
         /// <param name="prefabEventUI"></param>
-        public void AddEvent(Event dEvent, GameObject prefabEventUI)
+        public void AddEvent(Event dEvent, GameObject prefabEventUI, float posXLeft, float posXRight)
         {
             EventUI a = Instantiate(prefabEventUI, transform).GetComponent<EventUI>();
-            a.Initialize(dEvent);
+            a.Initialize(dEvent, posXLeft, posXRight);
             events.Add(a);
         }
     }
