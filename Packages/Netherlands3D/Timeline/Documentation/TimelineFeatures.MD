@@ -27,3 +27,10 @@ event update
 - loop trough all events
 - for each event get corresponding -x / x position based on its date
 - dictionary that keeps track off all visable dates, and its corresponding local x positions
+
+- based on current date we can generate a list with all visable dates.
+- couple the list with a dict which contains the local positions
+- convert those positions to world/back to local to have event positions
+
+- set local pos of eventUI, then set left to -half (to the same point of local position),
+then set local position to right side position, and set right to half
