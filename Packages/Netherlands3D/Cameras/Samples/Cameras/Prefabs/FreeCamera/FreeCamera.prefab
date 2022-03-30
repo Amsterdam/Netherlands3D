@@ -49,16 +49,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveForwardOnPlane: 1
+  dragOnPlaneThreshold: 0.5
   dragToMoveCamera: 1
   multiplySpeedBasedOnHeight: 1
   moveSpeed: 1
   upAndDownSpeed: 30
-  dragSpeed: 3
+  dragSpeed: 1
   easing: 10
   zoomSpeed: 0.001
   minimumSpeed: 0.01
   maximumSpeed: 1000
-  minimumDragSpeed: 50
+  minimumDragSpeed: 20
   maximumDragSpeed: 2000
   dragRotateSpeed: 0.08
   rotateAroundPointSpeed: 0.1
