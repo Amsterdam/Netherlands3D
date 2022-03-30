@@ -13,8 +13,8 @@
     "twin city",
     "geoservice"
   ],
-  "license": "EUPL-1.2",
   "licenseURL": "https://github.com/Amsterdam/Netherlands3D/blob/main/LICENSE.txt",
+  "license": "EUPL-1.2",
   "changelogURL": "https://github.com/Amsterdam/Netherlands3D/blob/main/CHANGELOG.md",
   "samples": [
     {
@@ -31,6 +31,11 @@
       "displayName": "WMS-url",
       "description": "runtime tooling for correct wms-url's for use in the WMS-Layer",
       "path": "getWMSUrl/GeoService/Samples~/WMSSelector"
+    },
+	{
+      "displayName": "BAG-information",
+      "description": "example of showing pdok.nl BAG information in a canvas after clicking on buildings",
+      "path": "BAGInformation/Samples~/BAGInformation"
     }
   ],
   "hideInEditor": false,

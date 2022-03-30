@@ -8,10 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - moved all the shaders into their corresponding samples, when updating, make sure to open the samples and copy the shaders into your assets-folder.
+- separated Input, BAGInformation, DataParsing and Interface into their own root folders and script assemblies
 
 ### Added
 - added improved UI to WMS-Layer Sample 
 - added ADD_BROTLI_ACCEPT_ENCODING_HEADER scripting define symbol to enable adding the Accept-Encoding header for brotli files
+- added scripts to retrieve GeoJSON properties, and an example using pdok.nl API's to retrieve BAG information after clicking on a building
+- added basic modular interface scripts to show connections with an interface using events
 
 ### [0.0.8] - 23-02-2022
 
