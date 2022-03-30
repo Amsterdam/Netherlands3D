@@ -1,9 +1,23 @@
 using Netherlands3D.Events;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/*
+*  Copyright (C) X Gemeente
+*                X Amsterdam
+*                X Economic Services Departments
+*
+*  Licensed under the EUPL, Version 1.2 or later (the "License");
+*  You may not use this work except in compliance with the License.
+*  You may obtain a copy of the License at:
+*
+*    https://github.com/Amsterdam/Netherlands3D/blob/main/LICENSE.txt
+*
+*  Unless required by applicable law or agreed to in writing, software
+*  distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+*  implied. See the License for the specific language governing
+*  permissions and limitations under the License.
+*/
 public class FreeCamera : MonoBehaviour
 {
     [Header("Options")]
@@ -82,7 +96,6 @@ public class FreeCamera : MonoBehaviour
     private BoolEvent firstPersonModifier;
 
     private Vector3 lastPointerPosition;
-    private Vector3 pointerDelta;
     private Vector3 zoomTarget;
     private Camera cameraComponent;
     private Plane worldPlane;
@@ -118,7 +131,11 @@ public class FreeCamera : MonoBehaviour
         firstPersonModifier.started.AddListener(RotateFirstPerson);
     }
 
-	private void PointerDelta(Vector3 pointerDelta)
+    /// <summary>
+    /// Use pointerdelta to rotate around point or first person rotate when modifiers are enabled
+    /// </summary>
+    /// <param name="pointerDelta">Pointer delta input</param>
+	public void PointerDelta(Vector3 pointerDelta)
 	{
         if (rotate)
 		{
@@ -137,10 +154,10 @@ public class FreeCamera : MonoBehaviour
     }
 
     /// <summary>
-    /// Drag rotate via pointer delta
+    /// Drag rotate camera via pointer delta
     /// </summary>
-    /// <param name="value"></param>
-    private void DragRotateAroundOwnAxis(Vector3 value)
+    /// <param name="value">Pointer/stick delta input</param>
+    public void DragRotateAroundOwnAxis(Vector3 value)
 	{
 		StopEasing();
 		CalculateSpeed();
@@ -153,7 +170,11 @@ public class FreeCamera : MonoBehaviour
 		RevertIfOverAxis();
 	}
 
-    private void RotateAroundOwnAxis(Vector3 value)
+    /// <summary>
+    /// Rotate around own axes (first person style turning of camera)
+    /// </summary>
+    /// <param name="value">Pointer/stick delta input</param>
+    public void RotateAroundOwnAxis(Vector3 value)
     {
         StopEasing();
         CalculateSpeed();
@@ -166,13 +187,20 @@ public class FreeCamera : MonoBehaviour
         RevertIfOverAxis();
     }
 
+    /// <summary>
+    /// Stores previous transform position to reset to after moves that cross the bounds
+    /// </summary>
     private void StorePreviousTransform()
 	{
 		previousRotation = this.transform.rotation;
 		previousPosition = this.transform.position;
 	}
 
-    private void RotateAroundPoint(Vector3 pointerDelta)
+    /// <summary>
+    /// Rotate camera around a fixed point 
+    /// </summary>
+    /// <param name="pointerDelta">Pointer delta (based on deltaTime)</param>
+    public void RotateAroundPoint(Vector3 pointerDelta)
 	{
         StopEasing();
 
@@ -188,7 +216,7 @@ public class FreeCamera : MonoBehaviour
     /// If we use rotation limits, restore previous position/rotation if we passed straight up or down.
     /// This avoids getting upside down.
     /// </summary>
-	private void RevertIfOverAxis()
+	public void RevertIfOverAxis()
 	{
         if (!useRotationLimits) return;
 
@@ -199,19 +227,32 @@ public class FreeCamera : MonoBehaviour
         }
     }
 
-	private void FreeFly(Vector3 value)
+    /// <summary>
+    /// Fly camera airplane style using stick style input
+    /// </summary>
+    /// <param name="value">Joystick or gamepad style input</param>
+	public void FreeFly(Vector3 value)
     {
         StopEasing();
         CalculateSpeed();
         this.transform.Translate(value.x * gamepadMoveSpeed * Time.deltaTime, 0, value.y * gamepadMoveSpeed * Time.deltaTime, Space.Self);
     }
 
-	private void Rotate(bool rotate)
+    /// <summary>
+    /// Activate rotation modifier
+    /// </summary>
+    /// <param name="rotate">Rotating active</param>
+	public void Rotate(bool rotate)
 	{
         this.rotate = rotate;
         if (!rotate) rotatingAroundPoint = false;
     }
-    private void RotateFirstPerson(bool rotateFirstPerson)
+
+    /// <summary>
+    /// Rotate first person style 
+    /// </summary>
+    /// <param name="rotateFirstPerson"></param>
+    public void RotateFirstPerson(bool rotateFirstPerson)
     {
         this.firstPersonRotate = rotateFirstPerson;
     }
@@ -219,10 +260,12 @@ public class FreeCamera : MonoBehaviour
     void Update()
 	{
         EaseDragTarget();
-
         Clamp();
 	}
 
+    /// <summary>
+    /// Clamp camera to limits
+    /// </summary>
 	private void Clamp()
 	{
 		if(this.transform.position.y > maxCameraHeight)
@@ -235,6 +278,10 @@ public class FreeCamera : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Eases out camera motion using drag velocity.
+    /// This allows you to drag and throw the camera.
+    /// </summary>
 	private void EaseDragTarget()
 	{
         dragVelocity = new Vector3(Mathf.Lerp(dragVelocity.x,0, Time.deltaTime * easing), 0, Mathf.Lerp(dragVelocity.z, 0, Time.deltaTime * easing));
@@ -244,12 +291,19 @@ public class FreeCamera : MonoBehaviour
 		}
 	}
 
+    /// <summary>
+    /// Clears camera drag velocity so it stops directly
+    /// </summary>
     private void StopEasing()
     {
         dragVelocity = Vector3.zero;
     }
 
-	private void Drag(bool isDragging)
+    /// <summary>
+    /// Dragging camera and modifier logic
+    /// </summary>
+    /// <param name="isDragging"></param>
+	public void Drag(bool isDragging)
 	{
         if (!dragToMoveCamera) return;
 
@@ -271,6 +325,10 @@ public class FreeCamera : MonoBehaviour
         dragging = isDragging;
     }
 
+    /// <summary>
+    /// Move towards/from zoompoint
+    /// </summary>
+    /// <param name="amount">Zoom delta where 1 is towards, and -1 is backing up from zoompoint</param>
 	public void ZoomToPointer(float amount)
 	{
         dragging = false;
@@ -290,7 +348,7 @@ public class FreeCamera : MonoBehaviour
 	/// </summary>
 	/// <param name="screenPoint">Optional screen position. Defaults to pointer input position.</param>
 	/// <returns>World position</returns>
-	private Vector3 GetWorldPoint(Vector3 screenPoint = default)
+	public Vector3 GetWorldPoint(Vector3 screenPoint = default)
 	{
 		if (screenPoint == default) 
         {
@@ -304,11 +362,19 @@ public class FreeCamera : MonoBehaviour
         return samplePoint;
 	}
 
+    /// <summary>
+    /// Sets the pointer screen position
+    /// </summary>
+    /// <param name="pointerPosition">Screen coordinates</param>
 	public void SetPointerPosition(Vector3 pointerPosition)
     {
         lastPointerPosition = pointerPosition;
     }
 
+    /// <summary>
+    /// Moves camera left/right on local axis
+    /// </summary>
+    /// <param name="amount"></param>
     public void MoveHorizontally(float amount)
 	{
         StopEasing();
@@ -317,6 +383,10 @@ public class FreeCamera : MonoBehaviour
 		this.transform.Translate(Vector3.right * amount * speed * Time.deltaTime, Space.Self);
 	}
 
+    /// <summary>
+    /// Move camera forward/backwards on own forward, or foward over world plane based on moveForwardOnPlane setting
+    /// </summary>
+    /// <param name="amount"></param>
 	public void MoveForwardBackwards(float amount)
     {
         StopEasing();
@@ -330,12 +400,19 @@ public class FreeCamera : MonoBehaviour
         this.transform.Translate(forwardDirection.normalized * amount * speed * Time.deltaTime, Space.World);
     }
 
+    /// <summary>
+    /// Move camera position up or down in world space
+    /// </summary>
+    /// <param name="amount">The amount in meters per second</param>
     public void MoveUpDown(float amount)
     {
         StopEasing();
         this.transform.Translate(Vector3.up * amount * upAndDownSpeed * Time.deltaTime, Space.World);
     }
 
+    /// <summary>
+    /// Calculates the dynamic speed variables based on camera height
+    /// </summary>
     private void CalculateSpeed()
     {
         speed = (multiplySpeedBasedOnHeight) ? moveSpeed * Mathf.Abs(this.transform.position.y) : moveSpeed;
@@ -345,6 +422,7 @@ public class FreeCamera : MonoBehaviour
         speed = Mathf.Clamp(speed, minimumSpeed, maximumSpeed);
         dynamicZoomSpeed = Mathf.Clamp(dynamicZoomSpeed, minimumSpeed, maximumSpeed);
     }
+
     private void OnDrawGizmos()
     {
         if (dragging || rotatingAroundPoint)
