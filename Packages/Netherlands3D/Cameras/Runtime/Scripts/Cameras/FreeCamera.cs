@@ -24,6 +24,9 @@ public class FreeCamera : MonoBehaviour
     [Tooltip("Move forward on world plane instead of camera forward")]
     [SerializeField]
     private bool moveForwardOnPlane = true;
+    [Tooltip("Value threshold from 0 to 1 to switch to dragging coplanar")]
+    [SerializeField]
+    private bool dragOnPlaneThreshold = true;
     [SerializeField]
     private bool dragToMoveCamera = true;
     [SerializeField]
@@ -40,13 +43,18 @@ public class FreeCamera : MonoBehaviour
     private float easing = 1.0f;
     [SerializeField]
     private float zoomSpeed = 1.0f;
-    private float speed = 1.0f;
+    private float dynamicMoveSpeed = 1.0f;
+    private float dynamicDragSpeed = 1.0f;
     private float dynamicZoomSpeed = 1.0f;
 
     [SerializeField]
     private float minimumSpeed = 5.0f;
     [SerializeField]
     private float maximumSpeed = 1000.0f;
+    [SerializeField]
+    private float minimumDragSpeed = 5.0f;
+    [SerializeField]
+    private float maximumDragSpeed = 1000.0f;
     [SerializeField]
     private float dragRotateSpeed = 1.0f;
 
@@ -95,7 +103,7 @@ public class FreeCamera : MonoBehaviour
     [SerializeField]
     private BoolEvent firstPersonModifier;
 
-    private Vector3 lastPointerPosition;
+    private Vector3 currentPointerPosition;
     private Vector3 zoomTarget;
     private Camera cameraComponent;
     private Plane worldPlane;
@@ -109,6 +117,7 @@ public class FreeCamera : MonoBehaviour
     private bool rotatingAroundPoint = false;
     private bool firstPersonRotate = false;
 
+    private Vector3 dragStartPointerPosition;
     private Quaternion previousRotation;
     private Vector3 previousPosition;
 
@@ -312,18 +321,14 @@ public class FreeCamera : MonoBehaviour
 
 		if(!dragging && isDragging)
         {
-            dragStart = GetWorldPoint();
-            dragStart.y = this.transform.position.y;
+            dragStart = this.transform.position;
+            dragStartPointerPosition = currentPointerPosition;
         }
-        else if(dragging && !rotatingAroundPoint && currentPointerDelta .magnitude > 0 && !firstPersonRotate)
+        else if(dragging && !rotatingAroundPoint && currentPointerDelta.magnitude > 0 && !firstPersonRotate)
         {
-            var cameraPlanePoint = GetWorldPoint();
-            cameraPlanePoint.y = this.transform.position.y;
-            var dragDirection = cameraPlanePoint - dragStart;
-
-            this.transform.Translate(-dragDirection * Time.deltaTime * dragSpeed, Space.World);
-
-            dragVelocity = cameraPlanePoint - dragStart;
+            CalculateSpeed();
+            var screenMove = currentPointerDelta / Screen.height;
+            this.transform.Translate(-screenMove * dynamicDragSpeed, Space.Self);
         }
         dragging = isDragging;
     }
@@ -355,7 +360,7 @@ public class FreeCamera : MonoBehaviour
 	{
 		if (screenPoint == default) 
         {
-            screenPoint = lastPointerPosition;
+            screenPoint = currentPointerPosition;
         }
 
 		var screenRay = cameraComponent.ScreenPointToRay(screenPoint);
@@ -371,7 +376,7 @@ public class FreeCamera : MonoBehaviour
     /// <param name="pointerPosition">Screen coordinates</param>
 	public void SetPointerPosition(Vector3 pointerPosition)
     {
-        lastPointerPosition = pointerPosition;
+        currentPointerPosition = pointerPosition;
     }
 
     /// <summary>
@@ -383,7 +388,7 @@ public class FreeCamera : MonoBehaviour
         StopEasing();
 
         CalculateSpeed();
-		this.transform.Translate(Vector3.right * amount * speed * Time.deltaTime, Space.Self);
+		this.transform.Translate(Vector3.right * amount * dynamicMoveSpeed * Time.deltaTime, Space.Self);
 	}
 
     /// <summary>
@@ -400,7 +405,7 @@ public class FreeCamera : MonoBehaviour
         {
             forwardDirection.y = 0;
         }
-        this.transform.Translate(forwardDirection.normalized * amount * speed * Time.deltaTime, Space.World);
+        this.transform.Translate(forwardDirection.normalized * amount * dynamicMoveSpeed * Time.deltaTime, Space.World);
     }
 
     /// <summary>
@@ -418,11 +423,13 @@ public class FreeCamera : MonoBehaviour
     /// </summary>
     private void CalculateSpeed()
     {
-        speed = (multiplySpeedBasedOnHeight) ? moveSpeed * Mathf.Abs(this.transform.position.y) : moveSpeed;
+        dynamicMoveSpeed = (multiplySpeedBasedOnHeight) ? moveSpeed * Mathf.Abs(this.transform.position.y) : moveSpeed;
+        dynamicDragSpeed = (multiplySpeedBasedOnHeight) ? dragSpeed * Mathf.Abs(this.transform.position.y) : dragSpeed;
         dynamicZoomSpeed = (multiplySpeedBasedOnHeight) ? zoomSpeed * Mathf.Abs(this.transform.position.y) : zoomSpeed;
         
         //Clamp speeds
-        speed = Mathf.Clamp(speed, minimumSpeed, maximumSpeed);
+        dynamicMoveSpeed = Mathf.Clamp(dynamicMoveSpeed, minimumSpeed, maximumSpeed);
+        dynamicDragSpeed = Mathf.Clamp(dynamicDragSpeed, minimumDragSpeed, maximumDragSpeed);
         dynamicZoomSpeed = Mathf.Clamp(dynamicZoomSpeed, minimumSpeed, maximumSpeed);
     }
 

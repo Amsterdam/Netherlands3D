@@ -28,6 +28,7 @@ public class CameraOldInputProvider : BaseCameraInputProvider
         pointerPosition.started.Invoke(pointer);
         var pointerDelta = (pointer - previousPointerPosition);
         previousPointerPosition = pointer;
+        lookInput.started.Invoke(pointerDelta);
 
         //Transform inputs 
         var moveValue = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
@@ -44,11 +45,6 @@ public class CameraOldInputProvider : BaseCameraInputProvider
         {
             zoomInput.started.Invoke(zoomValue.y);
         }
-        if (pointerDelta.magnitude > 0)
-        {
-            lookInput.started.Invoke(pointerDelta);
-        }
-
         if (upPressed)
         {
             upDownInput.started.Invoke(1);

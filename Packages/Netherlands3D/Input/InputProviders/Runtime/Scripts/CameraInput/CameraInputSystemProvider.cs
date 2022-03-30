@@ -63,6 +63,8 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         var upPressed = upAction.IsPressed();
         var downPressed = downAction.IsPressed();
 
+        lookInput.started.Invoke(lookValue);
+
         if (moveValue.magnitude>0)
         {
             horizontalInput.started.Invoke(moveValue.x);
@@ -75,10 +77,6 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         if (zoomValue.magnitude > 0)
         {
             zoomInput.started.Invoke(zoomValue.y);
-        }
-        if (lookValue.magnitude > 0)
-        {
-            lookInput.started.Invoke(lookValue);
         }
         if (rotateValue.magnitude > 0)
         {
