@@ -328,6 +328,8 @@ public class FreeCamera : MonoBehaviour
         {
             CalculateSpeed();
             var screenMove = currentPointerDelta / Screen.height;
+
+            StorePreviousTransform();
             if (Vector3.Dot(Vector3.down, transform.forward) >= dragOnPlaneThreshold)
             {
                 var flattenedForward = this.transform.forward;
@@ -336,6 +338,8 @@ public class FreeCamera : MonoBehaviour
                 screenMove.y = 0;
             }
             this.transform.Translate(-screenMove * dynamicDragSpeed, Space.Self);
+
+            dragVelocity = (previousPosition - this.transform.position) / Time.deltaTime;
         }
         dragging = isDragging;
     }
