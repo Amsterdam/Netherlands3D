@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1107191816428015815}
   - component: {fileID: 1107191816428015818}
   m_Layer: 0
-  m_Name: FreeCamera_OldInput
+  m_Name: FreeCamera_Legacy
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

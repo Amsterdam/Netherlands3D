@@ -132,7 +132,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1107191816428015814, guid: 138128fdcc4c75249b5d452836d9b312, type: 3}
       propertyPath: m_Name
-      value: FreeCamera_OldInput
+      value: FreeCamera_LegacyInput
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: 138128fdcc4c75249b5d452836d9b312, type: 3}
       propertyPath: m_RootOrder
