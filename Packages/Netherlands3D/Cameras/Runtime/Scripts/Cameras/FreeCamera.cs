@@ -26,7 +26,7 @@ public class FreeCamera : MonoBehaviour
     private bool moveForwardOnPlane = true;
     [Tooltip("Value threshold from 0 to 1 to switch to dragging coplanar")]
     [SerializeField]
-    private bool dragOnPlaneThreshold = true;
+    private float dragOnPlaneThreshold = 0.5f;
     [SerializeField]
     private bool dragToMoveCamera = true;
     [SerializeField]
@@ -328,6 +328,13 @@ public class FreeCamera : MonoBehaviour
         {
             CalculateSpeed();
             var screenMove = currentPointerDelta / Screen.height;
+            if (Vector3.Dot(Vector3.down, transform.forward) >= dragOnPlaneThreshold)
+            {
+                var flattenedForward = this.transform.forward;
+                flattenedForward.y = 0;
+                this.transform.Translate(flattenedForward.normalized * -screenMove.y * dynamicDragSpeed, Space.World);
+                screenMove.y = 0;
+            }
             this.transform.Translate(-screenMove * dynamicDragSpeed, Space.Self);
         }
         dragging = isDragging;
