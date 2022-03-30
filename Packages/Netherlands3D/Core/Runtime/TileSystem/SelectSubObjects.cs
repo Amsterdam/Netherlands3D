@@ -51,8 +51,6 @@ namespace Netherlands3D.TileSystem
         [SerializeField]
         private Vector3Event clickedOnPosition;
         [SerializeField]
-        private Vector3Event clickedOnPosition;
-        [SerializeField]
         private BoolEvent onColoringSubobjects;
 
         private void Awake()
