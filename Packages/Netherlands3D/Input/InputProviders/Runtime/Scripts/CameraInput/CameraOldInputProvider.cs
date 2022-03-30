@@ -30,7 +30,7 @@ public class CameraOldInputProvider : BaseCameraInputProvider
         previousPointerPosition = pointer;
 
         //Transform inputs 
-        var moveValue = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Horizontal"));
+        var moveValue = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         var zoomValue = Input.mouseScrollDelta;
         var upPressed = Input.GetKey(KeyCode.PageUp);
         var downPressed = Input.GetKey(KeyCode.PageDown);
