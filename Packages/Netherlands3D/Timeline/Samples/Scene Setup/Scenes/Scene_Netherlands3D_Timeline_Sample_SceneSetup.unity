@@ -1775,6 +1775,7 @@ GameObject:
   m_Component:
   - component: {fileID: 967324802}
   - component: {fileID: 967324803}
+  - component: {fileID: 967324804}
   m_Layer: 5
   m_Name: Catergories
   m_TagString: Untagged
@@ -1822,6 +1823,18 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!225 &967324804
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 967324801}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &984436687
 GameObject:
   m_ObjectHideFlags: 0

@@ -309,9 +309,9 @@ namespace Netherlands3D.Timeline
                         dEvent.startDate >= visableDateLeft && dEvent.endDate <= visableDateRight)      //     [0-----0]                    
                     {
                         // Event is visable, show it & add to event layer
-                        float xL = EventUIGetPosX(dEvent.startDate);
+                        float xL = EventUIGetPosX(dEvent.startDate, false);
                         Debug.LogWarning("XL " + xL);
-                        float xR = EventUIGetPosX(dEvent.endDate);
+                        float xR = EventUIGetPosX(dEvent.endDate, true);
                         Debug.LogWarning("XR " + xR);
                         eventLayers[dEvent.category].AddEvent(dEvent, prefabEventUI, xL, xR);
                     }
@@ -325,7 +325,7 @@ namespace Netherlands3D.Timeline
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns>The rect left or right value<returns>
-        private float EventUIGetPosX(DateTime dateTime)
+        private float EventUIGetPosX(DateTime dateTime, bool isRight)
         {
             // Correct dateTime
             dateTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0);
@@ -381,13 +381,21 @@ namespace Netherlands3D.Timeline
                 else
                 {
                     // Found local x value of date in timebar
+                    bool isPositive = value > 0;
                     // from the selected time bar get its local x position
                     float timebarPosX = timeBars[i].transform.localPosition.x;
                     // deduct value from timebarPosX (get diff from 0 point)
                     float midpointInBar = Mathf.Abs(timebarPosX) - Mathf.Abs(value);
                     // From center deduct value
-                    float midpoint = (TimeBarParentWidth / 2) - midpointInBar;
-                    return midpoint;
+                    if(!isRight)
+                    {
+                        return (TimeBarParentWidth / 2) - midpointInBar;
+
+                    }
+                        return (TimeBarParentWidth / 2) + midpointInBar;
+                    //float timebarPosX = Mathf.Abs(timeBars[i].transform.localPosition.x);
+                    //float midpointbar = timebarPosX - value;
+                    //return (TimeBarParentWidth / 2) + midpointbar;
                 }
             }
             return 0;
