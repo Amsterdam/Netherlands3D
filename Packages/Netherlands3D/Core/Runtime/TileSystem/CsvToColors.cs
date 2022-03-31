@@ -9,8 +9,6 @@ using UnityEngine.Networking;
 
 public class CsvToColors : MonoBehaviour
 {
-    private string dataSource = "file:///somecsv.csv";
-
     [SerializeField]
     private int idColumn = 0;
     [SerializeField]
@@ -130,7 +128,7 @@ public class CsvToColors : MonoBehaviour
 
             if (webRequest.result != UnityWebRequest.Result.Success)
             {
-                Debug.Log($"Could not load {dataSource}");
+                Debug.Log($"Could not load {csvPath}");
             }
             else
             {
