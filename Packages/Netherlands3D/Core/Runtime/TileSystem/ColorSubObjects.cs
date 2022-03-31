@@ -104,7 +104,8 @@ namespace Netherlands3D.TileSystem
 
         private void ClearData()
         {
-            idColors.Clear();
+            if(idColors != null)
+                idColors.Clear();
         }
 
         private void OnEnable()
