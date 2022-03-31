@@ -32,5 +32,17 @@ event update
 - couple the list with a dict which contains the local positions
 - convert those positions to world/back to local to have event positions
 
-- set local pos of eventUI, then set left to -half (to the same point of local position),
+- (doesnt work)set local pos of eventUI, then set left to -half (to the same point of local position),
 then set local position to right side position, and set right to half
+
+- get the date local x position, based off center 0
+- get it from left & right (0 = max width)
+- then get the difference between left/right xpos, this is the width of the event
+- the center point between left/right is the center pos of the event
+--
+timebar local x - date x pos, 909 - 909 = 0, midpoint center screen
+left side event = 1920/2 = 960 for a side, 960 - ^ above 0 = 960 as value
+right side event:
+time pos: -404
+-404 - 909 = -505
+960 - 505 = 455

@@ -68,7 +68,7 @@ namespace Netherlands3D.Timeline
         // Start is called before the first frame update
         void Start()
         {            
-            SetCurrentDate(DateTime.Now);
+            SetCurrentDate(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0));
             LoadData();
         }
 
@@ -310,9 +310,9 @@ namespace Netherlands3D.Timeline
                     {
                         // Event is visable, show it & add to event layer
                         float xL = EventUIGetPosX(dEvent.startDate);
-                        print("XL " + xL);
+                        Debug.LogWarning("XL " + xL);
                         float xR = EventUIGetPosX(dEvent.endDate);
-                        print("XR " + xR);
+                        Debug.LogWarning("XR " + xR);
                         eventLayers[dEvent.category].AddEvent(dEvent, prefabEventUI, xL, xR);
                     }
                 }
@@ -330,59 +330,67 @@ namespace Netherlands3D.Timeline
             // Correct dateTime
             dateTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0);
 
-            // based on current data which lays in center calculate where the dateTime lays from center
-            float width = TimeBarParentWidth;
-            int datesToPlace = (int)(width / TimeBar.PixelDistanceDates);
-            float spaceBetween = width / datesToPlace;
+            //// based on current data which lays in center calculate where the dateTime lays from center
+            //float width = TimeBarParentWidth;
+            //int datesToPlace = (int)(width / TimeBar.PixelDistanceDates);
+            //float spaceBetween = width / datesToPlace;
 
-            Dictionary<DateTime, float> dates = new Dictionary<DateTime, float>();
-            DateTime increment = visableDateLeft;
-            float posX = TimeBarParentWidth * -1; //~900, the time local x position
-            while(increment < visableDateRight) 
-            {
-                switch(timeUnit) // 0 = yyyy, 1 = mm/yyyy, 2 = dd/mm/yyyy
-                {
-                    default: // yyyy
-                        increment = increment.AddYears(1);
-                        break;
-                    case 1: // mm/yyyy
-                        increment = increment.AddMonths(1);
-                        break;
-                    case 2: // dd/mm/yyyy
-                        increment = increment.AddDays(1);
-                        break;
-                }
-                dates.Add(increment, posX);
-                print(increment);
-                posX += spaceBetween;
-            }
-            print("DateTime: " + dateTime);
-
-            // Check if dateTime is in dates (get closests
-            //var k = ArrayExtention.MinBy(dateTimePositions, x => Math.Abs((x.Value - dateTime).Ticks));
-            var k = dates.Where(x => x.Key.Year == dateTime.Year).First();
-            if(k.Key != null)
-            {
-                // Return key value
-                Debug.LogWarning("found");
-                return k.Value;
-            }
-            else
-            {
-                // The date rect value is out of screen
-                return 0;
-            }
-
-            // Loop through timebars to check if the date is available
-            //for(int i = 0; i < timeBars.Length; i++)
+            //Dictionary<DateTime, float> dates = new Dictionary<DateTime, float>();
+            //DateTime increment = visableDateLeft;
+            //float posX = TimeBarParentWidth * -1; //~900, the time local x position
+            //while(increment < visableDateRight) 
             //{
-            //    float value = timeBars[i].GetDatePosition(dateTime);
-            //    if(value == 0.123f) continue;
-            //    else
+            //    switch(timeUnit) // 0 = yyyy, 1 = mm/yyyy, 2 = dd/mm/yyyy
             //    {
-            //        return value;
+            //        default: // yyyy
+            //            increment = increment.AddYears(1);
+            //            break;
+            //        case 1: // mm/yyyy
+            //            increment = increment.AddMonths(1);
+            //            break;
+            //        case 2: // dd/mm/yyyy
+            //            increment = increment.AddDays(1);
+            //            break;
             //    }
+            //    dates.Add(increment, posX);
+            //    print(increment);
+            //    posX += spaceBetween;
             //}
+            //print("DateTime: " + dateTime);
+
+            //// Check if dateTime is in dates (get closests
+            ////var k = ArrayExtention.MinBy(dateTimePositions, x => Math.Abs((x.Value - dateTime).Ticks));
+            //var k = dates.Where(x => x.Key.Year == dateTime.Year).First();
+            //if(k.Key != null)
+            //{
+            //    // Return key value
+            //    Debug.LogWarning("found " + dateTime + " " + k.Value);
+            //    return k.Value;
+            //}
+            //else
+            //{
+            //    // The date rect value is out of screen
+            //    return 0;
+            //}
+
+            //Loop through timebars to check if the date is available
+            for(int i = 0; i < timeBars.Length; i++)
+            {
+                float value = timeBars[i].GetDatePosition(dateTime);
+                if(value == 0.123f) continue;
+                else
+                {
+                    // Found local x value of date in timebar
+                    // from the selected time bar get its local x position
+                    float timebarPosX = timeBars[i].transform.localPosition.x;
+                    // deduct value from timebarPosX (get diff from 0 point)
+                    float midpointInBar = Mathf.Abs(timebarPosX) - Mathf.Abs(value);
+                    // From center deduct value
+                    float midpoint = (TimeBarParentWidth / 2) - midpointInBar;
+                    return midpoint;
+                }
+            }
+            return 0;
         }
 
         /// <summary>
