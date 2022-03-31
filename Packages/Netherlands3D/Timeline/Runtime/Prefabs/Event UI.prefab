@@ -50,8 +50,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1345e552dccde1545ac3fba6be7e6d52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  event: {fileID: 0}
+  dEvent: {fileID: 0}
   rectTransform: {fileID: 6648799158405934587}
+  nameField: {fileID: 6648799159244977129}
 --- !u!1 &6648799158497113895
 GameObject:
   m_ObjectHideFlags: 0

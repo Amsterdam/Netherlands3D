@@ -303,9 +303,9 @@ namespace Netherlands3D.Timeline
                 foreach(var dEvent in data.data[item])
                 {
                     // Check if event is in visable range
-                    if(//dEvent.startDate <= visableDateLeft && dEvent.endDate >= visableDateRight)// ||     // 0---[-------]---0
-                        //dEvent.startDate <= visableDateLeft && dEvent.endDate <= visableDateRight ||    // 0---[---0   ]
-                        //dEvent.startDate >= visableDateLeft && dEvent.endDate >= visableDateRight ||    //     [   0---]---0
+                    if( dEvent.startDate <= visableDateLeft && dEvent.endDate >= visableDateRight ||    // 0---[-------]---0
+                        dEvent.startDate <= visableDateLeft && dEvent.endDate <= visableDateRight ||    // 0---[---0   ]
+                        dEvent.startDate >= visableDateLeft && dEvent.endDate >= visableDateRight ||    //     [   0---]---0
                         dEvent.startDate >= visableDateLeft && dEvent.endDate <= visableDateRight)      //     [0-----0]                    
                     {
                         // Event is visable, show it & add to event layer
@@ -381,7 +381,6 @@ namespace Netherlands3D.Timeline
                 else
                 {
                     // Found local x value of date in timebar
-                    bool isPositive = value > 0;
                     // from the selected time bar get its local x position
                     float timebarPosX = timeBars[i].transform.localPosition.x;
                     // deduct value from timebarPosX (get diff from 0 point)
@@ -392,10 +391,7 @@ namespace Netherlands3D.Timeline
                         return (TimeBarParentWidth / 2) - midpointInBar;
 
                     }
-                        return (TimeBarParentWidth / 2) + midpointInBar;
-                    //float timebarPosX = Mathf.Abs(timeBars[i].transform.localPosition.x);
-                    //float midpointbar = timebarPosX - value;
-                    //return (TimeBarParentWidth / 2) + midpointbar;
+                    return (TimeBarParentWidth / 2) + midpointInBar;
                 }
             }
             return 0;
