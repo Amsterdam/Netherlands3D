@@ -251,7 +251,7 @@ GameObject:
   - component: {fileID: 129918395}
   - component: {fileID: 129918394}
   m_Layer: 0
-  m_Name: CsvToColors
+  m_Name: CsvDataToColors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -568,8 +568,9 @@ GameObject:
   m_Component:
   - component: {fileID: 571352603}
   - component: {fileID: 571352604}
+  - component: {fileID: 571352605}
   m_Layer: 5
-  m_Name: Toggle (1)
+  m_Name: Toggle HeatmapData2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -642,8 +643,66 @@ MonoBehaviour:
   m_Group: {fileID: 397048612}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 3601609578a5d63449cd4429f55e3210, type: 2}
+        m_TargetAssemblyTypeName: Netherlands3D.Events.BoolEvent, nl.netherlands3d.core
+        m_MethodName: Invoke
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
+--- !u!114 &571352605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 571352602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bda199de660f4334b8a50d8e350bdf29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEvent: {fileID: 11400000, guid: 3601609578a5d63449cd4429f55e3210, type: 2}
+  onTriggered:
+    m_PersistentCalls:
+      m_Calls: []
+  onTrue:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 11825b52e3b8a9b42a390688a222152f, type: 2}
+        m_TargetAssemblyTypeName: Netherlands3D.Events.StringEvent, nl.netherlands3d.core
+        m_MethodName: Invoke
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: file://C:/CSVFiles/csvdata3.csv
+          m_BoolArgument: 0
+        m_CallState: 2
+  onFalse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 3156a50af90da084abbcd7f2ff0c0d60, type: 2}
+        m_TargetAssemblyTypeName: Netherlands3D.Events.TriggerEvent, nl.netherlands3d.core
+        m_MethodName: Invoke
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &606163480
 GameObject:
   m_ObjectHideFlags: 0
@@ -1238,7 +1297,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Toggle
+  m_Text: Heatmap data 1
 --- !u!222 &1330735638
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1317,7 +1376,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Toggle
+  m_Text: Heatmap data 3
 --- !u!222 &1457716574
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1650,7 +1709,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Toggle
+  m_Text: Heatmap data 2
 --- !u!222 &1912007336
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2009,8 +2068,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2045305051}
   - component: {fileID: 2045305052}
+  - component: {fileID: 2045305053}
   m_Layer: 5
-  m_Name: Toggle (2)
+  m_Name: Toggle HeatmapData3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2083,8 +2143,66 @@ MonoBehaviour:
   m_Group: {fileID: 397048612}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 58d4f6f1b052bd34a8643929324eb38a, type: 2}
+        m_TargetAssemblyTypeName: Netherlands3D.Events.BoolEvent, nl.netherlands3d.core
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1
+--- !u!114 &2045305053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045305050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bda199de660f4334b8a50d8e350bdf29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEvent: {fileID: 11400000, guid: 58d4f6f1b052bd34a8643929324eb38a, type: 2}
+  onTriggered:
+    m_PersistentCalls:
+      m_Calls: []
+  onTrue:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 11825b52e3b8a9b42a390688a222152f, type: 2}
+        m_TargetAssemblyTypeName: Netherlands3D.Events.StringEvent, nl.netherlands3d.core
+        m_MethodName: Invoke
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: file://C:/CSVFiles/csvdata3.csv
+          m_BoolArgument: 0
+        m_CallState: 2
+  onFalse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 3156a50af90da084abbcd7f2ff0c0d60, type: 2}
+        m_TargetAssemblyTypeName: Netherlands3D.Events.TriggerEvent, nl.netherlands3d.core
+        m_MethodName: Invoke
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2082405213
 GameObject:
   m_ObjectHideFlags: 0
@@ -2097,7 +2215,7 @@ GameObject:
   - component: {fileID: 2082405215}
   - component: {fileID: 2082405216}
   m_Layer: 5
-  m_Name: Toggle
+  m_Name: Toggle HeatmapData1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2202,7 +2320,19 @@ MonoBehaviour:
       m_Calls: []
   onTrue:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 11825b52e3b8a9b42a390688a222152f, type: 2}
+        m_TargetAssemblyTypeName: Netherlands3D.Events.StringEvent, nl.netherlands3d.core
+        m_MethodName: Invoke
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: file://C:/CSVFiles/csvdata3.csv
+          m_BoolArgument: 0
+        m_CallState: 2
   onFalse:
     m_PersistentCalls:
       m_Calls:
