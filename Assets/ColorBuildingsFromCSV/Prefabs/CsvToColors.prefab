@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7868538963513521064
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7868538963513521066}
+  - component: {fileID: 7868538963513521067}
+  m_Layer: 0
+  m_Name: CsvToColors
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7868538963513521066
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7868538963513521064}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7868538963513521067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7868538963513521064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b40cb2554ac24ce4c94f70290305bee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idColumn: 0
+  colorColumn: 2
+  colorInterpretation: 0
+  minimumValue: 0
+  maximumValue: 100
+  gradientContainer: {fileID: 11400000, guid: fce275245b7e0f94ab3211ea3c815468, type: 2}
+  defaultColor: {r: 0, g: 0.286582, b: 1, a: 1}
+  onSetIDColumn: {fileID: 11400000, guid: 7f03d0c5d710a3140985a9772fc412ff, type: 2}
+  onSetColorColumn: {fileID: 11400000, guid: 3fb5e21ccda107f448b670f56760ebcf, type: 2}
+  onSetHEXColorMode: {fileID: 11400000, guid: 0e30969de9e8ef347b83b9acc4a65ca9, type: 2}
+  onSetInterpolateColorMode: {fileID: 11400000, guid: 0ce1e9d364f531342b0a1660318a4817, type: 2}
+  onSetGradient: {fileID: 11400000, guid: 82aafbb0dba4769488e6cc3e3112e2cb, type: 2}
+  parseCSVFile: {fileID: 11400000, guid: 11825b52e3b8a9b42a390688a222152f, type: 2}
+  parsedIdsAndColors: {fileID: 11400000, guid: 35364c47e9928be4fb1378d1bb9a8af8, type: 2}

@@ -32,7 +32,7 @@ namespace Netherlands3D.TileSystem
         private float maxSelectDistance = 8000;
 
         [SerializeField]
-        [ColorUsage(true, true, 0f, 8f, 0.125f, 3f)]
+        [ColorUsage(true, true)]
         private Color selectionVertexColor;
 
         private List<string> selectedIDs;
@@ -77,7 +77,6 @@ namespace Netherlands3D.TileSystem
 		{
             pauseSelectHighlighting = coloring;
         }
-
 
         public void SelectWithInputs(Ray inputRay, bool multiSelect, bool secondary = false){
             if (pauseSelectHighlighting) 
