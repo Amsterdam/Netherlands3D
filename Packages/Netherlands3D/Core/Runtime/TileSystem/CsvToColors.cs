@@ -139,7 +139,12 @@ public class CsvToColors : MonoBehaviour
                 {
                     Color color = Color.magenta;
                     string id = line[idColumn];
-                    ParseColor(line[colorColumn], out color);
+
+                    if(!ParseColor(line[colorColumn], out color))
+                    {
+                        Debug.Log($"Stopped parsing CSV");
+                        yield break;
+					}
 
                     if (idColors.ContainsKey(id))
                     {
@@ -156,26 +161,35 @@ public class CsvToColors : MonoBehaviour
         }
     }
 
-    private void ParseColor(string colorInput, out Color color)
+    private bool ParseColor(string colorInput, out Color color)
     {
         color = Color.white;
         switch (colorInterpretation)
         {
             case ColorInterpretation.HEX:
-                ColorUtility.TryParseHtmlString(colorInput, out color);
-                break;
+                if(ColorUtility.TryParseHtmlString(colorInput, out color))
+                {
+                    return true;
+				}
+                else
+                {
+                    Debug.Log($"Cant parse {colorInput} as HEX color");
+                    return false;
+				}
             case ColorInterpretation.INTERPOLATE:
                 if (float.TryParse(colorInput, out float parsed))
                 {
                     color = gradientContainer.gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, parsed));
+                    return true;
                 }
                 else
                 {
                     Debug.Log($"Cant parse {colorInput} as float");
+                    return false;
                 }
-                break;
             default:
                 break;
         }
+        return false;
     }
 }

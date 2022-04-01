@@ -106,6 +106,8 @@ namespace Netherlands3D.TileSystem
         {
             if(idColors != null)
                 idColors.Clear();
+
+            ClearAllSubObjectColorData();
         }
 
         private void OnEnable()
@@ -148,18 +150,22 @@ namespace Netherlands3D.TileSystem
         }
 
         private void OnDisable()
-        {
-            StopAllCoroutines();
+		{
+			StopAllCoroutines();
+			ClearAllSubObjectColorData();
+		}
 
-            var allSubObjects = gameObject.GetComponentsInChildren<SubObjects>();
-            for (int i = allSubObjects.Length - 1; i >= 0; i--)
-            {
-                allSubObjects[i].ResetColors();
-                Destroy(allSubObjects[i]);
-            }
-        }
+		private void ClearAllSubObjectColorData()
+		{
+			var allSubObjects = gameObject.GetComponentsInChildren<SubObjects>();
+			for (int i = allSubObjects.Length - 1; i >= 0; i--)
+			{
+				allSubObjects[i].ResetColors();
+				Destroy(allSubObjects[i]);
+			}
+		}
 
-        private void OnTransformChildrenChanged()
+		private void OnTransformChildrenChanged()
         {
             UpdateColors(false);
         }
