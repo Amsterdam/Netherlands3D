@@ -57,15 +57,20 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// Get the x position of a date in this time bar if it is available
         /// </summary>
+        /// <param name="dateTime">The date time to get</param>
+        /// <param name="timeUnit">The time unit used 0 = yyyy, 1 = yyyy/MM, 2 = yyyy/MM/dd</param>
         /// <returns>local position x, 0.123f if the date is not in this timebar</returns>
-        public float GetDatePosition(DateTime dateTime)
+        public float GetDatePosition(DateTime dateTime, int timeUnit)
         {
             // Get the date closest to the dateTime to fetch
             //var k = dateTimePositions.OrderBy(x => (x.Value - dateTime)).FirstOrDefault();
             //print(k.Value);
             //return dateTimePositions.OrderBy(x => (x.Value - dateTime)).FirstOrDefault().Key;
             var k = ArrayExtention.MinBy(dateTimePositions, x => Math.Abs((x.Value - dateTime).Ticks));
-            if(k.Value == null)
+            if(k.Value == null || 
+                timeUnit == 0 && k.Value.Year != dateTime.Year ||
+                timeUnit == 1 && k.Value.Year == dateTime.Year && k.Value.Month != dateTime.Month ||
+                timeUnit == 2 && k.Value.Year == dateTime.Year && k.Value.Month == dateTime.Month && k.Value.Day != dateTime.Day)
             {
                 return 0.123f;
             }

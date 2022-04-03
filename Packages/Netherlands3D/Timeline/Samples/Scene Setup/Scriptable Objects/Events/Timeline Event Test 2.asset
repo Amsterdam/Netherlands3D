@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adf17790ea2eb03499567d0855648d67, type: 3}
   m_Name: Timeline Event Test 2
   m_EditorClassIdentifier: 
-  name: Naam
+  name: 1800/1801
   description: Test
   startDate:
     dateTimeString: 1800/03/30 00:00

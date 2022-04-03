@@ -210,7 +210,7 @@ namespace Netherlands3D.Timeline
             currentDate = newDate;
 
             UpdateTimeBars();
-            SetFocusedBarPosition(GetFocusedBar().GetDatePosition(currentDate));
+            SetFocusedBarPosition(GetFocusedBar().GetDatePosition(currentDate, timeUnit));
             UpdateCurrentDateVisual();
             UpdateVisableDateRange();
         }
@@ -265,7 +265,7 @@ namespace Netherlands3D.Timeline
         /// </remarks>
         private void UpdateVisableDateRange()
         {
-            int datesToPlace = (int)((TimeBarParentWidth / TimeBar.PixelDistanceDates) / 2) + 1;
+            int datesToPlace = (int)((TimeBarParentWidth / TimeBar.PixelDistanceDates) / 2);
             // based on timeUnit & current date, get the most left and right date
             switch(timeUnit) // 0 = yyyy, 1 = mm/yyyy, 2 = dd/mm/yyyy
             {
@@ -303,16 +303,16 @@ namespace Netherlands3D.Timeline
                 foreach(var dEvent in data.data[item])
                 {
                     // Check if event is in visable range
-                    if( dEvent.startDate <= visableDateLeft && dEvent.endDate >= visableDateRight ||    // 0---[-------]---0
-                        dEvent.startDate <= visableDateLeft && dEvent.endDate <= visableDateRight ||    // 0---[---0   ]
-                        dEvent.startDate >= visableDateLeft && dEvent.endDate >= visableDateRight ||    //     [   0---]---0
-                        dEvent.startDate >= visableDateLeft && dEvent.endDate <= visableDateRight)      //     [0-----0]                    
+                    if( dEvent.startDate <= visableDateLeft && dEvent.endDate >= visableDateRight ||                                            // 0---[-------]---0
+                        dEvent.startDate <= visableDateLeft && dEvent.endDate <= visableDateRight && dEvent.endDate >= visableDateLeft ||       // 0---[---0   ]
+                        dEvent.startDate >= visableDateLeft && dEvent.startDate <= visableDateRight && dEvent.endDate >= visableDateRight ||    //     [   0---]---0
+                        dEvent.startDate >= visableDateLeft && dEvent.endDate <= visableDateRight)                                              //     [0-----0]                    
                     {
                         // Event is visable, show it & add to event layer
                         float xL = EventUIGetPosX(dEvent.startDate, false);
-                        Debug.LogWarning("XL " + xL);
+                        Debug.LogWarning(visableDateLeft + " XL " + xL);
                         float xR = EventUIGetPosX(dEvent.endDate, true);
-                        Debug.LogWarning("XR " + xR);
+                        Debug.LogWarning(visableDateRight + " XR " + xR);
                         eventLayers[dEvent.category].AddEvent(dEvent, prefabEventUI, xL, xR);
                     }
                 }
@@ -376,22 +376,55 @@ namespace Netherlands3D.Timeline
             //Loop through timebars to check if the date is available
             for(int i = 0; i < timeBars.Length; i++)
             {
-                float value = timeBars[i].GetDatePosition(dateTime);
+                float value = timeBars[i].GetDatePosition(dateTime, timeUnit);
                 if(value == 0.123f) continue;
                 else
                 {
                     // Found local x value of date in timebar
                     // from the selected time bar get its local x position
                     float timebarPosX = timeBars[i].transform.localPosition.x;
-                    // deduct value from timebarPosX (get diff from 0 point)
-                    float midpointInBar = Mathf.Abs(timebarPosX) - Mathf.Abs(value);
-                    // From center deduct value
-                    if(!isRight)
-                    {
-                        return (TimeBarParentWidth / 2) - midpointInBar;
 
+                    // If timeBarPosX and its value pos is bigger then the screen width/2 then it is out of bounds
+                    float boundsValue;
+                    if(timebarPosX < 0)
+                    {
+                        boundsValue = timebarPosX + value * -1;
                     }
-                    return (TimeBarParentWidth / 2) + midpointInBar;
+                    else
+                    {
+                        boundsValue = timebarPosX - value;
+                    }
+                    print("bounds: " + dateTime + " " + i + " : " + boundsValue + " timebarPosX " + timebarPosX + " value " + value);
+                    if(boundsValue > TimeBarParentWidth / 2) return 0;
+
+                    // Left or right
+                    if(timebarPosX < 0)
+                    {
+                        // Time bar is left from 0
+                        // deduct value from timebarPosX (get diff from 0 point)
+                        float midpointInBar = Mathf.Abs(timebarPosX) - Mathf.Abs(value);
+                        // From center deduct value
+                        if(!isRight)
+                        {
+                            return (TimeBarParentWidth / 2) - midpointInBar;
+
+                        }
+                        return (TimeBarParentWidth / 2) + midpointInBar;
+                    }
+                    else
+                    {
+                        print("right");
+                        // Time bar is right from 0
+                        value = Mathf.Abs(value);
+                        print("posX: " + timebarPosX + " value: " + value);
+                        float midpointInBar = timebarPosX + value;
+                        if(!isRight)
+                        {
+                            return (TimeBarParentWidth / 2) + midpointInBar;
+
+                        }
+                        return (TimeBarParentWidth / 2) - midpointInBar;
+                    }
                 }
             }
             return 0;
