@@ -395,14 +395,18 @@ namespace Netherlands3D.Timeline
                         boundsValue = timebarPosX - value;
                     }
                     print("bounds: " + dateTime + " " + i + " : " + boundsValue + " timebarPosX " + timebarPosX + " value " + value);
-                    if(boundsValue > TimeBarParentWidth / 2) return 0;
+                    if(boundsValue > TimeBarParentWidth / 2 || boundsValue < -TimeBarParentWidth / 2)
+                    {
+                        Debug.LogWarning("out bounds");
+                        return 0;
+                    }
 
-                    // Left or right
+                    // Negative or positive
                     if(timebarPosX < 0)
                     {
                         // Time bar is left from 0
                         // deduct value from timebarPosX (get diff from 0 point)
-                        float midpointInBar = Mathf.Abs(timebarPosX) - Mathf.Abs(value);
+                        float midpointInBar = Mathf.Abs(timebarPosX) + value;
                         // From center deduct value
                         if(!isRight)
                         {
@@ -413,11 +417,8 @@ namespace Netherlands3D.Timeline
                     }
                     else
                     {
-                        print("right");
-                        // Time bar is right from 0
-                        value = Mathf.Abs(value);
-                        print("posX: " + timebarPosX + " value: " + value);
-                        float midpointInBar = timebarPosX + value;
+                        float midpointInBar = timebarPosX - value;
+                        // From center deduct value
                         if(!isRight)
                         {
                             return (TimeBarParentWidth / 2) + midpointInBar;
