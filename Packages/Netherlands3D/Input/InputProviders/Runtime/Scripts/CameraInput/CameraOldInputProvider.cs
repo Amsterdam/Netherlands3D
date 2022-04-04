@@ -1,14 +1,17 @@
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 public class CameraOldInputProvider : BaseCameraInputProvider
 {
     private Vector2 previousPointerPosition;
-
-	private void Start()
+#if ENABLE_LEGACY_INPUT_MANAGER
+    private void Start()
 	{
         previousPointerPosition = Input.mousePosition;
     }
-#if ENABLE_LEGACY_INPUT_MANAGER
+
     public void Update()
 	{
         //Modifier inputs
@@ -50,6 +53,13 @@ public class CameraOldInputProvider : BaseCameraInputProvider
         {
             upDownInput.started.Invoke(-1);
         }
+    }
+#endif
+#if UNITY_EDITOR && !ENABLE_LEGACY_INPUT_MANAGER
+    private void OnValidate()
+	{
+        Debug.LogWarning("Input Manager (Old) API is not enabled.\n" +
+        "To change this go to Edit/Project Settings/Player and set the Active Input Handling dropdown to 'Input Manager (Old)' or 'Both'");
     }
 #endif
 }

@@ -1,5 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 #if ENABLE_INPUT_SYSTEM
@@ -96,5 +97,12 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
             upDownInput.started.Invoke(-1);
         }
     }
-    #endif
+#endif
+#if UNITY_EDITOR && !ENABLE_INPUT_SYSTEM
+    private void OnValidate()
+	{
+        Debug.LogWarning("Input System Package (New) API is not enabled.\n" +
+        "To change this go to Edit/Project Settings/Player and set the Active Input Handling dropdown to 'Input System Package (New)' or 'Both'");
+    }
+#endif
 }
