@@ -14,7 +14,7 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// The format of how the date is
         /// </summary>
-        private static readonly string dateFormat = "yyyy/MM/dd HH:mm";
+        private static readonly string dateFormat = "yyyy/MM/dd";// HH:mm";
 
         /// <summary>
         /// The DateTime value

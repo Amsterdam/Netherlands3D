@@ -1831,7 +1831,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 967324801}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -3607,6 +3607,26 @@ PrefabInstance:
     - target: {fileID: 6648799158405934587, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648799159244977129, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
+      propertyPath: m_fontSize
+      value: 36
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648799159244977129, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
+      propertyPath: m_fontSizeMax
+      value: 36
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648799159244977129, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648799159244977129, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648799159244977129, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
