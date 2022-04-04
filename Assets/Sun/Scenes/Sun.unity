@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18368094, g: 0.22913274, b: 0.3050099, a: 1}
+  m_IndirectSpecularColor: {r: 0.18377224, g: 0.22830835, b: 0.29963836, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -724,19 +724,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: d798cae13fd83964e93c3d4487669f3f, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.39446932
+      value: -0.044118457
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: d798cae13fd83964e93c3d4487669f3f, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.11707523
+      value: -0.0103009315
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: d798cae13fd83964e93c3d4487669f3f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.87375027
+      value: 0.97280896
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: d798cae13fd83964e93c3d4487669f3f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.25932184
+      value: -0.22713485
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: d798cae13fd83964e93c3d4487669f3f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -749,14 +749,6 @@ PrefabInstance:
     - target: {fileID: 7539193515803747148, guid: d798cae13fd83964e93c3d4487669f3f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -0.159
-      objectReference: {fileID: 0}
-    - target: {fileID: 8864515628194110769, guid: d798cae13fd83964e93c3d4487669f3f, type: 3}
-      propertyPath: hour
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 8864515628194110769, guid: d798cae13fd83964e93c3d4487669f3f, type: 3}
-      propertyPath: minutes
-      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d798cae13fd83964e93c3d4487669f3f, type: 3}
