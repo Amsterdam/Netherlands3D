@@ -10,11 +10,13 @@ namespace Netherlands3D.Timeline
     public class EventLayer : MonoBehaviour
     {
         public RectTransform rectTransform;
+        public CanvasGroup canvasGroup;
         public List<EventUI> events = new List<EventUI>();
 
         private void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
+            canvasGroup = GetComponent<CanvasGroup>();
         }
 
         /// <summary>

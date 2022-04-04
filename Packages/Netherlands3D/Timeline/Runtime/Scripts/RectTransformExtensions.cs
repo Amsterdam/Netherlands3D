@@ -29,8 +29,8 @@ namespace SLIDDES.UI
 
         public static void SetHeight(this RectTransform rt, float height)
         {
-            rt.sizeDelta = new Vector2(rt.sizeDelta.x, height);
-            rt.anchoredPosition = rt.anchoredPosition;
+            rt.localPosition = new Vector3(rt.localPosition.x, height / 2, rt.localPosition.z);
+            SetBottom(rt, -height);
         }
 
         public static void SetRect(this RectTransform rt, float top, float bottom, float left, float right)

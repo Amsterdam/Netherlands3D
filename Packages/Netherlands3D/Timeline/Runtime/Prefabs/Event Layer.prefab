@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8156334888922514390}
   - component: {fileID: 6409091396589923664}
+  - component: {fileID: 4828376916749320811}
   m_Layer: 5
   m_Name: Event Layer
   m_TagString: Untagged
@@ -48,3 +49,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e42317ebd00d0f408557a508d848cf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rectTransform: {fileID: 0}
+  events: []
+--- !u!225 &4828376916749320811
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8156334888922514389}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
