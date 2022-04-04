@@ -183,7 +183,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6d6ec9b07a823247867c3757d4509a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: c0d1fbf783a5acb4eb5fc697924f64ec, type: 2}
+  timelineData: {fileID: 11400000, guid: c0d1fbf783a5acb4eb5fc697924f64ec, type: 2}
   timeBarParent: {fileID: 247540033}
   timeBars:
   - {fileID: 396992209}
@@ -3562,7 +3562,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6648799158405934587, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 231
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6648799158405934587, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3607,26 +3607,6 @@ PrefabInstance:
     - target: {fileID: 6648799158405934587, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6648799159244977129, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
-      propertyPath: m_fontSize
-      value: 36
-      objectReference: {fileID: 0}
-    - target: {fileID: 6648799159244977129, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
-      propertyPath: m_fontSizeMax
-      value: 36
-      objectReference: {fileID: 0}
-    - target: {fileID: 6648799159244977129, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
-      propertyPath: m_enableAutoSizing
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6648799159244977129, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
-      propertyPath: m_VerticalAlignment
-      value: 512
-      objectReference: {fileID: 0}
-    - target: {fileID: 6648799159244977129, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
-      propertyPath: m_HorizontalAlignment
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}

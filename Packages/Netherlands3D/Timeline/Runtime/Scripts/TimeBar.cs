@@ -11,6 +11,9 @@ namespace Netherlands3D.Timeline
     /// </summary>
     public class TimeBar : MonoBehaviour
     {
+        /// <summary>
+        /// The minimum distance in pixels the time fields have to be apart from eachother
+        /// </summary>
         public static readonly float PixelDistanceDates = 100;
 
         [Header("Components")]
@@ -21,6 +24,7 @@ namespace Netherlands3D.Timeline
         /// The rect transform of the time bar
         /// </summary>
         [HideInInspector] public RectTransform rectTransform;
+
         /// <summary>
         /// The most left dateTime of this timebar
         /// </summary>
@@ -34,12 +38,6 @@ namespace Netherlands3D.Timeline
         private void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
-        }
-
-        // Start is called before the first frame update
-        void Start()
-        {
-        
         }
 
         /// <summary>
@@ -63,19 +61,21 @@ namespace Netherlands3D.Timeline
         public float GetDatePosition(DateTime dateTime, int timeUnit)
         {
             // Get the date closest to the dateTime to fetch
-            //var k = dateTimePositions.OrderBy(x => (x.Value - dateTime)).FirstOrDefault();
-            //print(k.Value);
-            //return dateTimePositions.OrderBy(x => (x.Value - dateTime)).FirstOrDefault().Key;
             var k = ArrayExtention.MinBy(dateTimePositions, x => Math.Abs((x.Value - dateTime).Ticks));
             if(k.Value == null || 
                 timeUnit == 0 && k.Value.Year != dateTime.Year ||
+                timeUnit == 1 && k.Value.Year != dateTime.Year ||
                 timeUnit == 1 && k.Value.Year == dateTime.Year && k.Value.Month != dateTime.Month ||
+                timeUnit == 2 && k.Value.Year != dateTime.Year ||
+                timeUnit == 2 && k.Value.Year == dateTime.Year && k.Value.Month != dateTime.Month ||
                 timeUnit == 2 && k.Value.Year == dateTime.Year && k.Value.Month == dateTime.Month && k.Value.Day != dateTime.Day)
             {
                 return 0.123f;
             }
-            return k.Key * -1;
-            //return dateTimePositions.FirstOrDefault(x => x.Value == dateTime).Key * -1; // have to invert number positivity
+            Debug.Log(timeUnit == 1 && k.Value.Year == dateTime.Year && k.Value.Month != dateTime.Month);
+            Debug.Log("Datepos: " + dateTime + " - " + k.Value);
+            return k.Key * -1; // have to invert number positivity
+            //return dateTimePositions.FirstOrDefault(x => x.Value == dateTime).Key * -1; 
         }
 
         /// <summary>

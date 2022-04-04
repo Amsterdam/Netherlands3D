@@ -383,7 +383,6 @@ namespace Netherlands3D.Timeline
                 if(IsEventVisible(dEvent))
                 {
                     // Event is visable, show it & add to event layer
-                    print(eventLayers.ContainsKey(dEvent.category));
                     visibleEventsUI.Add(i, eventLayers[dEvent.category].AddEvent(dEvent, prefabEventUI));
                 }
             }
