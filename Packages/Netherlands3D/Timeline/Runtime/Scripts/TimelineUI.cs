@@ -102,11 +102,11 @@ namespace Netherlands3D.Timeline
             string[] keys = timelineData.data.Keys.ToArray();
             foreach(string item in keys)
             {
-                Category c = Instantiate(prefabCategory, parentCategories).GetComponent<Category>();
-                c.Initialize(item);
-                categories.Add(c);
                 EventLayer e = Instantiate(prefabEventLayer, parentEventLayers).GetComponent<EventLayer>();
                 eventLayers.Add(item, e);
+                Category c = Instantiate(prefabCategory, parentCategories).GetComponent<Category>();
+                c.Initialize(item, e);
+                categories.Add(c);
             }
         }
 

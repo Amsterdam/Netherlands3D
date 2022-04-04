@@ -9,18 +9,12 @@ namespace Netherlands3D.Timeline
     /// </summary>
     public class EventLayer : MonoBehaviour
     {
+        public RectTransform rectTransform;
         public List<EventUI> events = new List<EventUI>();
 
-        // Start is called before the first frame update
-        void Start()
+        private void Awake()
         {
-        
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-        
+            rectTransform = GetComponent<RectTransform>();
         }
 
         /// <summary>

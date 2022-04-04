@@ -72,10 +72,9 @@ namespace Netherlands3D.Timeline
             {
                 return 0.123f;
             }
-            Debug.Log(timeUnit == 1 && k.Value.Year == dateTime.Year && k.Value.Month != dateTime.Month);
-            Debug.Log("Datepos: " + dateTime + " - " + k.Value);
+            //Debug.Log(timeUnit == 1 && k.Value.Year == dateTime.Year && k.Value.Month != dateTime.Month);
+            //Debug.Log("Datepos: " + dateTime + " - " + k.Value);
             return k.Key * -1; // have to invert number positivity
-            //return dateTimePositions.FirstOrDefault(x => x.Value == dateTime).Key * -1; 
         }
 
         /// <summary>
