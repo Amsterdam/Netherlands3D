@@ -6,19 +6,44 @@ namespace Netherlands3D.Sun
     [ExecuteInEditMode]
     public class SunTime : MonoBehaviour
     {
+        [Header("Location")]
+
         [SerializeField]
         private float longitude;
 
         [SerializeField]
         private float latitude;
 
+        [Header("Time")]
+        [SerializeField]
+        private DateTimeKind dateTimeKind = DateTimeKind.Local;
+
+        [SerializeField]
+        private bool jumpToCurrentTimeAtStart = false;
+
         [SerializeField]
         [Range(0, 24)]
-        private int hour;
+        private int hour = 18;
 
         [SerializeField]
         [Range(0, 60)]
-        private int minutes;
+        private int minutes = 0;
+
+        [SerializeField]
+        [Range(0, 60)]
+        private int seconds = 0;
+
+        [SerializeField]
+        [Range(1,31)]
+        private int day = 13;
+
+        [SerializeField]
+        [Range(1, 12)]
+        private int month = 8;
+
+        [SerializeField]
+        [Range(1, 9999)]
+        private int year = 2022;
 
         private DateTime time;
 
@@ -43,6 +68,42 @@ namespace Netherlands3D.Sun
             OnValidate();
         }
 
+        public void SetHour(int hour)
+        {
+            this.hour = hour;
+            OnValidate();
+        }
+
+        public void SetSeconds(int seconds)
+        {
+            this.seconds = seconds;
+            OnValidate();
+        }
+
+        public void SetMinutes(int minutes)
+        {
+            this.minutes = minutes;
+            OnValidate();
+        }
+
+        public void SetDay(int day)
+        {
+            this.day = day;
+            OnValidate();
+        }
+
+        public void SetMonth(int month)
+        {
+            this.month = month;
+            OnValidate();
+        }
+
+        public void SetYear(int year)
+        {
+            this.year = year;
+            OnValidate();
+        }
+
         public void SetLocation(float longitude, float latitude){
           this.longitude = longitude;
           this.latitude = latitude;
@@ -58,14 +119,21 @@ namespace Netherlands3D.Sun
 
         private void Start()
         {
-            time = DateTime.Now;
-            hour = time.Hour;
-            minutes = time.Minute;
+            if (jumpToCurrentTimeAtStart)
+            {
+                time = DateTime.Now;
+
+                hour = time.Hour;
+                minutes = time.Minute;
+                day = time.Day;
+                month = time.Month;
+                year = time.Year;
+            }
         }
 
         private void OnValidate()
         {
-            time = DateTime.Now.Date + new TimeSpan(hour, minutes, 0);
+            time = new DateTime(year,month,day,hour,minutes,seconds,dateTimeKind);
         }
 
         private void Update()
