@@ -1,6 +1,4 @@
 using Netherlands3D.Events;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -14,6 +12,7 @@ namespace Netherlands3D
         [SerializeField]
         private Vector3Event secondaryClickOnScreenPosition;
 
+#if ENABLE_LEGACY_INPUT_MANAGER
         void Update()
         {
             if (!IsOverInterface())
@@ -28,7 +27,7 @@ namespace Netherlands3D
                 }
             }
         }
-
+#endif
         private bool IsOverInterface()
         {
             if (!EventSystem.current) return false;

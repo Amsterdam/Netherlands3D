@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class CameraOldInputProvider : BaseCameraInputProvider
 {
@@ -11,8 +8,8 @@ public class CameraOldInputProvider : BaseCameraInputProvider
 	{
         previousPointerPosition = Input.mousePosition;
     }
-
-	public void Update()
+#if ENABLE_LEGACY_INPUT_MANAGER
+    public void Update()
 	{
         //Modifier inputs
         var dragging = Input.GetMouseButton(0);
@@ -54,4 +51,5 @@ public class CameraOldInputProvider : BaseCameraInputProvider
             upDownInput.started.Invoke(-1);
         }
     }
+#endif
 }

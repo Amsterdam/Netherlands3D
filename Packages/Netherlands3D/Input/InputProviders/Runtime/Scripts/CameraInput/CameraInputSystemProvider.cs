@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
+
+#if ENABLE_INPUT_SYSTEM
+    using UnityEngine.InputSystem;
+#endif
 
 public class CameraInputSystemProvider : BaseCameraInputProvider
 {
+#if ENABLE_INPUT_SYSTEM
     private InputAction dragAction;
     private InputAction moveAction;
     private InputAction lookAction;
@@ -92,4 +96,5 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
             upDownInput.started.Invoke(-1);
         }
     }
+    #endif
 }
