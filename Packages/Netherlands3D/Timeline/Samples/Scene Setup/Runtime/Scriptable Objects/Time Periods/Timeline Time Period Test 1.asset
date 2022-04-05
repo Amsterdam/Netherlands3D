@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: adf17790ea2eb03499567d0855648d67, type: 3}
-  m_Name: Timeline Event Test 1
+  m_Name: Timeline Time Period Test 1
   m_EditorClassIdentifier: 
   name: 2018/2024
   description: Test

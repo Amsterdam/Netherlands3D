@@ -63,12 +63,12 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// String of each event layer with as key category name
         /// </summary>
-        private Dictionary<string, EventLayer> eventLayers = new Dictionary<string, EventLayer>();
+        private Dictionary<string, TimePeriodsLayer> eventLayers = new Dictionary<string, TimePeriodsLayer>();
         /// <summary>
         /// Dictionary containing the active eventUI scripts with corresponding data.data index id
         /// </summary>
         /// <remarks><data.data[i], EventUI></remarks>
-        private Dictionary<int, EventUI> visibleEventsUI = new Dictionary<int, EventUI>();
+        private Dictionary<int, TimePeriodUI> visibleEventsUI = new Dictionary<int, TimePeriodUI>();
 
         // Start is called before the first frame update
         void Start()
@@ -102,7 +102,7 @@ namespace Netherlands3D.Timeline
             string[] keys = timelineData.data.Keys.ToArray();
             foreach(string item in keys)
             {
-                EventLayer e = Instantiate(prefabEventLayer, parentEventLayers).GetComponent<EventLayer>();
+                TimePeriodsLayer e = Instantiate(prefabEventLayer, parentEventLayers).GetComponent<TimePeriodsLayer>();
                 eventLayers.Add(item, e);
                 Category c = Instantiate(prefabCategory, parentCategories).GetComponent<Category>();
                 c.Initialize(item, e);
@@ -383,7 +383,7 @@ namespace Netherlands3D.Timeline
                 if(IsEventVisible(dEvent))
                 {
                     // Event is visable, show it & add to event layer
-                    visibleEventsUI.Add(i, eventLayers[dEvent.category].AddEvent(dEvent, prefabEventUI));
+                    visibleEventsUI.Add(i, eventLayers[dEvent.category].AddTimePeriod(dEvent, prefabEventUI));
                 }
             }
 

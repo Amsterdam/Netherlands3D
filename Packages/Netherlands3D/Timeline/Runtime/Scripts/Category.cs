@@ -23,7 +23,7 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// The linked event layer
         /// </summary>
-        private EventLayer eventLayer;
+        private TimePeriodsLayer eventLayer;
         /// <summary>
         /// Is the category visible
         /// </summary>
@@ -33,7 +33,7 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private RectTransform rectTransform;
 
-        public void Initialize(string name, EventLayer eventLayer)
+        public void Initialize(string name, TimePeriodsLayer eventLayer)
         {
             this.name = name;
             nameField.text = name;

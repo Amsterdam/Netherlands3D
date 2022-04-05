@@ -6,10 +6,10 @@ using TMPro;
 
 namespace Netherlands3D.Timeline
 {
-    public class EventUI : MonoBehaviour
+    public class TimePeriodUI : MonoBehaviour
     {
         /// <summary>
-        /// The event data for this eventUI
+        /// The event data for this time period UI
         /// </summary>
         public TimePeriod dEvent;
         /// <summary>
@@ -23,13 +23,13 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// The event layer of the event
         /// </summary>
-        public EventLayer eventLayer;
+        public TimePeriodsLayer eventLayer;
 
         /// <summary>
         /// Initialize the UI
         /// </summary>
         /// <param name="dEvent"></param>
-        public void Initialize(TimePeriod dEvent, EventLayer eventLayer)
+        public void Initialize(TimePeriod dEvent, TimePeriodsLayer eventLayer)
         {
             this.dEvent = dEvent;
             this.eventLayer = eventLayer;            
@@ -46,11 +46,11 @@ namespace Netherlands3D.Timeline
         }
 
         /// <summary>
-        /// Remove the EventUI
+        /// Remove the time period UI
         /// </summary>
         public void Remove()
         {
-            eventLayer.events.Remove(this);
+            eventLayer.timePeriodsUI.Remove(this);
             Destroy(gameObject);
         }
 
