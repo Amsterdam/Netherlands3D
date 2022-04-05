@@ -2,6 +2,7 @@
 using UnityEditor;
 #endif
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CameraOldInputProvider : BaseCameraInputProvider
 {
@@ -14,8 +15,22 @@ public class CameraOldInputProvider : BaseCameraInputProvider
 
     public void Update()
 	{
+        //Optionaly ignore camera input when the pointer is interacting with UI
+        if (!isDragging && ignoreInputWhenHoveringInterface && EventSystem.current && EventSystem.current.IsPointerOverGameObject())
+        {
+            ingoringInput = true;
+            return;
+        }
+
         //Modifier inputs
         var dragging = Input.GetMouseButton(0);
+
+        //Only start sending input again after we stopped dragging
+        if (ingoringInput && !dragging)
+            ingoringInput = false;
+        if (ingoringInput) return;
+        isDragging = dragging;
+
         var rotate = Input.GetMouseButton(2) || (dragging && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)));
         var firstPerson = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
 

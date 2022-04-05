@@ -2,9 +2,10 @@
 using UnityEditor;
 #endif
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 #if ENABLE_INPUT_SYSTEM
-    using UnityEngine.InputSystem;
+using UnityEngine.InputSystem;
 #endif
 
 public class CameraInputSystemProvider : BaseCameraInputProvider
@@ -46,8 +47,22 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 
 	public void Update()
 	{
+        //Optionaly ignore camera input when the pointer is interacting with UI
+        if (!isDragging && ignoreInputWhenHoveringInterface && EventSystem.current && EventSystem.current.IsPointerOverGameObject())
+        {
+            ingoringInput = true;
+            return;
+        }
+
         //Modifier inputs
         var dragging = dragAction.IsPressed();
+
+        //Only start sending input again after we stopped dragging
+        if (ingoringInput && !dragging)
+            ingoringInput = false;
+        if (ingoringInput) return;
+        isDragging = dragging;
+
         var rotate = rotateModifierAction.IsPressed();
         var firstPerson = firstPersonModifierAction.IsPressed();
 
