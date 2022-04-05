@@ -12,23 +12,23 @@ namespace Netherlands3D.Timeline
     [CreateAssetMenu(fileName = "Timeline Time Period", menuName = "ScriptableObjects/Timeline/Time Period")]
     public class TimePeriod : ScriptableObject
     {
-        [Tooltip("The event name")]
+        [Tooltip("The time period name")]
         public new string name;
-        [Tooltip("The description of the event")]
+        [Tooltip("The description of the time period")]
         [TextArea(1, 10)]
         public string description;
-        [Tooltip("The start date of the event")]
+        [Tooltip("The start date of the time period")]
         public DateTimeSerializable startDate;
-        [Tooltip("The end date of the event")]
+        [Tooltip("The end date of the time period")]
         public DateTimeSerializable endDate;
-        [Tooltip("The category of the event")]
+        [Tooltip("The category of the time period")]
         public string category;
         [Space]
-        [Tooltip("The unity event that gets invoked when the event gets invoked")]
+        [Tooltip("The unity time period that gets invoked when the time period gets invoked")]
         public UnityEvent unityEvent;
 
         /// <summary>
-        /// Invoke the event (for triggering a unity event)
+        /// Invoke the time period unity event
         /// </summary>
         public void Invoke()
         {
