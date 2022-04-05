@@ -11,7 +11,7 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// The event data for this eventUI
         /// </summary>
-        public Event dEvent;
+        public TimePeriod dEvent;
         /// <summary>
         /// The rect transform component of the UI
         /// </summary>
@@ -29,11 +29,20 @@ namespace Netherlands3D.Timeline
         /// Initialize the UI
         /// </summary>
         /// <param name="dEvent"></param>
-        public void Initialize(Event dEvent, EventLayer eventLayer)
+        public void Initialize(TimePeriod dEvent, EventLayer eventLayer)
         {
             this.dEvent = dEvent;
             this.eventLayer = eventLayer;            
             nameField.text = dEvent.name;
+        }
+
+        /// <summary>
+        /// Invokes the event from this UI
+        /// </summary>
+        public void InvokeEvent()
+        {
+            if(dEvent == null) return;
+            dEvent.Invoke();
         }
 
         /// <summary>
@@ -45,6 +54,11 @@ namespace Netherlands3D.Timeline
             Destroy(gameObject);
         }
 
+        /// <summary>
+        /// Update the UI elementss from this prefab
+        /// </summary>
+        /// <param name="posXLeft">The rt left position</param>
+        /// <param name="posXRight">The rt right position</param>
         public void UpdateUI(float posXLeft, float posXRight)
         {
             rectTransform.SetRect(0, 0, posXLeft, posXRight);

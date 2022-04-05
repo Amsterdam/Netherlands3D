@@ -17,16 +17,11 @@ namespace Netherlands3D.Timeline
             field = GetComponent<TextMeshProUGUI>();
         }
 
-        // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
-        
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-        
+            var rt = GetComponent<RectTransform>();
+            transform.localPosition = new Vector3(transform.localPosition.x, -rt.sizeDelta.y / 2, transform.localPosition.z);
+            
         }
     }
 }

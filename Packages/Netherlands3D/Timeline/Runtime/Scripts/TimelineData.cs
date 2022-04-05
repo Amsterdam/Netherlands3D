@@ -11,12 +11,12 @@ namespace Netherlands3D.Timeline
     public class TimelineData : ScriptableObject
     {
         [Tooltip("The events of this timeline")]
-        public List<Event> events;
+        public List<TimePeriod> events;
 
         /// <summary>
         /// The sorted data. <categoryname, list<EventsBelongingToCategory>>
         /// </summary>
-        public Dictionary<string, List<Event>> data = new Dictionary<string, List<Event>>();
+        public Dictionary<string, List<TimePeriod>> data = new Dictionary<string, List<TimePeriod>>();
 
         /// <summary>
         /// Orders the events on its categories
@@ -27,7 +27,7 @@ namespace Netherlands3D.Timeline
             data.Clear();
 
             // Order all events
-            foreach(Event item in events)
+            foreach(TimePeriod item in events)
             {
                 // Check if event category is already present
                 if(data.ContainsKey(item.category))
@@ -38,7 +38,7 @@ namespace Netherlands3D.Timeline
                 else
                 {
                     // Add to new
-                    data.Add(item.category, new List<Event>() { item });
+                    data.Add(item.category, new List<TimePeriod>() { item });
                 }
             }
         }

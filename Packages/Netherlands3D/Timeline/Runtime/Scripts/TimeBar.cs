@@ -137,7 +137,7 @@ namespace Netherlands3D.Timeline
                 string format = timeUnit switch
                 {
                     1 => "MM",
-                    2 => "dd/MM",
+                    2 => "dd",
                     _ => "yyyy",
                 };
                 a.field.text = dateTime.ToString(format);

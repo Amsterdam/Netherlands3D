@@ -44,23 +44,22 @@ namespace Netherlands3D.Timeline
         public void ToggleVisability()
         {
             isVisible = !isVisible;
-            print("t");
             if(isVisible)
             {
-                rectTransform.SetHeight(96);
-                eventLayer.rectTransform.SetHeight(96);
+                //rectTransform.SetHeight(96);
+                //eventLayer.rectTransform.SetHeight(96);
                 eventLayer.canvasGroup.alpha = 1;
             }
             else
             {
-                rectTransform.SetHeight(46);
-                eventLayer.rectTransform.SetHeight(46);
+                //rectTransform.SetHeight(46);
+                //eventLayer.rectTransform.SetHeight(46);
                 eventLayer.canvasGroup.alpha = 0;
             }
 
             // Force unity to rebuild layout, since it wont do it on its own >:(
-            rectTransform.RefreshContentFitter();
-            eventLayer.rectTransform.RefreshContentFitter();
+            //rectTransform.RefreshContentFitter();
+            //eventLayer.rectTransform.RefreshContentFitter();
             //LayoutRebuilder.ForceRebuildLayoutImmediate(transform.parent.GetComponent<RectTransform>());
             //LayoutRebuilder.ForceRebuildLayoutImmediate(eventLayer.transform.parent.GetComponent<RectTransform>());
         }

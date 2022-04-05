@@ -310,7 +310,7 @@ namespace Netherlands3D.Timeline
         /// Check if the event is visible in the visable date range
         /// </summary>
         /// <param name="dEvent">The even to check</param>
-        private bool IsEventVisible(Event dEvent)
+        private bool IsEventVisible(TimePeriod dEvent)
         {
             return  dEvent.startDate <= visableDateLeft && dEvent.endDate >= visableDateRight ||                                            // 0---[-------]---0
                     dEvent.startDate <= visableDateLeft && dEvent.endDate <= visableDateRight && dEvent.endDate >= visableDateLeft ||       // 0---[---0   ]
@@ -372,7 +372,7 @@ namespace Netherlands3D.Timeline
             }
 
             // Loop through each event
-            Event dEvent;
+            TimePeriod dEvent;
             for(int i = 0; i < timelineData.events.Count; i++)
             {
                 // If event is already in eventUIIDS skip it since it is already checked

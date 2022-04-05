@@ -24,7 +24,7 @@ namespace Netherlands3D.Timeline
         /// </summary>
         /// <param name="dEvent"></param>
         /// <param name="prefabEventUI"></param>
-        public EventUI AddEvent(Event dEvent, GameObject prefabEventUI)
+        public EventUI AddEvent(TimePeriod dEvent, GameObject prefabEventUI)
         {
             EventUI a = Instantiate(prefabEventUI, transform).GetComponent<EventUI>();
             a.Initialize(dEvent, this);

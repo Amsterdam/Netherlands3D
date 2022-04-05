@@ -82,7 +82,6 @@ namespace Netherlands3D.Timeline
         {
             isDragging = false;
         }
-        
 
         public void OnPointerEnter(PointerEventData eventData)
         {
