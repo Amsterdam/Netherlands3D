@@ -51,11 +51,29 @@ namespace Netherlands3D.Sun
         private Light sunDirectionalLight;
 
         [SerializeField]
+        private bool animate = true;
+
+        [SerializeField]
         private float timeSpeed = 1;
 
         [SerializeField]
         private int frameSteps = 1;
         private int frameStep;
+
+        private const int gizmoRayLength = 10000;
+        private const int gizmoSunSize = 20;
+        private const int gizmoSunDistance = 20;
+
+		private void OnDrawGizmos()
+		{
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawRay(this.transform.position, this.transform.position - sunDirectionalLight.transform.forward * gizmoRayLength);
+		}
+
+		public void ToggleAnimation(bool animate)
+        {
+            this.animate = animate;
+        }
 
         public void SetTime(DateTime time) {
             this.time = time;
@@ -134,10 +152,13 @@ namespace Netherlands3D.Sun
         private void OnValidate()
         {
             time = new DateTime(year,month,day,hour,minutes,seconds,dateTimeKind);
+            SetPosition();
         }
 
         private void Update()
         {
+            if (!animate) return;
+
             time = time.AddSeconds(timeSpeed * Time.deltaTime);
             if (frameStep==0) {
                 SetPosition();
