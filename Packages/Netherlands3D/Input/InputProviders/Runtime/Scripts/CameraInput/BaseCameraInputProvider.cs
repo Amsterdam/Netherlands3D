@@ -5,6 +5,15 @@ using UnityEngine;
 
 public class BaseCameraInputProvider : MonoBehaviour
 {
+    [Header("Interface input ignore")]
+    public bool ignoreInputWhenHoveringInterface = true;
+
+    [HideInInspector]
+    public bool ingoringInput = false;
+    [HideInInspector]
+    public bool isDragging = false;
+
+    [Header("Invoke events")]
     public FloatEvent horizontalInput;
     public FloatEvent verticalInput;
     public Vector3Event lookInput;
