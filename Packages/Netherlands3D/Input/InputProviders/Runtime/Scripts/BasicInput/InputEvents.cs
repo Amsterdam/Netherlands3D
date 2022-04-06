@@ -12,16 +12,25 @@ namespace Netherlands3D
         [SerializeField]
         private Vector3Event secondaryClickOnScreenPosition;
 
+        private float lastClickDown = 0;
+        private float clickTime = 0.5f; //seconds
+
 #if ENABLE_LEGACY_INPUT_MANAGER
         void Update()
         {
             if (!IsOverInterface())
             {
-                if (Input.GetMouseButtonDown(0))
+                if(Input.GetMouseButtonDown(0))
                 {
-                    clickOnScreenPosition.Invoke(Input.mousePosition);
+                    lastClickDown = Time.time;
                 }
-                else if (Input.GetMouseButtonDown(1))
+                if (Input.GetMouseButtonUp(0))
+                {
+                    var clickStart = (Time.time - lastClickDown);
+                    if (clickStart < clickTime)
+                        clickOnScreenPosition.Invoke(Input.mousePosition);
+                }
+                else if (Input.GetMouseButtonUp(1))
                 {
                     secondaryClickOnScreenPosition.Invoke(Input.mousePosition);
                 }
