@@ -57,6 +57,7 @@ namespace Netherlands3D.Rendering
 		/// </summary>
 		private void SetShadowDistanceOnCurrentRenderPipeline()
 		{
+			if (!referenceTransform) return;
 			var dynamicShadowDistance = Mathf.Min(Mathf.Max(referenceTransform.position.y * range, minShadowDistance), maxShadowDistance);
 			ApplyMaxShadowDistance(dynamicShadowDistance);
 		}
