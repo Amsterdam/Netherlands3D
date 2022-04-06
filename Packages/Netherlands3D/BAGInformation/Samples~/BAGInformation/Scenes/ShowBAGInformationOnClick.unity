@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028377, g: 0.22571409, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -631,7 +631,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &626960510
 GameObject:
@@ -1765,11 +1765,6 @@ MonoBehaviour:
   filterByCameraFrustum: 1
   layers:
   - {fileID: 4681655142019714451}
-  - {fileID: 33835187302912205}
-  - {fileID: 1033508633846746686}
-  - {fileID: 3146379110839247089}
-  - {fileID: 886154575666521789}
-  - {fileID: 4627494509830521717}
   pendingTileChanges: []
   activeTileChangesView: []
 --- !u!4 &1512706335
@@ -1784,13 +1779,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1200672875177179467}
-  - {fileID: 2732327054507538776}
-  - {fileID: 2057837853563292810}
-  - {fileID: 1916068892547788082}
-  - {fileID: 6900577025068275204}
-  - {fileID: 8217241559806933439}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1546844732
 GameObject:
@@ -2130,7 +2120,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1842162588
 GameObject:
@@ -2197,7 +2187,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1845496220
 MonoBehaviour:
@@ -2516,7 +2506,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2110277491
 MonoBehaviour:
@@ -2700,156 +2690,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2131485516}
   m_CullTransparentMesh: 1
---- !u!114 &33835187302912205
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8850599036120517484}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f56e8526a6fa4154ab343f890f9340b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isenabled: 1
-  tileSize: 1000
-  layerPriority: 4
-  Datasets:
-  - Description: 
-    lod: 0
-    path: https://3d.amsterdam.nl/data/terrain1.1/terrain_{x}-{y}-lod0.bin
-    maximumDistance: 6000
-    maximumDistanceSquared: 36000000
-    enabled: 1
-  - Description: 
-    lod: 1
-    path: https://3d.amsterdam.nl/data/terrain1.1/terrain_{x}-{y}-lod1.bin
-    maximumDistance: 3000
-    maximumDistanceSquared: 9000000
-    enabled: 1
-  pauseLoading: 0
-  onLayerEnabled:
-    m_PersistentCalls:
-      m_Calls: []
-  onLayerDisabled:
-    m_PersistentCalls:
-      m_Calls: []
-  DefaultMaterialList:
-  - {fileID: 2100000, guid: e7a2af1b9b520f24a86604de8f36ca33, type: 2}
-  - {fileID: 2100000, guid: 4edd0e8d45295054faf6c07befae4e16, type: 2}
-  - {fileID: 2100000, guid: 8265305d98e7bb740ac27fd4b4eaf76c, type: 2}
-  - {fileID: 2100000, guid: a674ab90fc804ce4593e09b7b31e846f, type: 2}
-  - {fileID: 2100000, guid: ef2c8cb9c3ca51d48bc2e2fc2b9022c8, type: 2}
-  - {fileID: 2100000, guid: 3b680d4f7deb89648908700880fb407c, type: 2}
-  - {fileID: 2100000, guid: d51c8753eb50a504d8519fc63c6c9998, type: 2}
-  - {fileID: 2100000, guid: 6543ee7ced42a854d8494b805b7b6a64, type: 2}
-  - {fileID: 2100000, guid: 154ad834a9047874f8c032d05bb8f73b, type: 2}
-  - {fileID: 2100000, guid: 85d8b49e901d2d74f861df5ff6e3af74, type: 2}
-  - {fileID: 2100000, guid: 1d27b4df77a58394d934beb17e22ef9c, type: 2}
-  - {fileID: 2100000, guid: effeb907e73e0bf479f61f38032b4493, type: 2}
-  - {fileID: 2100000, guid: 8784d6829f244dc4a82c34a923b3108f, type: 2}
-  - {fileID: 2100000, guid: 8784d6829f244dc4a82c34a923b3108f, type: 2}
-  createMeshcollider: 0
-  tileShadowCastingMode: 1
-  brotliCompressedExtention: .unityweb
---- !u!1 &112661310821713388
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6900577025068275204}
-  - component: {fileID: 886154575666521789}
-  m_Layer: 0
-  m_Name: StreetNames
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &886154575666521789
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 112661310821713388}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a38316f36dee24748a32f2b70687e118, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isenabled: 1
-  tileSize: 1000
-  layerPriority: 2
-  Datasets:
-  - Description: 
-    lod: 0
-    path: 
-    maximumDistance: 1000
-    maximumDistanceSquared: 0
-    enabled: 1
-  pauseLoading: 0
-  onLayerEnabled:
-    m_PersistentCalls:
-      m_Calls: []
-  onLayerDisabled:
-    m_PersistentCalls:
-      m_Calls: []
-  textPrefab: {fileID: 6092693534695716574, guid: 7e0a4ae1636fabf438177d3baef1ec6e, type: 3}
-  geoJsonUrl: https://geodata.nationaalgeoregister.nl/kadastralekaart/wfs/v4_0?service=WFS&version=2.0.0&request=GetFeature&TypeNames=kadastralekaartv4:openbareruimtenaam&&propertyName=plaatsingspunt,tekst,hoek,relatieveHoogteligging,openbareRuimteType&outputformat=geojson&srs=EPSG:28992&bbox=
-  maxSpawnsPerFrame: 100
-  textsAndSizes:
-  - textPropertyName: tekst
-    drawWithSize: 0.5
-    offset: 10
-  positionSourceType: 0
-  autoOrientationMode: 2
-  drawGeometry: 0
-  lineRenderMaterial: {fileID: 2100000, guid: 9dc045a69ee65694da7669f5e52a4db1, type: 2}
-  lineColor: {r: 0.8235294, g: 0.39215687, b: 0.19607843, a: 1}
-  lineWidth: 5
-  readAngleFromProperty: 1
-  angleProperty: hoek
-  filterUniqueNames: 1
-  textMinDrawDistance: 0
---- !u!114 &1033508633846746686
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2975960111084553868}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f56e8526a6fa4154ab343f890f9340b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isenabled: 1
-  tileSize: 1000
-  layerPriority: 1
-  Datasets:
-  - Description: 
-    lod: 0
-    path: https://3d.amsterdam.nl/data/trees2.0/trees_{x}_{y}.1.bin
-    maximumDistance: 3000
-    maximumDistanceSquared: 9000000
-    enabled: 1
-  pauseLoading: 0
-  onLayerEnabled:
-    m_PersistentCalls:
-      m_Calls: []
-  onLayerDisabled:
-    m_PersistentCalls:
-      m_Calls: []
-  DefaultMaterialList:
-  - {fileID: 2100000, guid: 47ccc5c015fc45a4a9282e50cd36be6c, type: 2}
-  createMeshcollider: 0
-  tileShadowCastingMode: 1
-  brotliCompressedExtention: .unityweb
 --- !u!4 &1200672875177179467
 Transform:
   m_ObjectHideFlags: 0
@@ -2863,65 +2703,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1512706335}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &1916068892547788082
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2625011761438709480}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1512706335}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &2057837853563292810
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2975960111084553868}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1512706335}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2625011761438709480
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1916068892547788082}
-  - component: {fileID: 3146379110839247089}
-  m_Layer: 0
-  m_Name: Buurtnamen
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2732327054507538776
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8850599036120517484}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1512706335}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2866325024559451942
 GameObject:
@@ -2963,115 +2744,6 @@ MonoBehaviour:
   selectedIdsOnClick: {fileID: 11400000, guid: 9fccc0f026026d04bbc9a12ffd985622, type: 2}
   clickedOnPosition: {fileID: 11400000, guid: 1a3fcaa9dcfd1924385e66fd0012b8ba, type: 2}
   onColoringSubobjects: {fileID: 0}
---- !u!1 &2975960111084553868
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2057837853563292810}
-  - component: {fileID: 1033508633846746686}
-  m_Layer: 0
-  m_Name: Trees
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &3146379110839247089
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2625011761438709480}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a38316f36dee24748a32f2b70687e118, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isenabled: 1
-  tileSize: 1000
-  layerPriority: 2
-  Datasets:
-  - Description: 
-    lod: 0
-    path: 
-    maximumDistance: 2000
-    maximumDistanceSquared: 0
-    enabled: 1
-  pauseLoading: 0
-  onLayerEnabled:
-    m_PersistentCalls:
-      m_Calls: []
-  onLayerDisabled:
-    m_PersistentCalls:
-      m_Calls: []
-  textPrefab: {fileID: 8383371600766724334, guid: 226771f56b5021248b0ab1f2e594a611, type: 3}
-  geoJsonUrl: https://geodata.nationaalgeoregister.nl/wijkenbuurten2020/wfs?service=WFS&version=2.0.0&request=GetFeature&outputFormat=json&typeName=wijkenbuurten2020:cbs_buurten_2020&propertyName=buurtnaam,geom&bbox=
-  maxSpawnsPerFrame: 100
-  textsAndSizes:
-  - textPropertyName: buurtnaam
-    drawWithSize: 0.5
-    offset: 15
-  positionSourceType: 1
-  autoOrientationMode: 1
-  drawGeometry: 1
-  lineRenderMaterial: {fileID: 2100000, guid: 9dc045a69ee65694da7669f5e52a4db1, type: 2}
-  lineColor: {r: 0.8235294, g: 0.39215687, b: 0.19607843, a: 1}
-  lineWidth: 5
-  readAngleFromProperty: 0
-  angleProperty: hoek
-  filterUniqueNames: 1
-  textMinDrawDistance: 0
---- !u!114 &4627494509830521717
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8967557007122675941}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a38316f36dee24748a32f2b70687e118, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isenabled: 1
-  tileSize: 1000
-  layerPriority: 2
-  Datasets:
-  - Description: 
-    lod: 0
-    path: 
-    maximumDistance: 1000
-    maximumDistanceSquared: 0
-    enabled: 1
-  pauseLoading: 0
-  onLayerEnabled:
-    m_PersistentCalls:
-      m_Calls: []
-  onLayerDisabled:
-    m_PersistentCalls:
-      m_Calls: []
-  textPrefab: {fileID: 6092693534695716574, guid: 7e0a4ae1636fabf438177d3baef1ec6e, type: 3}
-  geoJsonUrl: https://geodata.nationaalgeoregister.nl/wijkenbuurten2020/wfs?service=WFS&version=2.0.0&request=GetFeature&outputFormat=json&typeName=wijkenbuurten2020:cbs_wijken_2020&propertyName=wijknaam,geom&bbox=
-  maxSpawnsPerFrame: 100
-  textsAndSizes:
-  - textPropertyName: wijknaam
-    drawWithSize: 1
-    offset: 60
-  positionSourceType: 1
-  autoOrientationMode: 1
-  drawGeometry: 1
-  lineRenderMaterial: {fileID: 2100000, guid: 9dc045a69ee65694da7669f5e52a4db1, type: 2}
-  lineColor: {r: 0.8235294, g: 0.39215687, b: 0.19607843, a: 1}
-  lineWidth: 5
-  readAngleFromProperty: 0
-  angleProperty: hoek
-  filterUniqueNames: 1
-  textMinDrawDistance: 0
 --- !u!114 &4681655142019714451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3112,65 +2784,3 @@ MonoBehaviour:
   createMeshcollider: 0
   tileShadowCastingMode: 1
   brotliCompressedExtention: .unityweb
---- !u!4 &6900577025068275204
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 112661310821713388}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1512706335}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &8217241559806933439
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8967557007122675941}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1512706335}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &8850599036120517484
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2732327054507538776}
-  - component: {fileID: 33835187302912205}
-  m_Layer: 6
-  m_Name: Terrain
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &8967557007122675941
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8217241559806933439}
-  - component: {fileID: 4627494509830521717}
-  m_Layer: 0
-  m_Name: Wijknamen
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
