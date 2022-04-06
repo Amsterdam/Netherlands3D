@@ -78,8 +78,6 @@ namespace Netherlands3D.Sun
         private int frameStep;
 
         private const int gizmoRayLength = 10000;
-        private const int gizmoSunSize = 20;
-        private const int gizmoSunDistance = 20;
 
 		private void OnDrawGizmos()
 		{
