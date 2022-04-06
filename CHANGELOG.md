@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - separated Input, BAGInformation, DataParsing and Interface into their own root folders and script assemblies
 
 ### Added
+- added sun/shadows based on location, date and time scripts and example
 - added camera based on 3DAmsterdam and 3DUtrecht behavior
 - added improved UI to WMS-Layer Sample 
 - added ADD_BROTLI_ACCEPT_ENCODING_HEADER scripting define symbol to enable adding the Accept-Encoding header for brotli files
