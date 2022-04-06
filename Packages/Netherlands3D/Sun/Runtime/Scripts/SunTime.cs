@@ -153,18 +153,23 @@ namespace Netherlands3D.Sun
         private void Start()
         {
             if (jumpToCurrentTimeAtStart)
-            {
-                time = DateTime.Now;
+			{
+				ResetToNow();
+			}
+		}
 
-                hour = time.Hour;
-                minutes = time.Minute;
-                day = time.Day;
-                month = time.Month;
-                year = time.Year;
-            }
-        }
+		public void ResetToNow()
+		{
+			time = DateTime.Now;
 
-        private void OnValidate()
+			hour = time.Hour;
+			minutes = time.Minute;
+			day = time.Day;
+			month = time.Month;
+			year = time.Year;
+		}
+
+		private void OnValidate()
         {
             time = new DateTime(year,month,day,hour,minutes,seconds,dateTimeKind);
             SetPosition();
