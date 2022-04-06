@@ -96,38 +96,38 @@ namespace Netherlands3D.Sun
         }
 
         public void SetTime(int hour, int minutes) {
-            this.hour = hour;
-            this.minutes = minutes;
+            this.hour = Mathf.Clamp(hour, 0, 24);
+            this.minutes = Mathf.Clamp(minutes, 0, 60);
             OnValidate();
         }
 
         public void SetHour(int hour)
         {
-            this.hour = hour;
+            this.hour = Mathf.Clamp(hour, 0, 24);
             OnValidate();
         }
 
         public void SetSeconds(int seconds)
         {
-            this.seconds = seconds;
+            this.seconds = Mathf.Clamp(seconds, 0, 60);
             OnValidate();
         }
 
         public void SetMinutes(int minutes)
         {
-            this.minutes = minutes;
+            this.minutes = Mathf.Clamp(minutes, 0, 60);
             OnValidate();
         }
 
         public void SetDay(int day)
         {
-            this.day = day;
+            this.day = Mathf.Clamp(day, 1, 31);
             OnValidate();
         }
 
         public void SetMonth(int month)
         {
-            this.month = month;
+            this.month = Mathf.Clamp(month,1,12);
             OnValidate();
         }
 
