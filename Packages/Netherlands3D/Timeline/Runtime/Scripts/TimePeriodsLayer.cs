@@ -9,8 +9,11 @@ namespace Netherlands3D.Timeline
     /// </summary>
     public class TimePeriodsLayer : MonoBehaviour
     {
-        public RectTransform rectTransform;
-        public CanvasGroup canvasGroup;
+        [HideInInspector] public RectTransform rectTransform;
+        [HideInInspector] public CanvasGroup canvasGroup;
+        /// <summary>
+        /// List of all the time period ui's contained in this layer
+        /// </summary>
         public List<TimePeriodUI> timePeriodsUI = new List<TimePeriodUI>();
 
         private void Awake()

@@ -191,10 +191,10 @@ MonoBehaviour:
   - {fileID: 27939137}
   - {fileID: 2075623514}
   inputFieldCurrentDate: {fileID: 58374212}
-  prefabEventLayer: {fileID: 8156334888922514389, guid: 842b7e9101432aa4bbfcd233dd0aa7ed, type: 3}
-  prefabEventUI: {fileID: 6648799158405934584, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
+  prefabTimePeriodsLayer: {fileID: 8156334888922514389, guid: 842b7e9101432aa4bbfcd233dd0aa7ed, type: 3}
+  prefabTimePeriodUI: {fileID: 6648799158405934584, guid: 577d66509b522aa40b5b2d47bb535568, type: 3}
   prefabCategory: {fileID: 3488877879993095637, guid: ca004326a967ad444b6f657145e74ded, type: 3}
-  parentEventLayers: {fileID: 377741723}
+  parentTimePeriodsLayers: {fileID: 377741723}
   parentCategories: {fileID: 1921655256}
 --- !u!1 &58374210
 GameObject:
@@ -1300,7 +1300,7 @@ GameObject:
   - component: {fileID: 377741725}
   - component: {fileID: 377741724}
   m_Layer: 5
-  m_Name: Parent Event Layers
+  m_Name: Parent Time Periods Layers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3126,7 +3126,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1905423607}
   m_Layer: 5
-  m_Name: Events
+  m_Name: Time Periods
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6648799158405934587}
   - component: {fileID: 6184441824040185694}
   m_Layer: 5
-  m_Name: Event UI
+  m_Name: Time Period UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

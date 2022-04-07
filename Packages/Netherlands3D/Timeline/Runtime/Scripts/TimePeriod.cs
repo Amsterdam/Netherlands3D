@@ -7,7 +7,7 @@ using UnityEngine.Events;
 namespace Netherlands3D.Timeline
 {
     /// <summary>
-    /// A timeline time period that holds data of something that happend between x - x
+    /// A timeline time period that holds data of something that happend between a start date and a end date
     /// </summary>
     [CreateAssetMenu(fileName = "Timeline Time Period", menuName = "ScriptableObjects/Timeline/Time Period")]
     public class TimePeriod : ScriptableObject

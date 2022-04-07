@@ -16,19 +16,21 @@ namespace Netherlands3D.Timeline
         /// </summary>
         public static readonly float PixelDistanceDates = 100;
 
+        /// <summary>
+        /// The most left dateTime of this timebar
+        /// </summary>
+        public DateTime StartDateTime { get; private set; }
+
         [Header("Components")]
+        [Tooltip("The parent of the date prefabs")]
         [SerializeField] private Transform parentDates;
+        [Tooltip("The timebarDate prefab")]
         [SerializeField] private GameObject prefabTimeBarDate;
 
         /// <summary>
         /// The rect transform of the time bar
         /// </summary>
         [HideInInspector] public RectTransform rectTransform;
-
-        /// <summary>
-        /// The most left dateTime of this timebar
-        /// </summary>
-        public DateTime startDateTime { get; private set; }
 
         /// <summary>
         /// The pixel position and the corresponding dateTime
@@ -58,17 +60,17 @@ namespace Netherlands3D.Timeline
         /// <param name="dateTime">The date time to get</param>
         /// <param name="timeUnit">The time unit used 0 = yyyy, 1 = yyyy/MM, 2 = yyyy/MM/dd</param>
         /// <returns>local position x, 0.123f if the date is not in this timebar</returns>
-        public float GetDatePosition(DateTime dateTime, int timeUnit)
+        public float GetDatePosition(DateTime dateTime, TimeUnit.Unit timeUnit)
         {
             // Get the date closest to the dateTime to fetch
             var k = ArrayExtention.MinBy(dateTimePositions, x => Math.Abs((x.Value - dateTime).Ticks));
             if(k.Value == null || 
-                timeUnit == 0 && k.Value.Year != dateTime.Year ||
-                timeUnit == 1 && k.Value.Year != dateTime.Year ||
-                timeUnit == 1 && k.Value.Year == dateTime.Year && k.Value.Month != dateTime.Month ||
-                timeUnit == 2 && k.Value.Year != dateTime.Year ||
-                timeUnit == 2 && k.Value.Year == dateTime.Year && k.Value.Month != dateTime.Month ||
-                timeUnit == 2 && k.Value.Year == dateTime.Year && k.Value.Month == dateTime.Month && k.Value.Day != dateTime.Day)
+                timeUnit == TimeUnit.Unit.year && k.Value.Year != dateTime.Year ||
+                timeUnit == TimeUnit.Unit.month && k.Value.Year != dateTime.Year ||
+                timeUnit == TimeUnit.Unit.month && k.Value.Year == dateTime.Year && k.Value.Month != dateTime.Month ||
+                timeUnit == TimeUnit.Unit.day && k.Value.Year != dateTime.Year ||
+                timeUnit == TimeUnit.Unit.day && k.Value.Year == dateTime.Year && k.Value.Month != dateTime.Month ||
+                timeUnit == TimeUnit.Unit.day && k.Value.Year == dateTime.Year && k.Value.Month == dateTime.Month && k.Value.Day != dateTime.Day)
             {
                 return 0.123f;
             }
@@ -83,7 +85,7 @@ namespace Netherlands3D.Timeline
         /// <param name="dateTimeLeaderIndex">The dateTime of the leader</param>
         /// <param name="barIndex">The index of the bar (based from its position 0-1-2)</param>
         /// <param name="timeUnit">The unit of time used on the bar. 0 = yyyy, 1 = MM/yyyy, 2 = dd/MM/yyyy</param>
-        public void UpdateVisuals(DateTime dateTimeLeaderIndex, int barIndex, int timeUnit)
+        public void UpdateVisuals(DateTime dateTimeLeaderIndex, int barIndex, TimeUnit.Unit timeUnit)
         {
             // Clear old
             foreach(Transform child in parentDates.transform)
@@ -98,28 +100,30 @@ namespace Netherlands3D.Timeline
             float spaceBetween = width / datesToPlace;
 
             // Calc bar starting date, and based on timeUnit
-            dateTimeLeaderIndex = timeUnit switch
-            {
-                1 => barIndex switch
-                {
-                    2 => dateTimeLeaderIndex.AddMonths(datesToPlace),
-                    1 => dateTimeLeaderIndex,
-                    _ => dateTimeLeaderIndex.AddMonths(-datesToPlace)
-                },
-                2 => barIndex switch
-                {
-                    2 => dateTimeLeaderIndex.AddDays(datesToPlace),
-                    1 => dateTimeLeaderIndex,
-                    _ => dateTimeLeaderIndex.AddDays(-datesToPlace)
-                },
-                _ => barIndex switch
-                {
-                    2 => dateTimeLeaderIndex.AddYears(datesToPlace),
-                    1 => dateTimeLeaderIndex,
-                    _ => dateTimeLeaderIndex.AddYears(-datesToPlace)
-                }
-            };            
-            startDateTime = dateTimeLeaderIndex;
+            //dateTimeLeaderIndex = timeUnit switch
+            //{
+            //    TimeUnit.Unit.year => barIndex switch
+            //    {
+            //        2 => dateTimeLeaderIndex.AddYears(datesToPlace),
+            //        1 => dateTimeLeaderIndex,
+            //        _ => dateTimeLeaderIndex.AddYears(-datesToPlace)
+            //    },
+            //    TimeUnit.Unit.month => barIndex switch
+            //    {
+            //        2 => dateTimeLeaderIndex.AddDays(datesToPlace),
+            //        1 => dateTimeLeaderIndex,
+            //        _ => dateTimeLeaderIndex.AddDays(-datesToPlace)
+            //    },
+            //    TimeUnit.Unit.day => barIndex switch
+            //    {
+            //        2 => dateTimeLeaderIndex.AddMonths(datesToPlace),
+            //        1 => dateTimeLeaderIndex,
+            //        _ => dateTimeLeaderIndex.AddMonths(-datesToPlace)
+            //    },
+            //    _ => barIndex switch { _ => null }
+            //};            
+            dateTimeLeaderIndex = TimeUnit.GetBarStartingDate(dateTimeLeaderIndex, timeUnit, barIndex, datesToPlace);
+            StartDateTime = dateTimeLeaderIndex;
 
             // Space dates evenly
             for(int i = 0; i < datesToPlace; i++)
@@ -128,19 +132,14 @@ namespace Netherlands3D.Timeline
                 float posX = -(width / 2) + (spaceBetween * i) + spaceBetween * 0.5f;
                 var dateTime = timeUnit switch
                 {
-                    1 => dateTimeLeaderIndex.AddMonths(i),
-                    2 => dateTimeLeaderIndex.AddDays(i),
-                    _ => dateTimeLeaderIndex.AddYears(i)
+                    TimeUnit.Unit.month => dateTimeLeaderIndex.AddMonths(i),
+                    TimeUnit.Unit.day => dateTimeLeaderIndex.AddDays(i),
+                    TimeUnit.Unit.year => dateTimeLeaderIndex.AddYears(i),
+                    _ => dateTimeLeaderIndex
 
                 };
                 a.transform.localPosition = new Vector3(posX, a.transform.localPosition.y, 0);
-                string format = timeUnit switch
-                {
-                    1 => "MM",
-                    2 => "dd",
-                    _ => "yyyy",
-                };
-                a.field.text = dateTime.ToString(format);
+                a.field.text = dateTime.ToString(TimeUnit.GetUnitString(timeUnit));
                 dateTimePositions.Add(posX, dateTime);
             }
         }

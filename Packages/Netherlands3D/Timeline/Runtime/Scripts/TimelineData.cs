@@ -10,35 +10,35 @@ namespace Netherlands3D.Timeline
     [CreateAssetMenu(fileName = "Timeline Data", menuName = "ScriptableObjects/Timeline/Timeline Data")]
     public class TimelineData : ScriptableObject
     {
-        [Tooltip("The events of this timeline")]
-        public List<TimePeriod> events;
+        [Tooltip("The time periods of this timeline")]
+        public List<TimePeriod> timePeriods;
 
         /// <summary>
         /// The sorted data. <categoryname, list<EventsBelongingToCategory>>
         /// </summary>
-        public Dictionary<string, List<TimePeriod>> data = new Dictionary<string, List<TimePeriod>>();
+        public Dictionary<string, List<TimePeriod>> sortedTimePeriods = new Dictionary<string, List<TimePeriod>>();
 
         /// <summary>
-        /// Orders the events on its categories
+        /// Orders the time periods on its categories
         /// </summary>
-        public void OrderEvents()
+        public void OrderTimePeriods()
         {
             // Reset values
-            data.Clear();
+            sortedTimePeriods.Clear();
 
-            // Order all events
-            foreach(TimePeriod item in events)
+            // Order all time periods
+            foreach(TimePeriod item in timePeriods)
             {
                 // Check if event category is already present
-                if(data.ContainsKey(item.category))
+                if(sortedTimePeriods.ContainsKey(item.category))
                 {
                     // Add to existing
-                    data[item.category].Add(item);
+                    sortedTimePeriods[item.category].Add(item);
                 }
                 else
                 {
                     // Add to new
-                    data.Add(item.category, new List<TimePeriod>() { item });
+                    sortedTimePeriods.Add(item.category, new List<TimePeriod>() { item });
                 }
             }
         }

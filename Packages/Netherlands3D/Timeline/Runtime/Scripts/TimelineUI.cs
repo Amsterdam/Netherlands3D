@@ -30,16 +30,16 @@ namespace Netherlands3D.Timeline
         public TMP_InputField inputFieldCurrentDate;
 
         [Header("Timeline Components")]
-        [SerializeField] private GameObject prefabEventLayer;
-        [SerializeField] private GameObject prefabEventUI;
+        [SerializeField] private GameObject prefabTimePeriodsLayer;
+        [SerializeField] private GameObject prefabTimePeriodUI;
         [SerializeField] private GameObject prefabCategory;
-        [SerializeField] private Transform parentEventLayers;
+        [SerializeField] private Transform parentTimePeriodsLayers;
         [SerializeField] private Transform parentCategories;
 
         /// <summary>
-        /// The time unit used for the timeline. 0 = yyyy, 1 = mm/yyyy, 2 = dd/mm/yyyy
+        /// The time unit used for the timeline
         /// </summary>
-        private int timeUnit = 0;
+        private TimeUnit.Unit timeUnit = TimeUnit.Unit.year;
         /// <summary>
         /// Array int holding the order of the indexes of timeBars in which they appear/move
         /// </summary>
@@ -90,19 +90,19 @@ namespace Netherlands3D.Timeline
             }
 
             // Clear old
-            foreach(Transform item in parentEventLayers.transform) Destroy(item.gameObject);
+            foreach(Transform item in parentTimePeriodsLayers.transform) Destroy(item.gameObject);
             foreach(Transform item in parentCategories.transform) Destroy(item.gameObject);
             categories.Clear();
             eventLayers.Clear();
 
             // Order all events based on category
-            timelineData.OrderEvents();
+            timelineData.OrderTimePeriods();
 
             // Create each category & event layer
-            string[] keys = timelineData.data.Keys.ToArray();
+            string[] keys = timelineData.sortedTimePeriods.Keys.ToArray();
             foreach(string item in keys)
             {
-                TimePeriodsLayer e = Instantiate(prefabEventLayer, parentEventLayers).GetComponent<TimePeriodsLayer>();
+                TimePeriodsLayer e = Instantiate(prefabTimePeriodsLayer, parentTimePeriodsLayers).GetComponent<TimePeriodsLayer>();
                 eventLayers.Add(item, e);
                 Category c = Instantiate(prefabCategory, parentCategories).GetComponent<Category>();
                 c.Initialize(item, e);
@@ -119,17 +119,17 @@ namespace Netherlands3D.Timeline
             DateTime result;
             if(DateTime.TryParseExact(inputFieldCurrentDate.text, "yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
             {
-                timeUnit = 0;
+                timeUnit = TimeUnit.Unit.year;
                 SetCurrentDate(result);
             }
             else if(DateTime.TryParseExact(inputFieldCurrentDate.text, "MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
             {
-                timeUnit = 1;
+                timeUnit = TimeUnit.Unit.month;
                 SetCurrentDate(result);
             }
             else if(DateTime.TryParseExact(inputFieldCurrentDate.text, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
             {
-                timeUnit = 2;
+                timeUnit = TimeUnit.Unit.day;
                 SetCurrentDate(result);
             }
             else
@@ -160,7 +160,7 @@ namespace Netherlands3D.Timeline
                     ArrayExtention.Rotate(barIndexes, -1);
                     leaderIndex = barIndexes[0];
                     // Update visuals of previous leader bar
-                    timeBars[barIndexes.Last()].UpdateVisuals(timeBars[barIndexes[1]].startDateTime, 2, timeUnit);
+                    timeBars[barIndexes.Last()].UpdateVisuals(timeBars[barIndexes[1]].StartDateTime, 2, timeUnit);
                 }
 
                 // Update remaining indexes positions
@@ -185,7 +185,7 @@ namespace Netherlands3D.Timeline
                     ArrayExtention.Rotate(barIndexes, 1);
                     leaderIndex = barIndexes[barIndexes.Length - 1];
                     // Update visuals of previous leader bar
-                    timeBars[barIndexes.First()].UpdateVisuals(timeBars[barIndexes[1]].startDateTime, 0, timeUnit);
+                    timeBars[barIndexes.First()].UpdateVisuals(timeBars[barIndexes[1]].StartDateTime, 0, timeUnit);
                 }
 
                 // Update remaining indexes positions
@@ -221,8 +221,7 @@ namespace Netherlands3D.Timeline
         /// <param name="valueToAdd">The value to add to currentDateTimeUnit</param>
         public void SetTimeUnit(int valueToAdd)
         {
-            if(timeUnit + valueToAdd < 0 || timeUnit + valueToAdd > 2) return;
-            timeUnit = Mathf.Clamp(timeUnit + valueToAdd, 0, 2);
+            TimeUnit.ChangeUnit(ref timeUnit, valueToAdd);
             SetCurrentDate(currentDate);
             UpdateCurrentDateVisual();
         }
@@ -310,7 +309,7 @@ namespace Netherlands3D.Timeline
         /// Check if the event is visible in the visable date range
         /// </summary>
         /// <param name="dEvent">The even to check</param>
-        private bool IsEventVisible(TimePeriod dEvent)
+        private bool IsTimePeriodVisible(TimePeriod dEvent)
         {
             return  dEvent.startDate <= visableDateLeft && dEvent.endDate >= visableDateRight ||                                            // 0---[-------]---0
                     dEvent.startDate <= visableDateLeft && dEvent.endDate <= visableDateRight && dEvent.endDate >= visableDateLeft ||       // 0---[---0   ]
@@ -343,13 +342,7 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private void UpdateCurrentDateVisual()
         {
-            string format = timeUnit switch
-            {
-                1 => "MM/yyyy",
-                2 => "dd/MM/yyyy",
-                _ => "yyyy",
-            };
-            inputFieldCurrentDate.text = currentDate.ToString(format);
+            inputFieldCurrentDate.text = currentDate.ToString(TimeUnit.GetUnitFullString(timeUnit));
         }
 
         /// <summary>
@@ -364,7 +357,7 @@ namespace Netherlands3D.Timeline
             for(int i = keys.Length - 1; i >= 0; i--) // Loop backwards
             {
                 k = keys[i];
-                if(!IsEventVisible(visibleEventsUI[k].dEvent))
+                if(!IsTimePeriodVisible(visibleEventsUI[k].timePeriod))
                 {
                     visibleEventsUI[k].Remove();
                     visibleEventsUI.Remove(k);
@@ -373,26 +366,26 @@ namespace Netherlands3D.Timeline
 
             // Loop through each event
             TimePeriod dEvent;
-            for(int i = 0; i < timelineData.events.Count; i++)
+            for(int i = 0; i < timelineData.timePeriods.Count; i++)
             {
                 // If event is already in eventUIIDS skip it since it is already checked
                 if(visibleEventsUI.ContainsKey(i)) continue;
 
                 // Check if event is visable and if so add it
-                dEvent = timelineData.events[i];
-                if(IsEventVisible(dEvent))
+                dEvent = timelineData.timePeriods[i];
+                if(IsTimePeriodVisible(dEvent))
                 {
                     // Event is visable, show it & add to event layer
-                    visibleEventsUI.Add(i, eventLayers[dEvent.category].AddTimePeriod(dEvent, prefabEventUI));
+                    visibleEventsUI.Add(i, eventLayers[dEvent.category].AddTimePeriod(dEvent, prefabTimePeriodUI));
                 }
             }
 
             // Now update each visible event
             foreach(var item in visibleEventsUI.Values)
             {
-                float xL = EventUIGetPosX(item.dEvent.startDate, false);
+                float xL = EventUIGetPosX(item.timePeriod.startDate, false);
                 //Debug.LogWarning(visableDateLeft + " XL " + xL);
-                float xR = EventUIGetPosX(item.dEvent.endDate, true);
+                float xR = EventUIGetPosX(item.timePeriod.endDate, true);
                 //Debug.LogWarning(visableDateRight + " XR " + xR);
                 item.UpdateUI(xL, xR);
             }
@@ -427,20 +420,37 @@ namespace Netherlands3D.Timeline
         {
             int datesToPlace = (int)((TimeBarParentWidth / TimeBar.PixelDistanceDates) / 2);
             // based on timeUnit & current date, get the most left and right date
-            switch(timeUnit) // 0 = yyyy, 1 = mm/yyyy, 2 = dd/mm/yyyy
+            switch(timeUnit)
             {
-                default: //0
+                case TimeUnit.Unit.year:
                     visableDateLeft = currentDate.AddYears(-datesToPlace);
                     visableDateRight = currentDate.AddYears(datesToPlace);
                     break;
-                case 1: //1
+                case TimeUnit.Unit.month:
                     visableDateLeft = currentDate.AddMonths(-datesToPlace);
                     visableDateRight = currentDate.AddMonths(datesToPlace);
                     break;
-                case 2: //2
+                case TimeUnit.Unit.day:
                     visableDateLeft = currentDate.AddDays(-datesToPlace);
                     visableDateRight = currentDate.AddDays(datesToPlace);
                     break;
+                case TimeUnit.Unit.hour:
+                    visableDateLeft = currentDate.AddHours(-datesToPlace);
+                    visableDateRight = currentDate.AddHours(datesToPlace);
+                    break;
+                case TimeUnit.Unit.minutes:
+                    visableDateLeft = currentDate.AddMinutes(-datesToPlace);
+                    visableDateRight = currentDate.AddMinutes(datesToPlace);
+                    break;
+                case TimeUnit.Unit.seconds:
+                    visableDateLeft = currentDate.AddSeconds(-datesToPlace);
+                    visableDateRight = currentDate.AddSeconds(datesToPlace);
+                    break;
+                case TimeUnit.Unit.milliseconds:
+                    visableDateLeft = currentDate.AddMilliseconds(-datesToPlace);
+                    visableDateRight = currentDate.AddMilliseconds(datesToPlace);
+                    break;
+                default: Debug.LogError("Out of range exception"); break;
             }
             // Correct dates
             visableDateLeft = new DateTime(visableDateLeft.Year, visableDateLeft.Month, visableDateLeft.Day, 0, 0, 0);
@@ -448,6 +458,5 @@ namespace Netherlands3D.Timeline
 
             UpdateEvents();
         }
-
     }
 }

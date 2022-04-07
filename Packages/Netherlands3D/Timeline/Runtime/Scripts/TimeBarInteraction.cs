@@ -26,12 +26,6 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private Vector3 mouseDownPosition;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-        
-        }
-
         // Update is called once per frame
         void Update()
         {
@@ -56,7 +50,7 @@ namespace Netherlands3D.Timeline
             if(isDragging)
             {
                 int dir = mouseDownPosition.x < Input.mousePosition.x ? 1 : -1;
-                timelineUI.ScrollTimeBar(Vector3.Distance(mouseDownPosition, Input.mousePosition) * dir * sensitivity * Time.deltaTime);
+                timelineUI.ScrollTimeBar(Vector3.Distance(mouseDownPosition, Input.mousePosition) * dir * sensitivity * UnityEngine.Time.deltaTime);
             }
 
             if(mouseIsOn)

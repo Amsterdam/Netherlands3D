@@ -9,9 +9,9 @@ namespace Netherlands3D.Timeline
     public class TimePeriodUI : MonoBehaviour
     {
         /// <summary>
-        /// The event data for this time period UI
+        /// The time period data for this time period UI
         /// </summary>
-        public TimePeriod dEvent;
+        public TimePeriod timePeriod;
         /// <summary>
         /// The rect transform component of the UI
         /// </summary>
@@ -21,19 +21,19 @@ namespace Netherlands3D.Timeline
         /// </summary>
         public TextMeshProUGUI nameField;
         /// <summary>
-        /// The event layer of the event
+        /// The time period layer of the event
         /// </summary>
-        public TimePeriodsLayer eventLayer;
+        public TimePeriodsLayer timePeriodsLayer;
 
         /// <summary>
         /// Initialize the UI
         /// </summary>
-        /// <param name="dEvent"></param>
-        public void Initialize(TimePeriod dEvent, TimePeriodsLayer eventLayer)
+        /// <param name="timePeriod"></param>
+        public void Initialize(TimePeriod timePeriod, TimePeriodsLayer timePeriodsLayer)
         {
-            this.dEvent = dEvent;
-            this.eventLayer = eventLayer;            
-            nameField.text = dEvent.name;
+            this.timePeriod = timePeriod;
+            this.timePeriodsLayer = timePeriodsLayer;
+            nameField.text = timePeriod.name;
         }
 
         /// <summary>
@@ -41,8 +41,8 @@ namespace Netherlands3D.Timeline
         /// </summary>
         public void InvokeEvent()
         {
-            if(dEvent == null) return;
-            dEvent.Invoke();
+            if(timePeriod == null) return;
+            timePeriod.Invoke();
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Netherlands3D.Timeline
         /// </summary>
         public void Remove()
         {
-            eventLayer.timePeriodsUI.Remove(this);
+            timePeriodsLayer.timePeriodsUI.Remove(this);
             Destroy(gameObject);
         }
 
