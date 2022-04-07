@@ -25,6 +25,42 @@ namespace Netherlands3D.Timeline
         }
 
         /// <summary>
+        /// Add time unit to a datime time with corresponding value
+        /// </summary>
+        /// <param name="dateTime">The dateTime to 'add' the unit too</param>
+        /// <param name="unit">The time unit to add</param>
+        /// <param name="value">The value to add</param>
+        /// <returns>The adjusted DateTime</returns>
+        public static DateTime AddUnitToDateTime(DateTime dateTime, Unit unit, int value)
+        {
+            return unit switch
+            {
+                Unit.year =>            dateTime.AddYears(value),
+                Unit.month =>           dateTime.AddMonths(value),
+                Unit.day =>             dateTime.AddDays(value),
+                Unit.hour =>            dateTime.AddHours(value),
+                Unit.minutes =>         dateTime.AddMinutes(value),
+                Unit.seconds =>         dateTime.AddSeconds(value),
+                Unit.milliseconds =>    dateTime.AddMilliseconds(value),
+                _=> throw new ArgumentOutOfRangeException("unit")
+            };
+        }
+
+        /// <summary>
+        /// Change the unit by a added/subtracted value
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <param name="value"></param>
+        public static void ChangeUnit(ref Unit unit, int value)
+        {
+            int uValue = (int)unit;
+            uValue += value;
+            if(uValue < 0) uValue = 0;
+            else if(uValue >= Enum.GetNames(typeof(Unit)).Length) uValue = Enum.GetNames(typeof(Unit)).Length - 1;
+            unit = (Unit)uValue;
+        }
+
+        /// <summary>
         /// Get the starting date for a bar based on dateTime, the time unit used and the change value
         /// </summary>
         /// <param name="dateTime">The dateTime to add it too</param>
@@ -39,68 +75,14 @@ namespace Netherlands3D.Timeline
 
             return unit switch
             {
-                Unit.year => dateTime.AddYears(changeValue * v),
-                Unit.month => dateTime.AddMonths(changeValue * v),
-                Unit.day => dateTime.AddDays(changeValue * v),
-                Unit.hour => dateTime.AddHours(changeValue * v),
-                Unit.minutes => dateTime.AddMinutes(changeValue * v),
-                Unit.seconds => dateTime.AddMinutes(changeValue * v),
-                Unit.milliseconds => dateTime.AddMilliseconds(changeValue * v),
+                Unit.year =>            dateTime.AddYears(changeValue * v),
+                Unit.month =>           dateTime.AddMonths(changeValue * v),
+                Unit.day =>             dateTime.AddDays(changeValue * v),
+                Unit.hour =>            dateTime.AddHours(changeValue * v),
+                Unit.minutes =>         dateTime.AddMinutes(changeValue * v),
+                Unit.seconds =>         dateTime.AddMinutes(changeValue * v),
+                Unit.milliseconds =>    dateTime.AddMilliseconds(changeValue * v),
                 _ => throw new ArgumentOutOfRangeException("unit"),
-            };
-
-            return unit switch
-            {
-                Unit.year => barIndex switch
-                {
-                    0 => dateTime.AddYears(-changeValue),
-                    1 => dateTime,
-                    2 => dateTime.AddYears(changeValue),
-                    _ => throw new Exception("TimeUnit out of range exception!"),
-                },
-                Unit.month => barIndex switch
-                {
-                    0 => dateTime.AddMonths(-changeValue),
-                    1 => dateTime,
-                    2 => dateTime.AddMonths(changeValue),
-                    _ => throw new Exception("TimeUnit out of range exception!"),
-                },
-                Unit.day => barIndex switch
-                {
-                    0 => dateTime.AddDays(-changeValue),
-                    1 => dateTime,
-                    2 => dateTime.AddDays(changeValue),
-                    _ => throw new Exception("TimeUnit out of range exception!"),
-                },
-                Unit.hour => barIndex switch
-                {
-                    0 => dateTime.AddHours(-changeValue),
-                    1 => dateTime,
-                    2 => dateTime.AddHours(changeValue),
-                    _ => throw new Exception("TimeUnit out of range exception!"),
-                },
-                Unit.minutes => barIndex switch
-                {
-                    0 => dateTime.AddMinutes(-changeValue),
-                    1 => dateTime,
-                    2 => dateTime.AddMinutes(changeValue),
-                    _ => throw new Exception("TimeUnit out of range exception!"),
-                },
-                Unit.seconds => barIndex switch
-                {
-                    0 => dateTime.AddSeconds(-changeValue),
-                    1 => dateTime,
-                    2 => dateTime.AddSeconds(changeValue),
-                    _ => throw new Exception("TimeUnit out of range exception!"),
-                },
-                Unit.milliseconds => barIndex switch
-                {
-                    0 => dateTime.AddMilliseconds(-changeValue),
-                    1 => dateTime,
-                    2 => dateTime.AddMilliseconds(changeValue),
-                    _ => throw new Exception("TimeUnit out of range exception!"),
-                },
-                _ => throw new Exception("TimeUnit out of range exception!"),
             };
         }
 
@@ -117,13 +99,13 @@ namespace Netherlands3D.Timeline
             int v = isLeft ? -1 : 1;
             return unit switch
             {
-                Unit.year => dateTime.AddYears(datesToPlace * v),
-                Unit.month => dateTime.AddMonths(datesToPlace * v),
-                Unit.day => dateTime.AddDays(datesToPlace * v),
-                Unit.hour => dateTime.AddHours(datesToPlace * v),
-                Unit.minutes => dateTime.AddMinutes(datesToPlace * v),
-                Unit.seconds => dateTime.AddSeconds(datesToPlace * v),
-                Unit.milliseconds => dateTime.AddMilliseconds(datesToPlace * v),
+                Unit.year =>            dateTime.AddYears(datesToPlace * v),
+                Unit.month =>           dateTime.AddMonths(datesToPlace * v),
+                Unit.day =>             dateTime.AddDays(datesToPlace * v),
+                Unit.hour =>            dateTime.AddHours(datesToPlace * v),
+                Unit.minutes =>         dateTime.AddMinutes(datesToPlace * v),
+                Unit.seconds =>         dateTime.AddSeconds(datesToPlace * v),
+                Unit.milliseconds =>    dateTime.AddMilliseconds(datesToPlace * v),
                 _ => throw new ArgumentOutOfRangeException("unit"),
             };
         }
@@ -142,6 +124,8 @@ namespace Netherlands3D.Timeline
                 Unit.day =>         "dd",
                 Unit.hour =>        "HH",
                 Unit.minutes =>     "mm",
+                Unit.seconds =>     "ss",
+                Unit.milliseconds => ".ff",
                 _ => ""
             };
         }
@@ -167,18 +151,25 @@ namespace Netherlands3D.Timeline
         }
 
         /// <summary>
-        /// Change the unit by a added/subtracted value
+        /// Check if the time unit & datetime match
         /// </summary>
         /// <param name="unit"></param>
-        /// <param name="value"></param>
-        public static void ChangeUnit(ref Unit unit, int value)
+        /// <param name="dateTimeA"></param>
+        /// <param name="dateTimeB"></param>
+        /// <returns>bool</returns>
+        public static bool TimeUnitAndDateTimesMatch(Unit unit, DateTime dateTimeA, DateTime dateTimeB)
         {
-            int uValue = (int)unit;
-            uValue += value;
-            if(uValue < 0) uValue = 0;
-            else if(uValue >= Enum.GetNames(typeof(Unit)).Length) uValue = Enum.GetNames(typeof(Unit)).Length - 1;
-            Debug.Log(uValue);
-            unit = (Unit)uValue;
+            return unit switch
+            {
+                Unit.year =>            dateTimeA.Year == dateTimeB.Year,
+                Unit.month =>           dateTimeA.Year == dateTimeB.Year && dateTimeA.Month == dateTimeB.Month,
+                Unit.day =>             dateTimeA.Year == dateTimeB.Year && dateTimeA.Month == dateTimeB.Month & dateTimeA.Day == dateTimeB.Day,
+                Unit.hour =>            dateTimeA.Year == dateTimeB.Year && dateTimeA.Month == dateTimeB.Month & dateTimeA.Day == dateTimeB.Day && dateTimeA.Hour == dateTimeB.Hour,
+                Unit.minutes =>         dateTimeA.Year == dateTimeB.Year && dateTimeA.Month == dateTimeB.Month & dateTimeA.Day == dateTimeB.Day && dateTimeA.Hour == dateTimeB.Hour && dateTimeA.Minute == dateTimeB.Minute,
+                Unit.seconds =>         dateTimeA.Year == dateTimeB.Year && dateTimeA.Month == dateTimeB.Month & dateTimeA.Day == dateTimeB.Day && dateTimeA.Hour == dateTimeB.Hour && dateTimeA.Minute == dateTimeB.Minute && dateTimeA.Second == dateTimeB.Second,
+                Unit.milliseconds =>    dateTimeA.Year == dateTimeB.Year && dateTimeA.Month == dateTimeB.Month & dateTimeA.Day == dateTimeB.Day && dateTimeA.Hour == dateTimeB.Hour && dateTimeA.Minute == dateTimeB.Minute && dateTimeA.Second == dateTimeB.Second && dateTimeA.Millisecond == dateTimeB.Millisecond,
+                _ => throw new ArgumentOutOfRangeException("unit")
+            };
         }
     }
 

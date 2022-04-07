@@ -58,24 +58,16 @@ namespace Netherlands3D.Timeline
         /// Get the x position of a date in this time bar if it is available
         /// </summary>
         /// <param name="dateTime">The date time to get</param>
-        /// <param name="timeUnit">The time unit used 0 = yyyy, 1 = yyyy/MM, 2 = yyyy/MM/dd</param>
+        /// <param name="timeUnit">The time unit used</param>
         /// <returns>local position x, 0.123f if the date is not in this timebar</returns>
         public float GetDatePosition(DateTime dateTime, TimeUnit.Unit timeUnit)
         {
             // Get the date closest to the dateTime to fetch
             var k = ArrayExtention.MinBy(dateTimePositions, x => Math.Abs((x.Value - dateTime).Ticks));
-            if(k.Value == null || 
-                timeUnit == TimeUnit.Unit.year && k.Value.Year != dateTime.Year ||
-                timeUnit == TimeUnit.Unit.month && k.Value.Year != dateTime.Year ||
-                timeUnit == TimeUnit.Unit.month && k.Value.Year == dateTime.Year && k.Value.Month != dateTime.Month ||
-                timeUnit == TimeUnit.Unit.day && k.Value.Year != dateTime.Year ||
-                timeUnit == TimeUnit.Unit.day && k.Value.Year == dateTime.Year && k.Value.Month != dateTime.Month ||
-                timeUnit == TimeUnit.Unit.day && k.Value.Year == dateTime.Year && k.Value.Month == dateTime.Month && k.Value.Day != dateTime.Day)
+            if(k.Value == null || !TimeUnit.TimeUnitAndDateTimesMatch(timeUnit, k.Value, dateTime))
             {
                 return 0.123f;
             }
-            //Debug.Log(timeUnit == 1 && k.Value.Year == dateTime.Year && k.Value.Month != dateTime.Month);
-            //Debug.Log("Datepos: " + dateTime + " - " + k.Value);
             return k.Key * -1; // have to invert number positivity
         }
 
@@ -99,8 +91,7 @@ namespace Netherlands3D.Timeline
             int datesToPlace = (int)(width / PixelDistanceDates);
             float spaceBetween = width / datesToPlace;
 
-            // Calc bar starting date, and based on timeUnit
-                    
+            // Calc bar starting date, and based on timeUnit                    
             dateTimeLeaderIndex = TimeUnit.GetBarStartingDate(dateTimeLeaderIndex, timeUnit, barIndex, datesToPlace);
             StartDateTime = dateTimeLeaderIndex;
 
@@ -109,14 +100,7 @@ namespace Netherlands3D.Timeline
             {
                 TimeBarDate a = Instantiate(prefabTimeBarDate, parentDates).GetComponent<TimeBarDate>();
                 float posX = -(width / 2) + (spaceBetween * i) + spaceBetween * 0.5f;
-                var dateTime = timeUnit switch
-                {
-                    TimeUnit.Unit.month => dateTimeLeaderIndex.AddMonths(i),
-                    TimeUnit.Unit.day => dateTimeLeaderIndex.AddDays(i),
-                    TimeUnit.Unit.year => dateTimeLeaderIndex.AddYears(i),
-                    _ => dateTimeLeaderIndex
-
-                };
+                var dateTime = TimeUnit.AddUnitToDateTime(dateTimeLeaderIndex, timeUnit, i);
                 a.transform.localPosition = new Vector3(posX, a.transform.localPosition.y, 0);
                 a.field.text = dateTime.ToString(TimeUnit.GetUnitString(timeUnit));
                 dateTimePositions.Add(posX, dateTime);
