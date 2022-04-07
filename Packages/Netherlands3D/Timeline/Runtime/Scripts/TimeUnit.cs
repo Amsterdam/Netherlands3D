@@ -34,6 +34,21 @@ namespace Netherlands3D.Timeline
         /// <returns>Starting date time</returns>
         public static DateTime GetBarStartingDate(DateTime dateTime, Unit unit, int barIndex, int changeValue)
         {
+            int v = 0;
+            if(barIndex == 0) v = -1; else if(barIndex == 2) v = 1;
+
+            return unit switch
+            {
+                Unit.year => dateTime.AddYears(changeValue * v),
+                Unit.month => dateTime.AddMonths(changeValue * v),
+                Unit.day => dateTime.AddDays(changeValue * v),
+                Unit.hour => dateTime.AddHours(changeValue * v),
+                Unit.minutes => dateTime.AddMinutes(changeValue * v),
+                Unit.seconds => dateTime.AddMinutes(changeValue * v),
+                Unit.milliseconds => dateTime.AddMilliseconds(changeValue * v),
+                _ => throw new ArgumentOutOfRangeException("unit"),
+            };
+
             return unit switch
             {
                 Unit.year => barIndex switch

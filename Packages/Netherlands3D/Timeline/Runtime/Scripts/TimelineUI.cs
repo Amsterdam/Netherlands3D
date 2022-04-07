@@ -420,38 +420,8 @@ namespace Netherlands3D.Timeline
         {
             int datesToPlace = (int)((TimeBarParentWidth / TimeBar.PixelDistanceDates) / 2);
             // based on timeUnit & current date, get the most left and right date
-            switch(timeUnit)
-            {
-                case TimeUnit.Unit.year:
-                    visableDateLeft = currentDate.AddYears(-datesToPlace);
-                    visableDateRight = currentDate.AddYears(datesToPlace);
-                    break;
-                case TimeUnit.Unit.month:
-                    visableDateLeft = currentDate.AddMonths(-datesToPlace);
-                    visableDateRight = currentDate.AddMonths(datesToPlace);
-                    break;
-                case TimeUnit.Unit.day:
-                    visableDateLeft = currentDate.AddDays(-datesToPlace);
-                    visableDateRight = currentDate.AddDays(datesToPlace);
-                    break;
-                case TimeUnit.Unit.hour:
-                    visableDateLeft = currentDate.AddHours(-datesToPlace);
-                    visableDateRight = currentDate.AddHours(datesToPlace);
-                    break;
-                case TimeUnit.Unit.minutes:
-                    visableDateLeft = currentDate.AddMinutes(-datesToPlace);
-                    visableDateRight = currentDate.AddMinutes(datesToPlace);
-                    break;
-                case TimeUnit.Unit.seconds:
-                    visableDateLeft = currentDate.AddSeconds(-datesToPlace);
-                    visableDateRight = currentDate.AddSeconds(datesToPlace);
-                    break;
-                case TimeUnit.Unit.milliseconds:
-                    visableDateLeft = currentDate.AddMilliseconds(-datesToPlace);
-                    visableDateRight = currentDate.AddMilliseconds(datesToPlace);
-                    break;
-                default: Debug.LogError("Out of range exception"); break;
-            }
+            visableDateLeft = TimeUnit.GetVisibleDateLeftRight(true, currentDate, timeUnit, datesToPlace);
+            visableDateRight = TimeUnit.GetVisibleDateLeftRight(false, currentDate, timeUnit, datesToPlace);
             // Correct dates
             visableDateLeft = new DateTime(visableDateLeft.Year, visableDateLeft.Month, visableDateLeft.Day, 0, 0, 0);
             visableDateRight = new DateTime(visableDateRight.Year, visableDateRight.Month, visableDateRight.Day, 0, 0, 0);

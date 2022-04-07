@@ -100,28 +100,7 @@ namespace Netherlands3D.Timeline
             float spaceBetween = width / datesToPlace;
 
             // Calc bar starting date, and based on timeUnit
-            //dateTimeLeaderIndex = timeUnit switch
-            //{
-            //    TimeUnit.Unit.year => barIndex switch
-            //    {
-            //        2 => dateTimeLeaderIndex.AddYears(datesToPlace),
-            //        1 => dateTimeLeaderIndex,
-            //        _ => dateTimeLeaderIndex.AddYears(-datesToPlace)
-            //    },
-            //    TimeUnit.Unit.month => barIndex switch
-            //    {
-            //        2 => dateTimeLeaderIndex.AddDays(datesToPlace),
-            //        1 => dateTimeLeaderIndex,
-            //        _ => dateTimeLeaderIndex.AddDays(-datesToPlace)
-            //    },
-            //    TimeUnit.Unit.day => barIndex switch
-            //    {
-            //        2 => dateTimeLeaderIndex.AddMonths(datesToPlace),
-            //        1 => dateTimeLeaderIndex,
-            //        _ => dateTimeLeaderIndex.AddMonths(-datesToPlace)
-            //    },
-            //    _ => barIndex switch { _ => null }
-            //};            
+                    
             dateTimeLeaderIndex = TimeUnit.GetBarStartingDate(dateTimeLeaderIndex, timeUnit, barIndex, datesToPlace);
             StartDateTime = dateTimeLeaderIndex;
 
