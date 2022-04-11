@@ -55,6 +55,16 @@ namespace Netherlands3D.Timeline
         }
 
         /// <summary>
+        /// Get the current dateTime based on a local x position of the bar
+        /// </summary>
+        /// <param name="posX">The bar local x position</param>
+        /// <returns>DateTime</returns>
+        public DateTime GetCurrentDateTime(float posX)
+        {
+            return dateTimePositions.OrderBy(x => Math.Abs(x.Key - posX + transform.localPosition.x)).FirstOrDefault().Value;
+        }
+
+        /// <summary>
         /// Get the x position of a date in this time bar if it is available
         /// </summary>
         /// <param name="dateTime">The date time to get</param>

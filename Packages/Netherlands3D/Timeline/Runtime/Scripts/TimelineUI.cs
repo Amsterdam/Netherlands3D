@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using SLIDDES.UI;
 using TMPro;
 using System.Globalization;
@@ -36,6 +37,27 @@ namespace Netherlands3D.Timeline
         [SerializeField] private Transform parentTimePeriodsLayers;
         [SerializeField] private Transform parentCategories;
 
+        [Header("Time Scrubber Components")]
+        [SerializeField] private TimeScrubber timeScrubber;
+
+        /// <summary>
+        /// Event 
+        /// </summary>
+        [HideInInspector] public UnityEvent<DateTime> onCurrentDateChange = new UnityEvent<DateTime>();
+
+        /// <summary>
+        /// The current time line date
+        /// </summary>
+        private DateTime CurrentDate 
+        { 
+            get { return currentDate; } 
+            set
+            {
+                currentDate = value;
+                onCurrentDateChange?.Invoke(currentDate);
+            }
+        }
+
         /// <summary>
         /// The time unit used for the timeline
         /// </summary>
@@ -45,7 +67,7 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private int[] barIndexes;
         /// <summary>
-        /// The current time line date
+        /// The current timeline date
         /// </summary>
         private DateTime currentDate;
         /// <summary>
@@ -77,6 +99,24 @@ namespace Netherlands3D.Timeline
             SetCurrentDate(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0));
         }
                         
+        /// <summary>
+        /// Get the closest bar based on the local x position
+        /// </summary>
+        /// <returns></returns>
+        public TimeBar GetClosestBar(float posX)
+        {
+            return timeBars.OrderBy(x => Math.Abs(posX - x.transform.localPosition.x)).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Get the focused bar
+        /// </summary>
+        /// <returns></returns>
+        public TimeBar GetFocusedBar()
+        {
+            // Based on time bar which is closest to position.x 0
+            return timeBars.OrderBy(x => Math.Abs(0 - x.transform.localPosition.x)).FirstOrDefault();
+        }
 
         /// <summary>
         /// Load the TimelineData in the UI
@@ -197,9 +237,12 @@ namespace Netherlands3D.Timeline
             }
 
             // Get currentDate from middle bar
-            currentDate = GetFocusedBar().GetCurrentDateTime();
+            CurrentDate = GetFocusedBar().GetCurrentDateTime();
             UpdateCurrentDateVisual();
             UpdateVisableDateRange();
+
+            // Reset timescrubber
+            timeScrubber.StoppedUsing();
         }
 
         /// <summary>
@@ -207,12 +250,22 @@ namespace Netherlands3D.Timeline
         /// </summary>
         public void SetCurrentDate(DateTime newDate)
         {
-            currentDate = newDate;
+            CurrentDate = newDate;
 
             UpdateTimeBars();
-            SetFocusedBarPosition(GetFocusedBar().GetDatePosition(currentDate, timeUnit));
+            SetFocusedBarPosition(GetFocusedBar().GetDatePosition(CurrentDate, timeUnit));
             UpdateCurrentDateVisual();
             UpdateVisableDateRange();
+        }
+
+        /// <summary>
+        /// Set the current date without a notify
+        /// </summary>
+        /// <param name="newDate">The new currentDate</param>
+        public void SetCurrentDateNoNotify(DateTime newDate)
+        {
+            CurrentDate = newDate;
+            UpdateCurrentDateVisual();
         }
 
         /// <summary>
@@ -222,7 +275,7 @@ namespace Netherlands3D.Timeline
         public void SetTimeUnit(int valueToAdd)
         {
             TimeUnit.ChangeUnit(ref timeUnit, valueToAdd);
-            SetCurrentDate(currentDate);
+            SetCurrentDate(CurrentDate);
             UpdateCurrentDateVisual();
         }
 
@@ -295,15 +348,6 @@ namespace Netherlands3D.Timeline
             return 0;
         }
 
-        /// <summary>
-        /// Get the focused bar
-        /// </summary>
-        /// <returns></returns>
-        private TimeBar GetFocusedBar()
-        {
-            // Based on time bar which is closest to position.x 0
-            return timeBars.OrderBy(x => Math.Abs(0 - x.transform.localPosition.x)).FirstOrDefault();
-        }
 
         /// <summary>
         /// Check if the event is visible in the visable date range
@@ -342,7 +386,7 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private void UpdateCurrentDateVisual()
         {
-            inputFieldCurrentDate.text = currentDate.ToString(TimeUnit.GetUnitFullString(timeUnit));
+            inputFieldCurrentDate.text = CurrentDate.ToString(TimeUnit.GetUnitFullString(timeUnit));
         }
 
         /// <summary>
@@ -406,7 +450,7 @@ namespace Netherlands3D.Timeline
             // Time bar visual
             for(int i = 0; i < 3; i++)
             {
-                timeBars[i].UpdateVisuals(currentDate, i, timeUnit);
+                timeBars[i].UpdateVisuals(CurrentDate, i, timeUnit);
             }
         }
 
@@ -420,8 +464,8 @@ namespace Netherlands3D.Timeline
         {
             int datesToPlace = (int)((TimeBarParentWidth / TimeBar.PixelDistanceDates) / 2);
             // based on timeUnit & current date, get the most left and right date
-            visableDateLeft = TimeUnit.GetVisibleDateLeftRight(true, currentDate, timeUnit, datesToPlace);
-            visableDateRight = TimeUnit.GetVisibleDateLeftRight(false, currentDate, timeUnit, datesToPlace);
+            visableDateLeft = TimeUnit.GetVisibleDateLeftRight(true, CurrentDate, timeUnit, datesToPlace);
+            visableDateRight = TimeUnit.GetVisibleDateLeftRight(false, CurrentDate, timeUnit, datesToPlace);
             // Correct dates
             visableDateLeft = new DateTime(visableDateLeft.Year, visableDateLeft.Month, visableDateLeft.Day, 0, 0, 0);
             visableDateRight = new DateTime(visableDateRight.Year, visableDateRight.Month, visableDateRight.Day, 0, 0, 0);
