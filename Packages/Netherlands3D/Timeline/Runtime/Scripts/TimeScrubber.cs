@@ -10,6 +10,11 @@ namespace Netherlands3D.Timeline
     /// </summary>
     public class TimeScrubber : MonoBehaviour
     {
+        /// <summary>
+        /// Is the time scrubber being used?
+        /// </summary>
+        public bool IsActive { get; private set; }
+
         [Header("Components")]
         [SerializeField] private Slider slider;
         [SerializeField] private TimelineUI timelineUI;
@@ -39,6 +44,17 @@ namespace Netherlands3D.Timeline
             // Convert to bar local x (-960, 0, 960)
             float convertedValue = value - (width / 2);
             timelineUI.SetCurrentDateNoNotify(timelineUI.GetClosestBar(convertedValue).GetCurrentDateTime(convertedValue));
+            IsActive = true;
+        }
+
+        /// <summary>
+        /// Scroll the time scrubber.
+        /// </summary>
+        /// <remarks>Scroll amount value has to be between -1 to 1 (Since the slider gets updated by this value)</remarks>
+        /// <param name="scrollAmount"></param>
+        public void ScrollTimeScrubber(float scrollAmount)
+        {
+            slider.value += scrollAmount;
         }
 
         /// <summary>
@@ -48,6 +64,7 @@ namespace Netherlands3D.Timeline
         {
             // Center scrubber
             slider.SetValueWithoutNotify(0.5f);
+            IsActive = false;
         }
     }
 }

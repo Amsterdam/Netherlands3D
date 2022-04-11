@@ -29,6 +29,8 @@ namespace Netherlands3D.Timeline
         public TimeBar[] timeBars = new TimeBar[3];
         [Tooltip("The input field of the current date")]
         public TMP_InputField inputFieldCurrentDate;
+        [Tooltip("The button that allows for auto scroll")]
+        public TextMeshProUGUI playButtonField;
 
         [Header("Timeline Components")]
         [SerializeField] private GameObject prefabTimePeriodsLayer;
@@ -59,6 +61,10 @@ namespace Netherlands3D.Timeline
         }
 
         /// <summary>
+        /// Is the time line currently automaticly playing (scrolling)
+        /// </summary>
+        private bool isAutomaticlyPlaying;
+        /// <summary>
         /// The time unit used for the timeline
         /// </summary>
         private TimeUnit.Unit timeUnit = TimeUnit.Unit.year;
@@ -78,6 +84,14 @@ namespace Netherlands3D.Timeline
         /// The most visable date right
         /// </summary>
         private DateTime visableDateRight;
+        /// <summary>
+        /// Enumerator for ScrollTimeBarAutomaticly
+        /// </summary>
+        private Coroutine coroutineScrollTimeBarAutomaticly;
+        /// <summary>
+        /// Coroutine for ScrollScrubberAutomaticly
+        /// </summary>
+        private Coroutine coroutineScrollScrubberAutomaticly;
         /// <summary>
         /// List of all categories scripts
         /// </summary>
@@ -175,6 +189,42 @@ namespace Netherlands3D.Timeline
             else
             {
                 UpdateCurrentDateVisual();
+            }
+        }
+
+        /// <summary>
+        /// Toggle to play the timeline automaticly or not
+        /// </summary>
+        public void TogglePlay()
+        {
+            // Based on if the time scrubber is in use or not play the time bar or the time scrubber
+            isAutomaticlyPlaying = !isAutomaticlyPlaying;
+            PlayScroll(isAutomaticlyPlaying);
+        }
+
+        public void PlayScroll(bool autoPlay)
+        {
+            isAutomaticlyPlaying = autoPlay;
+            if(isAutomaticlyPlaying)
+            {
+                playButtonField.text = "Stop";
+                // Check if timeline or time scrubber
+                if(timeScrubber.IsActive)
+                {
+                    // Use timescrubber
+                    coroutineScrollScrubberAutomaticly = StartCoroutine(ScrollTimeScrubberAutomaticly());
+                }
+                else
+                {
+                    // Use timeline
+                    coroutineScrollTimeBarAutomaticly = StartCoroutine(ScrollTimeBarAutomaticly());
+                }
+            }
+            else
+            {
+                playButtonField.text = "Play";
+                if(coroutineScrollTimeBarAutomaticly != null) StopCoroutine(coroutineScrollTimeBarAutomaticly);
+                if(coroutineScrollScrubberAutomaticly != null) StopCoroutine(coroutineScrollScrubberAutomaticly);
             }
         }
 
@@ -348,7 +398,6 @@ namespace Netherlands3D.Timeline
             return 0;
         }
 
-
         /// <summary>
         /// Check if the event is visible in the visable date range
         /// </summary>
@@ -379,6 +428,24 @@ namespace Netherlands3D.Timeline
             // Right bar
             TimeBar t2 = timeBars[barIndexes[2]];
             t2.transform.localPosition = new Vector3(localPosX + TimeBarParentWidth, t2.transform.localPosition.y, t2.transform.localPosition.z);
+        }
+
+        private IEnumerator ScrollTimeBarAutomaticly()
+        {
+            while(true)
+            {
+                ScrollTimeBar(-100 * Time.deltaTime);
+                yield return null;
+            }
+        }
+
+        private IEnumerator ScrollTimeScrubberAutomaticly()
+        {
+            while(true)
+            {
+                timeScrubber.ScrollTimeScrubber(0.1f * Time.deltaTime);
+                yield return null;
+            }
         }
 
         /// <summary>
