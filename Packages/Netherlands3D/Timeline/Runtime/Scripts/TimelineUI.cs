@@ -43,14 +43,19 @@ namespace Netherlands3D.Timeline
         [SerializeField] private TimeScrubber timeScrubber;
 
         /// <summary>
-        /// Event 
+        /// Unity Event that gets triggerd when the currentDate is changed
         /// </summary>
         [HideInInspector] public UnityEvent<DateTime> onCurrentDateChange = new UnityEvent<DateTime>();
+        /// <summary>
+        /// Unity Event that gets triggerd when a category is toggled
+        /// </summary>
+        /// <remarks><categoryName, setActive></remarks>
+        [HideInInspector] public UnityEvent<string, bool> onCategoryToggle = new UnityEvent<string, bool>();
 
         /// <summary>
         /// The current time line date
         /// </summary>
-        private DateTime CurrentDate 
+        public DateTime CurrentDate 
         { 
             get { return currentDate; } 
             set
@@ -59,6 +64,7 @@ namespace Netherlands3D.Timeline
                 onCurrentDateChange?.Invoke(currentDate);
             }
         }
+
 
         /// <summary>
         /// Is the time line currently automaticly playing (scrolling)
@@ -159,7 +165,7 @@ namespace Netherlands3D.Timeline
                 TimePeriodsLayer e = Instantiate(prefabTimePeriodsLayer, parentTimePeriodsLayers).GetComponent<TimePeriodsLayer>();
                 eventLayers.Add(item, e);
                 Category c = Instantiate(prefabCategory, parentCategories).GetComponent<Category>();
-                c.Initialize(item, e);
+                c.Initialize(item, e, this);
                 categories.Add(c);
             }
         }

@@ -74,7 +74,7 @@ namespace Netherlands3D.Timeline
         {
             // Get the date closest to the dateTime to fetch
             var k = ArrayExtention.MinBy(dateTimePositions, x => Math.Abs((x.Value - dateTime).Ticks));
-            if(k.Value == null || !TimeUnit.TimeUnitAndDateTimesMatch(timeUnit, k.Value, dateTime))
+            if(k.Value == null || !TimeUnit.CompareDateTimes(timeUnit, k.Value, dateTime))
             {
                 return 0.123f;
             }

@@ -25,6 +25,10 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private TimePeriodsLayer eventLayer;
         /// <summary>
+        /// The time line component of this category
+        /// </summary>
+        private TimelineUI timelineUI;
+        /// <summary>
         /// Is the category visible
         /// </summary>
         private bool isVisible = true;
@@ -33,11 +37,12 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private RectTransform rectTransform;
 
-        public void Initialize(string name, TimePeriodsLayer eventLayer)
+        public void Initialize(string name, TimePeriodsLayer eventLayer, TimelineUI timelineUI)
         {
             this.name = name;
             nameField.text = name;
             this.eventLayer = eventLayer;
+            this.timelineUI = timelineUI;
             rectTransform = GetComponent<RectTransform>();
         }
 
@@ -46,22 +51,13 @@ namespace Netherlands3D.Timeline
             isVisible = !isVisible;
             if(isVisible)
             {
-                //rectTransform.SetHeight(96);
-                //eventLayer.rectTransform.SetHeight(96);
                 eventLayer.canvasGroup.alpha = 1;
             }
             else
             {
-                //rectTransform.SetHeight(46);
-                //eventLayer.rectTransform.SetHeight(46);
                 eventLayer.canvasGroup.alpha = 0;
             }
-
-            // Force unity to rebuild layout, since it wont do it on its own >:(
-            //rectTransform.RefreshContentFitter();
-            //eventLayer.rectTransform.RefreshContentFitter();
-            //LayoutRebuilder.ForceRebuildLayoutImmediate(transform.parent.GetComponent<RectTransform>());
-            //LayoutRebuilder.ForceRebuildLayoutImmediate(eventLayer.transform.parent.GetComponent<RectTransform>());
+            timelineUI.onCategoryToggle.Invoke(name, isVisible);
         }
     }
 }

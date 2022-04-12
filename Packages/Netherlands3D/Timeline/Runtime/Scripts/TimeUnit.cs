@@ -157,7 +157,7 @@ namespace Netherlands3D.Timeline
         /// <param name="dateTimeA"></param>
         /// <param name="dateTimeB"></param>
         /// <returns>bool</returns>
-        public static bool TimeUnitAndDateTimesMatch(Unit unit, DateTime dateTimeA, DateTime dateTimeB)
+        public static bool CompareDateTimes(Unit unit, DateTime dateTimeA, DateTime dateTimeB)
         {
             return unit switch
             {
@@ -170,6 +170,19 @@ namespace Netherlands3D.Timeline
                 Unit.milliseconds =>    dateTimeA.Year == dateTimeB.Year && dateTimeA.Month == dateTimeB.Month & dateTimeA.Day == dateTimeB.Day && dateTimeA.Hour == dateTimeB.Hour && dateTimeA.Minute == dateTimeB.Minute && dateTimeA.Second == dateTimeB.Second && dateTimeA.Millisecond == dateTimeB.Millisecond,
                 _ => throw new ArgumentOutOfRangeException("unit")
             };
+        }
+
+        /// <summary>
+        /// Check if the datetime is in the datetime range based on the time unit
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <param name="dateTime"></param>
+        /// <param name="rangeStart"></param>
+        /// <param name="rangeEnd"></param>
+        /// <returns></returns>
+        public static bool DateTimeInRange(DateTime dateTime, DateTime rangeStart, DateTime rangeEnd)
+        {
+            return rangeStart <= dateTime && dateTime <= rangeEnd;
         }
     }
 
