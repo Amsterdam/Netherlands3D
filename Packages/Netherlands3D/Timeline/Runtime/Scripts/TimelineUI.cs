@@ -65,7 +65,6 @@ namespace Netherlands3D.Timeline
             }
         }
 
-
         /// <summary>
         /// Is the time line currently automaticly playing (scrolling)
         /// </summary>
@@ -208,6 +207,10 @@ namespace Netherlands3D.Timeline
             PlayScroll(isAutomaticlyPlaying);
         }
 
+        /// <summary>
+        /// Play the automatic scrolling of the timeline/scrubber
+        /// </summary>
+        /// <param name="autoPlay"></param>
         public void PlayScroll(bool autoPlay)
         {
             isAutomaticlyPlaying = autoPlay;
