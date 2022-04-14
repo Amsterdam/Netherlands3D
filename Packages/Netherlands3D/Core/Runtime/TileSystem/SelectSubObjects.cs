@@ -78,7 +78,6 @@ namespace Netherlands3D.TileSystem
             pauseSelectHighlighting = coloring;
         }
 
-
         public void SelectWithInputs(Ray inputRay, bool multiSelect, bool secondary = false){
             if (pauseSelectHighlighting) 
                 return;
