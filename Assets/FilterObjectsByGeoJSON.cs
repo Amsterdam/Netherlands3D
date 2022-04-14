@@ -29,6 +29,9 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	private List<float> retrievedFloats = new List<float>();
 
 	[SerializeField]
+	private string geoJsonRequestURL = "https://service.pdok.nl/lv/bag/wfs/v2_0?SERVICE=WFS&VERSION=2.0.0&outputFormat=geojson&REQUEST=GetFeature&typeName=bag:pand&count=1000&outputFormat=xml&srsName=EPSG:28992&bbox={bbox}";
+
+	[SerializeField]
 	private string idProperty = "identificatie";
 	private string filterProperty = "bouwjaar";
 	private float filterValue = 1900;
@@ -36,17 +39,19 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	[SerializeField]
 	private ComparisonOperator filterComparisonOperator = ComparisonOperator.PropertyIsLessThan;
 
-	[SerializeField]
-	private ObjectEvent filteredIdsAndFloats;
-
+	[Header("Listen to")]
 	[SerializeField]
 	private FloatEvent setFilterValue;
 
+	[Header("Invoke")]
 	[SerializeField]
-    private string geoJsonRequestURL = "https://service.pdok.nl/lv/bag/wfs/v2_0?SERVICE=WFS&VERSION=2.0.0&outputFormat=geojson&REQUEST=GetFeature&typeName=bag:pand&count=1000&outputFormat=xml&srsName=EPSG:28992&bbox={bbox}";
+	private ObjectEvent filteredIdsAndFloats;
+
+	private Extent bboxByCameraBounds;
 
 	/// <summary>
-	/// Request operator comparison type. We do this post retrieving the data, but these can be used in the Filter of the WFS request too.
+	/// Request operator comparison type. 
+	/// We compare to filter after retrieving the data, but these can be used in the Filter of the WFS request too.
 	/// </summary>
 	public enum ComparisonOperator
 	{
@@ -61,6 +66,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
     void Awake()
     {
 		if (setFilterValue) setFilterValue.started.AddListener(ChangeFilterValue);
+		if (setFilterValue) setFilterValue.started.AddListener(ChangeFilterValue);
     }
 
 	private void ChangeFilterValue(float newFilterValue)
@@ -73,8 +79,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	{
 		retrievedIDs.Clear();
 		retrievedFloats.Clear();
-
-		var bboxByCameraBounds = Camera.main.GetRDExtent(10000);
+		UpdateBoundsByCameraExtent();
 		var bbox = $"{bboxByCameraBounds.MinX},{bboxByCameraBounds.MinY},{bboxByCameraBounds.MaxX},{bboxByCameraBounds.MaxY}";
 		var requestUrl = geoJsonRequestURL.Replace("{bbox}", bbox);
 
@@ -95,6 +100,12 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 
 			InvokeFilteredIdsAndValues();
 		}
+	}
+
+	//Retrieve main camera extent
+	private void UpdateBoundsByCameraExtent()
+	{
+		bboxByCameraBounds = Camera.main.GetRDExtent(10000);
 	}
 
 	private void InvokeFilteredIdsAndValues()
