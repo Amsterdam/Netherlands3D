@@ -37,7 +37,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	private ComparisonOperator filterComparisonOperator = ComparisonOperator.PropertyIsLessThan;
 
 	[SerializeField]
-	private ObjectEvent retrievedObjectsAndYear;
+	private ObjectEvent filteredIdsAndFloats;
 
 	[SerializeField]
 	private FloatEvent setFilterValue;
@@ -58,13 +58,16 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 		PropertyIsGreaterThanOrEqualTo
 	}
 
-    void Start()
+    void Awake()
     {
-		if (setFilterValue) setFilterValue.started.AddListener((value) => filterValue = value);
-
-
-		StartCoroutine(GetFilteredObjects());
+		if (setFilterValue) setFilterValue.started.AddListener(ChangeFilterValue);
     }
+
+	private void ChangeFilterValue(float newFilterValue)
+	{
+		filterValue = newFilterValue;
+		StartCoroutine(GetFilteredObjects());
+	}
 
 	IEnumerator GetFilteredObjects()
 	{
@@ -98,13 +101,16 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	{
 		Dictionary<string, float> stringAndFloat = new Dictionary<string, float>();
 		for (int i = 0; i < retrievedFloats.Count; i++)
-		{
+		{	
 			var value = retrievedFloats[i];
 			if(ComparesToFilter(value))
 			{
-				
+				var id = retrievedIDs[i];
+				stringAndFloat.Add(id, value);
 			}
 		}
+
+		filteredIdsAndFloats.started.Invoke(stringAndFloat);
 	}
 
 	private bool ComparesToFilter(float value)
