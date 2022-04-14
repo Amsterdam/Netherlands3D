@@ -613,6 +613,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15ca2613e39e3a144a458f2a4f5ea34f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventFileLoaderFileImported: {fileID: 11400000, guid: 84b363a7049a9a04db505bfc5d96eb13, type: 2}
   fileExtention: 
   selectMultipleFiles: 0
   fileInputName: fileInput

@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using Netherlands3D.JavascriptConnection;
+using Netherlands3D.Events;
 
 namespace Netherlands3D.FileImporter
 {
@@ -23,6 +24,8 @@ namespace Netherlands3D.FileImporter
         [DllImport("__Internal")]        
         private static extern void AddFileInput(string inputName, string fileExtension, bool multiSelect);
 
+        [SerializeField] private StringEvent eventFileLoaderFileImported;
+
         [Tooltip("The allowed file extention to load")]
         [SerializeField] private string fileExtention;
         [Tooltip("Allow user to select multiple files")]
@@ -40,13 +43,51 @@ namespace Netherlands3D.FileImporter
         void Start()
         {
             button = GetComponent<Button>();
+            // Set file input name with generated id to avoid html conflictions
+            fileInputName += gameObject.GetInstanceID();
             name = fileInputName;
+
+            // Unity Editor
+#if UNITY_EDITOR
+            SetupUnityEditor();
+#endif
+            // WebGL
 #if !UNITY_EDITOR && UNITY_WEBGL
-            AddFileInput(fileInputName, fileExtention, selectMultipleFiles);
-            gameObject.AddComponent<DrawHTMLOverCanvas>().AlignObjectID(fileInputName);
+            SetupWebGL();
 #endif
         }
 
+
+        // Unity Editor
+#if UNITY_EDITOR
+
+        private void SetupUnityEditor()
+        {
+            button.onClick.AddListener(OnButtonClick);
+        }
+
+        /// <summary>
+        /// When the user clicks the button in editor mode
+        /// </summary>
+        private void OnButtonClick()
+        {
+            string filePath = UnityEditor.EditorUtility.OpenFilePanel("Select File", "", fileExtention);
+            if(filePath.Length != 0)
+            {
+                UnityEngine.Debug.Log("[File Importer] Import file from file path: " + filePath);
+                eventFileLoaderFileImported.Invoke(filePath);
+            }
+        }
+#endif
+
+        // WebGL
+#if !UNITY_EDITOR && UNITY_WEBGL
+
+        private void SetupWebGL()
+        {
+            AddFileInput(fileInputName, fileExtention, selectMultipleFiles);
+            gameObject.AddComponent<DrawHTMLOverCanvas>().AlignObjectID(fileInputName);
+        }
 
         /// <summary>
         /// If the click is registerd from the HTML overlay side, this method triggers the onClick events on the button
@@ -59,5 +100,6 @@ namespace Netherlands3D.FileImporter
                 button.onClick.Invoke();
             }
         }
+#endif
     }
 }
