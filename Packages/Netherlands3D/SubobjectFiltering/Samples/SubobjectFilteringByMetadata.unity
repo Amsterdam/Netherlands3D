@@ -457,7 +457,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85a6c40a8688d2c44a2816625c631323, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectFiltering: https://service.pdok.nl/lv/bag/wfs/v2_0?SERVICE=WFS&VERSION=2.0.0&outputFormat=geojson&REQUEST=GetFeature&typeName=bag:pand&count=1000&outputFormat=xml&srsName=EPSG:28992&bbox={bbox}
+  geoJsonRequestURL: https://service.pdok.nl/lv/bag/wfs/v2_0?SERVICE=WFS&VERSION=2.0.0&outputFormat=geojson&REQUEST=GetFeature&typeName=bag:pand&count=1000&outputFormat=xml&srsName=EPSG:28992&bbox={bbox}
+  idProperty: identificatie
+  filterComparisonOperator: 2
+  setFilterValue: {fileID: 11400000, guid: bb9fce0d39b61dd44a57ec1b630a2abc, type: 2}
+  filteredIdsAndFloats: {fileID: 11400000, guid: 0cbb9b4a81bd843498ad3a8f31b4d27f, type: 2}
 --- !u!1 &735203697
 GameObject:
   m_ObjectHideFlags: 0
@@ -548,7 +552,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11400000, guid: 0cbb9b4a81bd843498ad3a8f31b4d27f, type: 2}
+      - m_Target: {fileID: 11400000, guid: bb9fce0d39b61dd44a57ec1b630a2abc, type: 2}
         m_TargetAssemblyTypeName: Netherlands3D.Events.FloatEvent, nl.netherlands3d.core
         m_MethodName: Invoke
         m_Mode: 0
@@ -1302,7 +1306,7 @@ MonoBehaviour:
   disableOnStart: 1
   onEnableDrawingColors: {fileID: 0}
   onReceiveIdsAndColors: {fileID: 0}
-  onReceiveIdsAndFloats: {fileID: 0}
+  onReceiveIdsAndFloats: {fileID: 11400000, guid: 0cbb9b4a81bd843498ad3a8f31b4d27f, type: 2}
   onSetGradient: {fileID: 0}
   onReceiveMinRange: {fileID: 0}
   onReceiveMaxRange: {fileID: 0}
