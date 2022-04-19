@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_WEBGL
 using Netherlands3D.JavascriptConnection;
+#endif
 using Netherlands3D.Events;
+#if UNITY_STANDALONE || UNITY_EDITOR
+using Netherlands3D.FileImporter.SFB;
+#endif
 
 namespace Netherlands3D.FileImporter
 {
@@ -13,6 +18,7 @@ namespace Netherlands3D.FileImporter
     /// </summary>
     [AddComponentMenu("File Importer/Import File Button On Click")]
     [RequireComponent(typeof(Button))]
+    [RequireComponent(typeof(RectTransform))]
     public class ImportFileButtonOnClick : MonoBehaviour
     {
         /// <summary>
@@ -24,15 +30,18 @@ namespace Netherlands3D.FileImporter
         [DllImport("__Internal")]        
         private static extern void AddFileInput(string inputName, string fileExtension, bool multiSelect);
 
-        [SerializeField] private StringEvent eventFileLoaderFileImported;
-
-        [Tooltip("The allowed file extention to load")]
-        [SerializeField] private string fileExtention;
-        [Tooltip("Allow user to select multiple files")]
-        [SerializeField] private bool selectMultipleFiles;
 
         [Tooltip("HTML DOM ID")]
         [SerializeField] private string fileInputName = "fileInput";
+        [Tooltip("The allowed file extention to load")]
+        [SerializeField] private string fileExtention = "csv";
+        [Tooltip("Allow user to select multiple files")]
+        [SerializeField] private bool multiSelect;
+        
+        /// <summary>
+        /// The string event that gets called upon loading a file
+        /// </summary>
+        [SerializeField] private StringEvent eventFileLoaderFileImported;
 
         /// <summary>
         /// The button component attached to this same gameobject
@@ -47,29 +56,56 @@ namespace Netherlands3D.FileImporter
             fileInputName += gameObject.GetInstanceID();
             name = fileInputName;
 
+            // Execute setup based on platform
+            // Standalone
+#if UNITY_STANDALONE || UNITY_EDITOR
+            SetupUnityStandalone();
+#endif
             // Unity Editor
 #if UNITY_EDITOR
-            SetupUnityEditor();
+            //SetupUnityEditor(); // Doesnt allow for multiple file selection
 #endif
             // WebGL
-#if !UNITY_EDITOR && UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
             SetupWebGL();
 #endif
         }
 
+
+        // Standalone
+#if UNITY_STANDALONE || UNITY_EDITOR
+
+        private void SetupUnityStandalone()
+        {
+            button.onClick.AddListener(OnButtonClickUnityStandalone);
+        }
+
+        /// <summary>
+        /// When the user clicks the button in standalone mode
+        /// </summary>
+        private void OnButtonClickUnityStandalone()
+        {
+            var result = StandaloneFileBrowser.OpenFilePanel("Select File", "", fileExtention, multiSelect);
+            if(result.Length != 0)
+            {
+                // Invoke the event with joined string values
+                eventFileLoaderFileImported.Invoke(string.Join(",", result));
+            }
+        }
+#endif
 
         // Unity Editor
 #if UNITY_EDITOR
 
         private void SetupUnityEditor()
         {
-            button.onClick.AddListener(OnButtonClick);
+            button.onClick.AddListener(OnButtonClickUnityEditor);
         }
 
         /// <summary>
         /// When the user clicks the button in editor mode
         /// </summary>
-        private void OnButtonClick()
+        private void OnButtonClickUnityEditor()
         {
             string filePath = UnityEditor.EditorUtility.OpenFilePanel("Select File", "", fileExtention);
             if(filePath.Length != 0)
@@ -81,12 +117,14 @@ namespace Netherlands3D.FileImporter
 #endif
 
         // WebGL
-#if !UNITY_EDITOR && UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
 
         private void SetupWebGL()
         {
-            AddFileInput(fileInputName, fileExtention, selectMultipleFiles);
+            AddFileInput(fileInputName, fileExtention, multiSelect);
             gameObject.AddComponent<DrawHTMLOverCanvas>().AlignObjectID(fileInputName);
+            // A html button gets generated over this button so the pivot has to be 0,0 (bottom left) since it gets generated from the bottom left
+            GetComponent<RectTransform>().pivot = Vector2.zero;
         }
 
         /// <summary>

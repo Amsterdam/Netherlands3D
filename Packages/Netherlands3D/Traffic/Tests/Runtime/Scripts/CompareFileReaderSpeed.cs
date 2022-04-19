@@ -23,6 +23,7 @@ namespace Netherlands3D.VISSIM.Tests
         private string filePath;
         private Stopwatch stopwatch = new Stopwatch();
 
+#if UNITY_EDITOR
         // Start is called before the first frame update
         void Start()
         {
@@ -94,5 +95,6 @@ namespace Netherlands3D.VISSIM.Tests
             stopwatch.Stop();
             UnityEngine.Debug.LogWarning("[VISSIM][CFRS] Streamreader did it in " + stopwatch.ElapsedMilliseconds + "ms");
         }
+#endif
     }
 }
