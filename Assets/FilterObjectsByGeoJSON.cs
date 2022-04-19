@@ -15,6 +15,7 @@
 *  implied. See the License for the specific language governing
 *  permissions and limitations under the License.
 */
+using Netherlands3D.Core;
 using Netherlands3D.Events;
 using Netherlands3D.Utilities;
 using System.Collections;
@@ -29,12 +30,16 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	private List<float> retrievedFloats = new List<float>();
 
 	[SerializeField]
-	private string geoJsonRequestURL = "https://service.pdok.nl/lv/bag/wfs/v2_0?SERVICE=WFS&VERSION=2.0.0&outputFormat=geojson&REQUEST=GetFeature&typeName=bag:pand&count=1000&outputFormat=xml&srsName=EPSG:28992&bbox={bbox}";
+	private string geoJsonRequestURL = "https://service.pdok.nl/lv/bag/wfs/v2_0?SERVICE=WFS&VERSION=2.0.0&outputFormat=geojson&REQUEST=GetFeature&typeName=bag:pand&count={count}&startIndex={startIndex}&outputFormat=xml&srsName=EPSG:28992&bbox={bbox}";
 
 	[SerializeField]
 	private string idProperty = "identificatie";
 	private string filterProperty = "bouwjaar";
 	private float filterValue = 1900;
+
+	private int count = 1000;
+	private int startIndex = 0;
+	private bool gotAllResultsForArea = false;
 
 	[SerializeField]
 	private ComparisonOperator filterComparisonOperator = ComparisonOperator.PropertyIsLessThan;
@@ -68,19 +73,29 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
     void Awake()
     {
 		if (setFilterValue) setFilterValue.started.AddListener(ChangeFilterValue);
-		if (setFilterValue) setFilterValue.started.AddListener(ChangeFilterValue);
     }
+
+	private void OnDrawGizmos()
+	{
+		Gizmos.color = new Color(0, 1, 0, 0.3f);
+		var center = CoordConvert.RDtoUnity(new Vector3RD(bboxByCameraBounds.CenterX, bboxByCameraBounds.CenterY,0));
+		float height = (float)(bboxByCameraBounds.MaxY - bboxByCameraBounds.MinY);
+		float width = (float)(bboxByCameraBounds.MaxX - bboxByCameraBounds.MinX);
+
+		Gizmos.DrawCube(center,new Vector3(width,30,height));
+	}
 
 	private void ChangeFilterValue(float newFilterValue)
 	{
-		print(newFilterValue);
+		filterValue = newFilterValue;
 		if(retrievedIDs.Count > 0)
 		{
 			InvokeFilteredIdsAndValues();
-			return;
+
+			if(gotAllResultsForArea)
+				return;
 		}
 	
-		filterValue = newFilterValue;
 		if (runningRequest != null)
 		{
 			StopCoroutine(runningRequest);
@@ -93,29 +108,56 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 		UpdateBoundsByCameraExtent();
 
 		var bbox = $"{bboxByCameraBounds.MinX},{bboxByCameraBounds.MinY},{bboxByCameraBounds.MaxX},{bboxByCameraBounds.MaxY}";
-		var requestUrl = geoJsonRequestURL.Replace("{bbox}", bbox);
+		var baseUrl = geoJsonRequestURL.Replace("{bbox}", bbox);
 
-		var webRequest = UnityWebRequest.Get(requestUrl);
-		yield return webRequest.SendWebRequest();
+		gotAllResultsForArea = false;
+		retrievedIDs.Clear();
+		retrievedFloats.Clear();
+		startIndex = 0;
 
-		if (webRequest.result == UnityWebRequest.Result.Success)
+		while (!gotAllResultsForArea)
 		{
-			retrievedIDs.Clear();
-			retrievedFloats.Clear();
-
-			GeoJSON customJsonHandler = new GeoJSON(webRequest.downloadHandler.text);
-			while (customJsonHandler.GotoNextFeature())
+			var requestUrl = baseUrl;
+			if (requestUrl.Contains("{startIndex}"))
 			{
-				var id = customJsonHandler.GetPropertyStringValue(idProperty);
-				var value = customJsonHandler.GetPropertyFloatValue(filterProperty);
-
-				retrievedIDs.Add(id);
-				retrievedFloats.Add(value);
+				requestUrl = requestUrl.Replace("{count}", count.ToString()).Replace("{startIndex}", startIndex.ToString());
 			}
-			InvokeFilteredIdsAndValues();
-		}
-		else{
-			Debug.Log(webRequest.error);
+			else{
+				gotAllResultsForArea = true;
+			}
+
+			var webRequest = UnityWebRequest.Get(requestUrl);
+			yield return webRequest.SendWebRequest();
+
+			if (webRequest.result == UnityWebRequest.Result.Success)
+			{
+				GeoJSON customJsonHandler = new GeoJSON(webRequest.downloadHandler.text);
+				int featuresFoundInPage = 0;
+				while (customJsonHandler.GotoNextFeature())
+				{
+					var id = customJsonHandler.GetPropertyStringValue(idProperty);
+					var value = customJsonHandler.GetPropertyFloatValue(filterProperty);
+
+					retrievedIDs.Add(id);
+					retrievedFloats.Add(value);
+					featuresFoundInPage++;
+				}
+				print($"Found features {featuresFoundInPage}");
+				InvokeFilteredIdsAndValues();
+				if (featuresFoundInPage < count)
+				{
+					gotAllResultsForArea = true;
+					yield break;
+				}
+			}
+			else
+			{
+				gotAllResultsForArea = false;
+				Debug.Log(webRequest.error);
+				yield return new WaitForSeconds(2.0f); //Retry untill API is back up
+			}
+
+			startIndex += count;
 		}
 	}
 
@@ -131,10 +173,10 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 		for (int i = 0; i < retrievedFloats.Count; i++)
 		{	
 			var value = retrievedFloats[i];
-			if(ComparesToFilter(value))
+			var id = retrievedIDs[i];
+			if(!stringAndFloat.ContainsKey(id) && ComparesToFilter(value))
 			{
-				var id = retrievedIDs[i];
-				stringAndFloat.Add(id, value);
+				stringAndFloat.Add(retrievedIDs[i], value);
 			}
 		}
 		filteredIdsAndFloats.started.Invoke(stringAndFloat);
