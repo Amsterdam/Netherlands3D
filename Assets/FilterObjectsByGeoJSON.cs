@@ -49,6 +49,8 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 
 	private Extent bboxByCameraBounds;
 
+	private Coroutine runningRequest;
+
 	/// <summary>
 	/// Request operator comparison type. 
 	/// We compare to filter after retrieving the data, but these can be used in the Filter of the WFS request too.
@@ -71,15 +73,25 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 
 	private void ChangeFilterValue(float newFilterValue)
 	{
+		print(newFilterValue);
+		if(retrievedIDs.Count > 0)
+		{
+			InvokeFilteredIdsAndValues();
+			return;
+		}
+	
 		filterValue = newFilterValue;
-		StartCoroutine(GetFilteredObjects());
+		if (runningRequest != null)
+		{
+			StopCoroutine(runningRequest);
+		}
+		runningRequest = StartCoroutine(GetFilteredObjects());
 	}
 
-	IEnumerator GetFilteredObjects()
+	private IEnumerator GetFilteredObjects()
 	{
-		retrievedIDs.Clear();
-		retrievedFloats.Clear();
 		UpdateBoundsByCameraExtent();
+
 		var bbox = $"{bboxByCameraBounds.MinX},{bboxByCameraBounds.MinY},{bboxByCameraBounds.MaxX},{bboxByCameraBounds.MaxY}";
 		var requestUrl = geoJsonRequestURL.Replace("{bbox}", bbox);
 
@@ -88,6 +100,9 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 
 		if (webRequest.result == UnityWebRequest.Result.Success)
 		{
+			retrievedIDs.Clear();
+			retrievedFloats.Clear();
+
 			GeoJSON customJsonHandler = new GeoJSON(webRequest.downloadHandler.text);
 			while (customJsonHandler.GotoNextFeature())
 			{
@@ -97,8 +112,10 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 				retrievedIDs.Add(id);
 				retrievedFloats.Add(value);
 			}
-
 			InvokeFilteredIdsAndValues();
+		}
+		else{
+			Debug.Log(webRequest.error);
 		}
 	}
 
@@ -120,7 +137,6 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 				stringAndFloat.Add(id, value);
 			}
 		}
-
 		filteredIdsAndFloats.started.Invoke(stringAndFloat);
 	}
 

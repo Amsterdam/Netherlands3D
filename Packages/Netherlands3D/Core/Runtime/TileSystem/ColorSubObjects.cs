@@ -138,7 +138,6 @@ namespace Netherlands3D.TileSystem
         {
             this.enabled = true;
             var idFloats = (Dictionary<string, float>)idsAndFloats;
-
             idColors = new Dictionary<string, Color>();
             foreach (var keyValuePair in idFloats)
             {

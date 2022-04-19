@@ -90,7 +90,7 @@ namespace Netherlands3D.BAGInformation
 					var properties = customJsonHandler.GetProperties();
 					foreach (KeyValuePair<string, object> propertyKeyAndValue in properties)
 					{
-						FoundProperty(propertyKeyAndValue);
+						AddPropertyAndValue(propertyKeyAndValue);
 					}
 
 					if (properties.Count > 0)
@@ -101,7 +101,7 @@ namespace Netherlands3D.BAGInformation
 			}
 		}
 
-		private void FoundProperty(KeyValuePair<string, object> propertyKeyAndValue)
+		private void AddPropertyAndValue(KeyValuePair<string, object> propertyKeyAndValue)
 		{
 			var propertyAndValue = new List<string>();
 			propertyAndValue.Capacity = 2;
