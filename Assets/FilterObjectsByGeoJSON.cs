@@ -37,6 +37,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	private string filterProperty = "bouwjaar";
 	private float filterValue = 1900;
 
+	private float maxBoundsDistance = 10000;
 	private int count = 1000;
 	private int startIndex = 0;
 	private bool gotAllResultsForArea = false;
@@ -85,17 +86,47 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 		Gizmos.DrawCube(center,new Vector3(width,30,height));
 	}
 
+	private void Update()
+	{
+		CompareCameraExtents();
+	}
+
+	private void CompareCameraExtents()	{
+		var currentCameraExtents = Camera.main.GetRDExtent(maxBoundsDistance);
+		var similarCameraBounds = bboxByCameraBounds.Equals(currentCameraExtents);
+
+		if (!similarCameraBounds)
+		{
+			UpdateBoundsByCameraExtent();
+			ClearData();
+			FetchNewAreaFilteredObjects();
+		}
+	}
+
+	private void ClearData()
+	{
+		retrievedIDs.Clear();
+		retrievedFloats.Clear();
+		gotAllResultsForArea = false;
+	}
+
 	private void ChangeFilterValue(float newFilterValue)
 	{
 		filterValue = newFilterValue;
-		if(retrievedIDs.Count > 0)
+
+		if (retrievedIDs.Count > 0)
 		{
 			InvokeFilteredIdsAndValues();
 
-			if(gotAllResultsForArea)
+			if (gotAllResultsForArea)
 				return;
 		}
-	
+
+		FetchNewAreaFilteredObjects();
+	}
+
+	private void FetchNewAreaFilteredObjects()
+	{
 		if (runningRequest != null)
 		{
 			StopCoroutine(runningRequest);
@@ -164,7 +195,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	//Retrieve main camera extent
 	private void UpdateBoundsByCameraExtent()
 	{
-		bboxByCameraBounds = Camera.main.GetRDExtent(10000);
+		bboxByCameraBounds = Camera.main.GetRDExtent(maxBoundsDistance);
 	}
 
 	private void InvokeFilteredIdsAndValues()
