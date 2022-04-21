@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Buildings_VertexColoring
+  m_Name: Buildings_ColorClipping
   m_Shader: {fileID: -6465566751694194690, guid: 7d5cee3be1a0b11488312e129f324452, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -85,6 +85,7 @@ Material:
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
+    - _ClipAlpha: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1

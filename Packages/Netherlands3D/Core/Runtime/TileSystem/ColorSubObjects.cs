@@ -24,6 +24,8 @@ namespace Netherlands3D.TileSystem
         [SerializeField]
         private ObjectEvent onReceiveIdsAndFloats;
         [SerializeField]
+        private ObjectEvent onReceiveIdsAndFloatsForAlpha;
+        [SerializeField]
         private GradientContainerEvent onSetGradient;
 
         [SerializeField]
@@ -63,6 +65,17 @@ namespace Netherlands3D.TileSystem
             if (onReceiveIdsAndFloats)
             {
                 onReceiveIdsAndFloats.started.AddListener(SetIDsAndFloatsAsColors);
+
+                //If we can receive ids+floats, add listeners to determine the min and max of the range
+                if (onReceiveMinRange) onReceiveMinRange.started.AddListener(SetMinRange);
+                if (onReceiveMaxRange) onReceiveMaxRange.started.AddListener(SetMaxRange);
+                if (onEnableDrawingColors) onEnableDrawingColors.started.Invoke(true);
+                this.enabled = true;
+            }
+
+            if (onReceiveIdsAndFloatsForAlpha)
+            {
+                onReceiveIdsAndFloatsForAlpha.started.AddListener(SetIDsAndFloatsAsAlpha);
 
                 //If we can receive ids+floats, add listeners to determine the min and max of the range
                 if (onReceiveMinRange) onReceiveMinRange.started.AddListener(SetMinRange);
@@ -143,6 +156,21 @@ namespace Netherlands3D.TileSystem
             {
                 Color colorFromGradient = gradientContainer.gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, keyValuePair.Value));
                 idColors.Add(keyValuePair.Key, colorFromGradient);
+            }
+
+            UpdateColors(true);
+        }
+
+        public void SetIDsAndFloatsAsAlpha(object idsAndFloats)
+        {
+            this.enabled = true;
+            var idFloats = (Dictionary<string, float>)idsAndFloats;
+            idColors = new Dictionary<string, Color>();
+            foreach (var keyValuePair in idFloats)
+            {
+                Color color = Color.white;
+                color.a = 1-Mathf.InverseLerp((float)minimumValue, (float)maximumValue, keyValuePair.Value);
+                idColors.Add(keyValuePair.Key, color);
             }
 
             UpdateColors(true);
