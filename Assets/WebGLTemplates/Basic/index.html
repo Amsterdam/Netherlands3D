@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | Netherland3D</title>
+  </head>
+  <body style="text-align: center">
+    <canvas id="unity-canvas" width=960 height=600 style="width: 960px; height: 600px; background: #231F20"></canvas>
+    <script src="Build/FileImporterMinimal.loader.js"></script>
+    <script>
+      createUnityInstance(document.querySelector("#unity-canvas"), {
+        dataUrl: "Build/FileImporterMinimal.data.unityweb",
+        frameworkUrl: "Build/FileImporterMinimal.framework.js.unityweb",
+        codeUrl: "Build/FileImporterMinimal.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Gemeente Amsterdam",
+        productName: "Netherland3D",
+        productVersion: "0.1",
+        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+      }).then((unityInstance) => {window.unityInstance = unityInstance;});
+    </script>
+  </body>
+</html>
