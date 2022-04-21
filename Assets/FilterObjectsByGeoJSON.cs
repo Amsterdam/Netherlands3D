@@ -40,7 +40,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	private float maxBoundsDistance = 10000;
 	private int count = 1000;
 	private int startIndex = 0;
-	private bool gotAllResultsForArea = false;
+	private bool loadedResultsForArea = false;
 
 	[SerializeField]
 	private ComparisonOperator filterComparisonOperator = ComparisonOperator.PropertyIsLessThan;
@@ -51,11 +51,25 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 
 	[Header("Invoke")]
 	[SerializeField]
+	private BoolEvent busyLoadingData;
+	[SerializeField]
 	private ObjectEvent filteredIdsAndFloats;
 
 	private Extent bboxByCameraBounds;
 
 	private Coroutine runningRequest;
+	private UnityWebRequest runningWebRequest;
+
+	public bool LoadedAllResultsForArea { 
+		get {
+			return loadedResultsForArea;
+		}
+		private set
+		{
+			loadedResultsForArea = value;
+			busyLoadingData.Invoke(!loadedResultsForArea);
+		}
+	}
 
 	/// <summary>
 	/// Request operator comparison type. 
@@ -107,7 +121,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	{
 		retrievedIDs.Clear();
 		retrievedFloats.Clear();
-		gotAllResultsForArea = false;
+		LoadedAllResultsForArea = false;
 	}
 
 	private void ChangeFilterValue(float newFilterValue)
@@ -118,7 +132,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 		{
 			InvokeFilteredIdsAndValues();
 
-			if (gotAllResultsForArea)
+			if (LoadedAllResultsForArea)
 				return;
 		}
 
@@ -136,17 +150,22 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 
 	private IEnumerator GetFilteredObjects()
 	{
+		for (int i = 0; i < 3; i++)
+		{
+			yield return new WaitForEndOfFrame();
+		}
+		
 		UpdateBoundsByCameraExtent();
 
 		var bbox = $"{bboxByCameraBounds.MinX},{bboxByCameraBounds.MinY},{bboxByCameraBounds.MaxX},{bboxByCameraBounds.MaxY}";
 		var baseUrl = geoJsonRequestURL.Replace("{bbox}", bbox);
 
-		gotAllResultsForArea = false;
+		LoadedAllResultsForArea = false;
 		retrievedIDs.Clear();
 		retrievedFloats.Clear();
 		startIndex = 0;
 
-		while (!gotAllResultsForArea)
+		while (!LoadedAllResultsForArea)
 		{
 			var requestUrl = baseUrl;
 			if (requestUrl.Contains("{startIndex}"))
@@ -154,15 +173,20 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 				requestUrl = requestUrl.Replace("{count}", count.ToString()).Replace("{startIndex}", startIndex.ToString());
 			}
 			else{
-				gotAllResultsForArea = true;
+				LoadedAllResultsForArea = true;
 			}
 
-			var webRequest = UnityWebRequest.Get(requestUrl);
-			yield return webRequest.SendWebRequest();
 
-			if (webRequest.result == UnityWebRequest.Result.Success)
+			if(runningWebRequest!= null)
 			{
-				GeoJSON customJsonHandler = new GeoJSON(webRequest.downloadHandler.text);
+				runningWebRequest.Dispose();
+			}
+			runningWebRequest = UnityWebRequest.Get(requestUrl);
+			yield return runningWebRequest.SendWebRequest();
+
+			if (runningWebRequest.result == UnityWebRequest.Result.Success)
+			{
+				GeoJSON customJsonHandler = new GeoJSON(runningWebRequest.downloadHandler.text);
 				int featuresFoundInPage = 0;
 				while (customJsonHandler.GotoNextFeature())
 				{
@@ -173,18 +197,17 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 					retrievedFloats.Add(value);
 					featuresFoundInPage++;
 				}
-				print($"Found features {featuresFoundInPage}");
 				InvokeFilteredIdsAndValues();
 				if (featuresFoundInPage < count)
 				{
-					gotAllResultsForArea = true;
+					LoadedAllResultsForArea = true;
 					yield break;
 				}
 			}
 			else
 			{
-				gotAllResultsForArea = false;
-				Debug.Log(webRequest.error);
+				LoadedAllResultsForArea = false;
+				Debug.Log(runningWebRequest.error);
 				yield return new WaitForSeconds(2.0f); //Retry untill API is back up
 			}
 
