@@ -9,6 +9,7 @@ The current platforms that are supported are:
 - WebGL
 
 ## How To Use
+0. Each scene that uses the `ImportFileButtonOnClick` component should have the prefab `UserFileUploads`. This name cannot be changed and the prefab should only be dragged into the scene. The prefab is located in FileImporter > Runtime > Prefabs > UserFileUploads
 1. Attach the component "ImportFileButtonOnClick" to a gameobject where a button component is attached too.
 2. Set the fileInputName to that of your liking
 3. Set the file extention the file has to be, leaving it empty allows for all files.

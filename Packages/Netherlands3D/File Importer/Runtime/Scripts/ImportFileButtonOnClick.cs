@@ -33,7 +33,7 @@ namespace Netherlands3D.FileImporter
 
         [Tooltip("HTML DOM ID")]
         [SerializeField] private string fileInputName = "fileInput";
-        [Tooltip("The allowed file extention to load")]
+        [Tooltip("The allowed file extention to load. Don't put a '.' at the start")]
         [SerializeField] private string fileExtention = "csv";
         [Tooltip("Allow user to select multiple files")]
         [SerializeField] private bool multiSelect;
@@ -74,7 +74,7 @@ namespace Netherlands3D.FileImporter
 
         // Standalone
 #if UNITY_STANDALONE || UNITY_EDITOR
-
+                
         private void SetupUnityStandalone()
         {
             button.onClick.AddListener(OnButtonClickUnityStandalone);

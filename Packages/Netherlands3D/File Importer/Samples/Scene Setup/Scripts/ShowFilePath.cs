@@ -6,6 +6,7 @@ using TMPro;
 
 namespace Netherlands3D.FileImporter.Samples
 {
+    [AddComponentMenu("File Importer/Samples/ShowFilePath")]
     public class ShowFilePath : MonoBehaviour
     {
         public StringEvent eventFileLoaderFileImported;
