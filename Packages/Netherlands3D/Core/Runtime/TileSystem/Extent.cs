@@ -53,6 +53,11 @@ public struct Extent
 
         return this.CenterX == extent.CenterX && this.MinX == extent.MinX && this.MinY == extent.MinY && this.MaxX == extent.MaxX && this.MaxY == extent.MaxY;
     }
+
+	public override int GetHashCode()
+	{
+		return base.GetHashCode();
+	}
 }
 
 
