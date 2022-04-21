@@ -1,0 +1,17 @@
+{
+    "name": "nl.netherlands3d.subobjectfiltering",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9ca88277166fea644a31588b4f943acc",
+        "GUID:f79f0c22a2465944c8bab47cbcc34cc5"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
