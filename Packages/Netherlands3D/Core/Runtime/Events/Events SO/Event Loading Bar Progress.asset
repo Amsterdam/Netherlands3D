@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76a22c6800047e2418698f7b115d09d5, type: 3}
-  m_Name: Event Loading Progress
+  m_Name: Event Loading Bar Progress
   m_EditorClassIdentifier: 
-  eventName: Event Loading Progress
-  description: Shows the loading process of Traffic file loading ranging 0f to 1f
+  eventName: Event Loading Bar Progress
+  description: Shows the loading process of something loading ranging 0f to 1f
   started:
     m_PersistentCalls:
       m_Calls: []

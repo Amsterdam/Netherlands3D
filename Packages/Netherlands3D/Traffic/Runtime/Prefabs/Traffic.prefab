@@ -123,9 +123,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8334449571815547990}
-  - component: {fileID: 8334449571815547989}
+  - component: {fileID: 5941371805176876669}
   - component: {fileID: 8334449571815547991}
-  - component: {fileID: 4387080457431655685}
   m_Layer: 0
   m_Name: Traffic
   m_TagString: Untagged
@@ -149,7 +148,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8334449571815547989
+--- !u!114 &5941371805176876669
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -158,13 +157,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8334449571815547988}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 129cefa9debd37740b481190a74220df, type: 3}
+  m_Script: {fileID: 11500000, guid: 2ed231d42a4de204b9cf463431b50de5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showDebugLog: 1
-  maxDataCount: -1
-  eventFilesImported: {fileID: 11400000, guid: 8491950a9badaae46996777c747e43d1, type: 2}
-  eventClearDatabase: {fileID: 11400000, guid: 3a9cdedad05358846955d9112acf117d, type: 2}
+  showDebugLog: 0
+  maxDataCount: 200
+  eventFilesImported: {fileID: 11400000, guid: 84b363a7049a9a04db505bfc5d96eb13, type: 2}
+  eventClearDatabase: {fileID: 11400000, guid: 612b7d7f10053904594717c96bc8a3d2, type: 2}
   eventLoadingProgress: {fileID: 11400000, guid: 469d72f256b2f454dacfa55bd6eb1573, type: 2}
   dataDatabase: {fileID: 11400000, guid: 0c7b59f8d6cc82046a448b240c6183d3, type: 2}
 --- !u!114 &8334449571815547991
@@ -179,16 +178,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9eb5797fe92cd744a97a9acceaabf850, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4387080457431655685
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8334449571815547988}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac62c956896071942b19b868b9445aa9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  roadsData: {fileID: 11400000, guid: 81c7a8d291cae6149ba3323d39fcd3af, type: 2}

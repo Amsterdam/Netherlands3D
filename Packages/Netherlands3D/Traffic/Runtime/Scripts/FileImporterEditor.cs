@@ -8,10 +8,10 @@ namespace Netherlands3D.Traffic.Editor
     /// For quickly importing files in Unity Editor
     /// </summary>
     /// <see cref="EditorFileImporterEditor"/>
-    [RequireComponent(typeof(File))]
+    [RequireComponent(typeof(FileImporter))]
     [AddComponentMenu("Traffic/Traffic File Importer Editor")]
     public class FileImporterEditor : MonoBehaviour
     {
-        public File File { get { return GetComponent<File>(); } }
+        public FileImporter File { get { return GetComponent<FileImporter>(); } }
     }
 }

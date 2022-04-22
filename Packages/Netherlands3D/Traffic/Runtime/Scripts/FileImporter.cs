@@ -10,7 +10,7 @@ namespace Netherlands3D.Traffic
     /// For importing files for Traffic
     /// </summary>
     [AddComponentMenu("Netherlands3D/Traffic/Traffic File Importer")] // Used to change the script inspector name
-    public class File : MonoBehaviour
+    public class FileImporter : MonoBehaviour
     {
         [Header("Options")]
         [Tooltip("Show the debug messages")]
