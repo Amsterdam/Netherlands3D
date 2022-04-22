@@ -4,8 +4,6 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-  - enabled: 1
-    path: Packages/nl.netherlands3d/File Importer/Samples/Scene Setup/Scenes/Scene_Netherlands3D_FileImporter_Sample_SceneSetup.unity
-    guid: 4ba25d8d5d47bc84b8b4948029b5b97b
-  m_configObjects: {}
+  m_Scenes: []
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: e05a5c0051926ad4184f7c25a38f14fe, type: 2}

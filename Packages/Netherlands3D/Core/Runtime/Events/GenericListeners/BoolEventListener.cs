@@ -20,13 +20,16 @@ namespace Netherlands3D.Core
 
         [SerializeField]
         private BoolValueUnityEvent onFalse;
-        
+
         void Awake()
-        {
-            onEvent.started.AddListener(Invoke);
+        { 
+            if(onEvent)
+            {
+                onEvent.started.AddListener(Invoke);
+            }
         }
 
-        private void Invoke(bool arg0)
+        public void Invoke(bool arg0)
         {
             onTriggered.Invoke(arg0);
             if (arg0==true)

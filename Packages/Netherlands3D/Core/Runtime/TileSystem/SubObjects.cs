@@ -20,6 +20,8 @@ public partial class SubObjects : MonoBehaviour
 
 	private bool downloadingSubObjects = false;
 
+	private Coroutine runningColoringProcess;
+
 	private void Awake()
 	{
 		SubObjectsData = new List<SubOjectData>();
@@ -195,8 +197,15 @@ public partial class SubObjects : MonoBehaviour
 
 	public void ColorObjectsByID(Dictionary<string, Color> idColors, Color defaultColor)
 	{
-		StartCoroutine(LoadAndColorByID(idColors, defaultColor));
+		if (runningColoringProcess != null)
+		{
+			StopCoroutine(runningColoringProcess);
+			runningColoringProcess = null;
+		}
+
+		runningColoringProcess = StartCoroutine(LoadAndColorByID(idColors, defaultColor));
 	}
+
 	private IEnumerator LoadAndColorByID(Dictionary<string, Color> idColors, Color defaultColor)
 	{
 		yield return LoadMetaData(mesh);

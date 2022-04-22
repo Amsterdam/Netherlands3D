@@ -1,0 +1,18 @@
+{
+    "name": "nl.netherlands3d.bag",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:f79f0c22a2465944c8bab47cbcc34cc5",
+        "GUID:9ca88277166fea644a31588b4f943acc"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

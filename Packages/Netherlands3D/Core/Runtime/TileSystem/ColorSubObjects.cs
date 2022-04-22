@@ -109,7 +109,16 @@ namespace Netherlands3D.TileSystem
             }
         }
 
-		public void SwapGradient(GradientContainer newGradientContainer)
+        private void Start()
+        {
+            if (disableOnStart)
+            {
+                this.enabled = false;
+                onEnableDrawingColors.started.Invoke(false);
+            }
+        }
+
+        public void SwapGradient(GradientContainer newGradientContainer)
 		{
             gradientContainer = newGradientContainer;
             UpdateColors(true);
@@ -192,7 +201,7 @@ namespace Netherlands3D.TileSystem
                     foreach (var line in lines)
                     {
                         Color color = Color.magenta;
-                        string id = line[0];
+                        string id = line[idColumn];
                         ParseColor(line[colorColumn], out color);
 
                         if (idColors.ContainsKey(id))

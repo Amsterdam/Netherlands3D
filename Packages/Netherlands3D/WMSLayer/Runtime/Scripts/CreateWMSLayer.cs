@@ -19,11 +19,14 @@ namespace Netherlands3D.Geoservice
         [Header("Events")]
         public StringEvent OnWMSUrlDefined_String;
         public BoolEvent AleenOpMaaiveld_Bool;
+        public BoolEvent ShowLayer_Bool;
         public TriggerEvent ShowWMSOnBuildings;
         public TriggerEvent ShowWMSOnTerrain;
         public TriggerEvent ShowWMSOnBuildingsAndTerrain;
         public TriggerEvent UnloadWMSService;
 
+        private bool OnlyOnTerrain_Memory = false;
+        private bool DisplayState = true;
         //public List<LayerMask> layermasks;
         
         // Start is called before the first frame update
@@ -55,16 +58,35 @@ namespace Netherlands3D.Geoservice
             {
                 AleenOpMaaiveld_Bool.started.AddListener(ShowOnlyOnTerrain);
             }
+            if (ShowLayer_Bool)
+            {
+                ShowLayer_Bool.started.AddListener(ShowLayer);
+            }
+        }
+        /// <summary>
+        /// turn the layer on or off
+        /// </summary>
+        /// <param name="OnOff"></param>
+        public void ShowLayer(bool OnOff)
+        {
+            DisplayState = OnOff;
+            if (layer)
+            {
+                layer.isEnabled = OnOff;
+                layer.gameObject.SetActive(OnOff);
+            }
         }
 
         void UnloadLayer()
         {
             tileHandler.RemoveLayer(layer);
+            Destroy(layer.gameObject);
             layer = null;
         }
 
         void ShowOnlyOnTerrain(bool toggleValue)
         {
+            OnlyOnTerrain_Memory = toggleValue;
             if (toggleValue)
             {
                 showWMSOnTerrain();
@@ -121,7 +143,16 @@ namespace Netherlands3D.Geoservice
             }
             layer = layercontainer.AddComponent<WMSImageLayer>();
             layer.tileSize = 1500;
-            showWMSOnBuildingsAndTerrain();
+            if (OnlyOnTerrain_Memory)
+            {
+                showWMSOnTerrain();
+            }
+            else
+            {
+                showWMSOnBuildingsAndTerrain();
+            }
+            
+
             DataSet dataSet = new DataSet();
             string datasetURL = baseURL.Replace("{Width}", "16");
             datasetURL = datasetURL.Replace("{Height}", "16");
@@ -149,6 +180,9 @@ namespace Netherlands3D.Geoservice
             layer.TilePrefab = TilePrefab;
             layer.Datasets.Add(dataSet);
             tileHandler.AddLayer(layer);
+
+
+            ShowLayer(DisplayState);
         }
 
         

@@ -1,7 +1,7 @@
 {
   "name": "nl.netherlands3d",
   "displayName": "Netherlands 3D",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "unity": "2020.3",
   "description": "A library of Unity3D systems/prefabs meant for reuse/addition that were initialy developed for 3D Amsterdam and 3D Utrecht.",
   "type": "library",
@@ -13,32 +13,49 @@
     "twin city",
     "geoservice"
   ],
-  "license": "EUPL-1.2",
   "licenseURL": "https://github.com/Amsterdam/Netherlands3D/blob/main/LICENSE.txt",
+  "license": "EUPL-1.2",
   "changelogURL": "https://github.com/Amsterdam/Netherlands3D/blob/main/CHANGELOG.md",
-  "samples": [
-    {
-      "displayName": "TileSystem",
-      "description": "basic TileSystem",
-      "path": "Core/Samples~/TileSystem"
-    },
-{
-	"displayName": "WMS-layer",
-	"description": "example of a wms-layer",
-	"path": "WMSLayer/Samples~/wmsLayer"
-},
-{
-	"displayName": "WMS-url",
-	"description": "runtime tooling for correct wms-url's for use in the WMS-Layer",
-	"path": "getWMSUrl/GeoService/Samples~/WMSSelector"
-}
-  ],
+    "samples": [
+        {
+            "displayName": "TileSystem",
+            "description": "Basic TileSystem",
+            "path": "Core/Samples~/TileSystem"
+        },
+        {
+            "displayName": "Cameras",
+            "description": "Example of a camera based on the one used in 3DAmsterdam and 3DUtrecht, with dragging, scroll zooming etc.",
+            "path": "Cameras/Samples~/Cameras"
+        },
+        {
+            "displayName": "Sun/Shadows",
+            "description": "Example of a Directional Light with shadows based on the position of the sun according to the location,date and time.",
+            "path": "Sun/Samples~/Sun"
+        },
+        {
+            "displayName": "WMS-layer",
+            "description": "Example of a wms-layer",
+            "path": "WMSLayer/Samples~/wmsLayer"
+        },
+        {
+            "displayName": "WMS-url",
+            "description": "Runtime tooling for correct wms-url's for use in the WMS-Layer",
+            "path": "getWMSUrl/GeoService/Samples~/WMSSelector"
+        },
+        {
+            "displayName": "BAG-information",
+            "description": "Example of showing pdok.nl BAG information in a canvas after clicking on buildings",
+            "path": "BAGInformation/Samples~/BAGInformation"
+        }
+    ],
   "hideInEditor": false,
   "author": {
     "name": "3D Amsterdam Team",
     "url": "https://3d.amsterdam.nl"
   },
   "dependencies": {
-    "com.unity.textmeshpro": "3.0.6"
+    "com.unity.textmeshpro": "3.0.6",
+    "com.unity.inputsystem": "1.3.0",
+    "com.unity.render-pipelines.universal": "1.3.0"
   }
 }

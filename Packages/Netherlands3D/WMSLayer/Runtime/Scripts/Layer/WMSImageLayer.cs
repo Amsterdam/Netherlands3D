@@ -126,6 +126,7 @@ namespace Netherlands3D.Geoservice
                 }
 
                 Texture myTexture = ((DownloadHandlerTexture)webRequest.downloadHandler).texture; ;
+                myTexture.wrapMode = TextureWrapMode.Clamp;
                 Tile tile = tiles[tileKey];
 
                 Material material = tile.gameObject.GetComponent<MeshRenderer>().material;
