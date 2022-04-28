@@ -152,7 +152,8 @@
       "source": "embedded",
       "dependencies": {
         "com.unity.textmeshpro": "3.0.6",
-        "com.unity.inputsystem": "1.3.0"
+        "com.unity.inputsystem": "1.3.0",
+        "com.unity.render-pipelines.universal": "1.3.0"
       }
     },
     "com.unity.modules.ai": {
