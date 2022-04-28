@@ -1,7 +1,7 @@
 # BAG informatie na klikken op gebouw
 
 Het Netherlands3D pakketje bevat een voorbeeld om BAG informatie op te halen van een pand door er op te klikken.
-Importeer het BAG-information voorbeeld via de Package Manager*:*
+Importeer het BAG-information voorbeeld via de Package Manager*.
 
 *![img](./imgs/bag/image1.png)*
 
