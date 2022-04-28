@@ -6,20 +6,20 @@ Hier hebben we natuurlijk een pakketje voor klaar staan in Netherlands3D.
 Controleer eerst of je Unity project juist is ingesteld om met invoer om te gaan.
 Onder ‘Edit/Project Settings/Player/Other options’ moet ‘Active input handling’ ingesteld staan op ‘Both’. Het is mogelijk dat Unity opnieuw moet starten na het toepassen.
 
-![img](.\imgs\camera\image1.png)
+![img](./imgs/camera/image1.png)
 
 
 
 Importeer nu het Netherlands3D voorbeeld ‘Cameras’ uit de Package Manager:
 
-![img](.\imgs\camera\image2.png)
+![img](./imgs/camera/image2.png)
 
 **Je kunt de Package Manager boven in Unity vinden onder ‘Window/Package Manager’*
 
 Verwijder eerst een eventuele standaard camera uit je eigen scene.
 Vervolgens kan je FreeCamera en de CameraInputSystemProvider kopieren naar je eigen scene om die camera te gebruiken.
 
-![img](.\imgs\camera\image3.png)
+![img](./imgs/camera/image3.png)
 
 Druk vervolgens op **Play** om je scene met de nieuwe camera te testen.
 
