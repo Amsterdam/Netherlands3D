@@ -29,27 +29,28 @@ Druk vervolgens op **Play** om je scene met de nieuwe camera te testen.
 
 ## Muis
 
-**Camera verslepen**: Klik en slepen Linkermuisknop
-**In- en uitzoomen**: Scrollen
-**Draai om punt**: Muiswiel indrukken of Alt + Linkermuisknop
-**Rondkijken**: Ctrl+Linkermuisknop + slepen
-Toetsenbord
+- **Camera verslepen**: Klik en slepen Linkermuisknop
+- **In- en uitzoomen**: Scrollen
+- **Draai om punt**: Muiswiel indrukken of Alt + Linkermuisknop
+- **Rondkijken**: Ctrl+Linkermuisknop + slepen
 
-**W of pijl omhoog**: Naar voren schuiven
-**S of pijl omlaag**: Naar achteren schuiven
+## Toetsenbord
 
-**A of pijl naar links**: Naar links schuiven
-**D of pijl naar rechts**: Naar rechts schuiven
-**Q**: Naar links draaien
-**E**: Naar rechts draaien
-**R**: Omhoog draaien
-**F**: Omlaag draaien
-**PageUp**: Camera omhoog bewegen
-**PageDown**: Camera omlaag bewegen
+- **W of pijl omhoog**: Naar voren schuiven
+- **S of pijl omlaag**: Naar achteren schuiven
+
+- **A of pijl naar links**: Naar links schuiven
+- **D of pijl naar rechts**: Naar rechts schuiven
+- **Q**: Naar links draaien
+- **E**: Naar rechts draaien
+- **R**: Omhoog draaien
+- **F**: Omlaag draaien
+- **PageUp**: Camera omhoog bewegen
+- **PageDown**: Camera omlaag bewegen
 
 ## Gamepad
 
-**Linker Stick**: Camera in richting van stick bewegen
-**Rechts Stick**: Camera draaien
-**Linker Stick indrukken**: Omhoog bewegen
-**Rechter Stick indrukken**: Omlaag bewegen
+- **Linker Stick**: Camera in richting van stick bewegen
+- **Rechts Stick**: Camera draaien
+- **Linker Stick indrukken**: Omhoog bewegen
+- **Rechter Stick indrukken**: Omlaag bewegen
