@@ -35,4 +35,5 @@ Kopieer dan de volgende objecten vanuit de voorbeeld Scene naar je eigen Scene:
 We moeten er ook nog voor zorgen dat het materiaal dat in je Scene wordt toegewezen aan de gebouwen ondersteuning heeft om de gebouwkleur te wijzigen. Stel daarom bij je Binary Mesh Layer van je gebouwen object bij Default Material List het Buildings_SelectionVertexColoring materiaal in.
 
 ![img](./imgs/bag/image4.png)
+
 *Je kan een materiaal vanuit je Assets op het element slepen, of via het bolletje rechts opzoeken*
