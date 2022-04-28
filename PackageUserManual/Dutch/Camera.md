@@ -52,4 +52,4 @@ Toetsenbord
 **Linker Stick**: Camera in richting van stick bewegen
 **Rechts Stick**: Camera draaien
 **Linker Stick indrukken**: Omhoog bewegen
-**Rechter Stick indrukken**: Omhoog bewegen
+**Rechter Stick indrukken**: Omlaag bewegen
