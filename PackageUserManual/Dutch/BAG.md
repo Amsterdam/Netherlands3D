@@ -3,9 +3,9 @@
 Het Netherlands3D pakketje bevat een voorbeeld om BAG informatie op te halen van een pand door er op te klikken.
 Importeer het BAG-information voorbeeld via de Package Manager*:*
 
-*![img](./imgs/bag/image1.png)
+*![img](./imgs/bag/image1.png)*
 
-*Je kunt de Package Manager boven in Unity vinden onder ‘Window/Package Manager’*
+*Je kunt de Package Manager boven in Unity vinden onder 'Window/Package Manager'*
 
 Open vervolgens de geimporteerde voorbeeld Scene genaamd ‘ShowBAGInformationOnClick’
 
