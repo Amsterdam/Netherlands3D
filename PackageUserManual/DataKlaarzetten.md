@@ -10,8 +10,7 @@ In de volgende handleiding gaan we het Unity-project zodanig aanpassen dat we di
 De TU Delft heeft voor heel nederland 3D-modellen van (bijna) alle gebouwen in nederland gegenereerd. 
 Deze modellen kunnen we downloaden en gebruiken.
 
-Ga hiervoor naar [3dbag.nl](http://3dbag.nl)
-en zoek het knopje "Downloads" 
+Ga hiervoor naar [3dbag.nl](http://3dbag.nl) en zoek het knopje "Downloads"
 Op deze pagina kun je een tegel selecteren en vervolgens op "Confirm Selection" klikken.
 
 ![](./imgs/dataklaarzetten/image1.png)
@@ -56,8 +55,7 @@ De bovenste in de lijst heeft altijd het icoontje "Latest", deze willen we downl
 Dit doen we door onder het kopje "Assets" op het zip-bestand te klikken.
 
 ![Afbeelding met tekst Automatisch gegenereerde
-beschrijving](./imgs/dataklaarzetten/image4.png){width="5.430030621172353in"
-height="3.9216885389326333in"}
+beschrijving](./imgs/dataklaarzetten/image4.png)
 
 Pak het zip-bestandje uit naar een map die je makkelijk terug kunt vinden.
 
@@ -88,68 +86,47 @@ Doe hetzelfde voor de bestanden "panden TUDelftLod1-2.json" en "panden TUDelftLo
 
 # Datasets omzetten
 
-Om de tilebaketool aan het werk te kunnen zetten hoeven we deze alleen
-nog maar te vertellen waar de bronbestanden staan en waar de resultaten
+Om de tilebaketool aan het werk te kunnen zetten hoeven we deze alleen nog maar te vertellen waar de bronbestanden staan en waar de resultaten
 geplaatst moeten worden. Dit doen wij in het instellingenbestand.
 
 ![Afbeelding met tekst Automatisch gegenereerde
-beschrijving](./imgs/dataklaarzetten/image7.png){width="6.3in"
-height="1.65in"}
+beschrijving](./imgs/dataklaarzetten/image7.png)
 
-"sourceFolder" verwijst naar de map waarin de gedownloade en uitgepakte
-bestanden met de terreindata staan. Let erop dat hier een "/" achter de
-mapnaam geplaatst moet worden.
+"sourceFolder" verwijst naar de map waarin de gedownloade en uitgepakte bestanden met de terreindata staan. 
+Let erop dat hier een "/" achter de mapnaam geplaatst moet worden.
 
-"outputFolder" verwijst naar de map waarin de resultaten geplaatst
-moeten worden, aangevuld met een stuk tekst waarmee de naam van de
-nieuwe bestanden moet beginnen.\
-in het bovenstaande voorbeeld wordt de output dus geplaatst in de map
-brondata/terreintest/output op de E-schijf, en alle bestandsnamen in de
-output beginnen met het voorvoegsel "Terrein-".
+"outputFolder" verwijst naar de map waarin de resultaten geplaatst moeten worden, aangevuld met een stuk tekst waarmee de naam van de
+nieuwe bestanden moet beginnen. In het bovenstaande voorbeeld wordt de output dus geplaatst in de map 'brondata/terreintest/output' op de E-schijf, en alle bestandsnamen in de output beginnen met het voorvoegsel "Terrein-".
 
-LET OP: 3D-Bassisvoorziening heeft voor de 2019 en de 2020 versies
-verschillende LOD-niveau benamingen.\
-voor de 2019-versie moet in het instellingen-bestand bij "lod :" 1.0
-ingevuld worden,\
-voor de 2020-versie moet dit 1.2 zijn.
+LET OP: 3D-Bassisvoorziening heeft voor de 2019 en de 2020 versies verschillende LOD-niveau benamingen.
+Voor de 2019-versie moet in het instellingen-bestand bij "lod :" 1.0 ingevuld worden, voor de 2020-versie moet dit 1.2 zijn.
 
-Wanneer we nu deze instellingen aangepast en opgeslagen hebben kunnen we
-de tilebaketool aan het werk zetten. Dit doen we op de volgende manier:
+Wanneer we nu deze instellingen aangepast en opgeslagen hebben kunnen we de tilebaketool aan het werk zetten. 
+Dit doen we op de volgende manier:
 
-Open de windows verkenner 2 keer en plaats dezen naast elkaar in het
-scherm. In de ene verkenner open je de map met het instellingenbestand
-en in de andere verkenner open je de map met de tilebaketool.
+Open de windows verkenner 2 keer en plaats dezen naast elkaar in het scherm. 
+In de ene verkenner open je de map met het instellingenbestand en in de andere verkenner open je de map met de tilebaketool.
 
-Vervolgens klik je op het instellingenbestand, sleep je deze op
-tilebaketool.exe in de andere verkenner en laat hem los.
+Vervolgens klik je op het instellingenbestand, sleep je deze op tilebaketool.exe in de andere verkenner en laat hem los.
 
 ![](./imgs/dataklaarzetten/image8.png)
 
-Op dit moment opent er een venster met een zwarte achtergrond, dit is de
-tilebaketool die vertelt wat hij op dit moment doet.
+Op dit moment opent er een venster met een zwarte achtergrond, dit is de tilebaketool die vertelt wat hij op dit moment doet.
 
 ![Afbeelding met tekst Automatisch gegenereerde
-beschrijving](./imgs/dataklaarzetten/image9.png){width="6.3in"
-height="3.2944444444444443in"}
+beschrijving](./imgs/dataklaarzetten/image9.png)
 
-Wanneer de Tilebaketool klaar is (voor het maaiveld kan dit enkele uren
-duren) zijn er in de outputfolder en heleboel bestanden gemaakt.
+Wanneer de Tilebaketool klaar is (voor het maaiveld kan dit enkele uren duren) zijn er in de outputfolder en heleboel bestanden gemaakt.
 
 Voor elke vierante kilometer zijn 5 bestanden gegenereerd:
 
-![](./imgs/dataklaarzetten/image10.png){width="6.3in"
-height="1.757638888888889in"}
+![](./imgs/dataklaarzetten/image10.png)
 
-Het bestand dat eindigt op .bin bevat de geometrie
+Het bestand dat eindigt op .bin bevat de geometrie.
 
-Het bestand dat eindigt op .bin.br bevat de geometrie, en is
-gecomprimeerd. Deze bestanden worden gebruikt als de 3D-viewer in een
-webbrowser draait.
+Het bestand dat eindigt op .bin.br bevat de geometrie, en is gecomprimeerd. 
+Deze bestanden worden gebruikt als de 3D-viewer in een webbrowser draait.
 
-Het bestand dat eindigt op -data.bin bevat data waaruit we kunnen
-herleiden welke stukjes geometrie bij een uniek object-id horen (
-bijvoorbeeld een bag-id)
+Het bestand dat eindigt op -data.bin bevat data waaruit we kunnen herleiden welke stukjes geometrie bij een uniek object-id horen (bijvoorbeeld een bag-id)
 
-Het bestand dat eindigt op .gltf zorgt er voor dat je de geometrie in
-het .bin-bestand kan openen in paint3D of andere software die
-gltf-bestanden kan openen.
+Het bestand dat eindigt op .gltf zorgt er voor dat je de geometrie in het .bin-bestand kan openen in paint3D of andere software die gltf-bestanden kan openen.
