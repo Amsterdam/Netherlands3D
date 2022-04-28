@@ -5,7 +5,7 @@ Importeer het BAG-information voorbeeld via de Package Manager*:*
 
 *![img](./imgs/bag/image1.png)
 
-[^Je kunt de Package Manager boven in Unity vinden onder ‘Window/Package Manager’]: 
+*Je kunt de Package Manager boven in Unity vinden onder ‘Window/Package Manager’*
 
 Open vervolgens de geimporteerde voorbeeld Scene genaamd ‘ShowBAGInformationOnClick’
 
@@ -19,9 +19,7 @@ Om te beginnen hebben we het Select Sub Objects script nodig die op het Building
 Kopieer die dmv. rechtermuisklik, ‘Copy Component’, en vervolgens ‘Paste Component As New’ op je eigen Buildings object in je scene. 
 Op deze manier kopieer je ook de instellingen van het voorbeeld direct mee.
 
-![img](./imgs/bag/image3.png)
-
-[^Verander eventueel de Selection Vertex Color om een andere selectiekleur te gebruiken]: 
+![img](./imgs/bag/image3.png)*Verander eventueel de Selection Vertex Color om een andere selectiekleur te gebruiken*
 
 Kopieer dan de volgende objecten vanuit de voorbeeld Scene naar je eigen Scene:
 
@@ -39,5 +37,4 @@ We moeten er ook nog voor zorgen dat het materiaal dat in je Scene wordt toegewe
 
 ![img](./imgs/bag/image4.png)
 
-[^Je kan een materiaal vanuit je Assets op het element slepen, of via het bolletje rechts opzoeken]: 
-
+*Je kan een materiaal vanuit je Assets op het element slepen, of via het bolletje rechts opzoeken*
