@@ -15,7 +15,28 @@ MonoBehaviour:
   name: 1800/1801
   description: Test
   startDate:
-    dateTimeString: 1800/03/30 00:00
+    dateTimeString: 1800/03/30
   endDate:
-    dateTimeString: 1801/03/31 00:00
-  category: Huizen
+    dateTimeString: 1801/03/31
+  layer: Huizen
+  eventPressed:
+    m_PersistentCalls:
+      m_Calls: []
+  eventScreenEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  eventScreenExit:
+    m_PersistentCalls:
+      m_Calls: []
+  eventCurrentTimeEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  eventCurrentTimeExit:
+    m_PersistentCalls:
+      m_Calls: []
+  eventLayerShow:
+    m_PersistentCalls:
+      m_Calls: []
+  eventLayerHide:
+    m_PersistentCalls:
+      m_Calls: []

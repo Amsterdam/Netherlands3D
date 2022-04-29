@@ -173,9 +173,8 @@ namespace Netherlands3D.Timeline
         }
 
         /// <summary>
-        /// Check if the datetime is in the datetime range based on the time unit
+        /// Check if the datetime is in the datetime range
         /// </summary>
-        /// <param name="unit"></param>
         /// <param name="dateTime"></param>
         /// <param name="rangeStart"></param>
         /// <param name="rangeEnd"></param>

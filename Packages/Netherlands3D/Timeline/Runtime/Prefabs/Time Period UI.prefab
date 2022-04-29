@@ -50,10 +50,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1345e552dccde1545ac3fba6be7e6d52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dEvent: {fileID: 0}
+  timePeriod: {fileID: 0}
   rectTransform: {fileID: 6648799158405934587}
   nameField: {fileID: 6648799159244977129}
-  eventLayer: {fileID: 0}
+  timePeriodsLayer: {fileID: 0}
 --- !u!1 &6648799158497113895
 GameObject:
   m_ObjectHideFlags: 0
@@ -175,8 +175,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6184441824040185694}
-        m_TargetAssemblyTypeName: Netherlands3D.Timeline.EventUI, Netherlands3D.Timeline
-        m_MethodName: InvokeEvent
+        m_TargetAssemblyTypeName: Netherlands3D.Timeline.TimePeriodUI, Netherlands3D.Timeline
+        m_MethodName: Pressed
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

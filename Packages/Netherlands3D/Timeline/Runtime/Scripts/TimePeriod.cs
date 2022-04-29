@@ -21,18 +21,23 @@ namespace Netherlands3D.Timeline
         public DateTimeSerializable startDate;
         [Tooltip("The end date of the time period")]
         public DateTimeSerializable endDate;
-        [Tooltip("The category of the time period")]
-        public string category;
-        [Space]
-        [Tooltip("The unity time period that gets invoked when the time period gets invoked")]
-        public UnityEvent unityEvent;
+        [Tooltip("The layer of the time period")]
+        public string layer;
 
-        /// <summary>
-        /// Invoke the time period unity event
-        /// </summary>
-        public void Invoke()
-        {
-            unityEvent.Invoke();
-        }
+        [Header("Events")]
+        [Tooltip("The event that gets invoked when the time period is pressed")]
+        public UnityEvent eventPressed;
+        [Tooltip("When the time period enters on screen")]
+        public UnityEvent eventScreenEnter;
+        [Tooltip("When the time period exits off screen")]
+        public UnityEvent eventScreenExit;
+        [Tooltip("When the time period enters the currentTime range")]
+        public UnityEvent eventCurrentTimeEnter;
+        [Tooltip("When the time period exits the currentTime range")]
+        public UnityEvent eventCurrentTimeExit;
+        [Tooltip("When the layer of this time period gets set to show its periods")]
+        public UnityEvent eventLayerShow;
+        [Tooltip("When the layer of this time period gets set to hide its periods")]
+        public UnityEvent eventLayerHide;
     }
 }

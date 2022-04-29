@@ -9,15 +9,15 @@ namespace Netherlands3D.Timeline
 {
 
     /// <summary>
-    /// A category of a event
+    /// A layer UI element of a time period layer
     /// </summary>
-    public class Category : MonoBehaviour
+    public class LayerUI : MonoBehaviour
     {
         [Header("Components")]
         [SerializeField] private TextMeshProUGUI nameField;
 
         /// <summary>
-        /// Name of the category
+        /// Name of the layer
         /// </summary>
         private new string name;
         /// <summary>
@@ -25,17 +25,13 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private TimePeriodsLayer eventLayer;
         /// <summary>
-        /// The time line component of this category
+        /// The time line component of this layer
         /// </summary>
         private TimelineUI timelineUI;
         /// <summary>
-        /// Is the category visible
+        /// Is the layer visible
         /// </summary>
         private bool isVisible = true;
-        /// <summary>
-        /// The rect transform attached to this category
-        /// </summary>
-        private RectTransform rectTransform;
 
         public void Initialize(string name, TimePeriodsLayer eventLayer, TimelineUI timelineUI)
         {
@@ -43,9 +39,11 @@ namespace Netherlands3D.Timeline
             nameField.text = name;
             this.eventLayer = eventLayer;
             this.timelineUI = timelineUI;
-            rectTransform = GetComponent<RectTransform>();
         }
 
+        /// <summary>
+        /// Toggle the visability of the layer
+        /// </summary>
         public void ToggleVisability()
         {
             isVisible = !isVisible;

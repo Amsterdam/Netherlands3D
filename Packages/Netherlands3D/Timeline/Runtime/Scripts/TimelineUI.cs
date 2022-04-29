@@ -3,17 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using SLIDDES.UI;
 using TMPro;
 using System.Globalization;
+using UnityEngine.EventSystems;
 
 namespace Netherlands3D.Timeline
 {
     /// <summary>
     /// Main script for time line UI
     /// </summary>
-    public class TimelineUI : MonoBehaviour
+    public class TimelineUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         /// <summary>
         /// The width of the parent rect
@@ -22,6 +24,9 @@ namespace Netherlands3D.Timeline
 
         [Tooltip("The scriptable so data")]
         public TimelineData timelineData;
+
+        [Header("Values")]
+        [SerializeField] private float mouseSensitivity = 10;
 
         [Header("UI Components")]
         public RectTransform timeBarParent;
@@ -33,11 +38,13 @@ namespace Netherlands3D.Timeline
         public TextMeshProUGUI playButtonField;
 
         [Header("Timeline Components")]
-        [SerializeField] private GameObject prefabTimePeriodsLayer;
+        [SerializeField] private GameObject prefabTimePeriodsUILayer;
         [SerializeField] private GameObject prefabTimePeriodUI;
-        [SerializeField] private GameObject prefabCategory;
+        [SerializeField] private GameObject prefabLayerUI;
         [SerializeField] private Transform parentTimePeriodsLayers;
-        [SerializeField] private Transform parentCategories;
+        [SerializeField] private Transform parentLayersUI;
+        [SerializeField] private ScrollRect scrollRectTimePeriodLayers;
+        [SerializeField] private ScrollRect scrollRectLayers;
 
         [Header("Time Scrubber Components")]
         [SerializeField] private TimeScrubber timeScrubber;
@@ -55,11 +62,13 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// The current time line date
         /// </summary>
+        /// <seealso cref="SetCurrentDate(DateTime)" "For setting currentDate"/>
         public DateTime CurrentDate 
         { 
             get { return currentDate; } 
             set
             {
+                previousCurrentDate = currentDate;
                 currentDate = value;
                 onCurrentDateChange?.Invoke(currentDate);
             }
@@ -70,17 +79,37 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private bool isAutomaticlyPlaying;
         /// <summary>
-        /// The time unit used for the timeline
+        /// Is the user dragging its mouse on the time bar?
         /// </summary>
-        private TimeUnit.Unit timeUnit = TimeUnit.Unit.year;
+        private bool mouseIsDragging;
+        /// <summary>
+        /// Is the mouse on the ui?
+        /// </summary>
+        private bool mouseIsOn;
+        /// <summary>
+        /// Has the pointer event data for the scroll rects been send?
+        /// </summary>
+        private bool hasSendPointerEventData;
         /// <summary>
         /// Array int holding the order of the indexes of timeBars in which they appear/move
         /// </summary>
         private int[] barIndexes;
         /// <summary>
+        /// The time unit used for the timeline
+        /// </summary>
+        private TimeUnit.Unit timeUnit = TimeUnit.Unit.year;
+        /// <summary>
+        /// The position of the mouse when left input was pressed
+        /// </summary>
+        private Vector3 mouseDownPosition;
+        /// <summary>
         /// The current timeline date
         /// </summary>
         private DateTime currentDate;
+        /// <summary>
+        /// The previous currentDate
+        /// </summary>
+        private DateTime previousCurrentDate;
         /// <summary>
         /// The most visable date left
         /// </summary>
@@ -100,7 +129,7 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// List of all categories scripts
         /// </summary>
-        private List<Category> categories = new List<Category>();
+        private List<LayerUI> categories = new List<LayerUI>();
         /// <summary>
         /// String of each event layer with as key category name
         /// </summary>
@@ -109,7 +138,15 @@ namespace Netherlands3D.Timeline
         /// Dictionary containing the active eventUI scripts with corresponding data.data index id
         /// </summary>
         /// <remarks><data.data[i], EventUI></remarks>
-        private Dictionary<int, TimePeriodUI> visibleEventsUI = new Dictionary<int, TimePeriodUI>();
+        private Dictionary<int, TimePeriodUI> visibleTimePeriodsUI = new Dictionary<int, TimePeriodUI>();
+        /// <summary>
+        /// Pointer event data that gets used for the scrollrects
+        /// </summary>
+        private PointerEventData pointerEventDataBeginDragHandler;
+        /// <summary>
+        /// Pointer event data that gets used for the scrollrects
+        /// </summary>
+        private PointerEventData pointerEventDataEndDragHandler;
 
         // Start is called before the first frame update
         void Start()
@@ -117,7 +154,14 @@ namespace Netherlands3D.Timeline
             LoadData();
             SetCurrentDate(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0));
         }
-                        
+
+        private void Update()
+        {
+            OnPointerStay();
+        }
+
+        #region Timeline
+
         /// <summary>
         /// Get the closest bar based on the local x position
         /// </summary>
@@ -150,7 +194,7 @@ namespace Netherlands3D.Timeline
 
             // Clear old
             foreach(Transform item in parentTimePeriodsLayers.transform) Destroy(item.gameObject);
-            foreach(Transform item in parentCategories.transform) Destroy(item.gameObject);
+            foreach(Transform item in parentLayersUI.transform) Destroy(item.gameObject);
             categories.Clear();
             eventLayers.Clear();
 
@@ -161,9 +205,9 @@ namespace Netherlands3D.Timeline
             string[] keys = timelineData.sortedTimePeriods.Keys.ToArray();
             foreach(string item in keys)
             {
-                TimePeriodsLayer e = Instantiate(prefabTimePeriodsLayer, parentTimePeriodsLayers).GetComponent<TimePeriodsLayer>();
+                TimePeriodsLayer e = Instantiate(prefabTimePeriodsUILayer, parentTimePeriodsLayers).GetComponent<TimePeriodsLayer>();
                 eventLayers.Add(item, e);
-                Category c = Instantiate(prefabCategory, parentCategories).GetComponent<Category>();
+                LayerUI c = Instantiate(prefabLayerUI, parentLayersUI).GetComponent<LayerUI>();
                 c.Initialize(item, e, this);
                 categories.Add(c);
             }
@@ -439,6 +483,10 @@ namespace Netherlands3D.Timeline
             t2.transform.localPosition = new Vector3(localPosX + TimeBarParentWidth, t2.transform.localPosition.y, t2.transform.localPosition.z);
         }
 
+        /// <summary>
+        /// Scroll the timebar automaticly
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator ScrollTimeBarAutomaticly()
         {
             while(true)
@@ -448,6 +496,10 @@ namespace Netherlands3D.Timeline
             }
         }
 
+        /// <summary>
+        /// Scroll the time scrubber automaticly
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator ScrollTimeScrubberAutomaticly()
         {
             while(true)
@@ -468,46 +520,61 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// Based on what is visable show the events
         /// </summary>
-        private void UpdateEvents()
+        private void UpdateTimePeriods()
         {
-            // Based on whats visable, show corresponding events
-            // First loop trough already existing events and check if they are still visable or need to be removed
-            int[] keys = visibleEventsUI.Keys.ToArray();
+            // Based on whats visable, show corresponding time periods
+            // First loop trough already existing time periods and check if they are still visable or need to be removed
+            int[] keys = visibleTimePeriodsUI.Keys.ToArray();
             int k;
             for(int i = keys.Length - 1; i >= 0; i--) // Loop backwards
             {
                 k = keys[i];
-                if(!IsTimePeriodVisible(visibleEventsUI[k].timePeriod))
+                if(!IsTimePeriodVisible(visibleTimePeriodsUI[k].timePeriod))
                 {
-                    visibleEventsUI[k].Remove();
-                    visibleEventsUI.Remove(k);
+                    // Remove
+                    visibleTimePeriodsUI[k].Remove();
+                    visibleTimePeriodsUI.Remove(k);
                 }
             }
 
-            // Loop through each event
-            TimePeriod dEvent;
+            // Loop through each time period
+            TimePeriod timePeriod;
             for(int i = 0; i < timelineData.timePeriods.Count; i++)
             {
-                // If event is already in eventUIIDS skip it since it is already checked
-                if(visibleEventsUI.ContainsKey(i)) continue;
+                // If time periods is already in visibleEventsUI skip it since it is already checked
+                if(visibleTimePeriodsUI.ContainsKey(i)) continue;
 
-                // Check if event is visable and if so add it
-                dEvent = timelineData.timePeriods[i];
-                if(IsTimePeriodVisible(dEvent))
+                // Check if time period is visable and if so add it
+                timePeriod = timelineData.timePeriods[i];
+                if(IsTimePeriodVisible(timePeriod))
                 {
-                    // Event is visable, show it & add to event layer
-                    visibleEventsUI.Add(i, eventLayers[dEvent.category].AddTimePeriod(dEvent, prefabTimePeriodUI));
+                    // Time period is visable, show it & add to time periods layer
+                    visibleTimePeriodsUI.Add(i, eventLayers[timePeriod.layer].AddTimePeriod(timePeriod, prefabTimePeriodUI));
                 }
             }
 
-            // Now update each visible event
-            foreach(var item in visibleEventsUI.Values)
+            // Now update each visible time period
+            foreach(var item in visibleTimePeriodsUI.Values)
             {
                 float xL = EventUIGetPosX(item.timePeriod.startDate, false);
                 //Debug.LogWarning(visableDateLeft + " XL " + xL);
                 float xR = EventUIGetPosX(item.timePeriod.endDate, true);
                 //Debug.LogWarning(visableDateRight + " XR " + xR);
                 item.UpdateUI(xL, xR);
+
+                // Check the time period events
+                // Current Time Enter
+                if(TimeUnit.DateTimeInRange(currentDate, item.timePeriod.startDate, item.timePeriod.endDate) &&
+                    !TimeUnit.DateTimeInRange(previousCurrentDate, item.timePeriod.startDate, item.timePeriod.endDate))
+                {
+                    item.timePeriod.eventCurrentTimeEnter.Invoke();
+                }
+                // Current Time Exit
+                else if(TimeUnit.DateTimeInRange(previousCurrentDate, item.timePeriod.startDate, item.timePeriod.endDate) &&
+                    !TimeUnit.DateTimeInRange(currentDate, item.timePeriod.startDate, item.timePeriod.endDate))
+                {
+                    item.timePeriod.eventCurrentTimeExit.Invoke();
+                }
             }
         }
 
@@ -546,7 +613,111 @@ namespace Netherlands3D.Timeline
             visableDateLeft = new DateTime(visableDateLeft.Year, visableDateLeft.Month, visableDateLeft.Day, 0, 0, 0);
             visableDateRight = new DateTime(visableDateRight.Year, visableDateRight.Month, visableDateRight.Day, 0, 0, 0);
 
-            UpdateEvents();
+            UpdateTimePeriods();
         }
+
+        #endregion Timeline
+
+        #region Mouse Interaction
+
+        /// <summary>
+        /// User presses mouse down on time bar
+        /// </summary>
+        /// <param name="eventData"></param>
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            mouseIsDragging = true;
+            mouseDownPosition = Input.mousePosition;
+        }
+
+        /// <summary>
+        /// The mouse is on the ui
+        /// </summary>
+        public void OnPointerStay()
+        {
+            if(mouseIsDragging)
+            {
+                float x = Mathf.Abs(mouseDownPosition.x - Input.mousePosition.x);
+                float y = Mathf.Abs(mouseDownPosition.y - Input.mousePosition.y);
+                print(x + " " + y);
+                // Based on direction, scroll horizontal or vertical (& minimum distance needed)
+                if(Math.Abs(x - y) >= 3 && x >= y) //TODO mouse x/y overflow needs to be smooth instead of having to mouseup/down to switch
+                {
+                    int dirX = mouseDownPosition.x < Input.mousePosition.x ? 1 : -1;
+                    scrollRectTimePeriodLayers.enabled = false;
+                    scrollRectLayers.enabled = false;
+                    ScrollTimeBar(Vector3.Distance(mouseDownPosition, Input.mousePosition) * dirX * mouseSensitivity * UnityEngine.Time.deltaTime);
+                    PlayScroll(false);
+                }
+                else
+                {
+                    scrollRectTimePeriodLayers.enabled = true;
+                    scrollRectLayers.enabled = true;
+                    if(!hasSendPointerEventData && pointerEventDataBeginDragHandler != null)
+                    {
+                        scrollRectTimePeriodLayers.OnBeginDrag(pointerEventDataBeginDragHandler);
+                        scrollRectLayers.OnBeginDrag(pointerEventDataBeginDragHandler);
+                        hasSendPointerEventData = true;
+                    }
+                }
+            }
+
+            if(mouseIsOn)
+            {
+                if(Input.mouseScrollDelta.y < 0)
+                {
+                    // Up
+                    SetTimeUnit(-1);
+                }
+                else if(Input.mouseScrollDelta.y > 0)
+                {
+                    // Down
+                    SetTimeUnit(1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// User presses mouse up on time bar
+        /// </summary>
+        /// <param name="eventData"></param>
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            mouseIsDragging = false;
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            mouseIsOn = true;
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            mouseIsOn = false;
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            if(scrollRectTimePeriodLayers.enabled)
+            {
+                scrollRectTimePeriodLayers.OnDrag(eventData);
+                scrollRectLayers.OnDrag(eventData);
+            }
+        }
+
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            hasSendPointerEventData = false;
+            pointerEventDataBeginDragHandler = eventData;            
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            pointerEventDataEndDragHandler = eventData;
+            scrollRectTimePeriodLayers.OnEndDrag(eventData);
+            scrollRectLayers.OnEndDrag(eventData);
+        }
+
+        #endregion
     }
 }

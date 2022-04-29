@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 namespace Netherlands3D.Timeline.Samples
 {
@@ -11,34 +12,39 @@ namespace Netherlands3D.Timeline.Samples
         public GameObject cube;
         public TimelineUI timelineUI;
         public GameObject sphere;
+        public TextMeshProUGUI eventStateField;
 
         private bool cubeActive = true;
         private bool sphereActive = true;
 
         private void OnEnable()
         {
-            timePeriod.unityEvent.AddListener(ToggleCube);
+            timePeriod.eventPressed.AddListener(ToggleCube);
             timelineUI.onCurrentDateChange.AddListener(OnDateChange);
             timelineUI.onCategoryToggle.AddListener(OnCategoryToggle);
+
+            timePeriod.eventScreenEnter.AddListener(() => eventStateField.text = "ScreenEnter");
+            timePeriod.eventScreenExit.AddListener(() => eventStateField.text = "ScreenExit");
+            timePeriod.eventCurrentTimeEnter.AddListener(() => eventStateField.text = "CT Enter");
+            timePeriod.eventCurrentTimeExit.AddListener(() => eventStateField.text = "CT Exit");
+            timePeriod.eventLayerShow.AddListener(() => eventStateField.text = "Layer Show");
+            timePeriod.eventLayerHide.AddListener(() => eventStateField.text = "Layer Hide");
+            timePeriod.eventPressed.AddListener(() => eventStateField.text = "Pressed");
         }
 
         private void OnDisable()
         {
-            timePeriod.unityEvent.RemoveListener(ToggleCube);
+            timePeriod.eventPressed.RemoveListener(ToggleCube);
             timelineUI.onCurrentDateChange.RemoveListener(OnDateChange);
             timelineUI.onCategoryToggle.RemoveListener(OnCategoryToggle);
-        }
 
-        // Start is called before the first frame update
-        void Start()
-        {
-        
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-        
+            timePeriod.eventScreenEnter.RemoveListener(() => eventStateField.text = "ScreenEnter");
+            timePeriod.eventScreenExit.RemoveListener(() => eventStateField.text = "ScreenExit");
+            timePeriod.eventCurrentTimeEnter.RemoveListener(() => eventStateField.text = "CT Enter");
+            timePeriod.eventCurrentTimeExit.RemoveListener(() => eventStateField.text = "CT Exit");
+            timePeriod.eventLayerShow.RemoveListener(() => eventStateField.text = "Layer Show");
+            timePeriod.eventLayerHide.RemoveListener(() => eventStateField.text = "Layer Hide");
+            timePeriod.eventPressed.RemoveListener(() => eventStateField.text = "Pressed");
         }
 
         public void ToggleCube()

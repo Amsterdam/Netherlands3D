@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6409091396589923664}
   - component: {fileID: 4828376916749320811}
   m_Layer: 5
-  m_Name: Time Periods Layer
+  m_Name: Time Periods UI Layer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50,7 +50,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rectTransform: {fileID: 0}
-  events: []
+  canvasGroup: {fileID: 0}
+  timePeriodsUI: []
 --- !u!225 &4828376916749320811
 CanvasGroup:
   m_ObjectHideFlags: 0

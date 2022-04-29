@@ -15,7 +15,28 @@ MonoBehaviour:
   name: 2000/2040
   description: Test
   startDate:
-    dateTimeString: 2000/02/01 00:00
+    dateTimeString: 2000/02/01
   endDate:
-    dateTimeString: 2040/01/01 00:00
-  category: Bomen
+    dateTimeString: 2040/01/01
+  layer: Bomen
+  eventPressed:
+    m_PersistentCalls:
+      m_Calls: []
+  eventScreenEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  eventScreenExit:
+    m_PersistentCalls:
+      m_Calls: []
+  eventCurrentTimeEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  eventCurrentTimeExit:
+    m_PersistentCalls:
+      m_Calls: []
+  eventLayerShow:
+    m_PersistentCalls:
+      m_Calls: []
+  eventLayerHide:
+    m_PersistentCalls:
+      m_Calls: []

@@ -37,12 +37,12 @@ namespace Netherlands3D.Timeline
         }
 
         /// <summary>
-        /// Invokes the event from this UI
+        /// When the button of this UI is pressed
         /// </summary>
-        public void InvokeEvent()
+        public void Pressed()
         {
             if(timePeriod == null) return;
-            timePeriod.Invoke();
+            timePeriod.eventPressed.Invoke();
         }
 
         /// <summary>
@@ -50,6 +50,7 @@ namespace Netherlands3D.Timeline
         /// </summary>
         public void Remove()
         {
+            timePeriod.eventScreenExit.Invoke();
             timePeriodsLayer.timePeriodsUI.Remove(this);
             Destroy(gameObject);
         }

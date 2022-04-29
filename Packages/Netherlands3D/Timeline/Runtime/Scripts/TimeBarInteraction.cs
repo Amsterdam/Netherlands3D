@@ -40,6 +40,7 @@ namespace Netherlands3D.Timeline
         {
             isDragging = true;
             mouseDownPosition = Input.mousePosition;
+            print("yo");
         }
 
         /// <summary>

@@ -30,15 +30,15 @@ namespace Netherlands3D.Timeline
             foreach(TimePeriod item in timePeriods)
             {
                 // Check if event category is already present
-                if(sortedTimePeriods.ContainsKey(item.category))
+                if(sortedTimePeriods.ContainsKey(item.layer))
                 {
                     // Add to existing
-                    sortedTimePeriods[item.category].Add(item);
+                    sortedTimePeriods[item.layer].Add(item);
                 }
                 else
                 {
                     // Add to new
-                    sortedTimePeriods.Add(item.category, new List<TimePeriod>() { item });
+                    sortedTimePeriods.Add(item.layer, new List<TimePeriod>() { item });
                 }
             }
         }

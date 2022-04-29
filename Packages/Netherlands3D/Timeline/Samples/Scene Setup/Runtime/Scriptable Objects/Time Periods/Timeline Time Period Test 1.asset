@@ -15,7 +15,28 @@ MonoBehaviour:
   name: 2018/2024
   description: Test
   startDate:
-    dateTimeString: 2018/02/01 00:00
+    dateTimeString: 2018/02/01
   endDate:
-    dateTimeString: 2024/01/01 00:00
-  category: Auto's
+    dateTimeString: 2024/01/01
+  layer: Auto's
+  eventPressed:
+    m_PersistentCalls:
+      m_Calls: []
+  eventScreenEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  eventScreenExit:
+    m_PersistentCalls:
+      m_Calls: []
+  eventCurrentTimeEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  eventCurrentTimeExit:
+    m_PersistentCalls:
+      m_Calls: []
+  eventLayerShow:
+    m_PersistentCalls:
+      m_Calls: []
+  eventLayerHide:
+    m_PersistentCalls:
+      m_Calls: []

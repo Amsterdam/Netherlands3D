@@ -32,6 +32,7 @@ namespace Netherlands3D.Timeline
             TimePeriodUI a = Instantiate(prefabTimePeriodUI, transform).GetComponent<TimePeriodUI>();
             a.Initialize(timePeriod, this);
             timePeriodsUI.Add(a);
+            timePeriod.eventScreenEnter.Invoke();
             return a;
         }
     }
