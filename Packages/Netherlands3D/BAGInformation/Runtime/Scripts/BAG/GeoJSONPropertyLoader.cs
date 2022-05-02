@@ -15,7 +15,6 @@
 *  implied. See the License for the specific language governing
 *  permissions and limitations under the License.
 */
-using Netherlands3D.DataParsing;
 using Netherlands3D.Events;
 using Netherlands3D.Utilities;
 using System;
