@@ -13,8 +13,10 @@
     "twin city",
     "geoservice"
   ],
-  "licenseURL": "https://github.com/Amsterdam/Netherlands3D/blob/main/LICENSE.txt",
   "license": "EUPL-1.2",
+  "documentationUrl": "https://github.com/Amsterdam/Netherlands3D/tree/main/PackageUserManual/Dutch",
+  "changelogUrl": "https://github.com/Amsterdam/Netherlands3D",
+  "licensesUrl": "https://github.com/Amsterdam/Netherlands3D/blob/main/LICENSE.txt",
   "changelogURL": "https://github.com/Amsterdam/Netherlands3D/blob/main/CHANGELOG.md",
     "samples": [
         {
