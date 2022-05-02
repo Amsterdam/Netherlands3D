@@ -30,7 +30,6 @@ namespace Netherlands3D.FileImporter
         [DllImport("__Internal")]        
         private static extern void AddFileInput(string inputName, string fileExtension, bool multiSelect);
 
-
         [Tooltip("HTML DOM ID")]
         [SerializeField] private string fileInputName = "fileInput";
         [Tooltip("The allowed file extention to load. Don't put a '.' at the start")]
@@ -53,7 +52,7 @@ namespace Netherlands3D.FileImporter
         {
             button = GetComponent<Button>();
             // Set file input name with generated id to avoid html conflictions
-            fileInputName += gameObject.GetInstanceID();
+            fileInputName += "_" + gameObject.GetInstanceID();
             name = fileInputName;
 
             // Execute setup based on platform
@@ -137,6 +136,14 @@ namespace Netherlands3D.FileImporter
                 Debug.Log("Invoked native Unity button click event on " + this.gameObject.name);
                 button.onClick.Invoke();
             }
+        }
+#endif
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            // Check if user didn't put a . in the file extention
+            if(fileExtention.Contains(".")) fileExtention = fileExtention.Replace(".", "");
         }
 #endif
     }
