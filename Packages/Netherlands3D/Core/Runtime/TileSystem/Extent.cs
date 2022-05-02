@@ -45,6 +45,19 @@ public struct Extent
     public double Width => MaxX - MinX;
     public double Height => MaxY - MinY;
     public double Area => Width * Height;
+
+	public override bool Equals(object obj)
+    {
+        if (!(obj is Extent extent))
+            return false;
+
+        return this.CenterX == extent.CenterX && this.MinX == extent.MinX && this.MinY == extent.MinY && this.MaxX == extent.MaxX && this.MaxY == extent.MaxY;
+    }
+
+	public override int GetHashCode()
+	{
+		return base.GetHashCode();
+	}
 }
 
 

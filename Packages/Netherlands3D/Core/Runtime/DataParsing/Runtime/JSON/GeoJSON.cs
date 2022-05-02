@@ -16,8 +16,9 @@
 *  permissions and limitations under the License.
 */
 using System.Collections.Generic;
+using Netherlands3D.Utilities;
 
-namespace Netherlands3D.Utilities
+namespace Netherlands3D.DataParsing
 {
     /// <summary>
     /// This class uses a custom 'no garbage collection' way of parsing JSON data

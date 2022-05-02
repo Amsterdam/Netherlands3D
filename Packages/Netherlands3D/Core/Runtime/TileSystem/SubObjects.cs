@@ -208,7 +208,8 @@ public partial class SubObjects : MonoBehaviour
 
 	private IEnumerator LoadAndColorByID(Dictionary<string, Color> idColors, Color defaultColor)
 	{
-		yield return LoadMetaData(mesh);
+		if(SubObjectsData.Count == 0)
+			yield return LoadMetaData(mesh);
 
 		if (this.gameObject == null || mesh == null) yield break;
 

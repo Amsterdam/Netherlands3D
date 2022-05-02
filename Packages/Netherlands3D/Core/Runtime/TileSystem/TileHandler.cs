@@ -47,6 +47,7 @@ namespace Netherlands3D.TileSystem
 		[SerializeField]
 		private bool filterByCameraFrustum = true;
 		
+		[HideInInspector]
 		public List<Layer> layers = new List<Layer>();
 		
 
@@ -61,10 +62,7 @@ namespace Netherlands3D.TileSystem
 		/// <summary>
 		/// list of tilechanges, ready to be processed
 		/// </summary>
-		[SerializeField]
 		private List<TileChange> pendingTileChanges = new List<TileChange>();
-		[SerializeField]	//list with active tilechanges, for debugging
-		private List<TileChange> activeTileChangesView = new List<TileChange>();
 
 		/// <summary>
 		/// dictionary with tilechanges that are curently being processed
@@ -112,6 +110,12 @@ namespace Netherlands3D.TileSystem
 
 		void Start()
 		{
+			layers = GetComponentsInChildren<Layer>(false).ToList();
+			if (layers.Count == 0)
+			{
+				Debug.Log("No active layers found in TileHandler", this.gameObject);
+			}
+
 			pauseLoading = false;
 			CacheCameraFrustum();
 

@@ -46,6 +46,11 @@
             "displayName": "BAG-information",
             "description": "Example of showing pdok.nl BAG information in a canvas after clicking on buildings",
             "path": "BAGInformation/Samples~/BAGInformation"
+        },
+        {
+            "displayName": "Subobject-filtering",
+            "description": "Example showing filtering out subobjects based on a buildyear slider",
+            "path": "SubobjectFiltering/Samples~/SubobjectFiltering"
         }
     ],
   "hideInEditor": false,

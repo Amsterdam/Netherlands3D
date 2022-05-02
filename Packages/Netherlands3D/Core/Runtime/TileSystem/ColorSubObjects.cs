@@ -13,7 +13,6 @@ namespace Netherlands3D.TileSystem
     {
         private Dictionary<string, Color> idColors;
 
-
         [SerializeField]
         private bool disableOnStart = false;
 
@@ -25,6 +24,8 @@ namespace Netherlands3D.TileSystem
         [SerializeField]
         private ObjectEvent onReceiveIdsAndFloats;
         [SerializeField]
+        private ObjectEvent onReceiveIdsAndFloatsForAlpha;
+        [SerializeField]
         private GradientContainerEvent onSetGradient;
 
         [SerializeField]
@@ -34,22 +35,8 @@ namespace Netherlands3D.TileSystem
 
         [SerializeField]
         private TriggerEvent onClearData;
-
-        [Header("Or from URL")]
-        [SerializeField]
-        [Tooltip("CSV should have: id;color")]
-        private string dataSource = "file:///somecsv.csv";
-
-        [SerializeField]
-        private int idColumn = 0;
-
-        [SerializeField]
-        private int colorColumn = 2;
-
-        [SerializeField]
-        private ColorInterpretation colorInterpretation = ColorInterpretation.HEX;
-
-        [Header("Interpolation")]
+    
+        [Header("Sample float from gradient")]
         [SerializeField]
         private double minimumValue;
         [SerializeField]
@@ -61,24 +48,17 @@ namespace Netherlands3D.TileSystem
         [SerializeField]
         private Color defaultColor;
 
-        public enum ColorInterpretation
-        {
-            HEX,
-            INTERPOLATE
-        }
-
-        public class ColorAndValue
-        {
-            public float value = 0;
-            public Color color;
-        }
-
         private void Awake()
         {
+            if (onEnableDrawingColors)
+            {
+                onEnableDrawingColors.started.AddListener(EnableDrawingColors);
+            }
+
             if (onReceiveIdsAndColors)
             {
                 onReceiveIdsAndColors.started.AddListener(SetIDsAndColors);
-                onEnableDrawingColors.started.Invoke(true);
+                if (onEnableDrawingColors) onEnableDrawingColors.started.Invoke(true);
                 this.enabled = true;
             }
 
@@ -89,13 +69,19 @@ namespace Netherlands3D.TileSystem
                 //If we can receive ids+floats, add listeners to determine the min and max of the range
                 if (onReceiveMinRange) onReceiveMinRange.started.AddListener(SetMinRange);
                 if (onReceiveMaxRange) onReceiveMaxRange.started.AddListener(SetMaxRange);
-                onEnableDrawingColors.started.Invoke(true);
+                if (onEnableDrawingColors) onEnableDrawingColors.started.Invoke(true);
                 this.enabled = true;
             }
 
-            if (onEnableDrawingColors)
+            if (onReceiveIdsAndFloatsForAlpha)
             {
-                onEnableDrawingColors.started.AddListener(EnableDrawingColors);
+                onReceiveIdsAndFloatsForAlpha.started.AddListener(SetIDsAndFloatsAsAlpha);
+
+                //If we can receive ids+floats, add listeners to determine the min and max of the range
+                if (onReceiveMinRange) onReceiveMinRange.started.AddListener(SetMinRange);
+                if (onReceiveMaxRange) onReceiveMaxRange.started.AddListener(SetMaxRange);
+                if (onEnableDrawingColors) onEnableDrawingColors.started.Invoke(true);
+                this.enabled = true;
             }
 
             if (onClearData)
@@ -114,7 +100,7 @@ namespace Netherlands3D.TileSystem
             if (disableOnStart)
             {
                 this.enabled = false;
-                onEnableDrawingColors.started.Invoke(false);
+                if(onEnableDrawingColors) onEnableDrawingColors.started.Invoke(false);
             }
         }
 
@@ -131,23 +117,15 @@ namespace Netherlands3D.TileSystem
 
         private void ClearData()
         {
-            idColors.Clear();
+            if(idColors != null)
+                idColors.Clear();
+
+            ClearAllSubObjectColorData();
         }
 
         private void OnEnable()
         {
             if (onReceiveIdsAndColors || onReceiveIdsAndFloats)
-            {
-                //Colors are set via event.
-                UpdateColors();
-                return;
-            }
-
-            if (idColors == null)
-            {
-                StartCoroutine(LoadCSV());
-            }
-            else
             {
                 UpdateColors();
             }
@@ -168,11 +146,11 @@ namespace Netherlands3D.TileSystem
             idColors = (Dictionary<string, Color>)idsAndColors;
             UpdateColors(true);
         }
+
         public void SetIDsAndFloatsAsColors(object idsAndFloats)
         {
             this.enabled = true;
             var idFloats = (Dictionary<string, float>)idsAndFloats;
-
             idColors = new Dictionary<string, Color>();
             foreach (var keyValuePair in idFloats)
             {
@@ -183,77 +161,38 @@ namespace Netherlands3D.TileSystem
             UpdateColors(true);
         }
 
-        private IEnumerator LoadCSV()
+        public void SetIDsAndFloatsAsAlpha(object idsAndFloats)
         {
-            using (UnityWebRequest webRequest = UnityWebRequest.Get(dataSource))
+            this.enabled = true;
+            var idFloats = (Dictionary<string, float>)idsAndFloats;
+            idColors = new Dictionary<string, Color>();
+            foreach (var keyValuePair in idFloats)
             {
-                yield return webRequest.SendWebRequest();
-
-                if (webRequest.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.Log($"Could not load {dataSource}");
-                }
-                else
-                {
-                    idColors = new Dictionary<string, Color>();
-                    //Ready CSV lines ( skip header )
-                    var lines = CsvParser.ReadLines(webRequest.downloadHandler.text, 1);
-                    foreach (var line in lines)
-                    {
-                        Color color = Color.magenta;
-                        string id = line[idColumn];
-                        ParseColor(line[colorColumn], out color);
-
-                        if (idColors.ContainsKey(id))
-                        {
-                            Debug.Log($"Duplicate key found in dataset:{id}. Skipping.");
-                        }
-                        else
-                        {
-                            idColors.Add(id, color);
-                        }
-                    }
-                }
-                UpdateColors(true);
+                Color color = Color.white;
+                color.a = 1-Mathf.InverseLerp((float)minimumValue, (float)maximumValue, keyValuePair.Value);
+                idColors.Add(keyValuePair.Key, color);
             }
-        }
 
-        private void ParseColor(string colorInput, out Color color)
-        {
-            color = Color.white;
-            switch (colorInterpretation)
-            {
-                case ColorInterpretation.HEX:
-                    ColorUtility.TryParseHtmlString(colorInput, out color);
-                    break;
-                case ColorInterpretation.INTERPOLATE:
-                    if (float.TryParse(colorInput, out float parsed))
-                    {
-                        color = gradientContainer.gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, parsed));
-                    }
-                    else
-                    {
-                        Debug.Log($"Cant parse {colorInput} as float");
-                    }
-                    break;
-                default:
-                    break;
-            }
+            UpdateColors(true);
         }
 
         private void OnDisable()
-        {
-            StopAllCoroutines();
+		{
+			StopAllCoroutines();
+			ClearAllSubObjectColorData();
+		}
 
-            var allSubObjects = gameObject.GetComponentsInChildren<SubObjects>();
-            for (int i = allSubObjects.Length - 1; i >= 0; i--)
-            {
-                allSubObjects[i].ResetColors();
-                Destroy(allSubObjects[i]);
-            }
-        }
+		private void ClearAllSubObjectColorData()
+		{
+			var allSubObjects = gameObject.GetComponentsInChildren<SubObjects>();
+			for (int i = allSubObjects.Length - 1; i >= 0; i--)
+			{
+				allSubObjects[i].ResetColors();
+				Destroy(allSubObjects[i]);
+			}
+		}
 
-        private void OnTransformChildrenChanged()
+		private void OnTransformChildrenChanged()
         {
             UpdateColors(false);
         }
