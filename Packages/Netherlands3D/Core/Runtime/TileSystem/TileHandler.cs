@@ -119,6 +119,12 @@ namespace Netherlands3D.TileSystem
 			pauseLoading = false;
 			CacheCameraFrustum();
 
+			if (!Camera.main)
+			{
+				Debug.LogWarning("The TileHandler requires a camera. Make sure your scene has a camera, and it is tagged as MainCamera.");
+				this.enabled = false;
+			}
+
 			if (tileSizes.Count == 0)
 			{
 				GetTilesizes();
