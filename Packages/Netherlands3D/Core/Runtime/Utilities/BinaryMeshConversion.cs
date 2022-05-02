@@ -11,7 +11,6 @@ namespace Netherlands3D.Core
 {
     public class BinaryMeshConversion : MonoBehaviour
     {
-
         public struct SubMeshInfo
         {
             public int subMeshID;
@@ -339,8 +338,6 @@ namespace Netherlands3D.Core
                     var indicesCount = reader.ReadInt32();
                     var submeshCount = reader.ReadInt32();
 
-
-
                     var mesh = new Mesh();
 
                     //byte[] b = new byte[Marshal.SizeOf<Vector3>() * vertexCount];
@@ -355,8 +352,6 @@ namespace Netherlands3D.Core
                         // Otherwise resize:
                         vertices = new Vector3[normalsCount];
                     }
-
-
 
                     // Normals:
                     b = reader.ReadBytes(Marshal.SizeOf<Vector3>() * normalsCount);
@@ -376,7 +371,6 @@ namespace Netherlands3D.Core
                     int[] indices = new int[indicesCount];
                     b = reader.ReadBytes(sizeof(int) * indicesCount);
                     FromByteArray<int>(b, indices);
-
 
                     mesh.SetIndexBufferParams(indicesCount, UnityEngine.Rendering.IndexFormat.UInt32);
                     mesh.SetIndexBufferData(indices, 0, 0, indicesCount, UnityEngine.Rendering.MeshUpdateFlags.DontNotifyMeshUsers | UnityEngine.Rendering.MeshUpdateFlags.DontRecalculateBounds | UnityEngine.Rendering.MeshUpdateFlags.DontResetBoneBounds | UnityEngine.Rendering.MeshUpdateFlags.DontValidateIndices);
@@ -408,8 +402,6 @@ namespace Netherlands3D.Core
 
                     submeshMaterialIndices = materialIndices;
 
-
-
                     return mesh;
                 }
             }
@@ -433,7 +425,6 @@ namespace Netherlands3D.Core
                     handle.Free();
             }
         }
-
 
         public static void FromByteArray<T>(byte[] source, T[] destination, int sourceLength) where T : struct
         {
