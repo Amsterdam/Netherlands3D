@@ -30,9 +30,19 @@
             "path": "Cameras/Samples~/Cameras"
         },
         {
+            "displayName": "File Importer",
+            "description": "For importing files.",
+            "path": "File Importer/Samples~/Scene Setup"
+        },
+        {
             "displayName": "Sun/Shadows",
             "description": "Example of a Directional Light with shadows based on the position of the sun according to the location,date and time.",
             "path": "Sun/Samples~/Sun"
+        },
+        {
+          "displayName": "Timeline",
+          "description": "A timline for visualizing going through dates",
+          "path": "Timeline/Samples~/Scene Setup"
         },
         {
             "displayName": "WMS-layer",
