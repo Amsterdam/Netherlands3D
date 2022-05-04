@@ -39,5 +39,14 @@ namespace Netherlands3D.Timeline
         public UnityEvent eventLayerShow;
         [Tooltip("When the layer of this time period gets set to hide its periods")]
         public UnityEvent eventLayerHide;
+
+        public void Initialize(string name, string description, DateTimeSerializable startDate, DateTimeSerializable endDate, string layer)
+        {
+            this.name = name;
+            this.description = description;
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.layer = layer;
+        }
     }
 }

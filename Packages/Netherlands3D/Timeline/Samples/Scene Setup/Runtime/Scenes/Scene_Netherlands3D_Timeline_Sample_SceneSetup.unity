@@ -133,7 +133,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7070070187406513272, guid: 436dcd877c1ac0242b5f0e1b91c019a0, type: 3}
   m_PrefabInstance: {fileID: 7070070187418105816}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1403261439}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a6d6ec9b07a823247867c3757d4509a2, type: 3}
@@ -661,23 +661,6 @@ MonoBehaviour:
   timelineUI: {fileID: 55796640}
   sphere: {fileID: 1869723345}
   eventStateField: {fileID: 1784114609}
---- !u!1 &1403261439 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7070070187406513222, guid: 436dcd877c1ac0242b5f0e1b91c019a0, type: 3}
-  m_PrefabInstance: {fileID: 7070070187418105816}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1403261440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1403261439}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83bb74ce601ad3e4080ad0dd569e16e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1784114607
 GameObject:
   m_ObjectHideFlags: 0
