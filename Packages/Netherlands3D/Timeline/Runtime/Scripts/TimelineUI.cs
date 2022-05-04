@@ -15,6 +15,7 @@ namespace Netherlands3D.Timeline
     /// <summary>
     /// Main script for time line UI
     /// </summary>
+    [AddComponentMenu("Netherlands3D/Timeline/TimelineUI")]
     public class TimelineUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         /// <summary>
