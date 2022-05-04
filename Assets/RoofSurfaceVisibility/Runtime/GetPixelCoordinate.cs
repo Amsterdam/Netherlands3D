@@ -27,12 +27,16 @@ public class GetPixelCoordinate : MonoBehaviour
     [SerializeField]
     private int projectionTextureSize = 512;
 
+    [SerializeField]
+    private Material previewMaterial;
+
     void Start()
     {
         rect = new Rect(0, 0, renderTexture.width, renderTexture.height);
         readPixelTexture = new Texture2D(renderTexture.width, renderTexture.height, TextureFormat.RGB24, false);
-
         topDownTexture = new Texture2D(projectionTextureSize, projectionTextureSize, TextureFormat.RGB24,false,true);
+
+        previewMaterial.SetTexture("_BaseMap", topDownTexture);
     }
 
     private void Update()
