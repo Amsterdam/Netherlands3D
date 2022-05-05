@@ -1,5 +1,5 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GetPixelCoordinate : MonoBehaviour
@@ -10,15 +10,9 @@ public class GetPixelCoordinate : MonoBehaviour
     private Rect rect;
     Texture2D readPixelTexture;
 
-    Vector3 position = Vector3.zero;
-
-    [SerializeField]
-    private Transform target;
-
     [SerializeField]
     private Camera pixelCamera;
 
-    [SerializeField]
     private Texture2D topDownTexture;
 
     [SerializeField]
@@ -28,7 +22,22 @@ public class GetPixelCoordinate : MonoBehaviour
     private int projectionTextureSize = 512;
 
     [SerializeField]
-    private Material previewMaterial;
+    private Material projectorMaterial;
+
+    [SerializeField]
+    private Color visibleColor;
+
+    [SerializeField]
+    private Color notVisibleColor;
+
+    [SerializeField]
+    Transform projector;
+
+    [SerializeField]
+    private int maxPixelsPerFrame = 100;
+
+    [SerializeField]
+    private bool splitDirectionsOverFrames = false;
 
     void Start()
     {
@@ -36,29 +45,67 @@ public class GetPixelCoordinate : MonoBehaviour
         readPixelTexture = new Texture2D(renderTexture.width, renderTexture.height, TextureFormat.RGB24, false);
         topDownTexture = new Texture2D(projectionTextureSize, projectionTextureSize, TextureFormat.RGB24,false,true);
 
-        previewMaterial.SetTexture("_BaseMap", topDownTexture);
+        projectorMaterial.mainTexture = topDownTexture;
+
+        StartCoroutine(DrawLoop());
     }
 
-    private void Update()
+    IEnumerator DrawLoop()
     {
-        GetPixelLocation();
+        while (true)
+        {
+            yield return new WaitForEndOfFrame();
+
+            this.transform.rotation = Quaternion.identity;
+
+            Color[] topDownPixels = topDownTexture.GetPixels();
+            ApplyBaseColors(topDownPixels);
+
+            for (int i = 0; i < 5; i++)
+            {
+                RenderTexture.active = renderTexture;
+                pixelCamera.Render();
+                readPixelTexture.ReadPixels(rect, 0, 0);
+                RenderTexture.active = null;
+
+                yield return DrawTopDownVisibilityPixels(topDownPixels);
+
+                switch (i)
+                {
+                    case 0:
+                        this.transform.forward = Vector3.back;
+                        break;
+                    case 1:
+                        this.transform.forward = Vector3.down;
+                        break;
+                    case 2:
+                        this.transform.forward = Vector3.left;
+                        break;
+                    case 3:
+                        this.transform.forward = Vector3.right;
+                        break;
+                    case 4:
+                        this.transform.forward = Vector3.forward;
+                        break;
+                }        
+                if(splitDirectionsOverFrames) yield return new WaitForEndOfFrame();
+            }
+
+            topDownTexture.Apply();
+            yield return new WaitForEndOfFrame();
+        }
     }
 
-    public void GetPixelLocation()
+    private void LateUpdate()
     {
-        RenderTexture.active = renderTexture;
-        pixelCamera.Render();
-        readPixelTexture.ReadPixels(rect, 0, 0);
-
-        RenderTexture.active = null;
-
-        SetTopDownCoordinateInPixel();
+        projector.rotation = Quaternion.Euler(90,0,0);
     }
 
-    public void SetTopDownCoordinateInPixel()
+    private IEnumerator DrawTopDownVisibilityPixels(Color[] topDownPixels)
     {
-        Color[] pixels = topDownTexture.GetPixels();
+        yield return new WaitForEndOfFrame();
 
+        //Draw visibile pixels
         Color[] positionPixels = readPixelTexture.GetPixels();
 		for (int i = 0; i < positionPixels.Length; i++)
 		{
@@ -68,11 +115,17 @@ public class GetPixelCoordinate : MonoBehaviour
             int pixelColumn = (int)(rgbPosition.r * (projectionTextureSize-1));
             int pixelIndex = (pixelRow * projectionTextureSize) + pixelColumn;
 
-            pixels[pixelIndex] = (rgbPosition.r == 0) ? Color.red : Color.green;
+            topDownPixels[pixelIndex] = visibleColor;
         }
-
-        topDownTexture.SetPixels(pixels);
-        topDownTexture.Apply();
+        topDownTexture.SetPixels(topDownPixels);
     }
 
+    private void ApplyBaseColors(Color[] pixels)
+    {
+        //Set base color
+        for (int i = 0; i < pixels.Length; i++)
+        {
+            pixels[i] = notVisibleColor;
+        }
+    }
 }
