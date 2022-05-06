@@ -54,8 +54,8 @@ public class GetPixelCoordinate : MonoBehaviour
     {
         while (true)
         {
+            yield return new WaitUntil(()=> transform.hasChanged == true);
             yield return new WaitForEndOfFrame();
-
             this.transform.rotation = Quaternion.identity;
 
             Color[] topDownPixels = topDownTexture.GetPixels();
@@ -89,6 +89,8 @@ public class GetPixelCoordinate : MonoBehaviour
                         break;
                 }        
                 if(splitDirectionsOverFrames) yield return new WaitForEndOfFrame();
+
+                transform.hasChanged = false;
             }
 
             topDownTexture.Apply();
