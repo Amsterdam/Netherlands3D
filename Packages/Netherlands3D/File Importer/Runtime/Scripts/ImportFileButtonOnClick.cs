@@ -16,7 +16,7 @@ namespace Netherlands3D.FileImporter
     /// <summary>
     /// A script that can be added to a button component for importing files depending on the platform type
     /// </summary>
-    [AddComponentMenu("File Importer/Import File Button On Click")]
+    [AddComponentMenu("Netherlands3D/File Importer/Import File Button On Click")]
     [RequireComponent(typeof(Button))]
     [RequireComponent(typeof(RectTransform))]
     public class ImportFileButtonOnClick : MonoBehaviour
