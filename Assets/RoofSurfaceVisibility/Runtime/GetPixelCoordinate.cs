@@ -48,6 +48,8 @@ public class GetPixelCoordinate : MonoBehaviour
         projectorMaterial.mainTexture = topDownTexture;
 
         StartCoroutine(DrawLoop());
+
+        transform.hasChanged = true;
     }
 
     IEnumerator DrawLoop()
@@ -89,10 +91,8 @@ public class GetPixelCoordinate : MonoBehaviour
                         break;
                 }        
                 if(splitDirectionsOverFrames) yield return new WaitForEndOfFrame();
-
-                transform.hasChanged = false;
             }
-
+            transform.hasChanged = false;
             topDownTexture.Apply();
             yield return new WaitForEndOfFrame();
         }
