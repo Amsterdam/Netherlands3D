@@ -50,6 +50,19 @@ public class GetPixelCoordinate : MonoBehaviour
         StartCoroutine(DrawLoop());
 
         transform.hasChanged = true;
+
+        projector.SetParent(null,true);
+        pixelCamera.transform.SetParent(null, true);
+        projector.rotation = Quaternion.Euler(90, 0, 0);
+    }
+
+    private void OnDestroy()
+    {
+        if(projector != null)
+            Destroy(projector.gameObject);
+
+        Destroy(topDownTexture);
+        Destroy(readPixelTexture);
     }
 
     IEnumerator DrawLoop()
@@ -57,8 +70,10 @@ public class GetPixelCoordinate : MonoBehaviour
         while (true)
         {
             yield return new WaitUntil(()=> transform.hasChanged == true);
-            yield return new WaitForEndOfFrame();
-            this.transform.rotation = Quaternion.identity;
+
+            projector.transform.position = this.transform.position;
+            pixelCamera.transform.position = this.transform.position;
+            pixelCamera.transform.rotation = Quaternion.identity;
 
             Color[] topDownPixels = topDownTexture.GetPixels();
             ApplyBaseColors(topDownPixels);
@@ -72,41 +87,34 @@ public class GetPixelCoordinate : MonoBehaviour
 
                 yield return DrawTopDownVisibilityPixels(topDownPixels);
 
+                //Turn to cubic planes
                 switch (i)
                 {
                     case 0:
-                        this.transform.forward = Vector3.back;
+                        pixelCamera.transform.forward = Vector3.back;
                         break;
                     case 1:
-                        this.transform.forward = Vector3.down;
+                        pixelCamera.transform.forward = Vector3.down;
                         break;
                     case 2:
-                        this.transform.forward = Vector3.left;
+                        pixelCamera.transform.forward = Vector3.left;
                         break;
                     case 3:
-                        this.transform.forward = Vector3.right;
+                        pixelCamera.transform.forward = Vector3.right;
                         break;
                     case 4:
-                        this.transform.forward = Vector3.forward;
+                        pixelCamera.transform.forward = Vector3.forward;
                         break;
-                }        
+                }
                 if(splitDirectionsOverFrames) yield return new WaitForEndOfFrame();
             }
             transform.hasChanged = false;
             topDownTexture.Apply();
-            yield return new WaitForEndOfFrame();
         }
-    }
-
-    private void LateUpdate()
-    {
-        projector.rotation = Quaternion.Euler(90,0,0);
     }
 
     private IEnumerator DrawTopDownVisibilityPixels(Color[] topDownPixels)
     {
-        yield return new WaitForEndOfFrame();
-
         //Draw visibile pixels
         Color[] positionPixels = readPixelTexture.GetPixels();
 		for (int i = 0; i < positionPixels.Length; i++)
@@ -120,6 +128,8 @@ public class GetPixelCoordinate : MonoBehaviour
             topDownPixels[pixelIndex] = visibleColor;
         }
         topDownTexture.SetPixels(topDownPixels);
+
+        yield return null;
     }
 
     private void ApplyBaseColors(Color[] pixels)
