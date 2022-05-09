@@ -1,20 +1,24 @@
 # Beginnen met Netherlands3D in Unity
 
-## Git
+## Git installeren
 
 Zorg om te beginnen dat Git is geinstalleerd op het systeem.
 
 Git is te downloaden vanaf https://gitforwindows.org/
 
-Installatie met de standaard opties is voldoende.
+Installatie met de standaard opties is voldoende. Herstart je systeem na de installatie.
 
 ## Unity installeren
 
 Download en installeer Unity3D via <https://unity.com/download>
 
-Je download daarmee de 'Unity Hub'. 
+Je download daarmee de 'Unity Hub'. Vanuit deze Hub kan je verschillende versies van Unity downloaden.
 
-Vanuit de Hub kan je verschillende versies van Unity downloaden.
+'Sign in' met een bestaand Unity account, of maak eerst een nieuw account aan via 'Create account' en doe dan 'Sign in'
+
+Ga eventueel akkoord met het activeren van een 'personal license'.
+
+Kies in het 'Install Unity Editor' scherm rechtsonderin 'skip installation'. Wij willen namelijk een specifieke versie gaan installeren.
 
 Installeer via 'Installs / Install Editor' de LTS (long term service) versie 2020.3.*
 
@@ -22,9 +26,11 @@ Installeer via 'Installs / Install Editor' de LTS (long term service) versie 202
 
 Maak na het installeren in de Hub een nieuw Unity project aan via 'Projects / New Project' en kies als template '3D Core'.
 
+Het project wordt vervolgens automatisch geopend in Unity.
+
 ## In Unity
 
-Open de package-manager (window package manager)
+Open in Unity de package-manager (window package manager)
 
 ![](./imgs/beginnen/image1.png)
 
