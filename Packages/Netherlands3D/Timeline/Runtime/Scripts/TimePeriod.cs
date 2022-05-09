@@ -26,19 +26,19 @@ namespace Netherlands3D.Timeline
 
         [Header("Events")]
         [Tooltip("The event that gets invoked when the time period is pressed")]
-        public UnityEvent eventPressed;
+        public UnityEvent eventPressed = new UnityEvent();
         [Tooltip("When the time period enters on screen")]
-        public UnityEvent eventScreenEnter;
+        public UnityEvent eventScreenEnter = new UnityEvent();
         [Tooltip("When the time period exits off screen")]
-        public UnityEvent eventScreenExit;
+        public UnityEvent eventScreenExit = new UnityEvent();
         [Tooltip("When the time period enters the currentTime range")]
-        public UnityEvent eventCurrentTimeEnter;
+        public UnityEvent eventCurrentTimeEnter = new UnityEvent();
         [Tooltip("When the time period exits the currentTime range")]
-        public UnityEvent eventCurrentTimeExit;
+        public UnityEvent eventCurrentTimeExit = new UnityEvent();
         [Tooltip("When the layer of this time period gets set to show its periods")]
-        public UnityEvent eventLayerShow;
+        public UnityEvent eventLayerShow = new UnityEvent();
         [Tooltip("When the layer of this time period gets set to hide its periods")]
-        public UnityEvent eventLayerHide;
+        public UnityEvent eventLayerHide = new UnityEvent();
 
         public TimePeriod(string name, string description, DateTimeSerializable startDate, DateTimeSerializable endDate, string layer)
         {

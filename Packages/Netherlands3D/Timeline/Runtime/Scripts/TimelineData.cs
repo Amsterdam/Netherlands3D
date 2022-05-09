@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Netherlands3D.Timeline
 {
@@ -24,6 +25,7 @@ namespace Netherlands3D.Timeline
         /// List that contains all the timePeriods & timePeriodsSO
         /// </summary>
         [HideInInspector] public List<TimePeriod> allTimePeriods = new List<TimePeriod>();
+        [HideInInspector] public UnityEvent OnOrderTimePeriods;
 
         /// <summary>
         /// Orders the time periods on its categories
@@ -41,15 +43,12 @@ namespace Netherlands3D.Timeline
                 if(sortedTimePeriods.ContainsKey(item.timePeriod.layer))
                 {
                     // Add to existing
-                    Debug.Log(1);
                     sortedTimePeriods[item.timePeriod.layer].Add(item.timePeriod);
                 }
                 else
                 {
                     // Add to new
-                    Debug.Log(2);
-                    sortedTimePeriods.Add(item.timePeriod.layer, new List<TimePeriod>() { item.timePeriod });
-                    Debug.Log(sortedTimePeriods[item.timePeriod.layer][0].startDate.Value);
+                    sortedTimePeriods.Add(item.timePeriod.layer, new List<TimePeriod>() { item.timePeriod });                    
                 }
                 allTimePeriods.Add(item.timePeriod);
             }
@@ -60,20 +59,19 @@ namespace Netherlands3D.Timeline
                 // Check if event category is already present
                 if(sortedTimePeriods.ContainsKey(item.layer))
                 {
-                    Debug.Log(1);
                     // Add to existing
                     sortedTimePeriods[item.layer].Add(item);
                 }
                 else
                 {
-                    Debug.Log(2);
                     // Add to new
                     sortedTimePeriods.Add(item.layer, new List<TimePeriod>() { item });
                 }
                 allTimePeriods.Add(item);
             }
 
-            Debug.Log("[TimelineData] Sorted time periods layer Count: " + sortedTimePeriods.Count);
+            //Debug.Log("[TimelineData] Sorted time periods layer Count: " + sortedTimePeriods.Count);
+            OnOrderTimePeriods.Invoke();
         }
     }
 }

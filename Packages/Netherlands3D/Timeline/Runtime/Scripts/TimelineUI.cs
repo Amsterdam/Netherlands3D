@@ -76,6 +76,10 @@ namespace Netherlands3D.Timeline
         }
 
         /// <summary>
+        /// If the currentDate is set at the start
+        /// </summary>
+        private bool currentDateIsSet;
+        /// <summary>
         /// Is the time line currently automaticly playing (scrolling)
         /// </summary>
         private bool isAutomaticlyPlaying;
@@ -149,11 +153,23 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private PointerEventData pointerEventDataEndDragHandler;
 
+        private void OnEnable()
+        {
+            timelineData.OnOrderTimePeriods.AddListener(LoadData);
+        }
+
+        private void OnDisable()
+        {
+            timelineData.OnOrderTimePeriods.RemoveListener(LoadData);
+        }
+
         // Start is called before the first frame update
         void Start()
-        {            
-            LoadData();
+        {
+            // Triggers LoadData
+            timelineData.OrderTimePeriods();
             SetCurrentDate(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0));
+            currentDateIsSet = true;
         }
 
         private void Update()
@@ -192,15 +208,14 @@ namespace Netherlands3D.Timeline
                 Debug.LogError("[TimelineUI] Data not assigned");
                 return;
             }
+            Debug.Log("[TimelineUI] Load Data");
 
             // Clear old
             foreach(Transform item in parentTimePeriodsLayers.transform) Destroy(item.gameObject);
             foreach(Transform item in parentLayersUI.transform) Destroy(item.gameObject);
             categories.Clear();
             eventLayers.Clear();
-
-            // Order all events based on category
-            timelineData.OrderTimePeriods();
+            visibleTimePeriodsUI.Clear();
 
             // Create each category & event layer
             string[] keys = timelineData.sortedTimePeriods.Keys.ToArray();
@@ -212,6 +227,8 @@ namespace Netherlands3D.Timeline
                 c.Initialize(item, e, this);
                 categories.Add(c);
             }
+
+            if(currentDateIsSet) SetCurrentDate(CurrentDate);
         }
 
         /// <summary>
@@ -568,13 +585,13 @@ namespace Netherlands3D.Timeline
                 if(TimeUnit.DateTimeInRange(currentDate, item.timePeriod.startDate, item.timePeriod.endDate) &&
                     !TimeUnit.DateTimeInRange(previousCurrentDate, item.timePeriod.startDate, item.timePeriod.endDate))
                 {
-                    item.timePeriod.eventCurrentTimeEnter.Invoke();
+                    item.timePeriod.eventCurrentTimeEnter?.Invoke();
                 }
                 // Current Time Exit
                 else if(TimeUnit.DateTimeInRange(previousCurrentDate, item.timePeriod.startDate, item.timePeriod.endDate) &&
                     !TimeUnit.DateTimeInRange(currentDate, item.timePeriod.startDate, item.timePeriod.endDate))
                 {
-                    item.timePeriod.eventCurrentTimeExit.Invoke();
+                    item.timePeriod.eventCurrentTimeExit?.Invoke();
                 }
             }
         }

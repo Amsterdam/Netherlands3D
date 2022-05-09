@@ -29,11 +29,10 @@ namespace Netherlands3D.Timeline
         /// <param name="prefabTimePeriodUI"></param>
         public TimePeriodUI AddTimePeriod(TimePeriod timePeriod, GameObject prefabTimePeriodUI)
         {
-            Debug.Log("Add time period: " + timePeriod.startDate.Value);
             TimePeriodUI a = Instantiate(prefabTimePeriodUI, transform).GetComponent<TimePeriodUI>();
             a.Initialize(timePeriod, this);
             timePeriodsUI.Add(a);
-            timePeriod.eventScreenEnter.Invoke();
+            timePeriod.eventScreenEnter?.Invoke();
             return a;
         }
     }
