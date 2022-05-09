@@ -41,11 +41,16 @@ public class PixelPositionToProjectionTexture : MonoBehaviour
 
     void Start()
     {
+        renderTexture = Instantiate(renderTexture);
+        pixelCamera.targetTexture = renderTexture;
+
         rect = new Rect(0, 0, renderTexture.width, renderTexture.height);
         readPixelTexture = new Texture2D(renderTexture.width, renderTexture.height, TextureFormat.RGB24, false);
         topDownTexture = new Texture2D(projectionTextureSize, projectionTextureSize, TextureFormat.RGB24,false,true);
 
+        projectorMaterial = Instantiate(projectorMaterial);
         projectorMaterial.mainTexture = topDownTexture;
+        projector.GetComponentInChildren<Renderer>().material = projectorMaterial;
 
         StartCoroutine(DrawLoop());
 
@@ -63,6 +68,8 @@ public class PixelPositionToProjectionTexture : MonoBehaviour
 
         Destroy(topDownTexture);
         Destroy(readPixelTexture);
+        Destroy(projectorMaterial);
+        Destroy(pixelCamera);
     }
 
     IEnumerator DrawLoop()
