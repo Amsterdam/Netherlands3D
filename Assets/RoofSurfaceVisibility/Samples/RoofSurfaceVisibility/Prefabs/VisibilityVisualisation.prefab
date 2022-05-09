@@ -175,7 +175,6 @@ GameObject:
   - component: {fileID: 3443717345307502012}
   - component: {fileID: 5693592345133590141}
   - component: {fileID: 1186221705623815084}
-  - component: {fileID: 7953712121038643575}
   m_Layer: 0
   m_Name: Pointer
   m_TagString: Untagged
@@ -247,19 +246,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &7953712121038643575
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4986453711275435681}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6911903876264881142
 GameObject:
   m_ObjectHideFlags: 0
@@ -352,7 +338,6 @@ GameObject:
   - component: {fileID: 7997191441952977339}
   - component: {fileID: 5727619012740047437}
   - component: {fileID: 7256849156666367896}
-  - component: {fileID: 2368722381898894504}
   m_Layer: 0
   m_Name: Pin
   m_TagString: Untagged
@@ -423,16 +408,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2368722381898894504
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8078527957911856315}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}

@@ -78,9 +78,9 @@ public class PixelPositionToProjectionTexture : MonoBehaviour
         {
             yield return new WaitUntil(()=> transform.hasChanged == true);
 
-            projector.transform.position = this.transform.position;
             pixelCamera.transform.position = this.transform.position;
             pixelCamera.transform.rotation = Quaternion.identity;
+            yield return new WaitForEndOfFrame();
 
             Color[] topDownPixels = topDownTexture.GetPixels();
             ApplyBaseColors(topDownPixels);
@@ -117,6 +117,7 @@ public class PixelPositionToProjectionTexture : MonoBehaviour
             }
             transform.hasChanged = false;
             topDownTexture.Apply();
+            projector.transform.position = pixelCamera.transform.position;
         }
     }
 
