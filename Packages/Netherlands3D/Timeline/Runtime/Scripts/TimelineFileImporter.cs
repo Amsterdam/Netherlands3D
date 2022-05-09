@@ -50,7 +50,7 @@ namespace Netherlands3D.Timeline
                 switch(pathExtension)
                 {
                     case ".csv":
-                        yield return CsvParser.StreamReadLines(path, 1, 999, x => { }, x => { }, x => csvData = x);
+                        yield return CsvParser.StreamReadLines(path, 2, 999, x => { }, x => { }, x => csvData = x);
                         break;
                     default:
                         failedFiles++;
@@ -70,16 +70,18 @@ namespace Netherlands3D.Timeline
         /// <param name="csv"></param>
         private void CSVToTimelineData(List<string[]> csv)
         {
+            string[] dateFormats = new string[] { "yyyy/MM/dd", "dd/MM/yyyy" };
             // Loop through csv and convert it to time periods
             foreach(string[] row in csv)
             {
                 // 0: name, 1: description, 2: startTime, 3: endTime, 4: layer
-                TimePeriod t = ScriptableObject.CreateInstance<TimePeriod>();
-                t.Initialize(row[0], 
-                    row[1], 
-                    DateTime.ParseExact(row[2], "yyyy/MM/dd", CultureInfo.InvariantCulture), 
-                    DateTime.ParseExact(row[3], "yyyy/MM/dd", CultureInfo.InvariantCulture), 
-                    row[4]);
+                print(row[0]);
+                print(row[1]);
+                print(row[2]);
+                print(row[4]);
+                if(!DateTime.TryParseExact(row[2], dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime start)) continue;
+                if(!DateTime.TryParseExact(row[3], dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime end)) continue;
+                TimePeriod t = new TimePeriod(row[0], row[1], start, end, row[4]);
                 
                 timelineData.timePeriods.Add(t);
             }

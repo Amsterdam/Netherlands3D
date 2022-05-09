@@ -12,9 +12,147 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c07847de6314724a869d6221c9ffab7, type: 3}
   m_Name: Timeline Data 1
   m_EditorClassIdentifier: 
+  timePeriodsSO:
+  - {fileID: 11400000, guid: 16fa6657f9346974c93adfc94bbace87, type: 2}
   timePeriods:
-  - {fileID: 11400000, guid: 6f5743be2e4ca7844a7f4cf69e63cb4a, type: 2}
-  - {fileID: 11400000, guid: 3ff86b31ef9447f4f8e81fdf7ccb78d5, type: 2}
-  - {fileID: 11400000, guid: daad330a618aaef4299ea71ef6efaa86, type: 2}
-  - {fileID: 11400000, guid: dbfdecd356280a546a7a77cb33c7eb59, type: 2}
-  - {fileID: 11400000, guid: bfd3f99e26f40cd47b9da4120c4aa97d, type: 2}
+  - name: Test Data 0
+    description: 
+    startDate:
+      dateTimeString: 2000/01/01
+    endDate:
+      dateTimeString: 2001/01/01
+    layer: Testing1
+    eventPressed:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerShow:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerHide:
+      m_PersistentCalls:
+        m_Calls: []
+  - name: Test Data 1
+    description: 
+    startDate:
+      dateTimeString: 2020/01/01
+    endDate:
+      dateTimeString: 2021/01/01
+    layer: Testing Working
+    eventPressed:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerShow:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerHide:
+      m_PersistentCalls:
+        m_Calls: []
+  allTimePeriods:
+  - name: Test
+    description: Hello this is a test time period
+    startDate:
+      dateTimeString: 2020/01/01
+    endDate:
+      dateTimeString: 2021/01/01
+    layer: Not Working
+    eventPressed:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerShow:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerHide:
+      m_PersistentCalls:
+        m_Calls: []
+  - name: Test Data 0
+    description: 
+    startDate:
+      dateTimeString: 2000/01/01
+    endDate:
+      dateTimeString: 2001/01/01
+    layer: Testing1
+    eventPressed:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerShow:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerHide:
+      m_PersistentCalls:
+        m_Calls: []
+  - name: Test Data 1
+    description: 
+    startDate:
+      dateTimeString: 2020/01/01
+    endDate:
+      dateTimeString: 2021/01/01
+    layer: Testing Working
+    eventPressed:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerShow:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerHide:
+      m_PersistentCalls:
+        m_Calls: []

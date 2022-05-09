@@ -9,11 +9,11 @@ namespace Netherlands3D.Timeline
     /// <summary>
     /// A timeline time period that holds data of something that happend between a start date and a end date
     /// </summary>
-    [CreateAssetMenu(fileName = "Timeline Time Period", menuName = "ScriptableObjects/Timeline/Time Period")]
-    public class TimePeriod : ScriptableObject
+    [System.Serializable]
+    public class TimePeriod
     {
         [Tooltip("The time period name")]
-        public new string name;
+        public string name;
         [Tooltip("The description of the time period")]
         [TextArea(1, 10)]
         public string description;
@@ -40,7 +40,7 @@ namespace Netherlands3D.Timeline
         [Tooltip("When the layer of this time period gets set to hide its periods")]
         public UnityEvent eventLayerHide;
 
-        public void Initialize(string name, string description, DateTimeSerializable startDate, DateTimeSerializable endDate, string layer)
+        public TimePeriod(string name, string description, DateTimeSerializable startDate, DateTimeSerializable endDate, string layer)
         {
             this.name = name;
             this.description = description;

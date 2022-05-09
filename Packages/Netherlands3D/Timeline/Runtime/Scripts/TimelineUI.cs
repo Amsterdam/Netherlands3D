@@ -540,13 +540,13 @@ namespace Netherlands3D.Timeline
 
             // Loop through each time period
             TimePeriod timePeriod;
-            for(int i = 0; i < timelineData.timePeriods.Count; i++)
+            for(int i = 0; i < timelineData.allTimePeriods.Count; i++)
             {
                 // If time periods is already in visibleEventsUI skip it since it is already checked
                 if(visibleTimePeriodsUI.ContainsKey(i)) continue;
 
                 // Check if time period is visable and if so add it
-                timePeriod = timelineData.timePeriods[i];
+                timePeriod = timelineData.allTimePeriods[i];
                 if(IsTimePeriodVisible(timePeriod))
                 {
                     // Time period is visable, show it & add to time periods layer
@@ -640,7 +640,6 @@ namespace Netherlands3D.Timeline
             {
                 float x = Mathf.Abs(mouseDownPosition.x - Input.mousePosition.x);
                 float y = Mathf.Abs(mouseDownPosition.y - Input.mousePosition.y);
-                print(x + " " + y);
                 // Based on direction, scroll horizontal or vertical (& minimum distance needed)
                 if(Math.Abs(x - y) >= 3 && x >= y) //TODO mouse x/y overflow needs to be smooth instead of having to mouseup/down to switch
                 {
