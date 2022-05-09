@@ -2,7 +2,7 @@
 
 ## Git installeren
 
-Zorg om te beginnen dat Git is geinstalleerd op het systeem.
+Zorg om te beginnen dat Git is geinstalleerd op het systeem. Dit maakt het mogelijk om pakketjes te installeren.
 
 Git is te downloaden vanaf https://gitforwindows.org/
 
