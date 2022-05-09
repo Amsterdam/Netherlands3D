@@ -1,8 +1,28 @@
 # Beginnen met Netherlands3D in Unity
 
-Download en installeer Unity3D (<https://store.unity.com/>)
+## Git
 
-Open een nieuw 3D-project
+Zorg om te beginnen dat Git is geinstalleerd op het systeem.
+
+Git is te downloaden vanaf https://gitforwindows.org/
+
+Installatie met de standaard opties is voldoende.
+
+## Unity installeren
+
+Download en installeer Unity3D via <https://unity.com/download>
+
+Je download daarmee de 'Unity Hub'. 
+
+Vanuit de Hub kan je verschillende versies van Unity downloaden.
+
+Installeer via 'Installs / Install Editor' de LTS (long term service) versie 2020.3.*
+
+![image-20220509104007559](./imgs/beginnen/image0.png)
+
+Maak na het installeren in de Hub een nieuw Unity project aan via 'Projects / New Project' en kies als template '3D Core'.
+
+## In Unity
 
 Open de package-manager (window package manager)
 
@@ -26,27 +46,10 @@ Onder het kopje "Samples" staat een lijst met pakketjes, dit zijn de modules in 
 We beginnen met het TileSystem. Dit is de module die het 3D-model van de stad laat zien. 
 Klik hiervoor op het knopje "Import" naast "TileSystem".
 
-Unity heeft nu in de AssetFolder een mapje "Samples"aangemaakt met daarin een mapje "Netherlands3D" en daarin een mapje met een
+Unity heeft nu in de Assets map een mapje "Samples" aangemaakt met daarin een mapje "Netherlands3D" en daarin een mapje met een
 versienummer. In dit mapje staat alles wat je nodig hebt om het 3D-model van de stad in het project te laten zien.
 
-Unity heeft ook in de Console-window een berg foutmeldingen gegenereerd.
-Dit komt omdat netherlands3D nog een extra package nodig heeft, genaamd "Universal Render Pipeline".
-
-## Universal Render Pipeline
-
-Om de Universal Render Pipeline toe te voegen aan ons project gaan we weer naar de packageManager en kiezen we in het pulldown-menu voor "Unity Registry":
-
-![](./imgs/beginnen/image6.png)
-
-In de lijst met beschikbare packages selecteren we "Univeral RP" en klikken op "Install".
-
-![Afbeelding met tekst Automatisch gegenereerde
-beschrijving](./imgs/beginnen/image7.png)
-
-Unity gaat vervolgens weer even aan de slag met importeren van de package. 
-Wanneer we nu in de console-window op "clear" klikken zouden er geen foutmeldingen meer tevoorschijn moeten komen.
-
-Nu maken we in de AssetFolder een nieuwe map aan met de naam "RenderPipeline".
+Nu maken we in de Assets map een nieuwe map aan met de naam "RenderPipeline".
 
 ![Afbeelding met tekst Automatisch gegenereerde
 beschrijving](./imgs/beginnen/image8.png)
@@ -84,7 +87,7 @@ Vervolgens slepen we het bestand "LoadLayersFromScene" naar de hierarchy.
 ![Afbeelding met tekst Automatisch gegenereerde
 beschrijving](./imgs/beginnen/image15.png)
 
-Om een goed beeld te kunne krijgen willen we de Main Camera nog even verplaatsen. Dit doen we door in de Hierarchy de Main Camera aan te klikken:
+Om een goed beeld te kunnen krijgen willen we de Main Camera nog even verplaatsen. Dit doen we door in de Hierarchy de Main Camera aan te klikken:
 
 ![Afbeelding met tekst Automatisch gegenereerde
 beschrijving](./imgs/beginnen/image16.png)
