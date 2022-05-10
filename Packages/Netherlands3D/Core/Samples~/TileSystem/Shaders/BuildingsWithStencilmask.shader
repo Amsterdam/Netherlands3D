@@ -308,12 +308,12 @@ void Unity_TilingAndOffset_float(half2 UV, half2 Tiling, half2 Offset, out half2
     Out = UV * Tiling + Offset;
 }
 
-struct Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7
+struct Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d
 {
     float3 AbsoluteWorldSpacePosition;
 };
 
-void SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 IN, out float4 OutVector4_1)
+void SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d IN, out float4 OutVector4_1)
 {
     UnityTexture2D _Property_dea3cc24e70550849d43fb8887284f97_Out_0 = Texture2D_E59969F8;
     float _Split_b92f5ac2b94fea88a27fd34dfeee34c7_R_1 = IN.AbsoluteWorldSpacePosition[0];
@@ -390,10 +390,10 @@ SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
     UnityTexture2D _Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0 = UnityBuildTexture2DStructNoScale(_MaskMap);
     half4 _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0 = _ClippingMask;
     half2 _Property_bff7c659185748ca84af527b29dc138e_Out_0 = _Size;
-    Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
+    Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
     _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2.AbsoluteWorldSpacePosition = IN.AbsoluteWorldSpacePosition;
     float4 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1;
-    SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
+    SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
     half4 _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2;
     Unity_Multiply_half((_Branch_242ef354cf25430e9fb670bcac5f7760_Out_3.xxxx), _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1, _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2);
     surface.BaseColor = (_Multiply_e84b850cb73a4955ba99831a9bb36515_Out_2.xyz);
@@ -733,12 +733,12 @@ void Unity_TilingAndOffset_float(half2 UV, half2 Tiling, half2 Offset, out half2
     Out = UV * Tiling + Offset;
 }
 
-struct Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7
+struct Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d
 {
     float3 AbsoluteWorldSpacePosition;
 };
 
-void SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 IN, out float4 OutVector4_1)
+void SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d IN, out float4 OutVector4_1)
 {
     UnityTexture2D _Property_dea3cc24e70550849d43fb8887284f97_Out_0 = Texture2D_E59969F8;
     float _Split_b92f5ac2b94fea88a27fd34dfeee34c7_R_1 = IN.AbsoluteWorldSpacePosition[0];
@@ -815,10 +815,10 @@ SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
     UnityTexture2D _Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0 = UnityBuildTexture2DStructNoScale(_MaskMap);
     half4 _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0 = _ClippingMask;
     half2 _Property_bff7c659185748ca84af527b29dc138e_Out_0 = _Size;
-    Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
+    Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
     _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2.AbsoluteWorldSpacePosition = IN.AbsoluteWorldSpacePosition;
     float4 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1;
-    SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
+    SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
     half4 _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2;
     Unity_Multiply_half((_Branch_242ef354cf25430e9fb670bcac5f7760_Out_3.xxxx), _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1, _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2);
     surface.BaseColor = (_Multiply_e84b850cb73a4955ba99831a9bb36515_Out_2.xyz);
@@ -1101,12 +1101,12 @@ void Unity_TilingAndOffset_float(half2 UV, half2 Tiling, half2 Offset, out half2
     Out = UV * Tiling + Offset;
 }
 
-struct Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7
+struct Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d
 {
     float3 AbsoluteWorldSpacePosition;
 };
 
-void SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 IN, out float4 OutVector4_1)
+void SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d IN, out float4 OutVector4_1)
 {
     UnityTexture2D _Property_dea3cc24e70550849d43fb8887284f97_Out_0 = Texture2D_E59969F8;
     float _Split_b92f5ac2b94fea88a27fd34dfeee34c7_R_1 = IN.AbsoluteWorldSpacePosition[0];
@@ -1177,10 +1177,10 @@ SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
     UnityTexture2D _Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0 = UnityBuildTexture2DStructNoScale(_MaskMap);
     half4 _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0 = _ClippingMask;
     half2 _Property_bff7c659185748ca84af527b29dc138e_Out_0 = _Size;
-    Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
+    Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
     _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2.AbsoluteWorldSpacePosition = IN.AbsoluteWorldSpacePosition;
     float4 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1;
-    SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
+    SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
     half4 _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2;
     Unity_Multiply_half((_Branch_242ef354cf25430e9fb670bcac5f7760_Out_3.xxxx), _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1, _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2);
     surface.Alpha = (_Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2).x;
@@ -1455,12 +1455,12 @@ void Unity_TilingAndOffset_float(half2 UV, half2 Tiling, half2 Offset, out half2
     Out = UV * Tiling + Offset;
 }
 
-struct Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7
+struct Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d
 {
     float3 AbsoluteWorldSpacePosition;
 };
 
-void SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 IN, out float4 OutVector4_1)
+void SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d IN, out float4 OutVector4_1)
 {
     UnityTexture2D _Property_dea3cc24e70550849d43fb8887284f97_Out_0 = Texture2D_E59969F8;
     float _Split_b92f5ac2b94fea88a27fd34dfeee34c7_R_1 = IN.AbsoluteWorldSpacePosition[0];
@@ -1531,10 +1531,10 @@ SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
     UnityTexture2D _Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0 = UnityBuildTexture2DStructNoScale(_MaskMap);
     half4 _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0 = _ClippingMask;
     half2 _Property_bff7c659185748ca84af527b29dc138e_Out_0 = _Size;
-    Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
+    Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
     _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2.AbsoluteWorldSpacePosition = IN.AbsoluteWorldSpacePosition;
     float4 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1;
-    SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
+    SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
     half4 _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2;
     Unity_Multiply_half((_Branch_242ef354cf25430e9fb670bcac5f7760_Out_3.xxxx), _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1, _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2);
     surface.Alpha = (_Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2).x;
@@ -1821,12 +1821,12 @@ void Unity_TilingAndOffset_float(half2 UV, half2 Tiling, half2 Offset, out half2
     Out = UV * Tiling + Offset;
 }
 
-struct Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7
+struct Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d
 {
     float3 AbsoluteWorldSpacePosition;
 };
 
-void SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 IN, out float4 OutVector4_1)
+void SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d IN, out float4 OutVector4_1)
 {
     UnityTexture2D _Property_dea3cc24e70550849d43fb8887284f97_Out_0 = Texture2D_E59969F8;
     float _Split_b92f5ac2b94fea88a27fd34dfeee34c7_R_1 = IN.AbsoluteWorldSpacePosition[0];
@@ -1898,10 +1898,10 @@ SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
     UnityTexture2D _Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0 = UnityBuildTexture2DStructNoScale(_MaskMap);
     half4 _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0 = _ClippingMask;
     half2 _Property_bff7c659185748ca84af527b29dc138e_Out_0 = _Size;
-    Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
+    Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
     _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2.AbsoluteWorldSpacePosition = IN.AbsoluteWorldSpacePosition;
     float4 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1;
-    SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
+    SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
     half4 _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2;
     Unity_Multiply_half((_Branch_242ef354cf25430e9fb670bcac5f7760_Out_3.xxxx), _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1, _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2);
     surface.NormalTS = IN.TangentSpaceNormal;
@@ -2177,12 +2177,12 @@ void Unity_TilingAndOffset_float(half2 UV, half2 Tiling, half2 Offset, out half2
     Out = UV * Tiling + Offset;
 }
 
-struct Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7
+struct Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d
 {
     float3 AbsoluteWorldSpacePosition;
 };
 
-void SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 IN, out float4 OutVector4_1)
+void SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d IN, out float4 OutVector4_1)
 {
     UnityTexture2D _Property_dea3cc24e70550849d43fb8887284f97_Out_0 = Texture2D_E59969F8;
     float _Split_b92f5ac2b94fea88a27fd34dfeee34c7_R_1 = IN.AbsoluteWorldSpacePosition[0];
@@ -2255,10 +2255,10 @@ SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
     UnityTexture2D _Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0 = UnityBuildTexture2DStructNoScale(_MaskMap);
     half4 _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0 = _ClippingMask;
     half2 _Property_bff7c659185748ca84af527b29dc138e_Out_0 = _Size;
-    Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
+    Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
     _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2.AbsoluteWorldSpacePosition = IN.AbsoluteWorldSpacePosition;
     float4 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1;
-    SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
+    SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
     half4 _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2;
     Unity_Multiply_half((_Branch_242ef354cf25430e9fb670bcac5f7760_Out_3.xxxx), _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1, _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2);
     surface.BaseColor = (_Multiply_e84b850cb73a4955ba99831a9bb36515_Out_2.xyz);
@@ -2532,12 +2532,12 @@ void Unity_TilingAndOffset_float(half2 UV, half2 Tiling, half2 Offset, out half2
     Out = UV * Tiling + Offset;
 }
 
-struct Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7
+struct Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d
 {
     float3 AbsoluteWorldSpacePosition;
 };
 
-void SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 IN, out float4 OutVector4_1)
+void SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d IN, out float4 OutVector4_1)
 {
     UnityTexture2D _Property_dea3cc24e70550849d43fb8887284f97_Out_0 = Texture2D_E59969F8;
     float _Split_b92f5ac2b94fea88a27fd34dfeee34c7_R_1 = IN.AbsoluteWorldSpacePosition[0];
@@ -2609,10 +2609,10 @@ SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
     UnityTexture2D _Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0 = UnityBuildTexture2DStructNoScale(_MaskMap);
     half4 _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0 = _ClippingMask;
     half2 _Property_bff7c659185748ca84af527b29dc138e_Out_0 = _Size;
-    Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
+    Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
     _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2.AbsoluteWorldSpacePosition = IN.AbsoluteWorldSpacePosition;
     float4 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1;
-    SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
+    SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
     half4 _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2;
     Unity_Multiply_half((_Branch_242ef354cf25430e9fb670bcac5f7760_Out_3.xxxx), _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1, _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2);
     surface.BaseColor = (_Multiply_e84b850cb73a4955ba99831a9bb36515_Out_2.xyz);
@@ -2958,12 +2958,12 @@ void Unity_TilingAndOffset_float(half2 UV, half2 Tiling, half2 Offset, out half2
     Out = UV * Tiling + Offset;
 }
 
-struct Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7
+struct Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d
 {
     float3 AbsoluteWorldSpacePosition;
 };
 
-void SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 IN, out float4 OutVector4_1)
+void SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d IN, out float4 OutVector4_1)
 {
     UnityTexture2D _Property_dea3cc24e70550849d43fb8887284f97_Out_0 = Texture2D_E59969F8;
     float _Split_b92f5ac2b94fea88a27fd34dfeee34c7_R_1 = IN.AbsoluteWorldSpacePosition[0];
@@ -3040,10 +3040,10 @@ SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
     UnityTexture2D _Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0 = UnityBuildTexture2DStructNoScale(_MaskMap);
     half4 _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0 = _ClippingMask;
     half2 _Property_bff7c659185748ca84af527b29dc138e_Out_0 = _Size;
-    Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
+    Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
     _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2.AbsoluteWorldSpacePosition = IN.AbsoluteWorldSpacePosition;
     float4 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1;
-    SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
+    SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
     half4 _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2;
     Unity_Multiply_half((_Branch_242ef354cf25430e9fb670bcac5f7760_Out_3.xxxx), _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1, _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2);
     surface.BaseColor = (_Multiply_e84b850cb73a4955ba99831a9bb36515_Out_2.xyz);
@@ -3324,12 +3324,12 @@ void Unity_TilingAndOffset_float(half2 UV, half2 Tiling, half2 Offset, out half2
     Out = UV * Tiling + Offset;
 }
 
-struct Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7
+struct Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d
 {
     float3 AbsoluteWorldSpacePosition;
 };
 
-void SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 IN, out float4 OutVector4_1)
+void SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d IN, out float4 OutVector4_1)
 {
     UnityTexture2D _Property_dea3cc24e70550849d43fb8887284f97_Out_0 = Texture2D_E59969F8;
     float _Split_b92f5ac2b94fea88a27fd34dfeee34c7_R_1 = IN.AbsoluteWorldSpacePosition[0];
@@ -3400,10 +3400,10 @@ SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
     UnityTexture2D _Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0 = UnityBuildTexture2DStructNoScale(_MaskMap);
     half4 _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0 = _ClippingMask;
     half2 _Property_bff7c659185748ca84af527b29dc138e_Out_0 = _Size;
-    Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
+    Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
     _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2.AbsoluteWorldSpacePosition = IN.AbsoluteWorldSpacePosition;
     float4 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1;
-    SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
+    SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
     half4 _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2;
     Unity_Multiply_half((_Branch_242ef354cf25430e9fb670bcac5f7760_Out_3.xxxx), _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1, _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2);
     surface.Alpha = (_Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2).x;
@@ -3677,12 +3677,12 @@ void Unity_TilingAndOffset_float(half2 UV, half2 Tiling, half2 Offset, out half2
     Out = UV * Tiling + Offset;
 }
 
-struct Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7
+struct Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d
 {
     float3 AbsoluteWorldSpacePosition;
 };
 
-void SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 IN, out float4 OutVector4_1)
+void SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d IN, out float4 OutVector4_1)
 {
     UnityTexture2D _Property_dea3cc24e70550849d43fb8887284f97_Out_0 = Texture2D_E59969F8;
     float _Split_b92f5ac2b94fea88a27fd34dfeee34c7_R_1 = IN.AbsoluteWorldSpacePosition[0];
@@ -3753,10 +3753,10 @@ SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
     UnityTexture2D _Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0 = UnityBuildTexture2DStructNoScale(_MaskMap);
     half4 _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0 = _ClippingMask;
     half2 _Property_bff7c659185748ca84af527b29dc138e_Out_0 = _Size;
-    Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
+    Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
     _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2.AbsoluteWorldSpacePosition = IN.AbsoluteWorldSpacePosition;
     float4 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1;
-    SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
+    SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
     half4 _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2;
     Unity_Multiply_half((_Branch_242ef354cf25430e9fb670bcac5f7760_Out_3.xxxx), _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1, _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2);
     surface.Alpha = (_Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2).x;
@@ -4042,12 +4042,12 @@ void Unity_TilingAndOffset_float(half2 UV, half2 Tiling, half2 Offset, out half2
     Out = UV * Tiling + Offset;
 }
 
-struct Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7
+struct Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d
 {
     float3 AbsoluteWorldSpacePosition;
 };
 
-void SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 IN, out float4 OutVector4_1)
+void SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d IN, out float4 OutVector4_1)
 {
     UnityTexture2D _Property_dea3cc24e70550849d43fb8887284f97_Out_0 = Texture2D_E59969F8;
     float _Split_b92f5ac2b94fea88a27fd34dfeee34c7_R_1 = IN.AbsoluteWorldSpacePosition[0];
@@ -4119,10 +4119,10 @@ SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
     UnityTexture2D _Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0 = UnityBuildTexture2DStructNoScale(_MaskMap);
     half4 _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0 = _ClippingMask;
     half2 _Property_bff7c659185748ca84af527b29dc138e_Out_0 = _Size;
-    Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
+    Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
     _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2.AbsoluteWorldSpacePosition = IN.AbsoluteWorldSpacePosition;
     float4 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1;
-    SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
+    SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
     half4 _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2;
     Unity_Multiply_half((_Branch_242ef354cf25430e9fb670bcac5f7760_Out_3.xxxx), _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1, _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2);
     surface.NormalTS = IN.TangentSpaceNormal;
@@ -4398,12 +4398,12 @@ void Unity_TilingAndOffset_float(half2 UV, half2 Tiling, half2 Offset, out half2
     Out = UV * Tiling + Offset;
 }
 
-struct Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7
+struct Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d
 {
     float3 AbsoluteWorldSpacePosition;
 };
 
-void SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 IN, out float4 OutVector4_1)
+void SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d IN, out float4 OutVector4_1)
 {
     UnityTexture2D _Property_dea3cc24e70550849d43fb8887284f97_Out_0 = Texture2D_E59969F8;
     float _Split_b92f5ac2b94fea88a27fd34dfeee34c7_R_1 = IN.AbsoluteWorldSpacePosition[0];
@@ -4476,10 +4476,10 @@ SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
     UnityTexture2D _Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0 = UnityBuildTexture2DStructNoScale(_MaskMap);
     half4 _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0 = _ClippingMask;
     half2 _Property_bff7c659185748ca84af527b29dc138e_Out_0 = _Size;
-    Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
+    Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
     _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2.AbsoluteWorldSpacePosition = IN.AbsoluteWorldSpacePosition;
     float4 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1;
-    SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
+    SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
     half4 _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2;
     Unity_Multiply_half((_Branch_242ef354cf25430e9fb670bcac5f7760_Out_3.xxxx), _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1, _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2);
     surface.BaseColor = (_Multiply_e84b850cb73a4955ba99831a9bb36515_Out_2.xyz);
@@ -4754,12 +4754,12 @@ void Unity_TilingAndOffset_float(half2 UV, half2 Tiling, half2 Offset, out half2
     Out = UV * Tiling + Offset;
 }
 
-struct Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7
+struct Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d
 {
     float3 AbsoluteWorldSpacePosition;
 };
 
-void SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 IN, out float4 OutVector4_1)
+void SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(UnityTexture2D Texture2D_E59969F8, float4 Vector4_C27D9F6C, float2 Vector2_9E75FBFC, Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d IN, out float4 OutVector4_1)
 {
     UnityTexture2D _Property_dea3cc24e70550849d43fb8887284f97_Out_0 = Texture2D_E59969F8;
     float _Split_b92f5ac2b94fea88a27fd34dfeee34c7_R_1 = IN.AbsoluteWorldSpacePosition[0];
@@ -4831,10 +4831,10 @@ SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
     UnityTexture2D _Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0 = UnityBuildTexture2DStructNoScale(_MaskMap);
     half4 _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0 = _ClippingMask;
     half2 _Property_bff7c659185748ca84af527b29dc138e_Out_0 = _Size;
-    Bindings_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
+    Bindings_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2;
     _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2.AbsoluteWorldSpacePosition = IN.AbsoluteWorldSpacePosition;
     float4 _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1;
-    SG_MaskInWorldSpace_d1589b10477cd884eba3b46e9c796eb7(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
+    SG_MaskInWorldSpace_94726f8a3a6e7c943902842b66a2489d(_Property_66c05abfc4234b41b150d8dd39ce7c43_Out_0, _Property_edf8883a6f6b49469c1fbcbe6d67f474_Out_0, _Property_bff7c659185748ca84af527b29dc138e_Out_0, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2, _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1);
     half4 _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2;
     Unity_Multiply_half((_Branch_242ef354cf25430e9fb670bcac5f7760_Out_3.xxxx), _MaskInWorldSpace_31dc93b03b7846dc86f672f88a9b21f2_OutVector4_1, _Multiply_29ed45bf04914c6dacee44261a25a11f_Out_2);
     surface.BaseColor = (_Multiply_e84b850cb73a4955ba99831a9bb36515_Out_2.xyz);

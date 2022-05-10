@@ -168,7 +168,7 @@ namespace Netherlands3D.Core
 
         public static Mesh ReadBinaryMesh(byte[] fileBytes, out int[] submeshMaterialIndices)
         {
-#if USE_UNSAFE_READING
+#if !SAFE_READING_BINARY_TILE_DATA
             return ReadBinaryMeshUnSafe(fileBytes, out submeshMaterialIndices);
 #endif
 
