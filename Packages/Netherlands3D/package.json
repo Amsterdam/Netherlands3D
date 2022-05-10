@@ -58,6 +58,11 @@
             "displayName": "Subobject-filtering",
             "description": "Example showing filtering out subobjects based on a buildyear slider",
             "path": "SubobjectFiltering/Samples~/SubobjectFiltering"
+        },
+        {
+            "displayName": "WebGL template example",
+            "description": "A WebGL template example to use for Netherlands3D WebGL projects with unityInstance reference and responsive full browser window behaviour.",
+            "path": "WebGL/Samples~/WebGL"
         }
     ],
   "hideInEditor": false,
