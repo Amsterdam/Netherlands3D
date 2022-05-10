@@ -10,6 +10,7 @@ body {
 	margin: 0;
 	padding: 0;
 	background: #383838;
+	overflow:hidden;
 }
 
 .noselect {
