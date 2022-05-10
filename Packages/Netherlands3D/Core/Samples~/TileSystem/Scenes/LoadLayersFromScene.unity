@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -123,6 +123,123 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &185098585
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 185098589}
+  - component: {fileID: 185098588}
+  - component: {fileID: 185098587}
+  - component: {fileID: 185098586}
+  m_Layer: 0
+  m_Name: Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &185098586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 185098585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+--- !u!81 &185098587
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 185098585}
+  m_Enabled: 1
+--- !u!20 &185098588
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 185098585}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &185098589
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 185098585}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1512706333
 GameObject:
   m_ObjectHideFlags: 0
@@ -161,8 +278,6 @@ MonoBehaviour:
   - {fileID: 3146379110839247089}
   - {fileID: 886154575666521789}
   - {fileID: 4627494509830521717}
-  pendingTileChanges: []
-  activeTileChangesView: []
 --- !u!4 &1512706335
 Transform:
   m_ObjectHideFlags: 0
@@ -266,20 +381,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   DefaultMaterialList:
-  - {fileID: 2100000, guid: e7a2af1b9b520f24a86604de8f36ca33, type: 2}
-  - {fileID: 2100000, guid: 4edd0e8d45295054faf6c07befae4e16, type: 2}
-  - {fileID: 2100000, guid: 8265305d98e7bb740ac27fd4b4eaf76c, type: 2}
-  - {fileID: 2100000, guid: a674ab90fc804ce4593e09b7b31e846f, type: 2}
-  - {fileID: 2100000, guid: ef2c8cb9c3ca51d48bc2e2fc2b9022c8, type: 2}
-  - {fileID: 2100000, guid: 3b680d4f7deb89648908700880fb407c, type: 2}
-  - {fileID: 2100000, guid: d51c8753eb50a504d8519fc63c6c9998, type: 2}
-  - {fileID: 2100000, guid: 6543ee7ced42a854d8494b805b7b6a64, type: 2}
-  - {fileID: 2100000, guid: 154ad834a9047874f8c032d05bb8f73b, type: 2}
-  - {fileID: 2100000, guid: 85d8b49e901d2d74f861df5ff6e3af74, type: 2}
-  - {fileID: 2100000, guid: 1d27b4df77a58394d934beb17e22ef9c, type: 2}
-  - {fileID: 2100000, guid: effeb907e73e0bf479f61f38032b4493, type: 2}
-  - {fileID: 2100000, guid: 8784d6829f244dc4a82c34a923b3108f, type: 2}
-  - {fileID: 2100000, guid: 8784d6829f244dc4a82c34a923b3108f, type: 2}
+  - {fileID: 2100000, guid: 785983bc96c9c864c9877ff96db6febc, type: 2}
+  - {fileID: 2100000, guid: 6af2ad596c9466349912120837c4c79d, type: 2}
+  - {fileID: 2100000, guid: 7496e711c7d48e142bed6bf229b1d638, type: 2}
+  - {fileID: 2100000, guid: f73a2c39495281d4999b0608f28544ea, type: 2}
+  - {fileID: 2100000, guid: a99b7e5836c0be84cbe06ca8f93bcea8, type: 2}
+  - {fileID: 2100000, guid: b40ab48a98fecce4c94f0283887185a3, type: 2}
+  - {fileID: 2100000, guid: 08ef8d8b85e49cc4a8f493f0f9198334, type: 2}
+  - {fileID: 2100000, guid: 827740a2c343b2941ad30cc8b4e2b880, type: 2}
+  - {fileID: 2100000, guid: a8791bf6dd415c9478c301690fd3804d, type: 2}
+  - {fileID: 2100000, guid: b159b534afc574f4984fef3708d906b3, type: 2}
+  - {fileID: 2100000, guid: 159fdf34f2422914eb44801e6f7446da, type: 2}
+  - {fileID: 2100000, guid: 5dd311be29079cb45a4bcb13e19a057d, type: 2}
   createMeshcollider: 0
   tileShadowCastingMode: 1
   brotliCompressedExtention: .unityweb
@@ -376,7 +489,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   DefaultMaterialList:
-  - {fileID: 2100000, guid: 47ccc5c015fc45a4a9282e50cd36be6c, type: 2}
+  - {fileID: 2100000, guid: f36ad1da28199e24eb6175576d2ee8a3, type: 2}
   createMeshcollider: 0
   tileShadowCastingMode: 1
   brotliCompressedExtention: .unityweb
@@ -615,7 +728,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   DefaultMaterialList:
-  - {fileID: 2100000, guid: 8784d6829f244dc4a82c34a923b3108f, type: 2}
+  - {fileID: 2100000, guid: f64bd83b9a515834cb96d5bafc187987, type: 2}
   createMeshcollider: 0
   tileShadowCastingMode: 1
   brotliCompressedExtention: .unityweb
