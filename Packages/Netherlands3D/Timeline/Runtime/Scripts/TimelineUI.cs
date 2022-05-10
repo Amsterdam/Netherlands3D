@@ -37,6 +37,8 @@ namespace Netherlands3D.Timeline
         public TMP_InputField inputFieldCurrentDate;
         [Tooltip("The button that allows for auto scroll")]
         public TextMeshProUGUI playButtonField;
+        [Tooltip("For changing the playback speed")]
+        public TMP_InputField inputFieldPlaySpeed;
 
         [Header("Timeline Components")]
         [SerializeField] private GameObject prefabTimePeriodsUILayer;
@@ -509,7 +511,7 @@ namespace Netherlands3D.Timeline
         {
             while(true)
             {
-                ScrollTimeBar(-100 * Time.deltaTime);
+                ScrollTimeBar(-100 * int.Parse(inputFieldPlaySpeed.text) * Time.deltaTime);
                 yield return null;
             }
         }
@@ -522,7 +524,7 @@ namespace Netherlands3D.Timeline
         {
             while(true)
             {
-                timeScrubber.ScrollTimeScrubber(0.1f * Time.deltaTime);
+                timeScrubber.ScrollTimeScrubber(0.1f * int.Parse(inputFieldPlaySpeed.text) * Time.deltaTime);
                 yield return null;
             }
         }
