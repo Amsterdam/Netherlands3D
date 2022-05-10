@@ -1,12 +1,12 @@
 {
-    "name": "nl.netherlands3d.cameras",
+    "name": "Netherlands3D.GeoService.Runtime",
     "rootNamespace": "",
     "references": [
         "GUID:9ca88277166fea644a31588b4f943acc"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,

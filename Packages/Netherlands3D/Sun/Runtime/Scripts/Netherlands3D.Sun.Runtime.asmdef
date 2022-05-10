@@ -1,8 +1,9 @@
 {
-    "name": "nl.netherlands3d.wms",
+    "name": "Netherlands3D.Sun.Runtime",
     "rootNamespace": "",
     "references": [
-        "nl.netherlands3d.core"
+        "GUID:9ca88277166fea644a31588b4f943acc",
+        "GUID:15fc0a57446b3144c949da3e2b9737a9"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
