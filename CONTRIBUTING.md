@@ -12,6 +12,8 @@ Make sure pull requests with changes adhere to the following rules:
 - Both desktop (PC) and WebGL platforms builds are supported
 - Using code convention (see below)
 
+Pull requests commits will be squashed into one message and merged after approval.
+
 ## Code convention
 All the project code and comments should be written in English. Content text is written in Dutch.
 
