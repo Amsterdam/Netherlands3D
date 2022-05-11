@@ -50,7 +50,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1345e552dccde1545ac3fba6be7e6d52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timePeriod: {fileID: 0}
+  timePeriod:
+    name: 
+    description: 
+    startDate:
+      dateTimeString: 0001/01/01
+    endDate:
+      dateTimeString: 0001/01/01
+    layer: 
+    eventPressed:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerShow:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerHide:
+      m_PersistentCalls:
+        m_Calls: []
   rectTransform: {fileID: 6648799158405934587}
   nameField: {fileID: 6648799159244977129}
   timePeriodsLayer: {fileID: 0}
@@ -113,7 +141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.36816183, g: 0.6791027, b: 0.8018868, a: 1}
+  m_Color: {r: 0, g: 0.27450982, b: 0.6, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -260,8 +288,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -278,7 +306,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18.6
+  m_fontSize: 35.95
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -294,7 +322,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 0
+  m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -314,7 +342,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 4, y: 4, z: 4, w: 4}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
