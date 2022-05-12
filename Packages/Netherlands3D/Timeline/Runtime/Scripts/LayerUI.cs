@@ -46,6 +46,8 @@ namespace Netherlands3D.Timeline
         /// </summary>
         public void ToggleVisability()
         {
+            if(eventLayer == null) return;
+
             isVisible = !isVisible;
             if(isVisible)
             {

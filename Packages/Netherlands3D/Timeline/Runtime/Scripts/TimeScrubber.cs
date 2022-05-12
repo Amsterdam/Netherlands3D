@@ -16,15 +16,9 @@ namespace Netherlands3D.Timeline
         public bool IsActive { get; private set; }
 
         [Header("Components")]
+        [SerializeField] private RectTransform rt;
         [SerializeField] private Slider slider;
         [SerializeField] private TimelineUI timelineUI;
-
-        private RectTransform rt;
-
-        private void Awake()
-        {
-            rt = GetComponent<RectTransform>();
-        }
 
         // Start is called before the first frame update
         void Start()

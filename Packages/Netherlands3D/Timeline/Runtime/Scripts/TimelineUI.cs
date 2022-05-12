@@ -35,8 +35,6 @@ namespace Netherlands3D.Timeline
         public TimeBar[] timeBars = new TimeBar[3];
         [Tooltip("The input field of the current date")]
         public TMP_InputField inputFieldCurrentDate;
-        [Tooltip("The button that allows for auto scroll")]
-        public TextMeshProUGUI playButtonField;
         [Tooltip("For changing the playback speed")]
         public TMP_InputField inputFieldPlaySpeed;
 
@@ -275,12 +273,10 @@ namespace Netherlands3D.Timeline
         /// Play the automatic scrolling of the timeline/scrubber
         /// </summary>
         /// <param name="autoPlay"></param>
-        public void PlayScroll(bool autoPlay)
+        public void PlayScroll(bool play)
         {
-            isAutomaticlyPlaying = autoPlay;
-            if(isAutomaticlyPlaying)
+            if(play)
             {
-                playButtonField.text = "Stop";
                 // Check if timeline or time scrubber
                 if(timeScrubber.IsActive)
                 {
@@ -295,7 +291,6 @@ namespace Netherlands3D.Timeline
             }
             else
             {
-                playButtonField.text = "Play";
                 if(coroutineScrollTimeBarAutomaticly != null) StopCoroutine(coroutineScrollTimeBarAutomaticly);
                 if(coroutineScrollScrubberAutomaticly != null) StopCoroutine(coroutineScrollScrubberAutomaticly);
             }
