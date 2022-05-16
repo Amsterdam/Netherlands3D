@@ -575,6 +575,34 @@ MonoBehaviour:
     eventLayerHide:
       m_PersistentCalls:
         m_Calls: []
+  - name: 10 Years
+    description: Yo
+    startDate:
+      dateTimeString: 2000/01/01
+    endDate:
+      dateTimeString: 2010/01/01
+    layer: 10 Years
+    eventPressed:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerShow:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerHide:
+      m_PersistentCalls:
+        m_Calls: []
   allTimePeriods:
   - name: Test
     description: Hello this is a test time period
@@ -1143,6 +1171,34 @@ MonoBehaviour:
     endDate:
       dateTimeString: 2019/01/01
     layer: CSV+
+    eventPressed:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventScreenExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeEnter:
+      m_PersistentCalls:
+        m_Calls: []
+    eventCurrentTimeExit:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerShow:
+      m_PersistentCalls:
+        m_Calls: []
+    eventLayerHide:
+      m_PersistentCalls:
+        m_Calls: []
+  - name: 10 Years
+    description: Yo
+    startDate:
+      dateTimeString: 2000/01/01
+    endDate:
+      dateTimeString: 2010/01/01
+    layer: 10 Years
     eventPressed:
       m_PersistentCalls:
         m_Calls: []

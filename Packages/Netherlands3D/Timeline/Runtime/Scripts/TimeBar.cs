@@ -35,7 +35,7 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// The pixel position and the corresponding dateTime
         /// </summary>
-        private Dictionary<float, DateTime> dateTimePositions = new Dictionary<float, DateTime>();
+        [HideInInspector] public Dictionary<float, DateTime> dateTimePositions = new Dictionary<float, DateTime>();
 
         private void Awake()
         {

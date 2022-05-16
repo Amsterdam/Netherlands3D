@@ -36,12 +36,6 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private Coroutine coroutineScrollScrubberAutomaticly;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-        
-        }
-
         /// <summary>
         /// When the playback speed is changed
         /// </summary>

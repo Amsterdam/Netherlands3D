@@ -81,10 +81,6 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private bool currentDateIsSet;
         /// <summary>
-        /// Is the time line currently automaticly playing (scrolling)
-        /// </summary>
-        private bool isAutomaticlyPlaying;
-        /// <summary>
         /// Is the user dragging its mouse on the time bar?
         /// </summary>
         private bool mouseIsDragging;
@@ -252,9 +248,8 @@ namespace Netherlands3D.Timeline
             {
                 UpdateCurrentDateVisual();
             }
+            timeScrubber.StoppedUsing();
         }
-
-        
 
         /// <summary>
         /// Scroll the time bar horizontally by a amount
@@ -358,6 +353,7 @@ namespace Netherlands3D.Timeline
         }
 
 
+
         /// <summary>
         /// Get the local x position of a date from the timeBars
         /// </summary>
@@ -372,7 +368,7 @@ namespace Netherlands3D.Timeline
             for(int i = 0; i < timeBars.Length; i++)
             {
                 float value = timeBars[i].GetDatePosition(dateTime, timeUnit);
-                if(value == 0.123f) continue;
+                if(value == 0.123f) continue; // Not found
                 else
                 {
                     // Found local x value of date in timebar
@@ -427,6 +423,20 @@ namespace Netherlands3D.Timeline
         }
 
         /// <summary>
+        /// Get all the datetimes stored in the time bars
+        /// </summary>
+        /// <returns></returns>
+        private DateTime[] GetTimeBarDateTimes()
+        {
+            List<DateTime> dateTimes = new List<DateTime>();
+            for(int i = 0; i < timeBars.Length; i++)
+            {
+                dateTimes.AddRange(timeBars[i].dateTimePositions.Values.ToList());
+            }
+            return dateTimes.ToArray();
+        }
+
+        /// <summary>
         /// Check if the event is visible in the visable date range
         /// </summary>
         /// <param name="dEvent">The even to check</param>
@@ -457,9 +467,7 @@ namespace Netherlands3D.Timeline
             TimeBar t2 = timeBars[barIndexes[2]];
             t2.transform.localPosition = new Vector3(localPosX + TimeBarParentWidth, t2.transform.localPosition.y, t2.transform.localPosition.z);
         }
-
         
-
         /// <summary>
         /// Updates the current date inputfield text to currentDate datetime value
         /// </summary>
@@ -507,11 +515,27 @@ namespace Netherlands3D.Timeline
             // Now update each visible time period
             foreach(var item in visibleTimePeriodsUI.Values)
             {
-                float xL = EventUIGetPosX(item.timePeriod.startDate, false);
-                //Debug.LogWarning(visableDateLeft + " XL " + xL);
-                float xR = EventUIGetPosX(item.timePeriod.endDate, true);
-                //Debug.LogWarning(visableDateRight + " XR " + xR);
-                item.UpdateUI(xL, xR);
+                // Get left and right x positions correlating to the bar
+                // but check if no *X timeunit is used
+                float xL = 0, xR = 0;
+                if(timeUnit == TimeUnit.Unit.year5 || timeUnit == TimeUnit.Unit.year10)
+                {
+                    // *X used (as in 5 years, 10 years etc)
+                    // Get the closest year of the timebar & stick it 2 that
+                    DateTime dL = TimeUnit.GetClosestDateTime(item.timePeriod.startDate, GetTimeBarDateTimes());
+                    DateTime dR = TimeUnit.GetClosestDateTime(item.timePeriod.endDate, GetTimeBarDateTimes());
+                    xL = EventUIGetPosX(dL, false);
+                    xR = EventUIGetPosX(dR, true);
+                }
+                else
+                {
+                    // Normal
+                    xL = EventUIGetPosX(item.timePeriod.startDate, false);
+                    //Debug.LogWarning(visableDateLeft + " XL " + xL);
+                    xR = EventUIGetPosX(item.timePeriod.endDate, true);
+                    //Debug.LogWarning(visableDateRight + " XR " + xR);
+                }
+                item.UpdateUI(xL, xR - 16); // some wierd bug setting it off by some pixels, so applied ductapefix of -16
 
                 // Check the time period events
                 // Current Time Enter
@@ -563,6 +587,7 @@ namespace Netherlands3D.Timeline
             // Correct dates
             visableDateLeft = new DateTime(visableDateLeft.Year, visableDateLeft.Month, visableDateLeft.Day, 0, 0, 0);
             visableDateRight = new DateTime(visableDateRight.Year, visableDateRight.Month, visableDateRight.Day, 0, 0, 0);
+            //print(visableDateLeft + " - " + visableDateRight);
 
             UpdateTimePeriods();
         }

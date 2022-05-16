@@ -15,6 +15,8 @@ namespace Netherlands3D.Timeline
         /// </remarks>
         public enum Unit
         {
+            year10, // Every 10 years
+            year5, // Every 5 years
             year,
             month,
             day,
@@ -35,6 +37,8 @@ namespace Netherlands3D.Timeline
         {
             return unit switch
             {
+                Unit.year10 =>          dateTime.AddYears(value * 10),
+                Unit.year5 =>           dateTime.AddYears(value * 5),
                 Unit.year =>            dateTime.AddYears(value),
                 Unit.month =>           dateTime.AddMonths(value),
                 Unit.day =>             dateTime.AddDays(value),
@@ -75,15 +79,28 @@ namespace Netherlands3D.Timeline
 
             return unit switch
             {
+                Unit.year10 =>          dateTime.AddYears(changeValue * v * 10),
+                Unit.year5 =>           dateTime.AddYears(changeValue * v * 5),
                 Unit.year =>            dateTime.AddYears(changeValue * v),
                 Unit.month =>           dateTime.AddMonths(changeValue * v),
                 Unit.day =>             dateTime.AddDays(changeValue * v),
                 Unit.hour =>            dateTime.AddHours(changeValue * v),
                 Unit.minutes =>         dateTime.AddMinutes(changeValue * v),
-                Unit.seconds =>         dateTime.AddMinutes(changeValue * v),
+                Unit.seconds =>         dateTime.AddSeconds(changeValue * v),
                 Unit.milliseconds =>    dateTime.AddMilliseconds(changeValue * v),
                 _ => throw new ArgumentOutOfRangeException("unit"),
             };
+        }
+
+        /// <summary>
+        /// Get the closest dateTime out of an array
+        /// </summary>
+        /// <param name="dateTime">The dateTime to find the closest of in the array</param>
+        /// <param name="dateTimes">The array of dateTimes to search</param>
+        /// <returns>DateTime</returns>
+        public static DateTime GetClosestDateTime(DateTime dateTime, DateTime[] dateTimes)
+        {
+            return ArrayExtention.MinBy(dateTimes, x => Math.Abs((x - dateTime).Ticks));
         }
 
         /// <summary>
@@ -99,6 +116,8 @@ namespace Netherlands3D.Timeline
             int v = isLeft ? -1 : 1;
             return unit switch
             {
+                Unit.year10 =>          dateTime.AddYears(datesToPlace * v * 10),
+                Unit.year5 =>           dateTime.AddYears(datesToPlace * v * 5),
                 Unit.year =>            dateTime.AddYears(datesToPlace * v),
                 Unit.month =>           dateTime.AddMonths(datesToPlace * v),
                 Unit.day =>             dateTime.AddDays(datesToPlace * v),
@@ -119,6 +138,8 @@ namespace Netherlands3D.Timeline
         {
             return unit switch
             {
+                Unit.year10 =>      "yyyy",
+                Unit.year5 =>       "yyyy",
                 Unit.year =>        "yyyy",
                 Unit.month =>       "MM",
                 Unit.day =>         "dd",
@@ -139,6 +160,8 @@ namespace Netherlands3D.Timeline
         {
             return unit switch
             {
+                Unit.year10 =>      "yyyy" + " x10",
+                Unit.year5 =>       "yyyy" + " x5",
                 Unit.year =>        "yyyy",
                 Unit.month =>       "yyyy/MM",
                 Unit.day =>         "yyyy/MM/dd",
@@ -161,6 +184,8 @@ namespace Netherlands3D.Timeline
         {
             return unit switch
             {
+                Unit.year10 =>          dateTimeA.Year == dateTimeB.Year,
+                Unit.year5 =>           dateTimeA.Year == dateTimeB.Year,
                 Unit.year =>            dateTimeA.Year == dateTimeB.Year,
                 Unit.month =>           dateTimeA.Year == dateTimeB.Year && dateTimeA.Month == dateTimeB.Month,
                 Unit.day =>             dateTimeA.Year == dateTimeB.Year && dateTimeA.Month == dateTimeB.Month & dateTimeA.Day == dateTimeB.Day,
