@@ -1,10 +1,40 @@
 # Beginnen met Netherlands3D in Unity
 
-Download en installeer Unity3D (<https://store.unity.com/>)
+## Git installeren
 
-Open een nieuw 3D-project
+Zorg om te beginnen dat Git is geinstalleerd op het systeem. Dit maakt het mogelijk om pakketjes te installeren.
 
-Open de package-manager (window package manager)
+Git is te downloaden vanaf https://gitforwindows.org/
+
+Installatie met de standaard opties is voldoende. Herstart je systeem na de installatie.
+
+## Unity installeren
+
+Download en installeer Unity3D via <https://unity.com/download>
+
+Je download daarmee de 'Unity Hub'. Vanuit deze Hub kan je verschillende versies van Unity downloaden.
+
+'Sign in' met een bestaand Unity account, of maak eerst een nieuw account aan via 'Create account' en doe dan 'Sign in'
+
+Ga eventueel akkoord met het activeren van een 'FREE personal license'.
+
+Kies in het 'Install Unity Editor' scherm rechtsonderin 'skip installation'. Wij willen namelijk een specifieke versie gaan installeren.
+
+Installeer via 'Installs / Install Editor' de LTS (long term service) versie 2020.3.28f1
+
+![image-20220509104007559](./imgs/beginnen/image0.png)
+
+Maak na het installeren in de Hub een nieuw Unity project aan via 'Projects / New Project' en kies als template '3D Core'.
+
+Kies een naam voor je project en de locatie op je computer
+
+![image-20220509104007559](./imgs/beginnen/new_project.png)
+
+Het project wordt vervolgens automatisch geopend in Unity.
+
+## In Unity
+
+Open in Unity de package-manager (window package manager)
 
 ![](./imgs/beginnen/image1.png)
 
@@ -14,10 +44,17 @@ Klik op het + icoon in de linkerbovenhoek, kies voor "Add package from git URL",
 
 ![](./imgs/beginnen/image3.png)
 
-Unity gaat nu even iets voor zichzelf doen en laat daarna, als alles goed gegaan is, de package Netherlands3D zien in de package-manager.
+Unity gaat nu even iets voor zichzelf doen.
 
-![Afbeelding met tekst Automatisch gegenereerde
-beschrijving](./imgs/beginnen/image4.png)
+Er komt een melding om de editor opnieuw te starten, klik op Yes
+
+![](./imgs/beginnen/editor_herstart.png)
+
+
+
+Unity herstart nu en laat daarna, als alles goed gegaan is, de package Netherlands3D zien in de package-manager.
+
+![](./imgs/beginnen/image4.png)
 
 Onder het kopje "Samples" staat een lijst met pakketjes, dit zijn de modules in netherlands3D die je kunt toevoegen aan je eigen project.
 
@@ -26,32 +63,16 @@ Onder het kopje "Samples" staat een lijst met pakketjes, dit zijn de modules in 
 We beginnen met het TileSystem. Dit is de module die het 3D-model van de stad laat zien. 
 Klik hiervoor op het knopje "Import" naast "TileSystem".
 
-Unity heeft nu in de AssetFolder een mapje "Samples"aangemaakt met daarin een mapje "Netherlands3D" en daarin een mapje met een
+Unity heeft nu in de Assets map een mapje "Samples" aangemaakt met daarin een mapje "Netherlands3D" en daarin een mapje met een
 versienummer. In dit mapje staat alles wat je nodig hebt om het 3D-model van de stad in het project te laten zien.
 
-Unity heeft ook in de Console-window een berg foutmeldingen gegenereerd.
-Dit komt omdat netherlands3D nog een extra package nodig heeft, genaamd "Universal Render Pipeline".
+Nu maken we in de Assets map een nieuwe map aan met de naam "RenderPipeline" (let op de hoofdletters).
 
-## Universal Render Pipeline
+![](./imgs/beginnen/create_folder.png)
 
-Om de Universal Render Pipeline toe te voegen aan ons project gaan we weer naar de packageManager en kiezen we in het pulldown-menu voor "Unity Registry":
+![](./imgs/beginnen/image8.png)
 
-![](./imgs/beginnen/image6.png)
-
-In de lijst met beschikbare packages selecteren we "Univeral RP" en klikken op "Install".
-
-![Afbeelding met tekst Automatisch gegenereerde
-beschrijving](./imgs/beginnen/image7.png)
-
-Unity gaat vervolgens weer even aan de slag met importeren van de package. 
-Wanneer we nu in de console-window op "clear" klikken zouden er geen foutmeldingen meer tevoorschijn moeten komen.
-
-Nu maken we in de AssetFolder een nieuwe map aan met de naam "RenderPipeline".
-
-![Afbeelding met tekst Automatisch gegenereerde
-beschrijving](./imgs/beginnen/image8.png)
-
-Geef een rechter-muisklik op deze nieuwe map en kies voor CreateRenderingUniversal Render PipelinePipeline Asset (Forward Renderer)
+Geef een rechter-muisklik op deze nieuwe map en kies voor CreateRenderingUniversal Render PipelineAsset (Forward Renderer)
 
 ![](./imgs/beginnen/image9.png)
 
@@ -72,6 +93,8 @@ In het menuutje dat opent dubbelklikken we op het bestandje dat we zojuist hebbe
 
 ![](./imgs/beginnen/image13.png)
 
+
+
 ## TileSystem gebruiken
 
 Om het tilesystem in actie te zien gaan we in de assetsFolder naar de eerder geimporteerde Sample. 
@@ -81,19 +104,15 @@ In deze sample openen we de map "Scenes".
 
 Vervolgens slepen we het bestand "LoadLayersFromScene" naar de hierarchy.
 
-![Afbeelding met tekst Automatisch gegenereerde
-beschrijving](./imgs/beginnen/image15.png)
+![](./imgs/beginnen/image15.png)
 
-Om een goed beeld te kunne krijgen willen we de Main Camera nog even verplaatsen. Dit doen we door in de Hierarchy de Main Camera aan te klikken:
+Om een goed beeld te kunnen krijgen willen we de Main Camera nog even verplaatsen. Dit doen we door in de Hierarchy de Main Camera aan te klikken:
 
-![Afbeelding met tekst Automatisch gegenereerde
-beschrijving](./imgs/beginnen/image16.png)
+![](./imgs/beginnen/image16.png)
 
 En vervolgens in de inspector de Position en Rotation aan te passen.
 
-![Afbeelding met tekst, schermafbeelding, monitor, zwart Automatisch
-gegenereerde
-beschrijving](./imgs/beginnen/image17.png)
+![](./imgs/beginnen/image17.png)
 
 Nu we toch in de Inspector voor de camera bezig zijn zetten we ook onder het kopje "Camera", "Projection", "Clipping plane" de afstand voor Far even van 1000 op 6000.
 

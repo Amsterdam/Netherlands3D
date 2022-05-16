@@ -1,4 +1,4 @@
-In de vorige handleiding hebben we een unity-project gemaakt waarin we Amsterdam in 3D zien. 
+In de [vorige handleiding](Beginnen.md) hebben we een unity-project gemaakt waarin we Amsterdam in 3D zien. 
 Hartsikke leuk, maar wat moet je doen om een ander gebied te kunnen zien.
 
 In deze handleiding gaan we 3d-modellen van gebouwen en terrein bemachtigen en deze voorbereiden voor gebruik in Unity.
