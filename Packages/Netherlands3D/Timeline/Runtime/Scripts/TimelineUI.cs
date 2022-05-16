@@ -46,9 +46,10 @@ namespace Netherlands3D.Timeline
         [SerializeField] private Transform parentLayersUI;
         [SerializeField] private ScrollRect scrollRectTimePeriodLayers;
         [SerializeField] private ScrollRect scrollRectLayers;
+        public TimelinePlayback playback;
 
         [Header("Time Scrubber Components")]
-        [SerializeField] private TimeScrubber timeScrubber;
+        public TimeScrubber timeScrubber;
 
         /// <summary>
         /// Unity Event that gets triggerd when the currentDate is changed
@@ -99,6 +100,8 @@ namespace Netherlands3D.Timeline
         /// Array int holding the order of the indexes of timeBars in which they appear/move
         /// </summary>
         private int[] barIndexes;
+
+        private float scrollSpeed;
         /// <summary>
         /// The time unit used for the timeline
         /// </summary>
@@ -122,15 +125,7 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// The most visable date right
         /// </summary>
-        private DateTime visableDateRight;
-        /// <summary>
-        /// Enumerator for ScrollTimeBarAutomaticly
-        /// </summary>
-        private Coroutine coroutineScrollTimeBarAutomaticly;
-        /// <summary>
-        /// Coroutine for ScrollScrubberAutomaticly
-        /// </summary>
-        private Coroutine coroutineScrollScrubberAutomaticly;
+        private DateTime visableDateRight;        
         /// <summary>
         /// List of all categories scripts
         /// </summary>
@@ -259,42 +254,7 @@ namespace Netherlands3D.Timeline
             }
         }
 
-        /// <summary>
-        /// Toggle to play the timeline automaticly or not
-        /// </summary>
-        public void TogglePlay()
-        {
-            // Based on if the time scrubber is in use or not play the time bar or the time scrubber
-            isAutomaticlyPlaying = !isAutomaticlyPlaying;
-            PlayScroll(isAutomaticlyPlaying);
-        }
-
-        /// <summary>
-        /// Play the automatic scrolling of the timeline/scrubber
-        /// </summary>
-        /// <param name="autoPlay"></param>
-        public void PlayScroll(bool play)
-        {
-            if(play)
-            {
-                // Check if timeline or time scrubber
-                if(timeScrubber.IsActive)
-                {
-                    // Use timescrubber
-                    coroutineScrollScrubberAutomaticly = StartCoroutine(ScrollTimeScrubberAutomaticly());
-                }
-                else
-                {
-                    // Use timeline
-                    coroutineScrollTimeBarAutomaticly = StartCoroutine(ScrollTimeBarAutomaticly());
-                }
-            }
-            else
-            {
-                if(coroutineScrollTimeBarAutomaticly != null) StopCoroutine(coroutineScrollTimeBarAutomaticly);
-                if(coroutineScrollScrubberAutomaticly != null) StopCoroutine(coroutineScrollScrubberAutomaticly);
-            }
-        }
+        
 
         /// <summary>
         /// Scroll the time bar horizontally by a amount
@@ -498,31 +458,7 @@ namespace Netherlands3D.Timeline
             t2.transform.localPosition = new Vector3(localPosX + TimeBarParentWidth, t2.transform.localPosition.y, t2.transform.localPosition.z);
         }
 
-        /// <summary>
-        /// Scroll the timebar automaticly
-        /// </summary>
-        /// <returns></returns>
-        private IEnumerator ScrollTimeBarAutomaticly()
-        {
-            while(true)
-            {
-                ScrollTimeBar(-100 * int.Parse(inputFieldPlaySpeed.text) * Time.deltaTime);
-                yield return null;
-            }
-        }
-
-        /// <summary>
-        /// Scroll the time scrubber automaticly
-        /// </summary>
-        /// <returns></returns>
-        private IEnumerator ScrollTimeScrubberAutomaticly()
-        {
-            while(true)
-            {
-                timeScrubber.ScrollTimeScrubber(0.1f * int.Parse(inputFieldPlaySpeed.text) * Time.deltaTime);
-                yield return null;
-            }
-        }
+        
 
         /// <summary>
         /// Updates the current date inputfield text to currentDate datetime value
@@ -661,7 +597,7 @@ namespace Netherlands3D.Timeline
                     scrollRectTimePeriodLayers.enabled = false;
                     scrollRectLayers.enabled = false;
                     ScrollTimeBar(Vector3.Distance(mouseDownPosition, Input.mousePosition) * dirX * mouseSensitivity * UnityEngine.Time.deltaTime);
-                    PlayScroll(false);
+                    playback.PlayScroll(false);
                 }
                 else
                 {

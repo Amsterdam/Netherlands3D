@@ -52,7 +52,7 @@ namespace Netherlands3D.Timeline
             {
                 int dir = mouseDownPosition.x < Input.mousePosition.x ? 1 : -1;
                 timelineUI.ScrollTimeBar(Vector3.Distance(mouseDownPosition, Input.mousePosition) * dir * sensitivity * UnityEngine.Time.deltaTime);
-                timelineUI.PlayScroll(false);
+                timelineUI.playback.PlayScroll(false);
             }
 
             if(mouseIsOn)

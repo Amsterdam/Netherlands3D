@@ -27,6 +27,14 @@ namespace Netherlands3D.Timeline
         /// How fast the timeline is playing
         /// </summary>
         private int playbackSpeed;
+        /// <summary>
+        /// Enumerator for ScrollTimeBarAutomaticly
+        /// </summary>
+        private Coroutine coroutineScrollTimeBarAutomaticly;
+        /// <summary>
+        /// Coroutine for ScrollScrubberAutomaticly
+        /// </summary>
+        private Coroutine coroutineScrollScrubberAutomaticly;
 
         // Start is called before the first frame update
         void Start()
@@ -52,7 +60,61 @@ namespace Netherlands3D.Timeline
         {
             isPlaying = !isPlaying;
             playIcon.sprite = isPlaying ? spritePause : spritePlay;
-            timelineUI.PlayScroll(isPlaying);
+            OnPlaybackSpeedChanged();
+            PlayScroll(isPlaying);
+        }
+
+        /// <summary>
+        /// Play the automatic scrolling of the timeline/scrubber
+        /// </summary>
+        /// <param name="autoPlay"></param>
+        public void PlayScroll(bool play)
+        {
+            if(play)
+            {
+                // Check if timeline or time scrubber
+                if(timelineUI.timeScrubber.IsActive)
+                {
+                    // Use timescrubber
+                    coroutineScrollScrubberAutomaticly = StartCoroutine(ScrollTimeScrubberAutomaticly());
+                }
+                else
+                {
+                    // Use timeline
+                    coroutineScrollTimeBarAutomaticly = StartCoroutine(ScrollTimeBarAutomaticly());
+                }
+            }
+            else
+            {
+                if(coroutineScrollTimeBarAutomaticly != null) StopCoroutine(coroutineScrollTimeBarAutomaticly);
+                if(coroutineScrollScrubberAutomaticly != null) StopCoroutine(coroutineScrollScrubberAutomaticly);
+            }
+        }
+
+        /// <summary>
+        /// Scroll the timebar automaticly
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator ScrollTimeBarAutomaticly()
+        {
+            while(true)
+            {
+                timelineUI.ScrollTimeBar(-100 * playbackSpeed * Time.deltaTime);
+                yield return null;
+            }
+        }
+
+        /// <summary>
+        /// Scroll the time scrubber automaticly
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator ScrollTimeScrubberAutomaticly()
+        {
+            while(true)
+            {
+                timelineUI.timeScrubber.ScrollTimeScrubber(0.1f * playbackSpeed * Time.deltaTime);
+                yield return null;
+            }
         }
     }
 }

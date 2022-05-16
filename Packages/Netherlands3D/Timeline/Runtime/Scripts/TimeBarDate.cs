@@ -10,18 +10,12 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// The text where the date is displayed
         /// </summary>
-        [HideInInspector] public TextMeshProUGUI field;
-
-        private void Awake()
-        {
-            field = GetComponent<TextMeshProUGUI>();
-        }
+        public TextMeshProUGUI field;
 
         private void Start()
         {
             var rt = GetComponent<RectTransform>();
             transform.localPosition = new Vector3(transform.localPosition.x, -rt.sizeDelta.y / 2, transform.localPosition.z);
-            
         }
     }
 }
