@@ -56,9 +56,9 @@ public class VersionControl : EditorWindow
         GUILayout.Label("Netherlands3D Version Control", EditorStyles.boldLabel);
         
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.BeginVertical();
-        EditorGUILayout.LabelField("Current Release: ", currentVersion);
-        EditorGUILayout.EndVertical();
+            EditorGUILayout.BeginVertical();
+            EditorGUILayout.LabelField("Current Release: ", currentVersion);
+            EditorGUILayout.EndVertical();
         EditorGUILayout.EndHorizontal();
 
         if (CurrentVersionIsDefined == false)
@@ -79,38 +79,45 @@ public class VersionControl : EditorWindow
                     GUILayout.Label("Available Releases:");
                     GUILayout.FlexibleSpace();
                     index = EditorGUILayout.Popup(index, availableVersions.ToArray());
-                EditorGUILayout.EndHorizontal();
-                
-            EditorGUILayout.EndVertical();
-            GUILayout.FlexibleSpace();
-        EditorGUILayout.EndHorizontal();
-
-
-        GUILayout.Label("Used Namespaces", EditorStyles.boldLabel);
-
-
-
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.BeginVertical();
-        for (int i = 0; i < packagenames.Count; i++)
+                    GUILayout.FlexibleSpace();
+        if (availableVersions[index]!=currentVersion)
         {
-            GUILayout.Label(packagenames[i]);
-        }       
-
-        EditorGUILayout.EndVertical();
-        EditorGUILayout.BeginVertical();
-        for (int i = 0; i < packagenames.Count; i++)
-        {
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Button("V");
-            GUILayout.Button("X");
-            EditorGUILayout.EndHorizontal();
-        }
+            if (GUILayout.Button("Update Package"))
+                ImportPackage();
+        }            
         
-        EditorGUILayout.EndVertical();
-        GUILayout.FlexibleSpace();
-
         EditorGUILayout.EndHorizontal();
+                
+        //    EditorGUILayout.EndVertical();
+        //    GUILayout.FlexibleSpace();
+        //EditorGUILayout.EndHorizontal();
+
+
+        //GUILayout.Label("Used Namespaces", EditorStyles.boldLabel);
+
+
+
+        //EditorGUILayout.BeginHorizontal();
+        //EditorGUILayout.BeginVertical();
+        //for (int i = 0; i < packagenames.Count; i++)
+        //{
+        //    GUILayout.Label(packagenames[i]);
+        //}       
+
+        //EditorGUILayout.EndVertical();
+        //EditorGUILayout.BeginVertical();
+        //for (int i = 0; i < packagenames.Count; i++)
+        //{
+        //    EditorGUILayout.BeginHorizontal();
+        //    GUILayout.Button("V");
+        //    GUILayout.Button("X");
+        //    EditorGUILayout.EndHorizontal();
+        //}
+        
+        //EditorGUILayout.EndVertical();
+        //GUILayout.FlexibleSpace();
+
+        //EditorGUILayout.EndHorizontal();
 
 
 
@@ -174,7 +181,7 @@ public class VersionControl : EditorWindow
             if (listRequest.Status == StatusCode.Success)
             {
                 foreach (var package in listRequest.Result)
-                    if (package.name == "netherlands3d")
+                    if (package.name == "nl.netherlands3d")
                     {
                         GitInfo gi = package.git;
                         Debug.Log("packageversion: " + gi.revision);
