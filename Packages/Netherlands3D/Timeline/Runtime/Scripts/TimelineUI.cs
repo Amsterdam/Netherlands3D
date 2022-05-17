@@ -93,6 +93,10 @@ namespace Netherlands3D.Timeline
         /// </summary>
         private bool hasSendPointerEventData;
         /// <summary>
+        /// For skipping through timePeriods
+        /// </summary>
+        private int skipIndex = -1;
+        /// <summary>
         /// Array int holding the order of the indexes of timeBars in which they appear/move
         /// </summary>
         private int[] barIndexes;
@@ -352,6 +356,31 @@ namespace Netherlands3D.Timeline
             UpdateCurrentDateVisual();
         }
 
+        /// <summary>
+        /// Skip the timeline to the next time period
+        /// </summary>
+        /// <param name="forward"></param>
+        public void SkipToNextTimePeriod(bool forward)
+        {
+            // This stuff feels like spagetti but it works
+            List<TimePeriod> timePeriods = timelineData.allTimePeriods;
+            timePeriods.Sort((x, y) => x.CompareTo(y));
+            // Get the next time period
+            if(skipIndex == -1)
+            {
+                var closestTimePeriod = ArrayExtention.MinBy(timelineData.allTimePeriods, x => Math.Abs((x.startDate - CurrentDate).Ticks));
+                skipIndex = timePeriods.IndexOf(closestTimePeriod);
+            }
+
+            // Forward / backwards
+            skipIndex += forward ? 1 : -1;
+            if(skipIndex >= timePeriods.Count)
+                skipIndex = 0;
+            if(skipIndex < 0) skipIndex = timePeriods.Count - 1;
+
+            // Skip
+            SetCurrentDate(timePeriods[skipIndex].startDate);
+        }
 
 
         /// <summary>

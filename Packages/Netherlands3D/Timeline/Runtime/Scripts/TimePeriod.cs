@@ -10,7 +10,7 @@ namespace Netherlands3D.Timeline
     /// A timeline time period that holds data of something that happend between a start date and a end date
     /// </summary>
     [System.Serializable]
-    public class TimePeriod
+    public class TimePeriod : IComparable
     {
         [Tooltip("The time period name")]
         public string name;
@@ -47,6 +47,15 @@ namespace Netherlands3D.Timeline
             this.startDate = startDate;
             this.endDate = endDate;
             this.layer = layer;
+        }
+
+        public int CompareTo(object obj)
+        {
+            TimePeriod t = obj as TimePeriod;
+            if(t.startDate.Value > startDate.Value) return -1;
+            if(t.startDate.Value == startDate.Value) return 0;
+            if(t.startDate.Value < startDate.Value) return 1;
+            return 1;
         }
     }
 }
