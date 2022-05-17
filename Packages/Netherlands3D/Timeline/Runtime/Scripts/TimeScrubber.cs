@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,8 +38,12 @@ namespace Netherlands3D.Timeline
             float value = width * slider.value;
             // Convert to bar local x (-960, 0, 960)
             float convertedValue = value - (width / 2);
-            timelineUI.SetCurrentDateNoNotify(timelineUI.GetClosestBar(convertedValue).GetCurrentDateTime(convertedValue));
-            IsActive = true;
+            DateTime dt = timelineUI.GetClosestBar(convertedValue).GetCurrentDateTime(convertedValue, true);
+            if(dt.Year != 1)
+            {
+                timelineUI.SetCurrentDateNoNotify(dt);
+                IsActive = true;
+            }
         }
 
         /// <summary>

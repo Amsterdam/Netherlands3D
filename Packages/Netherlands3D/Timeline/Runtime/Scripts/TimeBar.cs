@@ -58,10 +58,24 @@ namespace Netherlands3D.Timeline
         /// Get the current dateTime based on a local x position of the bar
         /// </summary>
         /// <param name="posX">The bar local x position</param>
+        /// <param name="minDistance">Should the posX be at a min distance of the datetimepos before returning it</param>
         /// <returns>DateTime</returns>
-        public DateTime GetCurrentDateTime(float posX)
+        public DateTime GetCurrentDateTime(float posX, bool minDistance = false)
         {
-            return dateTimePositions.OrderBy(x => Math.Abs(x.Key - posX + transform.localPosition.x)).FirstOrDefault().Value;
+            if(!minDistance)
+                return dateTimePositions.OrderBy(x => Math.Abs(x.Key - posX + transform.localPosition.x)).FirstOrDefault().Value;
+            else
+            {
+                // For snapping purposes
+                var keyValue = dateTimePositions.OrderBy(x => Math.Abs(x.Key - posX + transform.localPosition.x)).FirstOrDefault();
+                posX = Mathf.Abs(posX);
+                float mod = posX % 100;
+                if(mod >= 90 || mod == 0 || mod <= 10)
+                {
+                    return keyValue.Value;
+                }
+                else return new DateTime(1, 1, 1);
+            }
         }
 
         /// <summary>
