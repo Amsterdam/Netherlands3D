@@ -22,6 +22,23 @@ namespace Netherlands3D.Timeline
         [Tooltip("The event system of the scene")]
         [SerializeField] private EventSystem m_EventSystem;
 
+        private void Awake()
+        {
+            // Get raycaster / event system if not assigned
+            if(m_Raycaster == null)
+            {
+                Debug.LogWarning("[ScrollRectLink] Graphic Raycaster not assigned! Finding reference in scene...");
+                m_Raycaster = FindObjectOfType<GraphicRaycaster>();
+                if(m_Raycaster == null) Debug.LogError("[ScrollRectLink] Please assign a graphic raycaster for ScrollRectLink!");
+            }
+            if(m_EventSystem == null)
+            {
+                Debug.LogWarning("[ScrollRectLink] EventSystem not assigned! Finding reference in scene...");
+                m_EventSystem = FindObjectOfType<EventSystem>();
+                if(m_EventSystem == null) Debug.LogError("[ScrollRectLink] Please assign a EventSystem for ScrollRectLink!");
+            }
+        }
+
         // Update is called once per frame
         void Update()
         {
