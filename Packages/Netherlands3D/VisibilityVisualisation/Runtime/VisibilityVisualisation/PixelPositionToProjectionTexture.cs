@@ -69,7 +69,7 @@ public class PixelPositionToProjectionTexture : MonoBehaviour
         Destroy(topDownTexture);
         Destroy(readPixelTexture);
         Destroy(projectorMaterial);
-        Destroy(pixelCamera);
+        Destroy(pixelCamera.gameObject);
     }
 
     IEnumerator DrawLoop()
