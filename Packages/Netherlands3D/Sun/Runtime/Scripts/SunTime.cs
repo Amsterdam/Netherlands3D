@@ -156,6 +156,10 @@ namespace Netherlands3D.Sun
 			{
 				ResetToNow();
 			}
+            else
+            {
+                Apply();
+            }
 		}
 
 		public void ResetToNow()
@@ -171,7 +175,12 @@ namespace Netherlands3D.Sun
 
 		private void OnValidate()
         {
-            time = new DateTime(year,month,day,hour,minutes,seconds,dateTimeKind);
+            Apply();
+        }
+
+        private void Apply()
+        {
+            time = new DateTime(year, month, day, hour, minutes, seconds, dateTimeKind);
             SetPosition();
         }
 
