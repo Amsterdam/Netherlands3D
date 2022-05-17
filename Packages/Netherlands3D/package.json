@@ -40,6 +40,11 @@
       "path": "Sun/Samples~/Sun"
     },
     {
+      "displayName": "Visibility visualisation",
+      "description": "Visualise visibility in a top-down projected texture from a point in the 3D world",
+      "path": "VisibilityVisualisation/Samples~/VisibilityVisualisation"
+    },
+    {
       "displayName": "WMS-layer",
       "description": "Example of a wms-layer",
       "path": "WMSLayer/Samples~/wmsLayer"
