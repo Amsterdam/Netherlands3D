@@ -78,7 +78,6 @@ public class VersionControl : EditorWindow
 
         if (packageSwappable==false)
         {
-            
             GUILayout.Label("je kunt niet van versie wisselen als deze local is");
             EditorGUILayout.EndHorizontal();
             return;
@@ -112,10 +111,7 @@ public class VersionControl : EditorWindow
         if (availableVersions[index]!=currentVersion)
         {
             if (GUILayout.Button("Update Package"))
-            {
-                importIsActive = true;
                 ImportPackage();
-            }
 
                 
         }            
@@ -146,6 +142,7 @@ public class VersionControl : EditorWindow
 
     private static void ImportPackage()
     {
+        importIsActive = true;
         string version = availableVersions[index];
         string packageURL = "https://github.com/Amsterdam/Netherlands3D.git?path=/Packages/Netherlands3D#" + version;
         Request = Client.Add(packageURL);
