@@ -11,6 +11,8 @@ using UnityEditor.PackageManager.Requests;
 
 public class VersionControl : EditorWindow
 {
+    static bool importIsActive = false;
+    static float symbolCounter = 0;
     static bool CurrentVersionIsDefined;
     static bool isProperVersion;
     static string currentVersion;
@@ -56,6 +58,22 @@ public class VersionControl : EditorWindow
         
         GUILayout.Label("Netherlands3D Version Control", EditorStyles.boldLabel);
 
+        if (importIsActive)
+        {
+            string labeltekst = "bezig met laden ";
+            for (int i = 0; i < symbolCounter; i++)
+            {
+                labeltekst = $"{labeltekst}.";
+            }
+            symbolCounter++;
+            if (symbolCounter>20)
+            {
+                symbolCounter = 0;
+            }
+            GUILayout.Label(labeltekst);
+            return;
+        }
+
         if (packageSwappable==false)
         {
             EditorGUILayout.BeginHorizontal();
@@ -92,7 +110,12 @@ public class VersionControl : EditorWindow
         if (availableVersions[index]!=currentVersion)
         {
             if (GUILayout.Button("Update Package"))
+            {
+                importIsActive = true;
                 ImportPackage();
+            }
+
+                
         }            
         
         EditorGUILayout.EndHorizontal();
@@ -146,6 +169,7 @@ public class VersionControl : EditorWindow
             EditorApplication.update -= OnPackageInstalled;
             UpdatePackageInfo();
         }
+        importIsActive = false;
     }
 
 
