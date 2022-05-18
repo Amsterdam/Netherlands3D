@@ -60,6 +60,7 @@ public class VersionControl : EditorWindow
 
         if (importIsActive)
         {
+            EditorGUILayout.BeginHorizontal();
             string labeltekst = "bezig met laden ";
             for (int i = 0; i < symbolCounter; i++)
             {
@@ -71,12 +72,13 @@ public class VersionControl : EditorWindow
                 symbolCounter = 0;
             }
             GUILayout.Label(labeltekst);
+            EditorGUILayout.EndHorizontal();
             return;
         }
 
         if (packageSwappable==false)
         {
-            EditorGUILayout.BeginHorizontal();
+            
             GUILayout.Label("je kunt niet van versie wisselen als deze local is");
             EditorGUILayout.EndHorizontal();
             return;
