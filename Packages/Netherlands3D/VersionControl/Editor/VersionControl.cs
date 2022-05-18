@@ -11,9 +11,12 @@ using UnityEditor.PackageManager.Requests;
 
 public class VersionControl : EditorWindow
 {
+    static bool importIsActive;
+    static float symbolCounter = 0;
     static bool CurrentVersionIsDefined;
     static bool isProperVersion;
     static string currentVersion;
+    static bool packageSwappable = true;
     static string mostRecentVersion;
     static List<string> availableVersions = new List<string>();
     static List<string> packagenames = new List<string>();
@@ -26,6 +29,7 @@ public class VersionControl : EditorWindow
     [MenuItem("Netherlands3D/versioncontrol")]
     static void Init()
     {
+        importIsActive = false;
         CurrentVersionIsDefined = false;
         packagenames = new List<string>();
 
@@ -54,7 +58,34 @@ public class VersionControl : EditorWindow
     {
         
         GUILayout.Label("Netherlands3D Version Control", EditorStyles.boldLabel);
-        
+
+        if (importIsActive)
+        {
+            EditorGUILayout.BeginHorizontal();
+            string labeltekst = "bezig met laden ";
+            for (int i = 0; i < symbolCounter; i++)
+            {
+                labeltekst = $"{labeltekst}.";
+            }
+            symbolCounter++;
+            if (symbolCounter>20)
+            {
+                symbolCounter = 0;
+            }
+            GUILayout.Label(labeltekst);
+            EditorGUILayout.EndHorizontal();
+            
+            return;
+        }
+
+        if (packageSwappable == false)
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("je kunt niet van versie wisselen als deze local is");
+            EditorGUILayout.EndHorizontal();
+            return;
+        }
+
         EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
             EditorGUILayout.LabelField("Current Release: ", currentVersion);
@@ -84,40 +115,17 @@ public class VersionControl : EditorWindow
         {
             if (GUILayout.Button("Update Package"))
                 ImportPackage();
+
+                
         }            
         
         EditorGUILayout.EndHorizontal();
-                
-        //    EditorGUILayout.EndVertical();
-        //    GUILayout.FlexibleSpace();
-        //EditorGUILayout.EndHorizontal();
 
-
-        //GUILayout.Label("Used Namespaces", EditorStyles.boldLabel);
-
-
-
-        //EditorGUILayout.BeginHorizontal();
-        //EditorGUILayout.BeginVertical();
-        //for (int i = 0; i < packagenames.Count; i++)
-        //{
-        //    GUILayout.Label(packagenames[i]);
-        //}       
-
-        //EditorGUILayout.EndVertical();
-        //EditorGUILayout.BeginVertical();
-        //for (int i = 0; i < packagenames.Count; i++)
-        //{
-        //    EditorGUILayout.BeginHorizontal();
-        //    GUILayout.Button("V");
-        //    GUILayout.Button("X");
-        //    EditorGUILayout.EndHorizontal();
-        //}
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("view ChangeLOG"))
+            Application.OpenURL("https://github.com/Amsterdam/Netherlands3D/blob/main/CHANGELOG.md");
+        EditorGUILayout.EndHorizontal();
         
-        //EditorGUILayout.EndVertical();
-        //GUILayout.FlexibleSpace();
-
-        //EditorGUILayout.EndHorizontal();
 
 
 
@@ -137,6 +145,9 @@ public class VersionControl : EditorWindow
 
     private static void ImportPackage()
     {
+        importIsActive = true;
+        window.Repaint();
+        
         string version = availableVersions[index];
         string packageURL = "https://github.com/Amsterdam/Netherlands3D.git?path=/Packages/Netherlands3D#" + version;
         Request = Client.Add(packageURL);
@@ -160,8 +171,11 @@ public class VersionControl : EditorWindow
                 Debug.Log("couldn't import the package");
             }
             EditorApplication.update -= OnPackageInstalled;
+            
+            importIsActive = false;
             UpdatePackageInfo();
         }
+        
     }
 
 
@@ -184,6 +198,11 @@ public class VersionControl : EditorWindow
                     if (package.name == "nl.netherlands3d")
                     {
                         GitInfo gi = package.git;
+                        if (gi==null)
+                        {
+                            packageSwappable = false;
+                            return;
+                        }
                         Debug.Log("packageversion: " + gi.revision);
                         if (gi.revision == "HEAD")
                         {
@@ -234,7 +253,7 @@ public class VersionControl : EditorWindow
         else
         {
             // Show results as text
-            Debug.Log("managed to donwmoad something");
+            //Debug.Log("managed to donwmoad something");
             string resulttext = request.downloadHandler.text;
             JSONNode releaseJSON = JSON.Parse(request.downloadHandler.text);
 
@@ -246,7 +265,7 @@ public class VersionControl : EditorWindow
                 availableVersions.Add(releaseJSON[i]["name"].Value);
             }
 
-            Debug.Log(request.downloadHandler.text);
+            //Debug.Log(request.downloadHandler.text);
 
         }
     }
