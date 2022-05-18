@@ -28,6 +28,18 @@ namespace Netherlands3D.Timeline
         [HideInInspector] public UnityEvent OnOrderTimePeriods;
 
         /// <summary>
+        /// Clear all data
+        /// </summary>
+        public void ClearData()
+        {
+            timePeriodsSO.Clear();
+            timePeriods.Clear();
+            sortedTimePeriods.Clear();
+            allTimePeriods.Clear();
+            OnOrderTimePeriods.Invoke();
+        }
+
+        /// <summary>
         /// Orders the time periods on its categories
         /// </summary>
         public void OrderTimePeriods()

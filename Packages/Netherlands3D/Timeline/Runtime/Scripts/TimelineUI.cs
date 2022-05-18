@@ -175,6 +175,14 @@ namespace Netherlands3D.Timeline
         #region Timeline
 
         /// <summary>
+        /// Clear the timeline data
+        /// </summary>
+        public void ClearData()
+        {
+            timelineData.ClearData();
+        }
+
+        /// <summary>
         /// Get the closest bar based on the local x position
         /// </summary>
         /// <returns></returns>
