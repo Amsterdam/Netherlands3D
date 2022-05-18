@@ -204,6 +204,11 @@ namespace Netherlands3D.TileSystem
 			container.SetActive(isEnabled);
 
 			mesh = BinaryMeshConversion.ReadBinaryMesh(binaryMeshData, out int[] submeshIndices);
+
+#if !UNITY_EDITOR && UNITY_WEBGL
+			if(brotliCompressedExtention.Length>0)
+				source = source.replace(brotliCompressedExtention,"");
+#endif
 			mesh.name = source;
 			container.AddComponent<MeshFilter>().sharedMesh = mesh;
 
