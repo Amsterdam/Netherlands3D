@@ -171,9 +171,11 @@ public class VersionControl : EditorWindow
                 Debug.Log("couldn't import the package");
             }
             EditorApplication.update -= OnPackageInstalled;
+            
+            importIsActive = false;
             UpdatePackageInfo();
         }
-        importIsActive = false;
+        
     }
 
 
