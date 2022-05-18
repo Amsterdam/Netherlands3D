@@ -14,6 +14,7 @@ public class VersionControl : EditorWindow
     static bool CurrentVersionIsDefined;
     static bool isProperVersion;
     static string currentVersion;
+    static bool packageSwappable = true;
     static string mostRecentVersion;
     static List<string> availableVersions = new List<string>();
     static List<string> packagenames = new List<string>();
@@ -54,7 +55,15 @@ public class VersionControl : EditorWindow
     {
         
         GUILayout.Label("Netherlands3D Version Control", EditorStyles.boldLabel);
-        
+
+        if (packageSwappable==false)
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("je kunt niet van versie wisselen als deze local is");
+            EditorGUILayout.EndHorizontal();
+            return;
+        }
+
         EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
             EditorGUILayout.LabelField("Current Release: ", currentVersion);
@@ -161,6 +170,7 @@ public class VersionControl : EditorWindow
                         GitInfo gi = package.git;
                         if (gi==null)
                         {
+                            packageSwappable = false;
                             return;
                         }
                         Debug.Log("packageversion: " + gi.revision);
@@ -213,7 +223,7 @@ public class VersionControl : EditorWindow
         else
         {
             // Show results as text
-            Debug.Log("managed to donwmoad something");
+            //Debug.Log("managed to donwmoad something");
             string resulttext = request.downloadHandler.text;
             JSONNode releaseJSON = JSON.Parse(request.downloadHandler.text);
 
@@ -225,7 +235,7 @@ public class VersionControl : EditorWindow
                 availableVersions.Add(releaseJSON[i]["name"].Value);
             }
 
-            Debug.Log(request.downloadHandler.text);
+            //Debug.Log(request.downloadHandler.text);
 
         }
     }
