@@ -11,7 +11,7 @@ using UnityEditor.PackageManager.Requests;
 
 public class VersionControl : EditorWindow
 {
-    static bool importIsActive = false;
+    static bool importIsActive;
     static float symbolCounter = 0;
     static bool CurrentVersionIsDefined;
     static bool isProperVersion;
@@ -29,6 +29,7 @@ public class VersionControl : EditorWindow
     [MenuItem("Netherlands3D/versioncontrol")]
     static void Init()
     {
+        importIsActive = false;
         CurrentVersionIsDefined = false;
         packagenames = new List<string>();
 
@@ -77,8 +78,9 @@ public class VersionControl : EditorWindow
             return;
         }
 
-        if (packageSwappable==false)
+        if (packageSwappable == false)
         {
+            EditorGUILayout.BeginHorizontal();
             GUILayout.Label("je kunt niet van versie wisselen als deze local is");
             EditorGUILayout.EndHorizontal();
             return;
@@ -145,6 +147,7 @@ public class VersionControl : EditorWindow
     {
         importIsActive = true;
         window.Repaint();
+        
         string version = availableVersions[index];
         string packageURL = "https://github.com/Amsterdam/Netherlands3D.git?path=/Packages/Netherlands3D#" + version;
         Request = Client.Add(packageURL);
