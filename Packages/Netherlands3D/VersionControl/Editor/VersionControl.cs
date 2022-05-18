@@ -73,6 +73,7 @@ public class VersionControl : EditorWindow
             }
             GUILayout.Label(labeltekst);
             EditorGUILayout.EndHorizontal();
+            
             return;
         }
 
@@ -143,6 +144,7 @@ public class VersionControl : EditorWindow
     private static void ImportPackage()
     {
         importIsActive = true;
+        window.Repaint();
         string version = availableVersions[index];
         string packageURL = "https://github.com/Amsterdam/Netherlands3D.git?path=/Packages/Netherlands3D#" + version;
         Request = Client.Add(packageURL);
