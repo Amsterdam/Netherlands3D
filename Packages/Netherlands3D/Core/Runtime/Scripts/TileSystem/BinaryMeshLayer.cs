@@ -207,7 +207,7 @@ namespace Netherlands3D.TileSystem
 
 #if !UNITY_EDITOR && UNITY_WEBGL
 			if(brotliCompressedExtention.Length>0)
-				source = source.replace(brotliCompressedExtention,"");
+				source = source.Replace(brotliCompressedExtention,"");
 #endif
 			mesh.name = source;
 			container.AddComponent<MeshFilter>().sharedMesh = mesh;
