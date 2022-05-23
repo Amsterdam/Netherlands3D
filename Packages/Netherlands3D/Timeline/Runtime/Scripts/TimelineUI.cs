@@ -572,7 +572,7 @@ namespace Netherlands3D.Timeline
                     xR = EventUIGetPosX(item.timePeriod.endDate, true);
                     //Debug.LogWarning(visableDateRight + " XR " + xR);
                 }
-                item.UpdateUI(xL, xR - 16); // some wierd bug setting it off by some pixels, so applied ductapefix of -16
+                item.UpdateUI(xL, xR); // some wierd bug setting it off by some pixels, so applied ductapefix of -16
 
                 // Check the time period events
                 // Current Time Enter
