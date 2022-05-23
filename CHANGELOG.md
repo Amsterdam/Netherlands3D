@@ -3,14 +3,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [not yet released]
 
-## [Unreleased]
+### Fixed
+- in webGL with brotli-compression for the binary-tiles the accompanying data-files could not be found.
+
+
+## [0.1.1] - 17-05-2022
+
+### Added
+- [VersionControl] added button to import selected version
+
+
+## [0.1.0] - 17-05-2022
 
 ### Changed
 - moved all the shaders into their corresponding samples, when updating, make sure to open the samples and copy the shaders into your assets-folder.
 - separated Input, BAGInformation, DataParsing and Interface into their own root folders and script assemblies
 
 ### Added
+- added versionControl for package
 - added subobject filtering code and example to filter objects based on geojson float values (construction year in example)
 - added sun/shadows based on location, date and time scripts and example
 - added camera based on 3DAmsterdam and 3DUtrecht behavior

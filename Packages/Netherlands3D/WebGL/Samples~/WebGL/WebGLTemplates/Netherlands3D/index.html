@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="mobile-web-app-capable" content="yes">
+    <title>{{{ PRODUCT_NAME }}} | {{{ PRODUCT_VERSION  }}}</title>
+	<link rel="stylesheet" href="style.css?v={{{ PRODUCT_VERSION  }}}" />
+  </head>
+  <body>
+      <div id="unity-container" class="unity-desktop">
+          <canvas id="unity-canvas" width="100%" height="100%"></canvas>
+          <div id="unity-loading-bar" class="noselect">
+              <div id="unity-progress-bar-empty">
+                  <div id="unity-progress-bar-full"></div>
+              </div>
+              <div id="unity-progress-text" style="display:none">
+                  {{{ PRODUCT_NAME }}} v{{{ PRODUCT_VERSION  }}}
+              </div>
+          </div>
+          <div id="unity-mobile-warning">
+              Unity WebGL is momenteel niet volledig ondersteund op mobiele apparaten.
+          </div>
+      </div>
+      <script>
+	  var unityInstance;
+	  var isMobileDevice = false;
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
+      var config = {
+          dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+          frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+          codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+#if MEMORY_FILENAME
+          memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+          symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+#endif
+          streamingAssetsUrl: "StreamingAssets",
+          companyName: "{{{ COMPANY_NAME }}}",
+          productName: "{{{ PRODUCT_NAME }}}",
+          productVersion: "{{{ PRODUCT_VERSION }}}",
+      };
+
+	  //dom element references
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var mobileWarning = document.querySelector("#unity-mobile-warning");
+
+	  // Avoid draining fillrate performance on mobile devices,
+      // and default/override low DPI mode on mobile browsers by setting devicePixelRatio to 1.
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+		  isMobileDevice = true;
+          container.className = "unity-mobile";
+          config.devicePixelRatio = 2;
+          mobileWarning.style.display = "block";
+          setTimeout(() => {
+              mobileWarning.style.display = "none";
+          }, 5000);
+      }
+
+      loadingBar.style.display = "block";
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+          createUnityInstance(canvas, config, (progress) => {
+              progressBarFull.style.width = 100 * progress + "%";
+          }).then((instance) => {
+              unityInstance = instance;
+              loadingBar.style.display = "none";
+			  loadingBar.remove();	  
+          }).catch((message) => {
+              alert(message);
+          });
+      };
+      document.body.appendChild(script); 
+    </script>
+  </body>
+</html>
