@@ -696,6 +696,8 @@ namespace Netherlands3D.Timeline
         public void OnPointerUp(PointerEventData eventData)
         {
             mouseIsDragging = false;
+            scrollRectTimePeriodLayers.enabled = true;
+            scrollRectLayers.enabled = true;
         }
 
         public void OnPointerEnter(PointerEventData eventData)
