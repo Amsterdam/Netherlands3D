@@ -5,11 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [not yet released]
 
+### Changed
+- TileHandler sample scene now uses .br instead of .unityweb as the default brotli compressed extention instead. ( matches TileBakeTool default brotli extention )
+
 ### Fixed
 - in webGL with brotli-compression for the binary-tiles the accompanying data-files could not be found.
 
 ### Added
-
 - Added Timeline interface for scrubbing through time-bound events
 
 ## [0.1.1] - 17-05-2022
