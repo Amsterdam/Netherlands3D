@@ -278,7 +278,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 5dd311be29079cb45a4bcb13e19a057d, type: 2}
   createMeshcollider: 0
   tileShadowCastingMode: 1
-  brotliCompressedExtention: .unityweb
+  brotliCompressedExtention: .br
 --- !u!1 &112661310821713388
 GameObject:
   m_ObjectHideFlags: 0
@@ -375,7 +375,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: f36ad1da28199e24eb6175576d2ee8a3, type: 2}
   createMeshcollider: 0
   tileShadowCastingMode: 1
-  brotliCompressedExtention: .unityweb
+  brotliCompressedExtention: .br
 --- !u!4 &1200672875177179467
 Transform:
   m_ObjectHideFlags: 0
@@ -614,7 +614,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: f64bd83b9a515834cb96d5bafc187987, type: 2}
   createMeshcollider: 0
   tileShadowCastingMode: 1
-  brotliCompressedExtention: .unityweb
+  brotliCompressedExtention: .br
 --- !u!4 &6900577025068275204
 Transform:
   m_ObjectHideFlags: 0
