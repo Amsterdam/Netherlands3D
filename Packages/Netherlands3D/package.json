@@ -63,6 +63,11 @@
       "displayName": "WebGL template example",
       "description": "A WebGL template example to use for Netherlands3D WebGL projects with unityInstance reference and responsive full browser window behaviour.",
       "path": "WebGL/Samples~/WebGL"
+    },
+    {
+      "displayName": "Timeline UI Mockup",
+      "description": "Ready to use timeline UI prefab",
+      "path": "Timeline/Samples~/Scene Setup"
     }
   ],
   "hideInEditor": false,
