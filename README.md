@@ -30,5 +30,11 @@ If you imported a Netherlands3D package and like to update the package, or pick 
 
 We highly recommend picking a specific release version for your project, to make sure the package will stay the same until you deliberately choose to update.
 
+## Hosting a WebGL Netherlands3D application
 
+If your project uses the TileHandler, and you would like to use the compressed binary tile files (ending in .br) in a WebGL build, you need to make sure your host server (remote or localhost) has the 'Content-Encoding' header set to 'br' for all files that have the .br file extention.
 
+The Unity documentation has some example server configurations to get started:
+https://docs.unity3d.com/Manual/webgl-server-configuration-code-samples.html
+
+The examples in the Unity documentation are specific to the Unity build files, so you would need to include your binary tile files path yourself.
