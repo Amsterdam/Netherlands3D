@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - in webGL with brotli-compression for the binary-tiles the accompanying data-files could not be found.
 
+### Added
+
+- Added Timeline interface for scrubbing through time-bound events
 
 ## [0.1.1] - 17-05-2022
 
