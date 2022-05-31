@@ -4,13 +4,13 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Netherlands3D.Traffic
+namespace Netherlands3D.Traffic.VISSIM
 {
     /// <summary>
     /// Data base containing Traffic data
     /// </summary>
-    [CreateAssetMenu(fileName = "Traffic Data Database", menuName = "ScriptableObjects/Traffic/Data Database", order = 1)]
-    public class DataDatabase : ScriptableObject
+    [CreateAssetMenu(fileName = "Traffic Database", menuName = "ScriptableObjects/Traffic/Database", order = 1)]
+    public class Database : ScriptableObject
     {
         /// <summary>
         /// If the Datas list has reached its max count
@@ -37,6 +37,12 @@ namespace Netherlands3D.Traffic
         /// Called when data is removed. Contains the int indexes of removed data values of Value
         /// </summary>
         public UnityEvent<List<int>> OnRemoveData = new UnityEvent<List<int>>();
+
+        /// <summary>
+        /// All signal heads data
+        /// </summary>
+        /// <remarks><number, DataATT></remarks>
+        public Dictionary<int, DataATT> signalHeads = new Dictionary<int, DataATT>();
 
         private void OnEnable()
         {

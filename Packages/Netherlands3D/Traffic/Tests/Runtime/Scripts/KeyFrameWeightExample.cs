@@ -1,31 +1,34 @@
 using UnityEngine;
 
-public class KeyFrameWeightExample : MonoBehaviour
+namespace Netherlands3D.Traffic.Tests
 {
-    public AnimationCurve animCurve = null;
-
-    void Start()
+    public class KeyFrameWeightExample : MonoBehaviour
     {
-        Keyframe[] ks = new Keyframe[3];
+        public AnimationCurve animCurve = null;
 
-        ks[0] = new Keyframe(0, 0);
-        ks[0].weightedMode = WeightedMode.In;
-        ks[0].inWeight = 0.5f;
+        void Start()
+        {
+            Keyframe[] ks = new Keyframe[3];
 
-        ks[1] = new Keyframe(4, 0);
-        ks[1].weightedMode = WeightedMode.In;
-        ks[1].inWeight = 0f;    // Zero weight.  The segment will be linear if previous keyframe outWeight is also zero.
+            ks[0] = new Keyframe(0, 0);
+            ks[0].weightedMode = WeightedMode.In;
+            ks[0].inWeight = 0.5f;
 
-        ks[2] = new Keyframe(6, 0);
-        ks[2].weightedMode = WeightedMode.In;
-        ks[2].inWeight = 1f / 3f;    // 1/3 is the default weight in WeightedMode.None weightedMode.
+            ks[1] = new Keyframe(4, 0);
+            ks[1].weightedMode = WeightedMode.In;
+            ks[1].inWeight = 0f;    // Zero weight.  The segment will be linear if previous keyframe outWeight is also zero.
 
-        animCurve = new AnimationCurve(ks);
-    }
+            ks[2] = new Keyframe(6, 0);
+            ks[2].weightedMode = WeightedMode.In;
+            ks[2].inWeight = 1f / 3f;    // 1/3 is the default weight in WeightedMode.None weightedMode.
 
-    void Update()
-    {
-        if(animCurve != null)
-            transform.position = new Vector3(Time.time, animCurve.Evaluate(Time.time), 0);
+            animCurve = new AnimationCurve(ks);
+        }
+
+        void Update()
+        {
+            if(animCurve != null)
+                transform.position = new Vector3(Time.time, animCurve.Evaluate(Time.time), 0);
+        }
     }
 }

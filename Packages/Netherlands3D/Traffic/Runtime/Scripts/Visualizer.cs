@@ -4,7 +4,7 @@ using UnityEngine;
 using Netherlands3D.TileSystem;
 using System.Linq;
 
-namespace Netherlands3D.Traffic
+namespace Netherlands3D.Traffic.VISSIM
 {
     /// <summary>
     /// Visualizer for Traffic
@@ -38,7 +38,7 @@ namespace Netherlands3D.Traffic
 
         [Header("Scriptable Objects")]
         [Tooltip("The database for Data")]
-        public DataDatabase datas;
+        public Database datas;
         [Tooltip("List containing every available entity data (Scriptable Objects)")]
         public List<EntityData> entitiesDatas = new List<EntityData>();
         [Tooltip("The scriptable objects for an entity")]

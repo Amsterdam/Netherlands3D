@@ -6,7 +6,7 @@ using Netherlands3D.Events;
 using TMPro;
 using System.Linq;
 
-namespace Netherlands3D.Traffic
+namespace Netherlands3D.Traffic.VISSIM
 {
     /// <summary>
     /// Handles the traffic UI elements
@@ -44,7 +44,7 @@ namespace Netherlands3D.Traffic
         [Tooltip("The scriptable objects for an entity")]
         public EntityScriptableObjects entitySO;
         [Tooltip("The database containing the traffic data")]
-        [SerializeField] private DataDatabase dataDatabase;
+        [SerializeField] private Database dataDatabase;
 
         [Header("Components")]
         [Tooltip("The camera gameobject with the entitycamera attached")]

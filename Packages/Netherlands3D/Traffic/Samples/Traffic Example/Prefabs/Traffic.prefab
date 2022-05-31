@@ -124,7 +124,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8334449571815547990}
   - component: {fileID: 5941371805176876669}
-  - component: {fileID: 8334449571815547991}
   m_Layer: 0
   m_Name: Traffic
   m_TagString: Untagged
@@ -162,19 +161,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   showDebugLog: 0
   maxDataCount: 200
-  eventFilesImported: {fileID: 11400000, guid: 84b363a7049a9a04db505bfc5d96eb13, type: 2}
-  eventClearDatabase: {fileID: 11400000, guid: 612b7d7f10053904594717c96bc8a3d2, type: 2}
-  eventLoadingProgress: {fileID: 11400000, guid: 469d72f256b2f454dacfa55bd6eb1573, type: 2}
-  dataDatabase: {fileID: 11400000, guid: 0c7b59f8d6cc82046a448b240c6183d3, type: 2}
---- !u!114 &8334449571815547991
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8334449571815547988}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9eb5797fe92cd744a97a9acceaabf850, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  eventFilesImported: {fileID: 11400000, guid: af14ecb9eb6b095409154e48f8d7d19a, type: 2}
+  eventClearDatabase: {fileID: 11400000, guid: dd396699afa8e64408c9a3cf504659bb, type: 2}
+  eventLoadingProgress: {fileID: 11400000, guid: 73da9d89a9b04454bb65e1b7a04cdf68, type: 2}
+  dataBase: {fileID: 11400000, guid: 0c7b59f8d6cc82046a448b240c6183d3, type: 2}

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using UnityEngine;
 using Netherlands3D.Events;
 
-namespace Netherlands3D.Traffic
+namespace Netherlands3D.Traffic.VISSIM
 {
     /// <summary>
     /// For importing files for Traffic
@@ -30,7 +30,7 @@ namespace Netherlands3D.Traffic
         /// </remarks>
         [SerializeField] private FloatEvent eventLoadingProgress;
         [Tooltip("The database holding 'Data' classes")]
-        [SerializeField] private DataDatabase dataDatabase;
+        [SerializeField] private Database dataBase;
 
         private void OnEnable()
         {
@@ -91,13 +91,22 @@ namespace Netherlands3D.Traffic
             {
                 // Check if we can load the file based on file extension
                 string pathExtension = path.Substring(path.LastIndexOf('.'));
-                switch(pathExtension)
+                switch(pathExtension.ToLower())
                 {
+                    case ".att":
+                        yield return ConverterATT.Convert(path, maxDataCount, convertedData =>
+                        {
+                            dataBase.signalHeads.AddRange(convertedData);
+                        });
+                        break;
                     case ".fzp":
                         yield return ConverterFZP.Convert(path, maxDataCount, convertedData => 
                         {
-                            dataDatabase.AddData(convertedData);
+                            dataBase.AddData(convertedData);
                         });
+                        break;
+                    case ".lsa":
+
                         break;
                     default:
                         failedFiles++;

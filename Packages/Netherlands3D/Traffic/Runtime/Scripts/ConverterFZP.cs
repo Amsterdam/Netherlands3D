@@ -11,7 +11,7 @@ using Netherlands3D.Events;
 namespace Netherlands3D.Traffic
 {
     /// <summary>
-    /// For converting .fzp files
+    /// For converting vissim .fzp files
     /// </summary>
     /// <remarks>
     /// FOR THIS VISSIM SIMULATION, USE THE STANDARD TEMPLATE WITH THE FOLLOWING PARAMETERS ONLY.         

@@ -10,7 +10,7 @@ namespace Netherlands3D.Traffic
     /// <summary>
     /// Base class for all Traffic entities (example car, truck, bike etc)
     /// </summary>
-    [AddComponentMenu("Traffic/Traffic Entity")] // Used to change the script inspector name
+    [AddComponentMenu("Netherlands3D/Traffic/Traffic Entity")] // Used to change the script inspector name
     [RequireComponent(typeof(Animation))]
     public class Entity : MonoBehaviour
     {
