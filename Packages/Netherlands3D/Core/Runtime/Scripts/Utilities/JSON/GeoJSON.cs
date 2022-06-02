@@ -422,7 +422,7 @@ namespace Netherlands3D.Utilities
 
         public List<List<List<GeoJSONPoint>>> GetMultiPolygon()
         {
-            int geometrystart = geoJSONString.IndexOf(GeometryPolygonStringLocatorString, featureStartIndex, featureLength) + GeometryPolygonStringLocatorString.Length;
+            int geometrystart = geoJSONString.IndexOf(GeometryMultiPolygonStringLocatorString, featureStartIndex, featureLength) + GeometryMultiPolygonStringLocatorString.Length;
             int nextStartPoint;
             return GetMultiPolygon(geometrystart, out nextStartPoint);
         }

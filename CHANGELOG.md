@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - in webGL with brotli-compression for the binary-tiles the accompanying data-files could not be found.
+- GeoJSON parser now uses correct 'MultiPolygon' lookup string, solving a problem where parsing MultiPolygons would return the first 'Polygon' geometry occurance
 
 ### Added
 - Added Timeline interface for scrubbing through time-bound events
