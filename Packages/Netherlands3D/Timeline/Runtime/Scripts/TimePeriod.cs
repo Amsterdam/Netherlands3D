@@ -23,6 +23,8 @@ namespace Netherlands3D.Timeline
         public DateTimeSerializable endDate;
         [Tooltip("The layer of the time period")]
         public string layer;
+        //[Tooltip("(WIP) The group the time period belongs too. Example: \"City/Buildings/Fast Food\"")]
+        //public string group;
 
         [Header("Events")]
         [Tooltip("The event that gets invoked when the time period is pressed")]
@@ -40,13 +42,14 @@ namespace Netherlands3D.Timeline
         [Tooltip("When the layer of this time period gets set to hide its periods")]
         public UnityEvent eventLayerHide = new UnityEvent();
 
-        public TimePeriod(string name, string description, DateTimeSerializable startDate, DateTimeSerializable endDate, string layer)
+        public TimePeriod(string name, string description, DateTimeSerializable startDate, DateTimeSerializable endDate, string layer = ""/*, string group = ""*/)
         {
             this.name = name;
             this.description = description;
             this.startDate = startDate;
             this.endDate = endDate;
             this.layer = layer;
+            //this.group = group;
         }
 
         public int CompareTo(object obj)
