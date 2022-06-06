@@ -15,16 +15,19 @@ namespace Netherlands3D.Traffic.VISSIM
     /// </remarks>
     public static class ConverterATT
     {
+        /// <summary>
+        /// The line the converter looks for before converting data
+        /// </summary>
         private static readonly string requiredTemplate = "$SIGNALHEAD:NO;SG;LNWID;ROTANGLE;WKTLOC";
 
-        public static IEnumerator Convert(string filePath, int maxDataCount, Action<Dictionary<int, DataATT>> callback)
+        public static IEnumerator Convert(string filePath, Action<Dictionary<int, SignalHeadData>> callback)
         {
             // Convert filePath to fileContent
             using StreamReader sr = new StreamReader(filePath);
             bool readyToConvert = false;
             string line;
-            DataATT data;
-            Dictionary<int, DataATT> convertedData = new Dictionary<int, DataATT>();
+            SignalHeadData data;
+            Dictionary<int, SignalHeadData> convertedData = new Dictionary<int, SignalHeadData>();
             // Read and display lines from the file until the end of the file is reached.
             while((line = sr.ReadLine()) != null)
             {
@@ -33,14 +36,14 @@ namespace Netherlands3D.Traffic.VISSIM
                 {
                     data = StringToData(line);
                     // Check if data number is already in convertedData
-                    if(convertedData.ContainsKey(data.number))
+                    if(convertedData.ContainsKey(data.groupID))
                     {
                         Debug.LogWarning("[ConverterATT] found duplicate signal head number, ignoring...");
                     }
                     else
                     {
                         // Doesnt exist, add it
-                        convertedData.Add(data.number, data);
+                        convertedData.Add(data.groupID, data);
                     }
                 }
 
@@ -57,7 +60,7 @@ namespace Netherlands3D.Traffic.VISSIM
             yield break;
         }
 
-        private static DataATT StringToData(string dataString)
+        private static SignalHeadData StringToData(string dataString)
         {
             string[] array = dataString.Split(';');
             int number = -1;
@@ -73,7 +76,7 @@ namespace Netherlands3D.Traffic.VISSIM
             float.TryParse(lFilter.Substring(0, spaceIndex), out wktLocation.x);
             float.TryParse(lFilter.Substring(spaceIndex, lFilter.Length - spaceIndex), out wktLocation.y);
             Debug.Log(wktLocation);
-            return new DataATT(number, array[1], laneWidth, rotationAngle, wktLocation);
+            return new SignalHeadData(number, array[1], laneWidth, rotationAngle, wktLocation);
         }
     }
 }

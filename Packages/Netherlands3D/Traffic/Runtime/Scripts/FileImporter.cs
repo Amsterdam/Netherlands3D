@@ -94,9 +94,9 @@ namespace Netherlands3D.Traffic.VISSIM
                 switch(pathExtension.ToLower())
                 {
                     case ".att":
-                        yield return ConverterATT.Convert(path, maxDataCount, convertedData =>
+                        yield return ConverterATT.Convert(path, convertedData =>
                         {
-                            dataBase.signalHeads.AddRange(convertedData);
+                            dataBase.AddSignalHeads(convertedData);
                         });
                         break;
                     case ".fzp":
@@ -106,7 +106,11 @@ namespace Netherlands3D.Traffic.VISSIM
                         });
                         break;
                     case ".lsa":
-
+                        yield return ConverterLSA.Convert(path, dataBase.SignalHeads, convertedData =>
+                        {
+                            dataBase.SignalHeads = convertedData;
+                            dataBase.OnSignalHeadsChanged.Invoke();
+                        });
                         break;
                     default:
                         failedFiles++;

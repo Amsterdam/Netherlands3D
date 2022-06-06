@@ -38,12 +38,16 @@ namespace Netherlands3D.Traffic.VISSIM
 
         [Header("Scriptable Objects")]
         [Tooltip("The database for Data")]
-        public Database datas;
+        public Database database;
         [Tooltip("List containing every available entity data (Scriptable Objects)")]
         public List<EntityData> entitiesDatas = new List<EntityData>();
         [Tooltip("The scriptable objects for an entity")]
         public EntityScriptableObjects entitySO;
 
+        [Header("Signal Heads")]
+        [Tooltip("The prefab used for signal heads")]
+        public GameObject prefabSignalHead;
+        
         /// <summary>
         /// Dictionary containing all entites <Data.id, Entity>
         /// </summary>
@@ -61,18 +65,35 @@ namespace Netherlands3D.Traffic.VISSIM
         /// Contains all available enities ID's (cars/busses/bikes etc.) with corresponding prefab to spawn
         /// </summary>
         public Dictionary<int, GameObject> availableEntitiesData = new Dictionary<int, GameObject>(); //TODO to so
-               
+
+        /// <summary>
+        /// Transform containing all signalHeads prefabs
+        /// </summary>
+        private Transform parentSignalHeads;
+        /// <summary>
+        /// Contains references to all signalHeads
+        /// </summary>
+        /// <remarks><number, signalhead></remarks>
+        private Dictionary<int, SignalHead> signalHeads = new Dictionary<int, SignalHead>();
 
         private void OnEnable()
         {
-            datas.OnAddData.AddListener(UpdateEntities);
+            database.OnAddData.AddListener(UpdateEntities);
+            database.OnSignalHeadsChanged.AddListener(UpdateSignalHeads);
             entitySO.eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
         }
 
         private void OnDisable()
         {
-            datas.OnAddData.RemoveListener(UpdateEntities);
+            database.OnAddData.RemoveListener(UpdateEntities);
+            database.OnSignalHeadsChanged.RemoveListener(UpdateSignalHeads);
             entitySO.eventSimulationStateChanged.started.RemoveListener(OnSimulationStateChanged);
+        }
+
+        private void Awake()
+        {
+            parentSignalHeads = new GameObject("Parent Signal Heads").transform;
+            parentSignalHeads.SetParent(transform);
         }
 
         private void Start()
@@ -106,14 +127,14 @@ namespace Netherlands3D.Traffic.VISSIM
             if(dataKeysUpdated == null)
             {
                 // Update from entire VISSIMManager.Datas
-                newData = datas.Value;
+                newData = database.Value;
             }
             else
             {
                 // Get updated data
                 foreach(var item in dataKeysUpdated)
                 {
-                    newData.Add(item, datas.Value[item]);
+                    newData.Add(item, database.Value[item]);
                 }
             }
 
@@ -157,6 +178,29 @@ namespace Netherlands3D.Traffic.VISSIM
         }
 
         /// <summary>
+        /// Called when new signal heads are added / removed
+        /// </summary>
+        public void UpdateSignalHeads()
+        {
+            Debug.Log(string.Format("[Visualizer] Updating {0} Signal Heads", database.SignalHeads.Count));
+            // Clear old
+            signalHeads.Clear();
+            foreach(Transform child in parentSignalHeads)
+            {
+                Destroy(child.gameObject);
+            }
+
+            // Add
+            foreach(var item in database.SignalHeads)
+            {
+                GameObject a = Instantiate(prefabSignalHead, parentSignalHeads);
+                SignalHead sh = a.GetComponent<SignalHead>();
+                sh.Initialize(item.Value);
+                signalHeads.Add(item.Key, sh);
+            }
+        }
+
+        /// <summary>
         /// Load the default VISSIM data
         /// </summary>
         private void LoadDefaultData()
@@ -181,7 +225,7 @@ namespace Netherlands3D.Traffic.VISSIM
         /// </summary>
         private void UpdateSimulationTime()
         {
-            if(datas.Value == null || datas.Value.Count < 1) return;
+            if(database.Value == null || database.Value.Count < 1) return;
 
             switch(entitySO.simulationState.Value)
             {

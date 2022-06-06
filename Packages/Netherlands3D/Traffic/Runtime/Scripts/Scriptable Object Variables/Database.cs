@@ -9,7 +9,7 @@ namespace Netherlands3D.Traffic.VISSIM
     /// <summary>
     /// Data base containing Traffic data
     /// </summary>
-    [CreateAssetMenu(fileName = "Traffic Database", menuName = "ScriptableObjects/Traffic/Database", order = 1)]
+    [CreateAssetMenu(fileName = "VISSIM Database", menuName = "ScriptableObjects/Traffic/VISSIM/Database", order = 1)]
     public class Database : ScriptableObject
     {
         /// <summary>
@@ -38,11 +38,40 @@ namespace Netherlands3D.Traffic.VISSIM
         /// </summary>
         public UnityEvent<List<int>> OnRemoveData = new UnityEvent<List<int>>();
 
+        #region new
+
+        /// <summary>
+        /// Dictionary containing all signal heads with their number as key
+        /// </summary>
+        /// <remarks>For adding signalheads use AddSignalHeads function!</remarks>
+        public Dictionary<int, SignalHeadData> SignalHeads
+        {
+            get
+            {
+                return signalHeads;
+            }
+            set 
+            {
+                signalHeads = value;
+            }
+        }
+
+        /// <summary>
+        /// Called when the data is changed
+        /// </summary>
+        public UnityEvent OnDataChanged;
+        /// <summary>
+        /// When the signalHeads data is changed
+        /// </summary>
+        public UnityEvent OnSignalHeadsChanged;
+
         /// <summary>
         /// All signal heads data
         /// </summary>
         /// <remarks><number, DataATT></remarks>
-        public Dictionary<int, DataATT> signalHeads = new Dictionary<int, DataATT>();
+        private Dictionary<int, SignalHeadData> signalHeads = new Dictionary<int, SignalHeadData>();
+
+        #endregion
 
         private void OnEnable()
         {
@@ -97,12 +126,33 @@ namespace Netherlands3D.Traffic.VISSIM
         }
 
         /// <summary>
+        /// Add signal heads to the database
+        /// </summary>
+        public void AddSignalHeads(Dictionary<int, SignalHeadData> signalHeads, bool triggerRefresh = true)
+        {
+            Debug.Log(string.Format("[VISSIM] Adding {0} signalHeads", signalHeads.Count)); 
+            this.signalHeads.AddRange(signalHeads);
+            if(triggerRefresh)
+            {
+                OnDataChanged.Invoke();
+                OnSignalHeadsChanged.Invoke();
+            }
+        }
+
+        /// <summary>
         /// Clears the database of all data
         /// </summary>
         public void Clear()
         {
             OnRemoveData?.Invoke(Value.Keys.ToList());
             Value.Clear();
+            Debug.Log(SignalHeads.Count);
+            Debug.Log(signalHeads.Count);
+            SignalHeads.Clear();
+            signalHeads.Clear();
+            SignalHeads = signalHeads;
+            Debug.Log(SignalHeads.Count);
+            Debug.Log(signalHeads.Count);
             MaxSimulationTime = 0;
         }
 

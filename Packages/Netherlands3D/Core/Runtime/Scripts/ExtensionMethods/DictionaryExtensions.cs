@@ -11,10 +11,10 @@ public static class DictionaryExtensions
     /// <summary>
     /// Add a dictionary to another dictionary
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="target"></param>
-    /// <param name="source"></param>
-    /// <param name="callbackDuplicate">If the dictionary tries to add a value that is already present</param>
+    /// <typeparam name="T">The type to add</typeparam>
+    /// <param name="target">The target to add the source too</param>
+    /// <param name="source">The source to add to the target</param>
+    /// <param name="onDuplicate">If the dictionary tries to add a value that is already present</param>
     public static void AddRange<T>(this ICollection<T> target, IEnumerable<T> source, Action<T> onDuplicate = null)
     {
         if(target == null)
@@ -25,7 +25,7 @@ public static class DictionaryExtensions
         {
             if(target.Contains(item))
             {
-                onDuplicate(item);
+                onDuplicate?.Invoke(item);
                 continue;
             }
             target.Add(item);

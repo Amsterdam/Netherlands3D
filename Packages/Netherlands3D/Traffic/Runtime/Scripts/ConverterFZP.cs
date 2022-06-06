@@ -19,6 +19,9 @@ namespace Netherlands3D.Traffic
     /// </remarks>
     public static class ConverterFZP
     {
+        /// <summary>
+        /// The line the converter looks for before converting data
+        /// </summary>
         private static readonly string requiredTemplate = "$VEHICLE:SIMSEC;NO;VEHTYPE;COORDFRONT;COORDREAR;WIDTH";
 
         /// <summary>

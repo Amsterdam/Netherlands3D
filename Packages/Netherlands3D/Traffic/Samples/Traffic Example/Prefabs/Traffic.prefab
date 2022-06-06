@@ -97,7 +97,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   binaryMeshLayer: {fileID: 0}
-  datas: {fileID: 11400000, guid: 0c7b59f8d6cc82046a448b240c6183d3, type: 2}
+  database: {fileID: 11400000, guid: 0c7b59f8d6cc82046a448b240c6183d3, type: 2}
   entitiesDatas:
   - {fileID: 11400000, guid: 20d7d988f78d49742999abe6f0e93f3c, type: 2}
   - {fileID: 11400000, guid: f332c2bfe813b534b870178d076f8da8, type: 2}
@@ -114,6 +114,7 @@ MonoBehaviour:
     simulationTime: {fileID: 11400000, guid: 45384d89a76d18340bbcb11dfc8b8f82, type: 2}
     simulationSpeed: {fileID: 11400000, guid: b62124e41bd8f704fbd00b900dc9778d, type: 2}
     simulationState: {fileID: 11400000, guid: 2f0f64cea92c55a4b845d4667baaf80f, type: 2}
+  prefabSignalHead: {fileID: 8201467708962993325, guid: 09f1af4904d99024aa7f1ea18f66f7bd, type: 3}
 --- !u!1 &8334449571815547988
 GameObject:
   m_ObjectHideFlags: 0

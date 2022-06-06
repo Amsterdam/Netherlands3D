@@ -41,6 +41,7 @@ SC 651  SGroup 65185  Link     18  Lane  1  At    3.7
 SC 651  SGroup 65187  Link     17  Lane  1  At    3.3
 $simsec; ??; sc; sgroep; kleur; ??; ??; ?? 
                               id 
+$SIGNALHEAD:SIMSEC;SG;SGID;COLOR
      1.0;     1.0;      651;   65101; red       ;     1.0; TRENDS   ;       0;
      1.0;     1.0;      651;   65102; red       ;     1.0; TRENDS   ;       0;
      1.0;     1.0;      651;   65105; red       ;     1.0; TRENDS   ;       0;
