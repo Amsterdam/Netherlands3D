@@ -42,7 +42,7 @@ namespace Netherlands3D.Traffic.VISSIM
 
         [Header("Scriptable Objects")]
         [Tooltip("The scriptable objects for an entity")]
-        public EntityScriptableObjects entitySO;
+        public SSO entitySO;
         [Tooltip("The database containing the traffic data")]
         [SerializeField] private Database dataDatabase;
 

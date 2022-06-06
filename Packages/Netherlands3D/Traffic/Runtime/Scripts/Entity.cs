@@ -29,7 +29,7 @@ namespace Netherlands3D.Traffic
         [SerializeField] protected Transform defaultCubeModel;
 
         [Header("Scriptable Objects")]
-        [SerializeField] protected EntityScriptableObjects so;
+        [SerializeField] protected SSO so;
 
         /// <summary>
         /// Should the entity update itself in realtime?
@@ -102,7 +102,7 @@ namespace Netherlands3D.Traffic
         /// </summary>
         /// <param name="data">Data of the entity</param>
         /// <param name="so">EntityScriptableObjects</param>
-        public void Initialize(Data data, EntityScriptableObjects so, LayerMask layerMask, bool updateRealtime = false, BinaryMeshLayer binaryMeshLayer = null)
+        public void Initialize(Data data, SSO so, LayerMask layerMask, bool updateRealtime = false, BinaryMeshLayer binaryMeshLayer = null)
         {
             this.data = data;
 

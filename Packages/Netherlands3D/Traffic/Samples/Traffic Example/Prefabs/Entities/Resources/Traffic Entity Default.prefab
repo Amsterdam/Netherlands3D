@@ -158,14 +158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultCubeModel: {fileID: 5874098943357162302}
-  so:
-    eventUpdateRealtime: {fileID: 0}
-    eventSimulationTimeChanged: {fileID: 0}
-    eventSimulationSpeedChanged: {fileID: 0}
-    eventSimulationStateChanged: {fileID: 0}
-    simulationTime: {fileID: 0}
-    simulationSpeed: {fileID: 0}
-    simulationState: {fileID: 0}
+  so: {fileID: 11400000, guid: 7facedd1a939204449f0ee823caeab73, type: 2}
 --- !u!111 &155323662574190005
 Animation:
   m_ObjectHideFlags: 0

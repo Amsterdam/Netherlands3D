@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Netherlands3D.Events;
 
 namespace Netherlands3D.Traffic.VISSIM
 {
@@ -9,6 +10,9 @@ namespace Netherlands3D.Traffic.VISSIM
     {
         public SignalHeadData data;
 
+        [Header("Events")]
+        public SSO sso;
+
         [Header("Components")]
         public Transform modelChild;
         public MeshRenderer meshRenderer;
@@ -16,10 +20,14 @@ namespace Netherlands3D.Traffic.VISSIM
         public Material materialAmber; // Color index 1
         public Material materialGreen; // Color index 2
 
-        // Start is called before the first frame update
-        void Start()
+        private void OnEnable()
         {
-        
+            
+        }
+
+        private void OnDisable()
+        {
+            
         }
 
         public void Initialize(SignalHeadData data)
@@ -30,5 +38,12 @@ namespace Netherlands3D.Traffic.VISSIM
             transform.rotation = Quaternion.Euler(0, data.rotationAngle, 0);
             name = "Signal Head " + data.groupID;
         }
+
+        // Start is called before the first frame update
+        void Start()
+        {
+        
+        }
+
     }
 }

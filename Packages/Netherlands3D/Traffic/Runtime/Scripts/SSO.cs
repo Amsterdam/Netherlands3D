@@ -6,10 +6,11 @@ using Netherlands3D.Events;
 namespace Netherlands3D.Traffic
 {
     /// <summary>
-    /// The scriptable objects the entity contains
+    /// Simulation Scriptable Objects. Collection of scriptable objects needed for simulation
     /// </summary>
     [System.Serializable]
-    public class EntityScriptableObjects
+    [CreateAssetMenu(fileName = "Simulation Scriptable Objects", menuName = "ScriptableObjects/Traffic/Simulation Scriptable Objects", order = 1)]
+    public class SSO : ScriptableObject
     {
         [Tooltip("If the entity should update itself in realtime on enviroment")]
         public BoolEvent eventUpdateRealtime;
@@ -26,7 +27,7 @@ namespace Netherlands3D.Traffic
         [Tooltip("The state of the simulation time and how it gets updated. 0 = paused, 1 = play, -1 = reversed, -2 = reset")]
         public IntVariable simulationState;
 
-        public EntityScriptableObjects(FloatEvent eventSimulationTimeChanged, FloatEvent eventSimulationSpeedChanged, IntEvent eventSimulationStateChanged, FloatVariable simulationTime, FloatVariable simulationSpeed, IntVariable simulationState)
+        public SSO(FloatEvent eventSimulationTimeChanged, FloatEvent eventSimulationSpeedChanged, IntEvent eventSimulationStateChanged, FloatVariable simulationTime, FloatVariable simulationSpeed, IntVariable simulationState)
         {
             this.eventSimulationTimeChanged = eventSimulationTimeChanged;
             this.eventSimulationSpeedChanged = eventSimulationSpeedChanged;

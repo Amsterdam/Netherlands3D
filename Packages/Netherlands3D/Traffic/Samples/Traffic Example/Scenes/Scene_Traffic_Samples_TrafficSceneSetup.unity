@@ -1147,6 +1147,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8334449570704879011, guid: 309a4e65127e29740a92518cdbe7b44f, type: 3}
+      propertyPath: entitySO
+      value: 
+      objectReference: {fileID: 11400000, guid: 7facedd1a939204449f0ee823caeab73, type: 2}
     - target: {fileID: 8334449571815547988, guid: 309a4e65127e29740a92518cdbe7b44f, type: 3}
       propertyPath: m_Name
       value: Traffic

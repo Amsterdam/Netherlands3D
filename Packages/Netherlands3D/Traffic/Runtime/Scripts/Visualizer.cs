@@ -42,7 +42,7 @@ namespace Netherlands3D.Traffic.VISSIM
         [Tooltip("List containing every available entity data (Scriptable Objects)")]
         public List<EntityData> entitiesDatas = new List<EntityData>();
         [Tooltip("The scriptable objects for an entity")]
-        public EntityScriptableObjects entitySO;
+        public SSO entitySO;
 
         [Header("Signal Heads")]
         [Tooltip("The prefab used for signal heads")]
