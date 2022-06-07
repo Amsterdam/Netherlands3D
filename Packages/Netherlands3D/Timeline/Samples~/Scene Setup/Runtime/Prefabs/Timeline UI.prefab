@@ -2392,6 +2392,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df197e6a594a53947bd11be2a1e5cb64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeBarScrollSpeed: 5
   rt: {fileID: 7070070186000849008}
   slider: {fileID: 7070070186695950802}
   timelineUI: {fileID: 7070070187406513272}
@@ -3367,7 +3368,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -3395,7 +3396,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.5
+  m_Value: 0.954
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -4271,6 +4272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timelineData: {fileID: 11400000, guid: 45c461b5fcd30484fb4e50bba7c6a8f8, type: 2}
+  dateTimeEvent: {fileID: 11400000, guid: 51a01211b129d8246a37ffcccb78db85, type: 2}
   mouseSensitivity: 10
   timeBarParent: {fileID: 7070070187330084505}
   timeBars:
@@ -4796,6 +4798,7 @@ GameObject:
   - component: {fileID: 7070070187552799230}
   - component: {fileID: 7070070187552799216}
   - component: {fileID: 7070070187552799231}
+  - component: {fileID: 599804594}
   m_Layer: 5
   m_Name: Show Button Toggle
   m_TagString: Untagged
@@ -4846,6 +4849,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   categoryMenuRectTransform: {fileID: 7070070187039032154}
   iconRectTransform: {fileID: 7070070186745004135}
+  canvasGroupLayers: {fileID: 7070070187039032156}
 --- !u!114 &7070070187552799231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4902,6 +4906,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!225 &599804594
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7070070187552799227}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 1
 --- !u!1 &7070070187578585137
 GameObject:
   m_ObjectHideFlags: 0

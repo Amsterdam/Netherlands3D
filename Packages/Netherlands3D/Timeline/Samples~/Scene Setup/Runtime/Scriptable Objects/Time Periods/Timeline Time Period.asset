@@ -19,7 +19,8 @@ MonoBehaviour:
       dateTimeString: 2020/01/01
     endDate:
       dateTimeString: 2021/01/01
-    layer: Not Working
+    layer: Example Layer
+    group: 
     eventPressed:
       m_PersistentCalls:
         m_Calls: []

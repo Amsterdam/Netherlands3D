@@ -5,12 +5,13 @@ using UnityEngine;
 namespace Netherlands3D.Timeline
 {
     /// <summary>
-    /// For showing/hiding the category menu
+    /// For showing/hiding the layers menu
     /// </summary>
-    public class CategoryShowToggle : MonoBehaviour
+    public class LayersShowToggle : MonoBehaviour
     {
-        [SerializeField] RectTransform categoryMenuRectTransform;
-        [SerializeField] RectTransform iconRectTransform;
+        [SerializeField] private RectTransform categoryMenuRectTransform;
+        [SerializeField] private RectTransform iconRectTransform;
+        [SerializeField] private CanvasGroup canvasGroupLayers;
 
         private bool isShowing = true;
 
@@ -21,9 +22,11 @@ namespace Netherlands3D.Timeline
             if(isShowing)
             {
                 iconRectTransform.localEulerAngles = new Vector3(0, 0, -90);
+                canvasGroupLayers.alpha = 1;
             }
             else
             {
+                canvasGroupLayers.alpha = 0;
                 iconRectTransform.localEulerAngles = new Vector3(0, 0, 90);
             }
             categoryMenuRectTransform.anchoredPosition = new Vector2(categoryMenuRectTransform.anchoredPosition.x * -1, categoryMenuRectTransform.anchoredPosition.y);

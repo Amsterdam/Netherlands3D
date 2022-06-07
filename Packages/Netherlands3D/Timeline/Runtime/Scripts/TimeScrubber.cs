@@ -15,15 +15,28 @@ namespace Netherlands3D.Timeline
         /// Is the time scrubber being used?
         /// </summary>
         public bool IsActive { get; private set; }
+        /// <summary>
+        /// Is the time scrubber scrolling by being on the edge on the left/right side?
+        /// </summary>
+        public bool IsScrollingWithEdge { get; private set; }
+        /// <summary>
+        /// Is the timescrubber scrolling via the TimelinePlayback?
+        /// </summary>
+        public bool PlaybackScroll { get; set; }
+
+        [Tooltip("When the scroll is all the way on the left/right move the timebar with this speed")]
+        public float timeBarScrollSpeed = 5;
 
         [Header("Components")]
         [SerializeField] private RectTransform rt;
         [SerializeField] private Slider slider;
         [SerializeField] private TimelineUI timelineUI;
 
+        private Coroutine coroutineScrollWithTimeScrubber;
+
         // Start is called before the first frame update
         void Start()
-        {
+        {            
             StoppedUsing();
         }
 
@@ -32,6 +45,24 @@ namespace Netherlands3D.Timeline
         /// </summary>
         public void OnValueChanged()
         {
+            // If the time slider is all the way left or right move the timeline & ignore slider
+            if(!PlaybackScroll)
+            {
+                if(slider.value <= 0.05f)
+                {
+                    StopScrollWithTimeScrubber();
+                    coroutineScrollWithTimeScrubber = StartCoroutine(ScrollWithTimeScrubber(100 * timeBarScrollSpeed * Time.deltaTime));
+                    return;
+                }
+                else if(slider.value >= 0.95f)
+                { 
+                    StopScrollWithTimeScrubber();
+                    coroutineScrollWithTimeScrubber = StartCoroutine(ScrollWithTimeScrubber(-100 * timeBarScrollSpeed * Time.deltaTime));
+                    return;
+                }
+                StopScrollWithTimeScrubber();
+            }
+
             // Set the timelineUI currentDate based on slider value
             // First get the range of the slider since the sides are off screen
             float width = rt.rect.width;
@@ -61,9 +92,28 @@ namespace Netherlands3D.Timeline
         /// </summary>
         public void StoppedUsing()
         {
+            if(coroutineScrollWithTimeScrubber != null) StopCoroutine(coroutineScrollWithTimeScrubber);
             // Center scrubber
             slider.SetValueWithoutNotify(0.5f);
             IsActive = false;
+        }
+
+        public void StopScrollWithTimeScrubber()
+        {
+            IsScrollingWithEdge = false;
+            if(coroutineScrollWithTimeScrubber != null) StopCoroutine(coroutineScrollWithTimeScrubber);
+        }
+
+
+        private IEnumerator ScrollWithTimeScrubber(float speed)
+        {
+            IsScrollingWithEdge = true;
+            while(true)
+            {
+                timelineUI.ScrollTimeBar(speed, false);
+                if(PlaybackScroll) yield break;
+                yield return null;
+            }
         }
     }
 }
