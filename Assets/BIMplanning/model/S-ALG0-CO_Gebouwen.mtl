@@ -1,0 +1,1224 @@
+newmtl H032-01_BH01_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl H032-02_BH02_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl H032-03_BH03_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl H032-04_BH04_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl H032-05_BH05_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl H032-06_BH06_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-01_BM01_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M221-11_BM01_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-30_BMK4_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-34_BMK4_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-36_BMK5_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M221-12_BMK5_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-35_BMK5_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-33_BMK3_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-28_BMK2_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-27_BMK1_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P034-10_OPP4_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    Ns 0.000000
+    Kd 0.498039 0.247059 0.247059
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-02_BM02_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-04_BM04_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-06_BM06_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-12_BM12_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    Ns 0.000000
+    Kd 0.498039 0.247059 0.247059
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-13_BM13_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    Ns 0.000000
+    Kd 0.498039 0.247059 0.247059
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-08_BM08_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-10_BM10_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-12_BM12_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-15_BM15_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-17_BM17_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-19_BM19_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-21_BM21_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-22_BM22_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-23_BM23_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-24_BM24_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-25_BM25_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-26_BM26_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-20_BM20_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-18_BM18_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-16_BM16_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-14_BM14_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-13_BM13_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-11_BM11_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-09_BM09_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-07_BM07_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-05_BM05_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M224-01_BM03_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    Ns 0.000000
+    Kd 0.498039 0.247059 0.247059
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M223-01_BM03_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-32_BP32_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-32_BP32_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    Ns 0.000000
+    Kd 0.498039 0.247059 0.247059
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-33_BP33_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-29_BP29_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-01_BP01_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-06_BP06_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-07_BP07_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-08_BP08_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-03_BP03_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-04_BP04_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-05_BP05_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-09_BP09_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-14_BP14_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-15_BP15_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-13_BP13_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-12_BP12_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-11_BP11_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-16_BP16_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-17_BP17_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-18_BP18_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-18_BP18_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    Ns 0.000000
+    Kd 0.498039 0.247059 0.247059
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-19_BP19_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-20_BP20_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-22_BP22_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-21_BP21_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-24_BP24_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-24_BP24_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    Ns 0.000000
+    Kd 0.498039 0.247059 0.247059
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-25_BP25_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-30_BP30_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-31_BP31_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-27_BP27_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-28_BP28_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-26_BP26_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-10_BP10_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-09_BP09_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    Ns 0.000000
+    Kd 0.498039 0.247059 0.247059
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-24_BM24_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    Ns 0.000000
+    Kd 0.498039 0.247059 0.247059
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-02_BP02_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    Ns 0.000000
+    Kd 0.498039 0.247059 0.247059
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-02_BP02_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    Ns 0.000000
+    Kd 0.517647 0.517647 0.517647
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-02_BM02_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-08_BM08_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-15_BM15_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-22_BM22_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-18_BM18_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-11_BM11_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-05_BM05_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-01_BP01_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-05_BP05_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-12_BP12_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-13_BP13_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-16_BP16_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-20_BP20_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-21_BP21_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-25_BP25_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-28_BP28_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-26_BP26_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-10_BP10_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    Ns 0.000000
+    Kd 0.356863 0.356863 0.356863
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-02_BM02_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-04_BM04_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-06_BM06_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-08_BM08_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-10_BM10_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-12_BM12_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-15_BM15_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-17_BM17_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-19_BM19_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-21_BM21_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-22_BM22_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-23_BM23_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-24_BM24_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-25_BM25_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-24_BM24_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-26_BM26_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-20_BM20_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-18_BM18_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-16_BM16_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-14_BM14_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-13_BM13_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-11_BM11_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-09_BM09_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-07_BM07_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M032-05_BM05_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M223-01_BM03_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-32_BP32_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-33_BP33_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-29_BP29_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-01_BP01_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-06_BP06_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-06_BP06_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-07_BP07_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-08_BP08_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-03_BP03_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-04_BP04_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-05_BP05_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-10_BP10_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-10_BP10_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-09_BP09_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-09_BP09_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-14_BP14_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-12_BP12_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-12_BP12_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-13_BP13_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-13_BP13_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-15_BP15_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-11_BP11_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-11_BP11_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-16_BP16_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-17_BP17_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-18_BP18_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-18_BP18_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-19_BP19_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-19_BP19_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-20_BP20_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-22_BP22_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-22_BP22_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-21_BP21_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-21_BP21_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-24_BP24_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-24_BP24_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-25_BP25_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-25_BP25_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-30_BP30_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-31_BP31_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-27_BP27_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-28_BP28_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-26_BP26_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-26_BP26_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    Ns 0.000000
+    Kd 0.839216 0.839216 0.839216
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P034-10_OPP4_S-ALG0-CO_Gebouwen.dgn_Default_0_204_0_vis
+    Ns 0.000000
+    Kd 0.000000 0.800000 0.000000
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl M224-01_BM03_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl P032-02_BP02_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    Ns 0.000000
+    Kd 0.000000 0.498039 0.121569
+    Ks 1.000000 1.000000 1.000000
+
+    map_Kd 
+
+newmtl Global_S-ALG0-CO_Gebouwen.dgn_Default_255_255_255__1ca3_vis
+    Ns 50.000000
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.000000 0.000000 0.000000
+
+    map_Kd 

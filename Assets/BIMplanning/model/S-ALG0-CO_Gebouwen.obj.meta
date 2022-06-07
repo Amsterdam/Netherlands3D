@@ -1,0 +1,980 @@
+fileFormatVersion: 2
+guid: 56c49322ce56c1f42ae343e3829ff69c
+ModelImporter:
+  serializedVersion: 21202
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Global_S-ALG0-CO_Gebouwen.dgn_Default_255_255_255__1ca3_vis
+    second: {fileID: 2100000, guid: 6216ff4de04b81a4c90cfaddab7015c6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: H032-01_BH01_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 6cec9424ca7bb8146ac0a5b8c3871840, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: H032-02_BH02_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: f4d06098179d1ad4781273afa82afeea, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: H032-03_BH03_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: da7570677ea825f458a45d3d551f36d0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: H032-04_BH04_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: d148d185947e1f04aa2efa45fd63d320, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: H032-05_BH05_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 33e906f35c6339f409de6ea36c643be6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: H032-06_BH06_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 6e8d9076ef720d543bba3b68bf857047, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-01_BM01_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 152ef08ff17a02d43b7cb96fd9888b2d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-02_BM02_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 8b5889ddf5fd6444bb30194c299de7ad, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-02_BM02_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 20a8b72c90ad7324f8411f9ffe709145, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-02_BM02_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: bef4331c1e8fbd8498df92000f93da34, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-04_BM04_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 7eb66925da7a1554da155d494bdd27c6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-04_BM04_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 16b1f47140f4b89489a064c000f08817, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-05_BM05_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 2ac150e86a28ded48a7b8d8f7697f835, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-05_BM05_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 1b814cd6ff25fa2428185c5872a1f247, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-05_BM05_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: 479ef79372184f6479949d98c117c47d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-06_BM06_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: a5afc7084c0794642b48fec78db3c96c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-06_BM06_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 843a9cd1fbf25504da09ef6f486e3b88, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-07_BM07_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 5757e488e9caeae40962a7fb7b4ec793, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-07_BM07_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: a90a02b51abb36b46a36c9222ac44be2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-08_BM08_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 67364fc59b47ad74591e34a472efcb6b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-08_BM08_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 6c731316aa6825f4bab721e1314a2c39, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-08_BM08_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: ed0fa42fa3faad94da9ae3aef9d3a3a6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-09_BM09_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 8bccc70319624894db9b595f09b8f6bc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-09_BM09_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 76e292e4f6ce913419481bfefe428182, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-10_BM10_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 9c5ca87ca2a38f940b6849a18369c5a0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-10_BM10_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: ed84418def3b57f46ab0e6e6d16302e7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-11_BM11_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 06113fe42370ee44db1b29b9665d4b6a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-11_BM11_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: b5d447da4a4641343a73169726eadfaf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-11_BM11_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: 55c3d31fabc94854da647edd9ebd4a04, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-12_BM12_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 85ae93e028839ef4b805ad4db0a26879, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-12_BM12_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    second: {fileID: 2100000, guid: c92f7a7e82615534c9154ace05fd16a1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-12_BM12_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 3b6449262c879ac40a0a3f9544023c59, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-13_BM13_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 099877c357e8e2448825c69f80ef5106, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-13_BM13_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    second: {fileID: 2100000, guid: 3df4841e1d209e243a4ba51dd4933ef8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-13_BM13_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 35129d93a52939a4499ca087953ac74e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-14_BM14_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 1e1a9d863c3117641aa5c20540093b31, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-14_BM14_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 050c7522bcbd52e448b92ab43c407895, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-15_BM15_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 2d1b46ee6fae67d4e91697cb1855b3ca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-15_BM15_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 0bc5794f6a3bed44b817e461dbf8edc3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-15_BM15_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: c6941c1f5a6877540abb1e49fcc9d881, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-16_BM16_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: e2ae2c3cd0f8b2b408ea008666077a98, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-16_BM16_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: be493fb32a71b3748869655e0c3c5a16, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-17_BM17_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 23ae08400f440914fae41891651ff8aa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-17_BM17_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 4bb5ea4258f740e419918c963794e6ab, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-18_BM18_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 9a9165ce0e9de984b90ca45fa6ea94b6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-18_BM18_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: d430a577f581a5b4087b6f350acc73f8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-18_BM18_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: 9da00f60ceb7cde43a7776c47de62384, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-19_BM19_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 80506f312be3c444f850a79e760334cd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-19_BM19_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 09d4e085a968c864a886bf9e2e43d7c6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-20_BM20_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: ca6d6a380285e9e4b926e60e2b0bba1f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-20_BM20_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 3bd1ac57977d19245b996241db8b1138, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-21_BM21_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 33949be833bc1424ca6f132177e9f3e9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-21_BM21_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 09ef1775f0d7bac43af6b8b200f40e12, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-22_BM22_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 8deb3699850387c478bb48ecadbeeb11, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-22_BM22_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: db9d6a68f25801d47b7ff4fd09b9baa9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-22_BM22_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: d39620df789574542aabd01bb5f3d7fd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-23_BM23_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 2e69129c19df58545bb811ed370d9240, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-23_BM23_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: fd0b842173c3d6441a6d9b4218101882, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-24_BM24_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 9c149055716dff24991b6ea74a066a15, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-24_BM24_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    second: {fileID: 2100000, guid: 83023f846d12dab48a24726beec92b02, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-24_BM24_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 28647c2527f24f144854be39dac60e6f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-24_BM24_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: 96a0d84334434b64cb0290031c8ee160, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-25_BM25_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 984f379493ccca94ea566d47e2aea9b8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-25_BM25_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 274247eba2c2e5444a6bb2b4aa8d3629, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-26_BM26_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 3b8106e5f696b27459a0a837558025f6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-26_BM26_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: a271b01268dd87a4a90d248bc5c07e85, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-27_BMK1_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 5bd335b226dfcf842bfda23d7ba3ddc9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-28_BMK2_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 5ab782713c59a1b41821ca625d45acb1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-30_BMK4_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 63c2537dd5ee1d64b859122ed0e0b3fc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-33_BMK3_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 2f33106e3b09a2348933f211eee55bee, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-34_BMK4_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: be805609a63f20643a494c2c74f9f08b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-35_BMK5_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 1228b2f71aa897040b925062ec1b7c00, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M032-36_BMK5_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 079fc1ba8066977459a8e009845f9923, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M221-11_BM01_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: dc265526e96bc3c42ba80c798d7b0bb1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M221-12_BMK5_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 72552f1b59acc754fa310e0a87a45932, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M223-01_BM03_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 0476b36f9865cfc44ac6f1f61588eb8f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M223-01_BM03_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 75156595ab8ce64449565dd16c10a327, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M224-01_BM03_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 5a87f405d951631478de942ef8e18f75, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M224-01_BM03_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    second: {fileID: 2100000, guid: 88e9800ecb5e94e4fa325f04aa268b4e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-01_BP01_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: c93831c1bd88ead4d9771b0869e9becf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-01_BP01_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 53ef60496f684f549ab6dbdb1cc1c09b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-01_BP01_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: 74031d317b97069408e150859875d47d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-02_BP02_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 561b18e9417068b489fcc964f04442f2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-02_BP02_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    second: {fileID: 2100000, guid: e477e0b9f1bd4284883f919668b8d329, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-02_BP02_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 69d5b03cf49fbe7489b64d004c2b9bc6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-03_BP03_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 6d1713351741ab34788e4bb68abf9609, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-03_BP03_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 4b59b4d2c02759e45b1130cfd9712804, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-04_BP04_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 7954bdd3f3bd96a42aef06d346dfc046, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-04_BP04_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: cb5ba1f374282de459b32a7486d44ffa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-05_BP05_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: f9560c7c1c801c24b82c5016ee0a2294, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-05_BP05_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: b8b1a5d0070423b49813dd5524e22a19, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-05_BP05_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: c63945a1b8d028a45b2feefe2bcf2b12, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-06_BP06_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 73cdba9b18b732f43a78c4576393955d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-06_BP06_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 044f8dfd86c86174f955b329a03fb31a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-06_BP06_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: 8c80e76b1888a854c86d25487a70e29e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-07_BP07_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: cb13f25be791aa84697d8d3c5c465d1b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-07_BP07_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 77e0e30a265a839488311c932f50dd06, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-08_BP08_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: b6bb1bd96eaa39d4eb1960ce72d14d26, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-08_BP08_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 78de616f4a344bb4a8ca8a7ce9328630, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-09_BP09_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: a81beb3a1f6659947b96f796c0a34fcc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-09_BP09_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    second: {fileID: 2100000, guid: 72caab1fb04131c4091951988fbc90fc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-09_BP09_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: d4ae7221c6bd7ae4aa9089585b3e209b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-09_BP09_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: 85efda8a406179946bc5fef4295d745e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-10_BP10_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: a53e6178f101fc943b14ed2a3385ab98, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-10_BP10_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 41cadebeb0852bf41a49685cb6b8e41b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-10_BP10_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: cbdf8d58162eae44eb3b56ea41416284, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-10_BP10_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: 4a8ed1233757d5e489cecee64bf3aa0c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-11_BP11_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 510432826427d164e95be21ab73ea8c6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-11_BP11_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: f63e17955c7c63c48a4f7e790dc24df9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-11_BP11_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: ab4cbcc19aeb66c418dde4e3925e3d3f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-12_BP12_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 6609d93642efc9848b029382cf1c3e99, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-12_BP12_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 5ea495b83ee9e3e409bbea726d50a03f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-12_BP12_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: 4b09d2732bf3a404f9c1c9a8c330421e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-12_BP12_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: f97e741dd09f7374c8c7c8124508189f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-13_BP13_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: ef8a4ccfd4716f744af3dac637a2c8d9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-13_BP13_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: ed13886d708f86147bfbaee56e86f281, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-13_BP13_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: 27ec6c8017d358747aff77a5fef952da, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-13_BP13_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: 45c284323cb727541b279301abac5d62, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-14_BP14_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: f4dbb0f665f540a408012a2099977ac3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-14_BP14_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 6cd06dc045df7fb4b8fc80c95393b8ca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-15_BP15_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 8737a8af041a17d4ab30d83702d74afa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-15_BP15_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 45016ab7fbc4c8648931b046273dc556, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-16_BP16_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 4fb6bcc4d1c284841b92450b193a34ab, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-16_BP16_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 9bc2604cc9c190649ba447048c231ab5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-16_BP16_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: 6cb712034078ca041b78f70f1889d0ef, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-17_BP17_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: d625bbb6a74c2d74381d6655eb4ae69a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-17_BP17_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: fe777309d95d87344849a31f50dd351a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-18_BP18_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: d01065194e64fc5459d0ace6e23f9ef1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-18_BP18_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    second: {fileID: 2100000, guid: 11bf32d2061f88b4996c0c09ff1b8a18, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-18_BP18_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: f123b0f6c96cc614799817ec0ed1b783, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-18_BP18_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: 0d1ff1fcb9bfe2b40bf79e8f858190f3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-19_BP19_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 2bb42953e9547e346861f2d931986f49, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-19_BP19_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 734f1980cc3442e428cc956f1cdc7fb8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-19_BP19_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: a0eaaf97e5ad6bf469777046dab9eefb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-20_BP20_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: bb3379e5b0c469c4e83031840887f429, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-20_BP20_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 3fc779e8f3e12bd40be822a0637e35b8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-20_BP20_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: 454eaafbbbdbc104982c1f212a0cc194, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-21_BP21_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: b536d66b09d0ce546aa15004e7d1c59c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-21_BP21_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: c77b3cccbc77fc74fa794db627a2d1ba, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-21_BP21_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: 5ec72d26046d44348939ac67aeae676f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-21_BP21_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: 253e3c627920aec479b0a33fe70d9591, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-22_BP22_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: d7420ee8a10e075478d87b61e1fc741a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-22_BP22_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 8ec32f63db83e554b987c7cd30a243b5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-22_BP22_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: 1ffd98206cde2634ba65be4243b7f71b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-24_BP24_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: ad15a3a2433d14b46a8eb5190f3f03d3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-24_BP24_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    second: {fileID: 2100000, guid: 144a764b6fbf65e489db1a5c9533923b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-24_BP24_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: bd6ba68cb043e8c4f994c6b722c16abb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-24_BP24_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: 73ac335349e8bcb4ead013458cfaf88e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-25_BP25_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: a49976800708d30418d660c478a5e451, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-25_BP25_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 7b4aad67e6cfcf144b36ebd3c1a88f11, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-25_BP25_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: 0653be215c34b8b47b1537a538f68173, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-25_BP25_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: bc1bbef3cf4245c43aba713f4ac354b8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-26_BP26_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: b71342e682526b842b755740ea008047, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-26_BP26_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: d44345c3a0a713a4fa68da8c97ce879f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-26_BP26_S-ALG0-CO_Gebouwen.dgn_Default_214_214_214_vis
+    second: {fileID: 2100000, guid: 8aad94f5abd5da746bebd8a3f0b34259, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-26_BP26_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: 357163e444bfa4c4cbccd1ee9a7f21d1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-27_BP27_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 351854daf528d0c4fba4307d12ce9c4e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-27_BP27_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: c6a87ae8e7f1c1f4ba1a680cbe38bb1a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-28_BP28_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: bb4e2dfbee5337f44bb6780e53df8592, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-28_BP28_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: f33284d6798d50542b208345cb46c238, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-28_BP28_S-ALG0-CO_Gebouwen.dgn_Default_91_91_91_vis
+    second: {fileID: 2100000, guid: 1e7ef6c083d8d8c4081df4acf51230ad, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-29_BP29_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: d49d50e41f36846408665d5256b74649, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-29_BP29_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 03aa2c356b714de4eabe930e756c423c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-30_BP30_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: a2c7ca4d09fb3a246bd2ce7b025b1205, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-30_BP30_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 9470e12891383bb4796579695db17f91, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-31_BP31_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 64f1f74b45462b94889a2c2d535018b0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-31_BP31_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 9f9b07979e772854fa6903c77a6ebbaf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-32_BP32_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 107902a6d142e0a40b4440a703d8fd33, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-32_BP32_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    second: {fileID: 2100000, guid: d32b7ed6ce981444fb68d59e1d2c4965, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-32_BP32_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 81b091b3de131394082aad95b1208c2e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-33_BP33_S-ALG0-CO_Gebouwen.dgn_Default_0_127_31_vis
+    second: {fileID: 2100000, guid: 9ff531143c89e444d8cc68d0bd880145, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P032-33_BP33_S-ALG0-CO_Gebouwen.dgn_Default_132_132_132_vis
+    second: {fileID: 2100000, guid: 7edabf43490f8484490a57ac0826cbd1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P034-10_OPP4_S-ALG0-CO_Gebouwen.dgn_Default_0_204_0_vis
+    second: {fileID: 2100000, guid: 616daa24537a9eb47a75d589d8aaa263, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: P034-10_OPP4_S-ALG0-CO_Gebouwen.dgn_Default_127_63_63_vis
+    second: {fileID: 2100000, guid: aacbedce2609bcb439c8b6e8f6a41647, type: 2}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 1
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
