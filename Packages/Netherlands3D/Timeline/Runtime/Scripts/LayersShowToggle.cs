@@ -15,6 +15,12 @@ namespace Netherlands3D.Timeline
 
         private bool isShowing = true;
 
+        private Vector2 defaultOpenSize;
+        private void Awake()
+        {
+            defaultOpenSize = categoryMenuRectTransform.sizeDelta;
+        }
+
         public void ToggleShow()
         {
             isShowing = !isShowing;
@@ -29,7 +35,7 @@ namespace Netherlands3D.Timeline
                 canvasGroupLayers.alpha = 0;
                 iconRectTransform.localEulerAngles = new Vector3(0, 0, 90);
             }
-            categoryMenuRectTransform.anchoredPosition = new Vector2(categoryMenuRectTransform.anchoredPosition.x * -1, categoryMenuRectTransform.anchoredPosition.y);
+            categoryMenuRectTransform.sizeDelta = (isShowing) ? defaultOpenSize : Vector2.zero;
         }
     }
 }
