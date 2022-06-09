@@ -32,6 +32,7 @@ public class GetGeoJSONFloatValues : MonoBehaviour
 
 	[SerializeField]
 	private string idProperty = "identificatie";
+	[SerializeField]
 	private string floatDataProperty = "bouwjaar";
 
 	private float maxBoundsDistance = 10000;
