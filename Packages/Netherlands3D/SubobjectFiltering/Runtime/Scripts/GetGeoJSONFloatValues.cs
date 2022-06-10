@@ -35,6 +35,9 @@ public class GetGeoJSONFloatValues : MonoBehaviour
 	[SerializeField]
 	private string floatDataProperty = "bouwjaar";
 
+	[SerializeField]
+	private bool clearDataOnViewChange = true;
+
 	private float maxBoundsDistance = 10000;
 	private int count = 1000;
 	private int startIndex = 0;
@@ -87,7 +90,8 @@ public class GetGeoJSONFloatValues : MonoBehaviour
 		if (!similarCameraBounds)
 		{
 			UpdateBoundsByCameraExtent();
-			ClearData();
+			if(clearDataOnViewChange)
+				ClearData();
 			FetchNewAreaFilteredObjects();
 		}
 	}
