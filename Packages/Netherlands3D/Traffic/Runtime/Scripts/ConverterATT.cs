@@ -71,12 +71,12 @@ namespace Netherlands3D.Traffic.VISSIM
             if(!float.TryParse(array[3], out rotationAngle)) Debug.LogError("[ConverterATT] Failed to parse rotation angle! Check if the .att file is correct");
             Vector2 wktLocation;
             string lFilter = Regex.Replace(array[4], "[^0-9. ]", "");
-            Debug.Log(lFilter);
             int spaceIndex = lFilter.IndexOf(" ");
             float.TryParse(lFilter.Substring(0, spaceIndex), out wktLocation.x);
             float.TryParse(lFilter.Substring(spaceIndex, lFilter.Length - spaceIndex), out wktLocation.y);
-            Debug.Log(wktLocation);
-            return new SignalHeadData(number, array[1], laneWidth, rotationAngle, wktLocation);
+            SignalHeadData d = new SignalHeadData(number, array[1], laneWidth, rotationAngle, wktLocation);
+            Debug.Log("[Convert ATT] " + d.ToString());
+            return d;
         }
     }
 }

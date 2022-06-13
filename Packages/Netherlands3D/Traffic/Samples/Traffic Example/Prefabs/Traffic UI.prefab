@@ -4878,7 +4878,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   useEntityCamera: 1
-  entitySO: {fileID: 11400000, guid: 7facedd1a939204449f0ee823caeab73, type: 2}
+  sso: {fileID: 11400000, guid: 7facedd1a939204449f0ee823caeab73, type: 2}
   dataDatabase: {fileID: 11400000, guid: 0c7b59f8d6cc82046a448b240c6183d3, type: 2}
   prefabEntityCamera: {fileID: 4254828008069217408, guid: cc2c4ec70649ffb49b03189e7cf545d4, type: 3}
   simulationTimeInputField: {fileID: 9100130316865555085}

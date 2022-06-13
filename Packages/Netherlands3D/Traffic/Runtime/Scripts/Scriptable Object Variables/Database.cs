@@ -146,14 +146,11 @@ namespace Netherlands3D.Traffic.VISSIM
         {
             OnRemoveData?.Invoke(Value.Keys.ToList());
             Value.Clear();
-            Debug.Log(SignalHeads.Count);
-            Debug.Log(signalHeads.Count);
             SignalHeads.Clear();
             signalHeads.Clear();
             SignalHeads = signalHeads;
-            Debug.Log(SignalHeads.Count);
-            Debug.Log(signalHeads.Count);
             MaxSimulationTime = 0;
+            Debug.Log("Cleared Data");
         }
 
         /// <summary>

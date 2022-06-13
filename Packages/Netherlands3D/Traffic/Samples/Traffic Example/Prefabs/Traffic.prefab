@@ -106,7 +106,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 568c237735c3a404aad6c3834762233c, type: 2}
   - {fileID: 11400000, guid: 2968661f991c8e548acf22059160d266, type: 2}
   - {fileID: 11400000, guid: e292eb682656a7e4ab4cd8a41ad30936, type: 2}
-  entitySO: {fileID: 11400000, guid: 7facedd1a939204449f0ee823caeab73, type: 2}
+  sso: {fileID: 11400000, guid: 7facedd1a939204449f0ee823caeab73, type: 2}
   prefabSignalHead: {fileID: 8201467708962993325, guid: 09f1af4904d99024aa7f1ea18f66f7bd, type: 3}
 --- !u!1 &8334449571815547988
 GameObject:

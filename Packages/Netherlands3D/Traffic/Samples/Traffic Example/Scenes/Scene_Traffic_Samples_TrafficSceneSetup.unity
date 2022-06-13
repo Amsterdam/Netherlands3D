@@ -914,6 +914,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6519846802174160523, guid: 09f1af4904d99024aa7f1ea18f66f7bd, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: bdca8ef6df211c64bbd892293422b382, type: 2}
+    - target: {fileID: 6955230458832505989, guid: 09f1af4904d99024aa7f1ea18f66f7bd, type: 3}
+      propertyPath: m_Animations.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6955230458832505989, guid: 09f1af4904d99024aa7f1ea18f66f7bd, type: 3}
+      propertyPath: m_Animations.Array.data[0]
+      value: 
+      objectReference: {fileID: 7400000, guid: 349cb0f7ac054134ba6a6fa89f9b78f5, type: 2}
     - target: {fileID: 8201467708962993325, guid: 09f1af4904d99024aa7f1ea18f66f7bd, type: 3}
       propertyPath: m_Name
       value: Signal Head
@@ -1147,10 +1159,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 8334449570704879011, guid: 309a4e65127e29740a92518cdbe7b44f, type: 3}
-      propertyPath: entitySO
-      value: 
-      objectReference: {fileID: 11400000, guid: 7facedd1a939204449f0ee823caeab73, type: 2}
     - target: {fileID: 8334449571815547988, guid: 309a4e65127e29740a92518cdbe7b44f, type: 3}
       propertyPath: m_Name
       value: Traffic

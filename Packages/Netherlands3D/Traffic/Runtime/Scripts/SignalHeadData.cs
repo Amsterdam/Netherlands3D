@@ -53,11 +53,16 @@ namespace Netherlands3D.Traffic.VISSIM
             // Convert sgString to sg
             int dashIndex = groupString.IndexOf("-");
             int.TryParse(groupString.Substring(0, dashIndex), out group);
-            int.TryParse(groupString.Substring(dashIndex + 1, groupString.Length - dashIndex - 1), out groupID);
-            Debug.Log(group + " " + groupID);
+            int.TryParse(groupString.Substring(dashIndex + 1, groupString.Length - dashIndex - 1), out groupID);            
             this.laneWidth = laneWidth;
             this.rotationAngle = rotationAngle;
             this.wktLocation = wktLocation;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("n: {0}, g: {1}, gID: {2}, gS: {3}, lw: {4}, ra: {5}, wkt: {6}",
+                number, group, groupID, groupString, laneWidth, rotationAngle, wktLocation);
         }
     }
 }

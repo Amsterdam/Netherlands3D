@@ -42,7 +42,7 @@ namespace Netherlands3D.Traffic.VISSIM
 
         [Header("Scriptable Objects")]
         [Tooltip("The scriptable objects for an entity")]
-        public SSO entitySO;
+        public SSO sso;
         [Tooltip("The database containing the traffic data")]
         [SerializeField] private Database dataDatabase;
 
@@ -61,13 +61,13 @@ namespace Netherlands3D.Traffic.VISSIM
         private void OnEnable()
         {
             dataDatabase.OnAddData.AddListener(OnAddData);
-            entitySO.eventSimulationSpeedChanged.started.AddListener(OnSimulationSpeedChange);
+            sso.eventSimulationSpeedChanged.started.AddListener(OnSimulationSpeedChange);
         }
 
         private void OnDisable()
         {
             dataDatabase.OnAddData.RemoveListener(OnAddData);
-            entitySO.eventSimulationSpeedChanged.started.RemoveListener(OnSimulationSpeedChange);
+            sso.eventSimulationSpeedChanged.started.RemoveListener(OnSimulationSpeedChange);
         }
 
         private void Start()
@@ -129,8 +129,10 @@ namespace Netherlands3D.Traffic.VISSIM
         /// </summary>
         public void UpdateVisualSimulationTime()
         {
-            if(!SimulationTimeInputFieldSelected) simulationTimeInputField.text = entitySO.simulationTime.Value.ToString("0");
-            sliderSimulationTime.SetValueWithoutNotify(entitySO.simulationTime.Value);
+            if(!SimulationTimeInputFieldSelected) simulationTimeInputField.text = sso.simulationTime.Value.ToString("0");
+            sliderSimulationTime.SetValueWithoutNotify(sso.simulationTime.Value);
+            // callback signalheads since that hasnt animation
+
         }
 
         /// <summary>
@@ -138,7 +140,7 @@ namespace Netherlands3D.Traffic.VISSIM
         /// </summary>
         public void Play()
         {
-            entitySO.simulationState.Value = 1;
+            sso.simulationState.Value = 1;
         }
 
         /// <summary>
@@ -146,7 +148,7 @@ namespace Netherlands3D.Traffic.VISSIM
         /// </summary>
         public void Pause()
         {
-            entitySO.simulationState.Value = 0;
+            sso.simulationState.Value = 0;
         }
 
         /// <summary>
@@ -154,7 +156,7 @@ namespace Netherlands3D.Traffic.VISSIM
         /// </summary>
         public void Rewind()
         {
-            entitySO.simulationState.Value = -1;
+            sso.simulationState.Value = -1;
         }
 
         /// <summary>
@@ -162,7 +164,7 @@ namespace Netherlands3D.Traffic.VISSIM
         /// </summary>
         public void ResetPlay()
         {
-            entitySO.simulationState.Value = -2;
+            sso.simulationState.Value = -2;
         }
 
         /// <summary>
@@ -180,7 +182,7 @@ namespace Netherlands3D.Traffic.VISSIM
         /// </summary>
         public void OnSimulationTimeSliderChanged()
         {
-            entitySO.simulationTime.Value = sliderSimulationTime.value;
+            sso.simulationTime.Value = sliderSimulationTime.value;
         }
 
         /// <summary>
@@ -188,7 +190,7 @@ namespace Netherlands3D.Traffic.VISSIM
         /// </summary>
         public void OnSimulationSpeedSliderChanged()
         {
-            entitySO.simulationSpeed.Value = sliderSimulationSpeed.value;
+            sso.simulationSpeed.Value = sliderSimulationSpeed.value;
         }
 
         /// <summary>
@@ -198,7 +200,7 @@ namespace Netherlands3D.Traffic.VISSIM
         {
             if(float.TryParse(simulationTimeInputField.text, out float value))
             {
-                entitySO.simulationTime.Value = value;
+                sso.simulationTime.Value = value;
             }
         }
 
@@ -209,7 +211,7 @@ namespace Netherlands3D.Traffic.VISSIM
         {
             if(float.TryParse(simulationSpeedInputField.text, out float value))
             {
-                entitySO.simulationSpeed.Value = Mathf.Clamp(value, 0.01f, 20);
+                sso.simulationSpeed.Value = Mathf.Clamp(value, 0.01f, 20);
             }
         }
 

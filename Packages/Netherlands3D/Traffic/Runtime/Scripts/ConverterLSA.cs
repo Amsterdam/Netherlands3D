@@ -69,16 +69,18 @@ namespace Netherlands3D.Traffic.VISSIM
             if(!float.TryParse(array[0], out float simsec)) Debug.LogError("[ConverterLSA] Failed to parse simsec! Check if the .lsa file is correct");
             // Signal group
             if(!int.TryParse(array[3], out int signalGroupID)) Debug.LogError("[ConverterLSA] Failed to parse signalGroupID! Check if the .lsa file is correct");
+            Debug.Log(array[4]);
             // Color index
-            int colorIndex = 0;
-            switch(array[4].ToLower())
+            int colorIndex = array[4].ToLower().Trim() switch
             {
-                case "amber": colorIndex = 1;break;
-                case "green": colorIndex = 2; break;
-                default: break;
-            }
-
-            return new LSA(simsec, signalGroupID, colorIndex);
+                "red" => 0,
+                "amber" => 1,
+                "green" => 2,
+                _ => 1,
+            };
+            var d = new LSA(simsec, signalGroupID, colorIndex);
+            Debug.Log("[ConverterLSA] " + d.ToString());
+            return d;
         }
 
         /// <summary>
@@ -95,6 +97,11 @@ namespace Netherlands3D.Traffic.VISSIM
                 this.simsec = simsec;
                 this.signalGroupID = signalGroupID;
                 this.colorIndex = colorIndex;
+            }
+
+            public override string ToString()
+            {
+                return string.Format("[Converter LSA] simsec: {0}, SGID: {1}, c: {2}", simsec, signalGroupID, colorIndex);
             }
         }
     }

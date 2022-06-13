@@ -18,7 +18,7 @@ namespace Netherlands3D.Traffic.VISSIM
             set
             {
                 updateEntitiesRealtime = value;
-                entitySO.eventUpdateRealtime.started.Invoke(value);
+                sso.eventUpdateRealtime.started.Invoke(value);
             }
         }
 
@@ -42,7 +42,7 @@ namespace Netherlands3D.Traffic.VISSIM
         [Tooltip("List containing every available entity data (Scriptable Objects)")]
         public List<EntityData> entitiesDatas = new List<EntityData>();
         [Tooltip("The scriptable objects for an entity")]
-        public SSO entitySO;
+        public SSO sso;
 
         [Header("Signal Heads")]
         [Tooltip("The prefab used for signal heads")]
@@ -80,14 +80,14 @@ namespace Netherlands3D.Traffic.VISSIM
         {
             database.OnAddData.AddListener(UpdateEntities);
             database.OnSignalHeadsChanged.AddListener(UpdateSignalHeads);
-            entitySO.eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
+            sso.eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
         }
 
         private void OnDisable()
         {
             database.OnAddData.RemoveListener(UpdateEntities);
             database.OnSignalHeadsChanged.RemoveListener(UpdateSignalHeads);
-            entitySO.eventSimulationStateChanged.started.RemoveListener(OnSimulationStateChanged);
+            sso.eventSimulationStateChanged.started.RemoveListener(OnSimulationStateChanged);
         }
 
         private void Awake()
@@ -103,9 +103,9 @@ namespace Netherlands3D.Traffic.VISSIM
 
             if(resetSOVOnStart)
             {
-                entitySO.simulationTime.value = 0;
-                entitySO.simulationState.value = 1;
-                entitySO.simulationSpeed.value = 1;
+                sso.simulationTime.value = 0;
+                sso.simulationState.value = 1;
+                sso.simulationSpeed.value = 1;
             }
         }
 
@@ -170,7 +170,7 @@ namespace Netherlands3D.Traffic.VISSIM
                     // Create entity
                     Entity entity = Object.Instantiate(prefab, transform).GetComponent<Entity>();
                     entities.Add(data.Key, entity);
-                    entity.Initialize(data.Value, entitySO, layerMask, updateEntitiesRealtime, binaryMeshLayer);
+                    entity.Initialize(data.Value, sso, layerMask, updateEntitiesRealtime, binaryMeshLayer);
                 }
             }
 
@@ -225,22 +225,22 @@ namespace Netherlands3D.Traffic.VISSIM
         /// </summary>
         private void UpdateSimulationTime()
         {
-            if(database.Value == null || database.Value.Count < 1) return;
+            //if(database.Value == null || database.Value.Count < 1) return;
 
-            switch(entitySO.simulationState.Value)
+            switch(sso.simulationState.Value)
             {
                 case -1: // Reversed
-                    if(entitySO.simulationTime.Value > 0)
+                    if(sso.simulationTime.Value > 0)
                     {
                         // Note that it is updating the value and not Value, we dont need a callback here every frame that it updates the value
-                        entitySO.simulationTime.value -= Time.deltaTime * entitySO.simulationSpeed.Value;
-                        if(entitySO.simulationTime.Value < 0) entitySO.simulationTime.Value = 0;
+                        sso.simulationTime.value -= Time.deltaTime * sso.simulationSpeed.Value;
+                        if(sso.simulationTime.Value < 0) sso.simulationTime.Value = 0;
                     }
                     break;
                 case 0: // Paused
                     break;
                 case 1: // Play
-                    entitySO.simulationTime.value += Time.deltaTime * entitySO.simulationSpeed.Value;
+                    sso.simulationTime.value += Time.deltaTime * sso.simulationSpeed.Value;
                     break;
                 case -2: // Reset
                     break;
@@ -264,7 +264,7 @@ namespace Netherlands3D.Traffic.VISSIM
                 case -1: // Reversed
                     break;
                 case -2: // Reset
-                    entitySO.simulationTime.Value = 0;
+                    sso.simulationTime.Value = 0;
                     break;
                 default:
                     break;
