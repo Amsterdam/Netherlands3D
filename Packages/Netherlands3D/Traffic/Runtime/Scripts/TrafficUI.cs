@@ -132,7 +132,7 @@ namespace Netherlands3D.Traffic.VISSIM
             if(!SimulationTimeInputFieldSelected) simulationTimeInputField.text = sso.simulationTime.Value.ToString("0");
             sliderSimulationTime.SetValueWithoutNotify(sso.simulationTime.Value);
             // callback signalheads since that hasnt animation
-
+            sso.simulationTime.Value = sso.simulationTime.Value;
         }
 
         /// <summary>

@@ -105,7 +105,7 @@ namespace Netherlands3D.Traffic.VISSIM
 
         private void OnSimulationTimeChanged(float value)
         {
-            if(data == null || data.schedule == null) return;
+            if(data == null || data.schedule == null || data.schedule.Count < 1) return;
             // Fetch the closest color index based on sim time
             var k = ArrayExtention.MinBy(data.schedule, x => Math.Abs(x.Key - value));
 
