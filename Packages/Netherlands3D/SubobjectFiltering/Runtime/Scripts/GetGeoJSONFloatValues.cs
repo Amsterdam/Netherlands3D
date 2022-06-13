@@ -23,6 +23,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+/// <summary>
+/// Retrieves GeoJSON id's and specific floats based on a Camera based bbox
+/// You can remove the bbox parameters from your request to get all data.
+/// </summary>
 public class GetGeoJSONFloatValues : MonoBehaviour
 {
 	private Dictionary<string, float> stringsAndFloats = new Dictionary<string, float>();
@@ -80,6 +84,18 @@ public class GetGeoJSONFloatValues : MonoBehaviour
 	private void Update()
 	{
 		CompareCameraExtents();
+	}
+
+	private void OnEnable()
+	{
+		UpdateBoundsByCameraExtent();
+		ClearData();
+		FetchNewAreaFilteredObjects();
+	}
+
+	private void OnDisable()
+	{
+		ClearData();
 	}
 
 	private void CompareCameraExtents()
