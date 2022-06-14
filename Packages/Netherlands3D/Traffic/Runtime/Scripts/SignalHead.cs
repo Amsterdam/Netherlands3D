@@ -12,7 +12,7 @@ namespace Netherlands3D.Traffic.VISSIM
         public SignalHeadData data;
 
         [Header("Events")]
-        public SSO sso;// <--------------------------------------------------------------------------------------
+        public SSO sso;
 
         [Header("Components")]
         public Transform modelChild;
@@ -20,29 +20,13 @@ namespace Netherlands3D.Traffic.VISSIM
         public Material materialRed; // Color index 0
         public Material materialAmber; // Color index 1
         public Material materialGreen; // Color index 2
-
-        // Animation
-        private readonly string animationName = "Behavior";
-#pragma warning disable CS0108 // Member hides inherited member; missing new keyword (Unity deprecated)
-        /// <summary>
-        /// The animation component
-        /// </summary>
-        private Animation animation;
-#pragma warning restore CS0108 // Member hides inherited member; missing new keyword
-        /// <summary>
-        /// The animation clip of the entity where its movement is in stored to animatie
-        /// </summary>
-        private AnimationClip animationClip;
-        private AnimationCurve animationCurve;
-
+        
         private void OnEnable()
         {
             // If turned off and then turned back on update its values
             if(data != null)
             {
                 OnSimulationTimeChanged(sso.simulationTime.Value);
-                OnSimulationSpeedChanged(sso.simulationSpeed.Value);
-                OnSimulationStateChanged(sso.simulationState.Value);
             }
         }
 
@@ -50,16 +34,8 @@ namespace Netherlands3D.Traffic.VISSIM
         {
             if(data != null)
             {
-                sso.eventUpdateRealtime.started.RemoveListener(OnUpdateRealtimeChanged);
                 sso.eventSimulationTimeChanged.started.RemoveListener(OnSimulationTimeChanged);
-                sso.eventSimulationSpeedChanged.started.RemoveListener(OnSimulationSpeedChanged);
-                sso.eventSimulationStateChanged.started.RemoveListener(OnSimulationStateChanged);
             }
-        }
-
-        private void Awake()
-        {
-            animation = GetComponent<Animation>();
         }
 
         public void Initialize(SignalHeadData data)
@@ -71,18 +47,7 @@ namespace Netherlands3D.Traffic.VISSIM
             name = "Signal Head " + data.groupID;
 
             // Add listeners
-            sso.eventUpdateRealtime.started.AddListener(OnUpdateRealtimeChanged);
             sso.eventSimulationTimeChanged.started.AddListener(OnSimulationTimeChanged);
-            sso.eventSimulationSpeedChanged.started.AddListener(OnSimulationSpeedChanged);
-            sso.eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
-
-            // Animation
-            animationClip = new AnimationClip();
-            animationClip.name = animationName;
-            animationClip.legacy = true;
-            animation.wrapMode = WrapMode.Clamp;
-
-
         }
 
         // Start is called before the first frame update
@@ -91,25 +56,11 @@ namespace Netherlands3D.Traffic.VISSIM
         
         }
 
-        public void UpdateFromData()
-        {
-            // Loop through signal head data schedule & add animation
-
-        }
-
-
-        private void OnUpdateRealtimeChanged(bool value)
-        {
-
-        }
-
         private void OnSimulationTimeChanged(float value)
         {
             if(data == null || data.schedule == null || data.schedule.Count < 1) return;
             // Fetch the closest color index based on sim time
             var k = ArrayExtention.MinBy(data.schedule, x => Math.Abs(x.Key - value));
-
-            Debug.Log("sh: " + k.Value);
 
             switch(k.Value)
             {
@@ -126,16 +77,6 @@ namespace Netherlands3D.Traffic.VISSIM
                     meshRenderer.material = materialAmber;
                     break;
             }
-        }
-
-        private void OnSimulationSpeedChanged(float value)
-        {
-            
-        }
-
-        private void OnSimulationStateChanged(int value)
-        {
-
         }
     }
 }

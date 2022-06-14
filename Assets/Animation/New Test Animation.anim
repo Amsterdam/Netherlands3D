@@ -21,6 +21,8 @@ AnimationClip:
   - curve:
     - time: 0
       value: {fileID: 2100000, guid: 010b82188d0f2a349a5c1fb742c7011e, type: 2}
+    - time: 0.083333336
+      value: {fileID: 2100000, guid: bdca8ef6df211c64bbd892293422b382, type: 2}
     - time: 0.25
       value: {fileID: 2100000, guid: 20180ebfde9605448b8eb3827ab5e5d8, type: 2}
     attribute: m_Materials.Array.data[0]

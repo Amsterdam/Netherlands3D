@@ -111,7 +111,7 @@ namespace Netherlands3D.Traffic.VISSIM
                 Visualizer v = FindObjectOfType<Visualizer>();
                 if(v == null) return;
                 if(v.transform.childCount == 0) return;
-                entityCamera.SetTarget(v.transform.GetChild(Random.Range(0, v.transform.childCount)));
+                entityCamera.SetTarget(v.transform.GetChild(1).GetChild(Random.Range(0, v.transform.childCount)));
             }
         }
 
@@ -132,7 +132,7 @@ namespace Netherlands3D.Traffic.VISSIM
             if(!SimulationTimeInputFieldSelected) simulationTimeInputField.text = sso.simulationTime.Value.ToString("0");
             sliderSimulationTime.SetValueWithoutNotify(sso.simulationTime.Value);
             // callback signalheads since that hasnt animation
-            sso.simulationTime.Value = sso.simulationTime.Value;
+            sso.simulationTime.Value = sso.simulationTime.Value; // Not optimized
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace Netherlands3D.Traffic.VISSIM
         public void OnAddData(List<int> newData)
         {
             // Update the max value of the slider
-            sliderSimulationTime.maxValue = dataDatabase.MaxSimulationTime;
+            //sliderSimulationTime.maxValue = dataDatabase.MaxSimulationTime; disabled since signal heads go to 10.000+
         }
 
         /// <summary>

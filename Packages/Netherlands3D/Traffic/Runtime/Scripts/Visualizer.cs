@@ -60,26 +60,32 @@ namespace Netherlands3D.Traffic.VISSIM
         /// <summary>
         /// A list containing all entities that do not have a corresponding id from entitiesDatas for debugging purposes
         /// </summary>
-        private List<int> missingEntityIDs = new List<int>(); //TODO to so
+        private List<int> missingEntityIDs = new List<int>();
         /// <summary>
         /// Contains all available enities ID's (cars/busses/bikes etc.) with corresponding prefab to spawn
         /// </summary>
         public Dictionary<int, GameObject> availableEntitiesData = new Dictionary<int, GameObject>(); //TODO to so
 
         /// <summary>
-        /// Transform containing all signalHeads prefabs
-        /// </summary>
-        private Transform parentSignalHeads;
-        /// <summary>
         /// Contains references to all signalHeads
         /// </summary>
         /// <remarks><number, signalhead></remarks>
         private Dictionary<int, SignalHead> signalHeads = new Dictionary<int, SignalHead>();
 
+        /// <summary>
+        /// Transform containing all entities
+        /// </summary>
+        private Transform parentEntities;
+        /// <summary>
+        /// Transform containing all signalHeads prefabs
+        /// </summary>
+        private Transform parentSignalHeads;
+
         private void OnEnable()
         {
             database.OnAddData.AddListener(UpdateEntities);
             database.OnSignalHeadsChanged.AddListener(UpdateSignalHeads);
+            database.OnClear.AddListener(OnClear);
             sso.eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
         }
 
@@ -87,6 +93,7 @@ namespace Netherlands3D.Traffic.VISSIM
         {
             database.OnAddData.RemoveListener(UpdateEntities);
             database.OnSignalHeadsChanged.RemoveListener(UpdateSignalHeads);
+            database.OnClear.RemoveListener(OnClear);
             sso.eventSimulationStateChanged.started.RemoveListener(OnSimulationStateChanged);
         }
 
@@ -94,6 +101,8 @@ namespace Netherlands3D.Traffic.VISSIM
         {
             parentSignalHeads = new GameObject("Parent Signal Heads").transform;
             parentSignalHeads.SetParent(transform);
+            parentEntities = new GameObject("Parent Entities").transform;
+            parentEntities.SetParent(transform);
         }
 
         private void Start()
@@ -168,7 +177,7 @@ namespace Netherlands3D.Traffic.VISSIM
                     if(ed != null) data.Value.size.y = ed.averageHeight;
 
                     // Create entity
-                    Entity entity = Object.Instantiate(prefab, transform).GetComponent<Entity>();
+                    Entity entity = Object.Instantiate(prefab, parentEntities).GetComponent<Entity>();
                     entities.Add(data.Key, entity);
                     entity.Initialize(data.Value, sso, layerMask, updateEntitiesRealtime, binaryMeshLayer);
                 }
@@ -247,6 +256,22 @@ namespace Netherlands3D.Traffic.VISSIM
                 default:
                     break;
             }
+        }
+
+        private void OnClear()
+        {
+            missingEntityIDs.Clear();
+            entities.Clear();
+            signalHeads.Clear();
+            foreach(Transform child in parentSignalHeads)
+            {
+                Destroy(child.gameObject);
+            }
+            foreach(Transform child in parentEntities)
+            {
+                Destroy(child.gameObject);
+            }
+            LoadDefaultData();
         }
 
         /// <summary>

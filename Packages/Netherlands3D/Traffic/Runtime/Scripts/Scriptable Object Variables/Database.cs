@@ -57,6 +57,10 @@ namespace Netherlands3D.Traffic.VISSIM
         }
 
         /// <summary>
+        /// When the database is cleared
+        /// </summary>
+        public UnityEvent OnClear;
+        /// <summary>
         /// Called when the data is changed
         /// </summary>
         public UnityEvent OnDataChanged;
@@ -150,6 +154,7 @@ namespace Netherlands3D.Traffic.VISSIM
             signalHeads.Clear();
             SignalHeads = signalHeads;
             MaxSimulationTime = 0;
+            OnClear?.Invoke();
             Debug.Log("Cleared Data");
         }
 
