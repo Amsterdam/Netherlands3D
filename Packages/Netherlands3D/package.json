@@ -68,6 +68,11 @@
       "displayName": "Timeline UI Mockup",
       "description": "Ready to use timeline UI prefab",
       "path": "Timeline/Samples~/Scene Setup"
+    },
+    {
+      "displayName": "Traffic Sample",
+      "description": "Ready to use traffic example",
+      "path": "Traffic/Samples~/Traffic Example"
     }
   ],
   "hideInEditor": false,
