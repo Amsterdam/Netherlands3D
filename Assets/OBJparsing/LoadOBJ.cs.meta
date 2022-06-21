@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 48bf8d9a6a410c34f833b97691a1b78a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - defaultMaterial: {fileID: 2100000, guid: a650d758b8a36cf46a28e085cc76fe68, type: 2}
+  - createdGameObject: {instanceID: 0}
+  - objFileSelected: {instanceID: 0}
+  - mtlFileSelected: {instanceID: 0}
+  - started: {instanceID: 0}
+  - Errormessage: {instanceID: 0}
+  - progressMessage: {instanceID: 0}
+  - progressPercentage: {instanceID: 0}
+  - finishedSuccesfull: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
