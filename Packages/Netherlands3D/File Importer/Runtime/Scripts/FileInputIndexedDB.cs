@@ -43,7 +43,7 @@ public class FileInputIndexedDB : MonoBehaviour
     private int fileCount = 0;
 
     [SerializeField]
-    private StringEvent filesImportedEvent;
+    public StringEvent filesImportedEvent;
 
     [SerializeField]
     private BoolEvent clearDataBaseEvent;
@@ -72,7 +72,7 @@ public class FileInputIndexedDB : MonoBehaviour
     //called from javascript
     public void LoadFile(string filename)
     {
-        filenames.Add(filename);
+        filenames.Add(Application.persistentDataPath+"/"+ filename);
         fileCount++;
         Debug.Log("received: "+filename);        
     }
@@ -105,6 +105,7 @@ public class FileInputIndexedDB : MonoBehaviour
 
     public void IndexedDBUpdated() // called from SyncFilesFromIndexedDB
     {
+        Debug.Log("indexedDBUpdatedForViewr");
         ProcessAllFiles();
     }
 

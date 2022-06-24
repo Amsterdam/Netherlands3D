@@ -49,7 +49,9 @@ namespace Netherlands3D.ModelParsing
         }
         private void getmtlFileName(string filename)
         {
+            
             mtlFilename = filename;
+            
         }
 
 
@@ -76,30 +78,50 @@ namespace Netherlands3D.ModelParsing
             }
             StartCoroutine(LoadingProcess());
 
+#if UNITY_WEBGL && !UNITY_EDITOR
+            if (File.Exists(objFilename))
+            {
+                File.Delete(objFilename);
+            }
+            if (File.Exists(mtlFilename))
+            {
+                File.Delete(mtlFilename);
+            }
+
+#endif
         }
 
         bool testModel()
         {
             if (!File.Exists(objFilename))
             {
-                sendErrorMessage("No obj-file found");
+                sendErrorMessage(objFilename + " not found");
+                return false;
             }
             return true;
         }
         bool testMTLFile()
         {
-            if (File.Exists(mtlFilename))
+            if (!File.Exists(mtlFilename))
             {
-                return true;
+                Debug.Log(mtlFilename + " can't be found");
+                sendErrorMessage(objFilename + " not found");
+                return false;
                
             }
-            return false;
+            
+            return true;
         }
 
         IEnumerator LoadingProcess()
         {
+            if (started)
+            {
+                started.started.Invoke(true);
+            }
             bool isBusy = true;
             var objstreamReader = gameObject.AddComponent<StreamreadOBJ>();
+            objstreamReader.SetMessageEvents(Errormessage, progressMessage, progressPercentage);
             objstreamReader.ReadOBJ(objFilename);
             while (isBusy)
             {
@@ -114,17 +136,24 @@ namespace Netherlands3D.ModelParsing
                 yield break;
             }
 
+            Debug.Log("Start with materials-file");
             if (testMTLFile()==true)
             {
+                Debug.Log("read the entire file");
                 ReadMTL mtlreader = gameObject.AddComponent<ReadMTL>();
                 string mtldata = File.ReadAllText(mtlFilename);
                 isBusy = true;
+
+                    Debug.Log("reading material-properties");
+
+                Debug.Log("parse it");
                 mtlreader.StartMTLParse(ref mtldata);
                 while (isBusy)
                 {
                     isBusy = mtlreader.isBusy;
                     yield return null;
                 }
+                Debug.Log("done parsing material-file");
                 objstreamReader.materialDataSlots = mtlreader.GetMaterialData();
                 Destroy(gameObject.GetComponent<ReadMTL>());
             }

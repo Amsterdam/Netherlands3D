@@ -4,7 +4,7 @@ using UnityEngine;
 using System.IO;
 namespace Netherlands3D.ModelParsing
 {
-    public class intList : MonoBehaviour
+    public class intList 
     {
         BinaryWriter writer;
         FileStream fs;

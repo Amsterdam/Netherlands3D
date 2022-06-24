@@ -6,11 +6,17 @@ using System.IO;
 using System.Text;
 using UnityEngine.Rendering;
 using Netherlands3D.Interface;
+using Netherlands3D.Events;
 
 namespace Netherlands3D.ModelParsing
 {
 	public class StreamreadOBJ : MonoBehaviour
 	{
+		
+		private StringEvent errormessage;
+		private StringEvent progressmessage;
+		private FloatEvent progressPercentageMessage;
+
 		//public LoadingScreen loadingObjScreen;
 		public int maxLinesPerFrame = 25000;
 		public GameObject createdGameObject;
@@ -82,6 +88,36 @@ namespace Netherlands3D.ModelParsing
 		private Dictionary<string, Submesh> submeshes = new Dictionary<string, Submesh>();
 		private Submesh activeSubmesh = new Submesh();
 		private bool hasNormals = true;
+
+
+		public void SetMessageEvents(StringEvent error, StringEvent message, FloatEvent percentage)
+        {
+			errormessage = error;
+			progressmessage = message;
+			progressPercentageMessage = percentage;
+        }
+
+		private void SendErrorMessage(string message)
+        {
+            if (errormessage)
+            {
+				errormessage.started.Invoke(message);
+            }
+        }
+		private void SendProgressMessage(string message)
+		{
+			if (progressmessage)
+			{
+				progressmessage.started.Invoke(message);
+			}
+		}
+		private void SendProgressPercentage(float percentage)
+		{
+			if (progressPercentageMessage)
+			{
+				progressPercentageMessage.started.Invoke(percentage);
+			}
+		}
 
 		void AddSubMesh(string submeshName)
 		{
@@ -167,6 +203,7 @@ namespace Netherlands3D.ModelParsing
 				if (lineCount == maxLinesPerFrame)
 				{
 					lineCount = 0;
+					SendProgressMessage(totalLinesCount + " regels ingelezen");
 					//loadingObjScreen.ProgressBar.SetMessage(totalLinesCount + " regels ingelezen");
 					yield return null;
 				}
@@ -931,6 +968,7 @@ namespace Netherlands3D.ModelParsing
 			finalNormals.SetupWriting("finalNormals");
 			for (int i = 0; i < keyList.Count; i++)
 			{
+				SendProgressMessage("Model wordt samengesteld. Onderdeel " + (i + 1) + " van " + keyList.Count);
 				//loadingObjScreen.ShowMessage("Model wordt samengesteld. Onderdeel " + (i+1) + " van " +keyList.Count);
 				yield return null;
 				submesh = submeshes[keyList[i]];
@@ -945,7 +983,9 @@ namespace Netherlands3D.ModelParsing
                 {
                     if (j%2000==1)
                     {
-						float percentage = (float)j / (float)numberOfIndices;
+
+						float percentage = Mathf.RoundToInt(100*(float)j / (float)numberOfIndices);
+						SendProgressPercentage(percentage);
 						//loadingObjScreen.ProgressBar.Percentage(percentage);
 						//loadingObjScreen.ProgressBar.SetMessage(Mathf.RoundToInt(percentage * 100).ToString() + "%");
 						yield return null;
@@ -1002,12 +1042,15 @@ namespace Netherlands3D.ModelParsing
 			Mesh mesh = new Mesh();
 			int finalVertexCount = finalVertices.Count();
 			Vector3[] defVertices = new Vector3[finalVertexCount];
+			SendProgressMessage("Onderdelen worden samengevoegd stap 1 van 3");
 			//loadingObjScreen.ShowMessage("Onderdelen worden samengevoegd stap 1 van 3");
 			for (int i = 0; i < finalVertexCount; i++)
             {
                 if (i%10000==1)
                 {
 					float percentage = (float)i / (float)finalVertexCount;
+					percentage = Mathf.RoundToInt(100*percentage);
+					SendProgressPercentage(percentage);
 					//loadingObjScreen.ProgressBar.Percentage(percentage);
 					//loadingObjScreen.ProgressBar.SetMessage(Mathf.RoundToInt(percentage * 100).ToString() + "%");
 					yield return null;
@@ -1020,6 +1063,7 @@ namespace Netherlands3D.ModelParsing
 
 			if (hasNormals)
             {
+				SendProgressMessage("Onderdelen worden samengevoegd stap 2 van 3");
 				//loadingObjScreen.ShowMessage("Onderdelen worden samengevoegd stap 2 van 3");
 				finalNormals.SetupReading();
 				Vector3[] defNormals = new Vector3[finalVertexCount];
@@ -1028,6 +1072,8 @@ namespace Netherlands3D.ModelParsing
 					if (i % 10000 == 1)
 					{
 						float percentage = (float)i / (float)finalVertexCount;
+						percentage = Mathf.RoundToInt(100*percentage);
+						SendProgressPercentage(percentage);
 						//loadingObjScreen.ProgressBar.Percentage(percentage);
 						//loadingObjScreen.ProgressBar.SetMessage(Mathf.RoundToInt(percentage * 100).ToString() + "%");
 						yield return null;
@@ -1043,12 +1089,15 @@ namespace Netherlands3D.ModelParsing
 
 			int indexCount = finalIndices.numberOfVertices();
 			int[] defIndices = new int[indexCount];
+			SendProgressMessage("Onderdelen worden samengevoegd stap 3 van 3");
 			//loadingObjScreen.ShowMessage("Onderdelen worden samengevoegd stap 3 van 3");
 			for (int i = 0; i < indexCount; i++)
 			{
 				if (i % 10000 == 1)
 				{
 					float percentage = (float)i / (float)indexCount;
+					percentage = Mathf.RoundToInt(100*percentage);
+					SendProgressPercentage(percentage);
 					//loadingObjScreen.ProgressBar.Percentage(percentage);
 					//loadingObjScreen.ProgressBar.SetMessage(Mathf.RoundToInt(percentage * 100).ToString() + "%");
 					yield return null;

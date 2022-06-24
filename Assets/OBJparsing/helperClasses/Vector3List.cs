@@ -4,7 +4,7 @@ using UnityEngine;
 using System.IO;
 namespace Netherlands3D.ModelParsing
 {
-    public class Vector3List : MonoBehaviour
+    public class Vector3List
 {
         BinaryWriter writer;
        FileStream reader;

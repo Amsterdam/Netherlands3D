@@ -36,7 +36,8 @@ namespace Netherlands3D.FileImporter
         [SerializeField] private string fileExtention = "csv";
         [Tooltip("Allow user to select multiple files")]
         [SerializeField] private bool multiSelect;
-        
+
+        private bool isListening = false;
         /// <summary>
         /// The string event that gets called upon loading a file
         /// </summary>
@@ -120,10 +121,15 @@ namespace Netherlands3D.FileImporter
 
         private void SetupWebGL()
         {
-            AddFileInput(fileInputName, fileExtention, multiSelect);
+            AddFileInput(fileInputName, "."+fileExtention, multiSelect);
             gameObject.AddComponent<DrawHTMLOverCanvas>().AlignObjectID(fileInputName);
             // A html button gets generated over this button so the pivot has to be 0,0 (bottom left) since it gets generated from the bottom left
             GetComponent<RectTransform>().pivot = Vector2.zero;
+
+             GameObject userfileUploadsObject = GameObject.Find("UserFileUploads");
+            StringEvent uploadedFIlesEvent = userfileUploadsObject.GetComponent<FileInputIndexedDB>().filesImportedEvent;
+            uploadedFIlesEvent.started.AddListener(ListenForFiles);
+
         }
 
         /// <summary>
@@ -135,9 +141,31 @@ namespace Netherlands3D.FileImporter
             {
                 Debug.Log("Invoked native Unity button click event on " + this.gameObject.name);
                 button.onClick.Invoke();
+                isListening=true;
             }
         }
+
+        
+         private void ListenForFiles(string filenames)
+        {
+        if (!isListening)
+	{
+        return;
+	}
+        
+            if (filenames.Length>0) // fileOpenDialog is not cancelled
+	        {
+            eventFileLoaderFileImported.Invoke(filenames);
+	        }
+            
+            
+            isListening=false;
+
+        }
 #endif
+
+
+
 
 #if UNITY_EDITOR
         private void OnValidate()

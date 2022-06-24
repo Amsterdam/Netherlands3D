@@ -4,7 +4,7 @@ using UnityEngine;
 using System.IO;
 namespace Netherlands3D.ModelParsing
 {
-    public class SubMeshRawData : MonoBehaviour
+    public class SubMeshRawData
     {
         BinaryWriter writer;
         FileStream fs;
