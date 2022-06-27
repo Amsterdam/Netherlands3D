@@ -41,7 +41,7 @@ namespace Netherlands3D.Traffic.VISSIM
         public void Initialize(SignalHeadData data)
         {
             this.data = data;
-            transform.position = new Vector3(data.wktLocation.x - 122000, 0, data.wktLocation.y - 450000); //TODO remove these hardcoded test values!
+            transform.position = new Vector3(data.wktLocation.x, 0, data.wktLocation.y);
             modelChild.localScale = new Vector3(data.laneWidth, 1, 1);
             transform.rotation = Quaternion.Euler(0, data.rotationAngle, 0);
             name = "Signal Head " + data.groupID;
