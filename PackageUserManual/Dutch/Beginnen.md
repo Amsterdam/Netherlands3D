@@ -1,5 +1,12 @@
 # Beginnen met Netherlands3D in Unity
 
+## Systeemeisen
+
+Een laptop waarop je software mag installeren (nog) geen Apple en het liefst met een i5 CPU (of hoger) 
+en een externe GPU (grafische kaart).
+Windows 10 of hoger (in ieder geval 64 bits).
+Een losse muis om beter te kunnen navigeren.
+
 ## Git installeren
 
 Zorg om te beginnen dat Git is geinstalleerd op het systeem. Dit maakt het mogelijk om pakketjes te installeren.
@@ -117,3 +124,5 @@ En vervolgens in de inspector de Position en Rotation aan te passen.
 Nu we toch in de Inspector voor de camera bezig zijn zetten we ook onder het kopje "Camera", "Projection", "Clipping plane" de afstand voor Far even van 1000 op 6000.
 
 Klik vervolgens op **"Play"**, et voila, we zien het 3D-model van Amsterdam.
+
+Je bent nu klaar om met de volgende stap te beginnen "het koppelen van je eigen dataset", volg hiervoor de handleiding 'DataKlaarzetten.md'
