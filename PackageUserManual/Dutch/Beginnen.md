@@ -1,5 +1,11 @@
 # Beginnen met Netherlands3D in Unity
 
+## Systeemeisen
+
+Een laptop waarop je software mag installeren (nog) geen Apple en het liefst met een i5 (of hoger) en een externe GPU. 
+Windows 10 of hoger (in ieder geval 64 bits).
+Een losse muis om beter te kunnen navigeren.
+
 ## Git installeren
 
 Zorg om te beginnen dat Git is geinstalleerd op het systeem. Dit maakt het mogelijk om pakketjes te installeren.
