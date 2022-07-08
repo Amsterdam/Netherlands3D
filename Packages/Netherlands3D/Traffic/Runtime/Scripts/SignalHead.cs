@@ -50,12 +50,6 @@ namespace Netherlands3D.Traffic.VISSIM
             sso.eventSimulationTimeChanged.started.AddListener(OnSimulationTimeChanged);
         }
 
-        // Start is called before the first frame update
-        void Start()
-        {
-        
-        }
-
         private void OnSimulationTimeChanged(float value)
         {
             if(data == null || data.schedule == null || data.schedule.Count < 1) return;
