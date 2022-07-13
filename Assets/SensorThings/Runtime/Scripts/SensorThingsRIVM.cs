@@ -13,6 +13,9 @@ namespace Netherlands3D.SensorThings
         [SerializeField]
         private string baseApiURL = "https://api-samenmeten.rivm.nl/v1.0";
 
+        [Tooltip("Filter by municipality")]
+        private string thingsFilter = "?$filter=contains(properties/codegemeente,'municipalityID')";
+
         void Start()
         {
             CheckAvailabilityAPI();
@@ -30,9 +33,10 @@ namespace Netherlands3D.SensorThings
         /// Get all things from API with optional filters
         /// </summary>
         /// <param name="callback">Returns object if data is retrieved</param>
-        public void GetThings(Action<bool,Things> callback)
+        public void GetThings(Action<bool,Things> callback, int municipalityID = 0)
         {
-            StartCoroutine(RequestAPI($"{baseApiURL}/Things", (success,text) =>
+            var filter = thingsFilter = thingsFilter.Replace("municipalityID", municipalityID.ToString());
+            StartCoroutine(RequestAPI($"{baseApiURL}/Things{thingsFilter}", (success,text) =>
             {
                 if(success)
                 {
