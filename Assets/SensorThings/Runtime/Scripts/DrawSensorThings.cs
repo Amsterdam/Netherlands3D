@@ -8,9 +8,11 @@ namespace Netherlands3D.SensorThings
     public class DrawSensorThings : MonoBehaviour
     {
         [SerializeField]
-        private GameObject thingPrefab;
+        private SensorThingVisual thingPrefab;
 
         private SensorThingsRIVM sensorThingsRIVM;
+
+
         private void OnEnable()
         {
             //Generate
