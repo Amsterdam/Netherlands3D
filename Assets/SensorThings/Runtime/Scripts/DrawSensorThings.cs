@@ -18,7 +18,6 @@ namespace Netherlands3D.SensorThings
             //Generate
             sensorThingsRIVM = GetComponent<SensorThingsRIVM>();
             sensorThingsRIVM.GetThings(GotThings, municipalityID);
-
         }
 
         private void GotThings(bool success, Things things)
@@ -28,7 +27,8 @@ namespace Netherlands3D.SensorThings
                 Debug.Log($"Things:{things.value.Length}");
                 foreach(var thing in things.value)
                 {
-
+                    var thingVisual = Instantiate(thingPrefab);
+                    thingVisual.SetData(sensorThingsRIVM, thing);
                 }
             }
         }
