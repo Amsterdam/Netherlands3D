@@ -9,7 +9,6 @@ namespace Netherlands3D.SensorThings
     {
         [SerializeField]
         private SensorThingVisual thingPrefab;
-
         private SensorThingsRIVM sensorThingsRIVM;
 
         [SerializeField] private int municipalityID = 363;
@@ -27,7 +26,7 @@ namespace Netherlands3D.SensorThings
                 Debug.Log($"Things:{things.value.Length}");
                 foreach(var thing in things.value)
                 {
-                    var thingVisual = Instantiate(thingPrefab);
+                    var thingVisual = Instantiate(thingPrefab,this.transform);
                     thingVisual.SetData(sensorThingsRIVM, thing);
                 }
             }

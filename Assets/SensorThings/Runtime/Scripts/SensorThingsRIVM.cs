@@ -30,6 +30,44 @@ namespace Netherlands3D.SensorThings
         }
 
         /// <summary>
+        /// Get all locations, or by thing ID
+        /// </summary>
+        /// <param name="callback">Returns Locations object</param>
+        /// <param name="thingID">Optional ID of the Thing to request specific location</param>
+        public void GetLocations(Action<bool, Locations> callback, int thingID = 0)
+        {
+            var specificThing = (thingID > 0) ? $"/Things({thingID})/" : "/";
+
+            StartCoroutine(RequestAPI($"{baseApiURL}{specificThing}Locations", (success, text) => {
+                if (success)
+                {
+                    Locations things = JSONToLocations(text);
+                    callback(true, things);
+                }
+                else
+                {
+                    callback(false, null);
+                }
+            }));
+        }
+
+        public void GetDatastreams(Action<bool, Datastreams> callback, int thingID = 0)
+        {
+            var specificThing = (thingID > 0) ? $"/Things({thingID})/" : "/";
+            StartCoroutine(RequestAPI($"{baseApiURL}{specificThing}Datastreams", (success, text) => {
+                if (success)
+                {
+                    Datastreams datastreams = JSONToDatastreams(text);
+                    callback(true, datastreams);
+                }
+                else
+                {
+                    callback(false, null);
+                }
+            }));
+        }
+
+        /// <summary>
         /// Get all things from API with optional filters
         /// </summary>
         /// <param name="callback">Returns object if data is retrieved</param>
@@ -97,21 +135,6 @@ namespace Netherlands3D.SensorThings
             return things;
         }
 
-        public void GetLocations(Action<bool, Locations> callback, int municipalityID = 0)
-        {
-            StartCoroutine(RequestAPI($"{baseApiURL}/GetLocations", (success, text) => {
-                if (success)
-                {
-                    Locations things = JSONToLocations(text);
-                    callback(true, things);
-                }
-                else
-                {
-                    callback(false, null);
-                }
-            }));
-        }
-
         private static Locations JSONToLocations(string text)
         {
             var json = JSON.Parse(text);
@@ -141,6 +164,35 @@ namespace Netherlands3D.SensorThings
             }
             locations.value = valuesObjects.ToArray();
             return locations;
+        }
+        private static Datastreams JSONToDatastreams(string text)
+        {
+            var json = JSON.Parse(text);
+            var datastreams = new Datastreams();
+            datastreams.iotnextLink = json["@iot.nextLink"];
+
+            var valuesJson = json["value"].AsArray;
+            Debug.Log(valuesJson.Count);
+            var valuesObjects = new List<Datastreams.Value>();
+            for (int i = 0; i < valuesJson.Count; i++)
+            {
+                var jsonValue = valuesJson[i];
+                var jsonValueUnityOfMeasurement = jsonValue["unitOfMeasurement"];
+                valuesObjects.Add(new Datastreams.Value
+                {
+                    iotid = jsonValue["@iot.id"],
+                    iotselfLink = jsonValue["@iot.selfLink"],
+                    name = jsonValue["name"],
+                    description = jsonValue["description"],
+                    unitOfMeasurement = new Datastreams.Unitofmeasurement()
+                    {
+                        symbol = jsonValueUnityOfMeasurement["symbol"]
+                    },
+                    ObservationsiotnavigationLink = "Observations@iot.navigationLink"
+                });
+            }
+            datastreams.value = valuesObjects.ToArray();
+            return datastreams;
         }
 
         public void GetDatastreams()
