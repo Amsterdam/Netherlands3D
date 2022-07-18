@@ -12,6 +12,7 @@ namespace Netherlands3D.SensorThings
         private SensorThingsRIVM sensorThingsRIVM;
 
         [SerializeField] private int municipalityID = 363;
+
         private void OnEnable()
         {
             //Generate

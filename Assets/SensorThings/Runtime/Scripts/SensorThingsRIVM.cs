@@ -37,7 +37,6 @@ namespace Netherlands3D.SensorThings
         public void GetLocations(Action<bool, Locations> callback, int thingID = 0)
         {
             var specificThing = (thingID > 0) ? $"/Things({thingID})/" : "/";
-
             StartCoroutine(RequestAPI($"{baseApiURL}{specificThing}Locations", (success, text) => {
                 if (success)
                 {
@@ -58,6 +57,22 @@ namespace Netherlands3D.SensorThings
                 if (success)
                 {
                     Datastreams datastreams = JSONToDatastreams(text);
+                    callback(true, datastreams);
+                }
+                else
+                {
+                    callback(false, null);
+                }
+            }));
+        }
+
+        public void GetObservations(Action<bool, Observations> callback, int dataStreamID = 0)
+        {
+            var specificDatastream = (dataStreamID > 0) ? $"/Datastreams({dataStreamID})/" : "/";
+            StartCoroutine(RequestAPI($"{baseApiURL}{specificDatastream}Observations", (success, text) => {
+                if (success)
+                {
+                    Observations datastreams = JSONToObservations(text);
                     callback(true, datastreams);
                 }
                 else
@@ -193,6 +208,32 @@ namespace Netherlands3D.SensorThings
             }
             datastreams.value = valuesObjects.ToArray();
             return datastreams;
+        }
+
+        private static Observations JSONToObservations(string text)
+        {
+            var json = JSON.Parse(text);
+            var observations = new Observations();
+            observations.iotnextLink = json["@iot.nextLink"];
+
+            var valuesJson = json["value"].AsArray;
+            Debug.Log(valuesJson.Count);
+            var valuesObjects = new List<Observations.Value>();
+            for (int i = 0; i < valuesJson.Count; i++)
+            {
+                var jsonValue = valuesJson[i];
+                var jsonValueUnityOfMeasurement = jsonValue["unitOfMeasurement"];
+                valuesObjects.Add(new Observations.Value
+                {
+                    iotid = jsonValue["@iot.id"],
+                    iotselfLink = jsonValue["@iot.selfLink"],
+                    phenomenonTime = jsonValue["phenomenonTime"],
+                    result = jsonValue["result"].AsFloat,
+                    DatastreamiotnavigationLink = "Datastream@iot.navigationLink"
+                });
+            }
+            observations.value = valuesObjects.ToArray();
+            return observations;
         }
 
         public void GetDatastreams()
