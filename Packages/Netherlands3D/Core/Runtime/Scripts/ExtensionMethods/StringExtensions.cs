@@ -9,7 +9,18 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 
 public static class StringExtensions
-{    
+{
+    /// <summary>
+    /// Turns first character of string into UpperCase
+    /// </summary>
+    /// <returns>The string with first character as uppercase</returns>
+    public static string ToFirstCharacterUpperCase(this string template)
+    {
+        var prettyName = template.ToCharArray();
+        prettyName[0] = char.ToUpperInvariant(prettyName[0]); 
+        return new String(prettyName);
+    }
+
     /// <summary>
     /// Replace the template string and fill in the x and y values
     /// </summary>
