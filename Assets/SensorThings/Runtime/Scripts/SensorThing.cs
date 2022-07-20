@@ -9,7 +9,7 @@ namespace Netherlands3D.SensorThings
 {
     public class SensorThing : MonoBehaviour
     {
-        private SensorThingsAPI sensorThingsRIVM;
+        private SensorThingsAPI sensorThingsAPI;
 
         private Things.Value thingData;
 
@@ -17,19 +17,22 @@ namespace Netherlands3D.SensorThings
         private Dictionary<Datastreams.Value, SensorThingCombinedData> datastreamObservations = new Dictionary<Datastreams.Value, SensorThingCombinedData>();
 
         [SerializeField]
-        private TextMesh testMesh;
+        private TextMesh textMesh;
 
         private string observedPropertyFilter;
 
+        private DateTime fromDateTime;
+        private DateTime toDateTime;
+
         private void Start()
         {
-            testMesh.text = "Loading";
+            textMesh.text = "Loading";
         }
 
         private void Update()
         {
-            testMesh.transform.LookAt(Camera.main.transform);
-            testMesh.transform.Rotate(0, 180, 0);
+            textMesh.transform.LookAt(Camera.main.transform);
+            textMesh.transform.Rotate(0, 180, 0);
         }
 
         private void OnEnable()
@@ -42,21 +45,22 @@ namespace Netherlands3D.SensorThings
         /// </summary>
         /// <param name="sensorThingsRIVM">SensorThingsRIVM API reference</param>
         /// <param name="thingData">The data object</param>
-        public void SetData(SensorThingsAPI sensorThingsRIVM, Things.Value thingData, string observedPropertyID)
+        public void SetData(SensorThingsAPI sensorThingsAPI, Things.Value thingData, string observedPropertyID, DateTime fromDateTime, DateTime toDateTime)
         {
-            this.sensorThingsRIVM = sensorThingsRIVM;
+            this.sensorThingsAPI = sensorThingsAPI;
             this.thingData = thingData;
             this.observedPropertyFilter = observedPropertyID;
-
+            this.fromDateTime = fromDateTime;
+            this.toDateTime = toDateTime;
             this.name = thingData.name;
 
-            sensorThingsRIVM.GetLocations(GotLocation, thingData.iotid);
-            sensorThingsRIVM.GetDatastreams(GotDatastreams, thingData.iotid);
+            sensorThingsAPI.GetLocations(this.GotLocation, thingData.iotid);
+            sensorThingsAPI.GetDatastreams(this.GotDatastreams, thingData.iotid);
         }
 
         /// <summary>
         /// Received the datastreams.
-        /// For now we simple create gameobjects for the streams to inspect them in the editor
+        /// Add the ObservedProperty and the Oberservations via seperate API requests
         /// </summary>
         private void GotDatastreams(bool success, Datastreams datastreams)
         {
@@ -66,14 +70,14 @@ namespace Netherlands3D.SensorThings
             for (int i = 0; i < datastreams.value.Length; i++)
             {
                 var datastream = datastreams.value[i];
-
-                var datastreamVisual = new GameObject();
-                datastreamVisual.transform.SetParent(this.transform);
-                datastreamVisual.name = datastream.name + " - " + datastream.unitOfMeasurement.symbol;
-
-                sensorThingsRIVM.GetObservedProperty((success, observedProperties) => { GotObservedProperty(success, observedProperties, datastream); }, datastream.iotid);
-                sensorThingsRIVM.GetObservations((success, observations) => { GotObservations(success, observations, datastream); }, datastream.iotid);
+                GatherDatastreamObservations(datastream);
             }
+        }
+
+        private void GatherDatastreamObservations(Datastreams.Value datastream)
+        {
+            sensorThingsAPI.GetObservedProperty((success, observedProperties) => { GotObservedProperty(success, observedProperties, datastream); }, datastream.iotid);
+            sensorThingsAPI.GetObservations((success, observations) => { GotObservations(success, observations, datastream); }, datastream.iotid, fromDateTime, toDateTime);
         }
 
         private void GotObservedProperty(bool success, ObservedProperties.Value observedProperties, Datastreams.Value datastream)

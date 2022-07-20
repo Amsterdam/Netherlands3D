@@ -76,17 +76,17 @@ namespace Netherlands3D.SensorThings
         /// </summary>
         /// <param name="callback">Returns success and Observations object</param>
         /// <param name="dataStreamID">Optional specific datastreams to filter on</param>
-        /// <param name="after">Filter results after this datetime</param>
-        /// <param name="before">Filter results before this datetime</param>
-        public void GetObservations(Action<bool, Observations> callback, int dataStreamID = 0, DateTime after = default, DateTime before = default)
+        /// <param name="from">Filter results after this datetime (inclusive) using day,month and year</param>
+        /// <param name="to">Filter results before this datetime using day,month and year</param>
+        public void GetObservations(Action<bool, Observations> callback, int dataStreamID = 0, DateTime from = default, DateTime to = default)
         {
             var specificDatastream = (dataStreamID > 0) ? $"/Datastreams({dataStreamID})/" : "/";
 
             //ge is greater than or equals
-            var betweenFilter = $@"$filter=day(phenomenonTime) ge {after.Day} and month(phenomenonTime) ge {after.Month} and year(phenomenonTime) ge {after.Year} and
-day(phenomenonTime) lt {before.Day} and month(phenomenonTime) lt {before.Month} and year(phenomenonTime) lt {before.Year}";
+            var betweenFilter = $@"$filter=day(phenomenonTime) ge {from.Day} and month(phenomenonTime) ge {from.Month} and year(phenomenonTime) ge {from.Year} and
+day(phenomenonTime) lt {to.Day} and month(phenomenonTime) lt {to.Month} and year(phenomenonTime) lt {to.Year}";
 
-            var filter = (after != default && before != default) ? betweenFilter : "";
+            var filter = (from != default && to != default) ? betweenFilter : "";
             
             StartCoroutine(RequestAPI($"{baseApiURL}{specificDatastream}Observations{filter}", (success, text) => {
                 if (success)

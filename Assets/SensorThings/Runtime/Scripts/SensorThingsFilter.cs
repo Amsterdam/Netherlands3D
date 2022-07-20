@@ -15,13 +15,25 @@ namespace Netherlands3D.SensorThings
 
         [SerializeField] private int municipalityID = 363;
 
+        [Header("Listen to")]
+        [SerializeField] private DateTimeEvent setFromDateTime;
+        [SerializeField] private DateTimeEvent setToDateTime;
+
+        [Header("Invoke")]
         [SerializeField] private StringEvent filterOnObservedProperty;
         [SerializeField] private StringListUnityEvent foundObservableProperty;
 
-        private string observedProperyID = ""; 
+        private string observedProperyID = "";
+        private DateTime fromDateTime = DateTime.Now.AddDays(-2);
+        private DateTime toDateTime = DateTime.Now;
+
+        private List<SensorThing> sensorThings = new List<SensorThing>();
 
         private void OnEnable()
         {
+            setFromDateTime.started.AddListener(SetFromDateTime);
+            setToDateTime.started.AddListener(SetToDateTime);
+
             filterOnObservedProperty.started.AddListener(FilterOnObservedProperty);
             foundObservableProperty.AddListener(FoundObservedProperty);
 
@@ -29,19 +41,34 @@ namespace Netherlands3D.SensorThings
             sensorThingsAPI = GetComponent<SensorThingsAPI>();
             sensorThingsAPI.StopRequests();
 
-            //sensorThingsRIVM.GetThings(GotThings, municipalityID);
+            //Get all then observed properties the API offers that we can filter on
             sensorThingsAPI.GetObservedProperties(GetObservedProperties);
+
+            //Get all the SensorThings in this municipality and gather their data
+            sensorThingsAPI.GetThings(GotThings, municipalityID);
+        }
+
+        private void FilterOnObservedProperty(string observedProperyID)
+        {
+            this.observedProperyID = observedProperyID;
+        }
+
+        private void SetToDateTime(DateTime fromDateTime)
+        {
+           this.fromDateTime = fromDateTime;
+        }
+
+        private void SetFromDateTime(DateTime toDateTime)
+        {
+            this.toDateTime = toDateTime;
         }
 
         private void OnDisable()
         {
             filterOnObservedProperty.started.RemoveAllListeners();
             foundObservableProperty.RemoveAllListeners();
-        }
 
-        private void FilterOnObservedProperty(string observedProperyID)
-        {
-            this.observedProperyID = observedProperyID;
+            sensorThings.Clear();
         }
 
         private void FoundObservedProperty(List<string> nameDescriptionAndID)
@@ -70,7 +97,9 @@ namespace Netherlands3D.SensorThings
                 foreach(var thing in things.value)
                 {
                     var sensorThing3DObject = Instantiate(thingPrefab,this.transform);
-                    sensorThing3DObject.SetData(sensorThingsAPI, thing, observedProperyID);
+                    sensorThing3DObject.SetData(sensorThingsAPI, thing, observedProperyID,fromDateTime,toDateTime);
+
+                    sensorThings.Add(sensorThing3DObject);
                 }
             }
         }
