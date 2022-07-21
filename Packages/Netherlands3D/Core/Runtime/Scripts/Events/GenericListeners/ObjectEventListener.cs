@@ -8,19 +8,22 @@ namespace Netherlands3D.Events.GenericListeners
     public class ObjectEventListener : MonoBehaviour
     {
         [SerializeField]
-        private ObjectEvent objectEvent;
+        private ObjectEvent onEvent;
 
         [SerializeField]
-        private ObjectValueUnityEvent onEvent;
+        private ObjectValueUnityEvent trigger;
 
         void Awake()
         {
-            objectEvent.started.AddListener(ObjectReceived);
+            if (onEvent)
+            {
+                onEvent.started.AddListener(Invoke);
+            }
         }
 
-        void ObjectReceived(object receivedObject)
+        public void Invoke(object value)
         {
-            onEvent.Invoke(receivedObject);
+            trigger.Invoke(value);
         }
     }
 }

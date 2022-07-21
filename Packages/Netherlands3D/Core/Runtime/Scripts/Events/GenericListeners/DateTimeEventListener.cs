@@ -21,8 +21,8 @@ public class DateTimeEventListener : MonoBehaviour
         }
     }
 
-	public void Invoke(DateTime arg0)
+	public void Invoke(DateTime value)
 	{
-        trigger.Invoke(arg0);
+        trigger.Invoke(value);
     }
 }

@@ -21,8 +21,8 @@ public class FloatEventListener : MonoBehaviour
         }
     }
 
-	public void Invoke(float arg0)
+	public void Invoke(float value)
 	{
-        trigger.Invoke(arg0);
+        trigger.Invoke(value);
     }
 }

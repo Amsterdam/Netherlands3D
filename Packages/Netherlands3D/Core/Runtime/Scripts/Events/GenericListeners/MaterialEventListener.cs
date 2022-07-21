@@ -1,18 +1,17 @@
+using Netherlands3D.Events;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Netherlands3D.Events;
-using UnityEngine.Events;
 
-namespace Netherlands3D.Core
+namespace Netherlands3D.Events.GenericListeners
 {
-    public class TriggerEventListener : MonoBehaviour
+    public class MaterialEventListener : MonoBehaviour
     {
         [SerializeField]
-        private TriggerEvent onEvent;
+        private MaterialEvent onEvent;
 
         [SerializeField]
-        private UnityEvent trigger;
+        private MaterialValueUnityEvent trigger;
 
         void Awake()
         {
@@ -22,9 +21,9 @@ namespace Netherlands3D.Core
             }
         }
 
-        public void Invoke()
+        public void Invoke(Material value)
         {
-            trigger.Invoke();
+            trigger.Invoke(value);
         }
     }
 }
