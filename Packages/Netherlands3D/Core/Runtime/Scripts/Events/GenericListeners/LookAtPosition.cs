@@ -15,7 +15,10 @@ namespace Netherlands3D.Events.GenericListeners
 
         void Awake()
         {
-            lookAtPosition.started.AddListener(LookAt);
+            if (onEvent)
+            {
+                lookAtPosition.started.AddListener(LookAt);
+            }
         }
 
         void LookAt(Vector3 position)

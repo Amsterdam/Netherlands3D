@@ -15,7 +15,10 @@ public class IntEventListener : MonoBehaviour
 
     void Awake()
     {
-        onEvent.started.AddListener(Invoke);
+        if (onEvent)
+        {
+            onEvent.started.AddListener(Invoke);
+        }
     }
 
 	public void Invoke(int value)

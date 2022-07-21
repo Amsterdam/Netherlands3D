@@ -15,7 +15,10 @@ namespace Netherlands3D.Events.GenericListeners
 
         void Awake()
         {
-            onEvent.started.AddListener(Invoke);
+            if (onEvent)
+            {
+                onEvent.started.AddListener(Invoke);
+            }
         }
 
         public void Invoke(Color value)
