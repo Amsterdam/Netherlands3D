@@ -5,20 +5,20 @@ using UnityEngine;
 
 namespace Netherlands3D.Events.GenericListeners
 {
-    public class GameObjectEventListener : MonoBehaviour
+    public class MaterialEventListener : MonoBehaviour
     {
         [SerializeField]
-        private GameObjectEvent onEvent;
+        private MaterialEvent onEvent;
 
         [SerializeField]
-        private GameObjectValueUnityEvent trigger;
+        private MaterialValueUnityEvent trigger;
 
         void Awake()
         {
             onEvent.started.AddListener(Invoke);
         }
 
-        public void Invoke(GameObject value)
+        public void Invoke(Material value)
         {
             trigger.Invoke(value);
         }

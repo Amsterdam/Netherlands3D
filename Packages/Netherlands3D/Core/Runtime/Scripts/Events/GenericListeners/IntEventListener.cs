@@ -15,14 +15,11 @@ public class IntEventListener : MonoBehaviour
 
     void Awake()
     {
-        if (onEvent)
-        {
-            onEvent.started.AddListener(Invoke);
-        }
+        onEvent.started.AddListener(Invoke);
     }
 
-	public void Invoke(int arg0)
+	public void Invoke(int value)
 	{
-        trigger.Invoke(arg0);
+        trigger.Invoke(value);
     }
 }

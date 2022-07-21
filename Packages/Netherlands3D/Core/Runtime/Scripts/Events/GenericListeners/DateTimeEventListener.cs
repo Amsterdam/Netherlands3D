@@ -15,14 +15,11 @@ public class DateTimeEventListener : MonoBehaviour
 
     void Awake()
     {
-        if (onEvent)
-        {
-            onEvent.started.AddListener(Invoke);
-        }
+        onEvent.started.AddListener(Invoke);
     }
 
-	public void Invoke(DateTime arg0)
+	public void Invoke(DateTime value)
 	{
-        trigger.Invoke(arg0);
+        trigger.Invoke(value);
     }
 }

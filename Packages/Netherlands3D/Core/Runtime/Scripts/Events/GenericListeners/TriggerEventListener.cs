@@ -16,10 +16,7 @@ namespace Netherlands3D.Core
 
         void Awake()
         {
-            if (onEvent)
-            {
-                onEvent.started.AddListener(Invoke);
-            }
+            onEvent.started.AddListener(Invoke);
         }
 
         public void Invoke()

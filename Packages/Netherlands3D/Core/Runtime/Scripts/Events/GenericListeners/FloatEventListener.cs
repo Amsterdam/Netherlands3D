@@ -15,14 +15,11 @@ public class FloatEventListener : MonoBehaviour
 
     void Awake()
     {
-        if (onEvent)
-        {
-            onEvent.started.AddListener(Invoke);
-        }
+        onEvent.started.AddListener(Invoke);
     }
 
-	public void Invoke(float arg0)
+	public void Invoke(float value)
 	{
-        trigger.Invoke(arg0);
+        trigger.Invoke(value);
     }
 }
