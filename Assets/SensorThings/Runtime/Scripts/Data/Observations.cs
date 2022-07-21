@@ -1,4 +1,6 @@
-﻿namespace Netherlands3D.SensorThings
+﻿using System;
+
+namespace Netherlands3D.SensorThings
 {
     public class Observations
     {

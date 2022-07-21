@@ -3,7 +3,6 @@
 public class SensorThingCombinedData
 {
     public Datastreams.Value datastream;
-
     public ObservedProperties.Value observedProperty;
     public Observations observations;
 

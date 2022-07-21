@@ -18,6 +18,7 @@ namespace Netherlands3D.SensorThings
         [Header("Listen to")]
         [SerializeField] private DateTimeEvent setFromDateTime;
         [SerializeField] private DateTimeEvent setToDateTime;
+        [SerializeField] private TriggerEvent getAllObservableProperties;
 
         [Header("Invoke")]
         [SerializeField] private StringEvent filterOnObservedProperty;
@@ -35,24 +36,33 @@ namespace Netherlands3D.SensorThings
             setToDateTime.started.AddListener(SetToDateTime);
 
             filterOnObservedProperty.started.AddListener(FilterOnObservedProperty);
+            getAllObservableProperties.started.AddListener(GetAllObservedProperties);
             foundObservableProperty.AddListener(FoundObservedProperty);
 
             //Generate
             sensorThingsAPI = GetComponent<SensorThingsAPI>();
-            sensorThingsAPI.StopRequests();
-
-            //Get all then observed properties the API offers that we can filter on
-            sensorThingsAPI.GetObservedProperties(GetObservedProperties);
-
-            //Get all the SensorThings in this municipality and gather their data
-            sensorThingsAPI.GetThings(GotThings, municipalityID);
         }
+
+        /// <summary>
+        /// Get all then observed properties the API offers that we can filter on
+        /// </summary>
+        private void GetAllObservedProperties()
+        {
+            sensorThingsAPI.StopRequests();
+            sensorThingsAPI.GetObservedProperties(GetObservedProperties);
+        }
+
 
         private void FilterOnObservedProperty(string observedProperyID)
         {
             this.observedProperyID = observedProperyID;
+            GetFilteredThings();
         }
-
+        private void GetFilteredThings()
+        {
+            //Get all the SensorThings in this municipality and gather their data
+            sensorThingsAPI.GetThings(GotThings, municipalityID);
+        }
         private void SetToDateTime(DateTime fromDateTime)
         {
            this.fromDateTime = fromDateTime;

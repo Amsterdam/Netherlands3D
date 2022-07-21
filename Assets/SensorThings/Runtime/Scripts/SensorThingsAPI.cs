@@ -83,8 +83,8 @@ namespace Netherlands3D.SensorThings
             var specificDatastream = (dataStreamID > 0) ? $"/Datastreams({dataStreamID})/" : "/";
 
             //ge is greater than or equals
-            var betweenFilter = $@"$filter=day(phenomenonTime) ge {from.Day} and month(phenomenonTime) ge {from.Month} and year(phenomenonTime) ge {from.Year} and
-day(phenomenonTime) lt {to.Day} and month(phenomenonTime) lt {to.Month} and year(phenomenonTime) lt {to.Year}";
+            var betweenFilter = $@"?$filter=day(phenomenonTime) ge {from.Day} and month(phenomenonTime) ge {from.Month} and year(phenomenonTime) ge {from.Year} and 
+day(phenomenonTime) lt {to.Day} and month(phenomenonTime) lt {to.Month} and year(phenomenonTime) le {to.Year}";
 
             var filter = (from != default && to != default) ? betweenFilter : "";
             
@@ -175,7 +175,6 @@ day(phenomenonTime) lt {to.Day} and month(phenomenonTime) lt {to.Month} and year
             var observedProperties = new ObservedProperties();
 
             var valuesJson = json["value"].AsArray;
-            Debug.Log(valuesJson.Count);
             var valuesObjects = new List<ObservedProperties.Value>();
             for (int i = 0; i < valuesJson.Count; i++)
             {
@@ -202,7 +201,6 @@ day(phenomenonTime) lt {to.Day} and month(phenomenonTime) lt {to.Month} and year
             things.iotnextLink = json["@iot.nextLink"];
 
             var valuesJson = json["value"].AsArray;
-            Debug.Log(valuesJson.Count);
             var valuesObjects = new List<Things.Value>();
             for (int i = 0; i < valuesJson.Count; i++)
             {
@@ -249,7 +247,6 @@ day(phenomenonTime) lt {to.Day} and month(phenomenonTime) lt {to.Month} and year
             var locations = new Locations();
             locations.iotnextLink = json["@iot.nextLink"];
             var valuesJson = json["value"].AsArray;
-            Debug.Log(valuesJson.Count);
             var valuesObjects = new List<Locations.Value>();
             for (int i = 0; i < valuesJson.Count; i++)
             {
@@ -309,7 +306,6 @@ day(phenomenonTime) lt {to.Day} and month(phenomenonTime) lt {to.Month} and year
             observations.iotnextLink = json["@iot.nextLink"];
 
             var valuesJson = json["value"].AsArray;
-            Debug.Log(valuesJson.Count);
             var valuesObjects = new List<Observations.Value>();
             for (int i = 0; i < valuesJson.Count; i++)
             {
@@ -366,11 +362,11 @@ day(phenomenonTime) lt {to.Day} and month(phenomenonTime) lt {to.Month} and year
                 {
                     case UnityWebRequest.Result.ConnectionError:
                     case UnityWebRequest.Result.DataProcessingError:
-                        Debug.LogError(webRequest.error);
+                        Debug.LogError(uri + "\n" + webRequest.error);
                         callback(false, webRequest.error);
                         break;
                     case UnityWebRequest.Result.ProtocolError:
-                        Debug.LogError(webRequest.error);
+                        Debug.LogError(uri + "\n" + webRequest.error);
                         callback(false, webRequest.error);
                         break;
                     case UnityWebRequest.Result.Success:

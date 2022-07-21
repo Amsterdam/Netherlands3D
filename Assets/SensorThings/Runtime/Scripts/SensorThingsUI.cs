@@ -14,11 +14,14 @@ public class SensorThingsUI : MonoBehaviour
 
     [Header("Invoke")]
     [SerializeField] private StringEvent filterOnPropertyID;
+    [SerializeField] private TriggerEvent getAllObservableProperties;
 
     void Awake()
     {
         showObservedProperty.started.AddListener(DrawObservedProperty);
-        buttonTemplate.gameObject.SetActive(false); 
+        buttonTemplate.gameObject.SetActive(false);
+
+        getAllObservableProperties.started.Invoke();
     }
 
     private void DrawObservedProperty(List<string> nameDescriptionAndID)

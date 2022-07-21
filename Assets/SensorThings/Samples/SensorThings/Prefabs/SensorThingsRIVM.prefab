@@ -61,6 +61,7 @@ MonoBehaviour:
   municipalityID: 363
   setFromDateTime: {fileID: 11400000, guid: bd7e82aaf1f77a14e856f3165d813528, type: 2}
   setToDateTime: {fileID: 11400000, guid: 046396fd0b966e548a6ad8a45ae49435, type: 2}
+  getAllObservableProperties: {fileID: 11400000, guid: 4effcf557befc6741ba4df9cd33759d0, type: 2}
   filterOnObservedProperty: {fileID: 11400000, guid: e4d3b4f88a1332b47878f7c1c5c1332e, type: 2}
   foundObservableProperty:
     m_PersistentCalls:

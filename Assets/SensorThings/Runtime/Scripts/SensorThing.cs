@@ -14,10 +14,13 @@ namespace Netherlands3D.SensorThings
         private Things.Value thingData;
 
         private Datastreams dataStreams;
-        private Dictionary<Datastreams.Value, SensorThingCombinedData> datastreamObservations = new Dictionary<Datastreams.Value, SensorThingCombinedData>();
+        private Dictionary<int, SensorThingCombinedData> datastreamObservations = new Dictionary<int, SensorThingCombinedData>();
 
         [SerializeField]
         private TextMesh textMesh;
+
+        [SerializeField]
+        private MeshRenderer meshRenderer;
 
         private string observedPropertyFilter;
 
@@ -26,13 +29,13 @@ namespace Netherlands3D.SensorThings
 
         private void Start()
         {
-            textMesh.text = "Loading";
+            textMesh.text = "";
+            meshRenderer.enabled = false;
         }
 
         private void Update()
         {
-            textMesh.transform.LookAt(Camera.main.transform);
-            textMesh.transform.Rotate(0, 180, 0);
+            textMesh.transform.rotation = Camera.main.transform.rotation;
         }
 
         private void OnEnable()
@@ -45,11 +48,11 @@ namespace Netherlands3D.SensorThings
         /// </summary>
         /// <param name="sensorThingsRIVM">SensorThingsRIVM API reference</param>
         /// <param name="thingData">The data object</param>
-        public void SetData(SensorThingsAPI sensorThingsAPI, Things.Value thingData, string observedPropertyID, DateTime fromDateTime, DateTime toDateTime)
+        public void SetData(SensorThingsAPI sensorThingsAPI, Things.Value thingData, string observedPropertyFilter, DateTime fromDateTime, DateTime toDateTime)
         {
             this.sensorThingsAPI = sensorThingsAPI;
             this.thingData = thingData;
-            this.observedPropertyFilter = observedPropertyID;
+            this.observedPropertyFilter = observedPropertyFilter;
             this.fromDateTime = fromDateTime;
             this.toDateTime = toDateTime;
             this.name = thingData.name;
@@ -76,23 +79,18 @@ namespace Netherlands3D.SensorThings
 
         private void GatherDatastreamObservations(Datastreams.Value datastream)
         {
-            sensorThingsAPI.GetObservedProperty((success, observedProperties) => { GotObservedProperty(success, observedProperties, datastream); }, datastream.iotid);
-            sensorThingsAPI.GetObservations((success, observations) => { GotObservations(success, observations, datastream); }, datastream.iotid, fromDateTime, toDateTime);
+            var newCombinedData = new SensorThingCombinedData() { datastream = datastream };
+
+            datastreamObservations.Add(datastream.iotid, newCombinedData);
+            sensorThingsAPI.GetObservedProperty((success, observedProperties) => { GotObservedProperty(success, observedProperties, datastream, newCombinedData); }, datastream.iotid);
         }
 
-        private void GotObservedProperty(bool success, ObservedProperties.Value observedProperties, Datastreams.Value datastream)
+        private void GotObservedProperty(bool success, ObservedProperties.Value observedProperties, Datastreams.Value datastream, SensorThingCombinedData combinedData)
         {
             if (!success) return;
-            if (!datastreamObservations.ContainsKey(datastream))
-            {
-                datastreamObservations.Add(datastream, new SensorThingCombinedData());
-            }
-            else
-            {
-                datastreamObservations[datastream].observedProperty = observedProperties;
-            }
+            combinedData.observedProperty = observedProperties;
+            sensorThingsAPI.GetObservations((success, observations) => { GotObservations(success, observations, datastream, combinedData); }, datastream.iotid);
         }
-
 
         /// <summary>
         /// Received the observations inside a datastream
@@ -100,17 +98,48 @@ namespace Netherlands3D.SensorThings
         /// <param name="success"></param>
         /// <param name="observations"></param>
         /// <param name="datastream">Datastream object the observations are tied to in a dictionary</param>
-        private void GotObservations(bool success, Observations observations, Datastreams.Value datastream)
+        private void GotObservations(bool success, Observations observations, Datastreams.Value datastream, SensorThingCombinedData combinedData)
         {
             if (!success) return;
-            if (!datastreamObservations.ContainsKey(datastream))
+
+            combinedData.observations = observations;
+            
+            UpdateVisual();
+        }
+
+        private void UpdateVisual()
+        {
+            this.name = $"{datastreamObservations.Count}";
+
+            if (datastreamObservations.Count > 0 )
             {
-                datastreamObservations.Add(datastream, new SensorThingCombinedData());
+                foreach (KeyValuePair<int, SensorThingCombinedData> dataCombination in datastreamObservations)
+                {
+                        var dataStream = dataCombination.Value.datastream;
+                        var observedProperty = dataCombination.Value.observedProperty;
+                        var observations = dataCombination.Value.observations;
+
+
+                        if (observedProperty != null)
+                        {
+                            if (observedProperty.iotid.ToString() == observedPropertyFilter && observations != null && observations.value.Length > 0) {
+                                meshRenderer.enabled = true;
+                                
+
+                                var observation = ObservationClosestToTimeRange(observations.value);
+                                textMesh.text = $"{observation.result} {dataStream.unitOfMeasurement.symbol}";
+                                meshRenderer.material.color = Color.Lerp(Color.green, Color.red, observation.result);
+                            }
+                        }
+
+                }
             }
-            else
-            {
-                datastreamObservations[datastream].observations = observations;
-            }
+        }
+
+        private Observations.Value ObservationClosestToTimeRange(Observations.Value[] observations)
+        {
+            if (observations.Length == 0) return null;
+            return observations[0];
         }
 
         /// <summary>
