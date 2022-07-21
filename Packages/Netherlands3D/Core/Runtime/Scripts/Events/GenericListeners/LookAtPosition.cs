@@ -15,13 +15,13 @@ namespace Netherlands3D.Events.GenericListeners
 
         void Awake()
         {
-            if (onEvent)
+            if (lookAtPosition)
             {
                 lookAtPosition.started.AddListener(LookAt);
             }
         }
 
-        void LookAt(Vector3 position)
+        public void LookAt(Vector3 position)
         {
             this.transform.position = position + offset;
             this.transform.LookAt(position);
