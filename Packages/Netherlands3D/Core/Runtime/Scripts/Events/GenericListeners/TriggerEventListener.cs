@@ -11,7 +11,7 @@ namespace Netherlands3D.Core
         private TriggerEvent onEvent;
 
         [SerializeField]
-        private BoolValueUnityEvent trigger;
+        private UnityEvent trigger;
 
         void Awake()
         {
@@ -23,7 +23,7 @@ namespace Netherlands3D.Core
 
         public void Invoke()
         {
-            trigger.Invoke(true);
+            trigger.Invoke();
         }
     }
 }
