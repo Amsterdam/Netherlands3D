@@ -326,7 +326,7 @@ MonoBehaviour:
   positionSourceType: 1
   autoOrientationMode: 1
   drawGeometry: 1
-  lineRenderMaterial: {fileID: 2100000, guid: 9dc045a69ee65694da7669f5e52a4db1, type: 2}
+  lineRenderMaterial: {fileID: 0}
   lineColor: {r: 0.8235294, g: 0.39215687, b: 0.19607843, a: 1}
   lineWidth: 5
   readAngleFromProperty: 0
@@ -738,7 +738,7 @@ MonoBehaviour:
   positionSourceType: 1
   autoOrientationMode: 1
   drawGeometry: 1
-  lineRenderMaterial: {fileID: 2100000, guid: 9dc045a69ee65694da7669f5e52a4db1, type: 2}
+  lineRenderMaterial: {fileID: 0}
   lineColor: {r: 0.8235294, g: 0.39215687, b: 0.19607843, a: 1}
   lineWidth: 5
   readAngleFromProperty: 0
@@ -1058,7 +1058,7 @@ MonoBehaviour:
   positionSourceType: 0
   autoOrientationMode: 2
   drawGeometry: 0
-  lineRenderMaterial: {fileID: 2100000, guid: 9dc045a69ee65694da7669f5e52a4db1, type: 2}
+  lineRenderMaterial: {fileID: 0}
   lineColor: {r: 0.8235294, g: 0.39215687, b: 0.19607843, a: 1}
   lineWidth: 5
   readAngleFromProperty: 1
