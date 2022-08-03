@@ -165,11 +165,6 @@ public class FreeCamera : MonoBehaviour
         }
     }
 
-    public void LockPointerControls(bool locked)
-    {
-
-    }
-
     /// <summary>
     /// Drag rotate camera via pointer delta
     /// </summary>
