@@ -34,7 +34,7 @@
       "displayName": "Selection Tools",
       "description": "Example for selecting areas using pointer",
       "path": "SelectionTools/Samples~/SelectionTools"
-    }
+    },
     {
       "displayName": "File Importer",
       "description": "For importing files.",
