@@ -21,15 +21,15 @@ using UnityEngine.Events;
 namespace Netherlands3D.Events
 {
 	[System.Serializable]
-	public class BoundsValueUnityEvent : UnityEvent<Bounds> { }
+	public class DoubleArrayValueUnityEvent : UnityEvent<double[]> { }
 
-	[CreateAssetMenu(fileName = "BoundsEvent", menuName = "EventContainers/BoundsEvent", order = 0)]
+	[CreateAssetMenu(fileName = "DoubleArrayEvent", menuName = "EventContainers/DoubleArrayEvent", order = 0)]
 	[System.Serializable]
-	public class BoundsEvent : EventContainer<BoundsValueUnityEvent> 
+	public class DoubleArrayEvent : EventContainer<DoubleArrayValueUnityEvent> 
 	{
-		public void Invoke(Bounds boundsContent)
+		public void Invoke(double[] doubleArray)
 		{
-			started.Invoke(boundsContent);
+			started.Invoke(doubleArray);
 		}
 	}
 }

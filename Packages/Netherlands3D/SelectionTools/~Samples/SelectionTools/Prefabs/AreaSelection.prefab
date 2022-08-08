@@ -26,8 +26,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2669728395923597117}
   m_LocalRotation: {x: 0.70710576, y: -0, z: -0, w: 0.7071079}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalPosition: {x: 50, y: 0, z: 50}
+  m_LocalScale: {x: 500, y: 500, z: 500}
   m_Children: []
   m_Father: {fileID: 7341232103798297238}
   m_RootOrder: 1
@@ -107,7 +107,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5517503978362030190}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 50, y: 0, z: 50}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_Children: []
   m_Father: {fileID: 7341232103798297238}
@@ -140,7 +140,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6d5134c598e5c084ab722c0bee12830e, type: 2}
+  - {fileID: 2100000, guid: 1d25d945d920ea0419c29537e77199ce, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -172,6 +172,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7341232103798297238}
   - component: {fileID: 433459257598798700}
+  - component: {fileID: 2057754735708505181}
   m_Layer: 0
   m_Name: AreaSelection
   m_TagString: Untagged
@@ -211,7 +212,23 @@ MonoBehaviour:
   selectingArea: {fileID: 11400000, guid: 4d1ca83f1f3585141a0bff951d91025b, type: 2}
   selectedAreaBounds: {fileID: 11400000, guid: 3b5bd5e8a51230645afcb43bfa880fea, type: 2}
   gridSize: 100
+  multiplyHighlightScale: 5
   maxSelectionDistanceFromCamera: 10000
   useWorldSpace: 0
   gridHighlight: {fileID: 2669728395923597117}
   selectionBlock: {fileID: 5517503978362030190}
+  triplanarGridMaterial: {fileID: 2100000, guid: 1d25d945d920ea0419c29537e77199ce, type: 2}
+--- !u!114 &2057754735708505181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7706646580884149493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55413f0db768d014aa2df56055f2dca2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boundsEvent: {fileID: 11400000, guid: 3b5bd5e8a51230645afcb43bfa880fea, type: 2}
+  boundingBoxRDEvent: {fileID: 11400000, guid: 6e9ed9b4f38d0d2418d43bc05dbb3645, type: 2}

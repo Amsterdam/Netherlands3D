@@ -29,6 +29,12 @@
       "description": "Example of a camera based on the one used in 3DAmsterdam and 3DUtrecht, with dragging, scroll zooming etc.",
       "path": "Cameras/Samples~/Cameras"
     },
+	,
+    {
+      "displayName": "Selection Tools",
+      "description": "Example for selecting areas using pointer",
+      "path": "SelectionTools/Samples~/SelectionTools"
+    }
     {
       "displayName": "File Importer",
       "description": "For importing files.",
