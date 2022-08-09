@@ -255,7 +255,7 @@ namespace Netherlands3D.SelectionTools
         private void FinishPolygon()
         {
             Debug.Log($"Make selection.");
-            //selectedAreaBounds.started.Invoke(bounds);
+            selectedPolygonArea.started.Invoke(positions);
         }
 
         /// <summary>
