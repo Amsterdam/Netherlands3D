@@ -63,6 +63,7 @@ namespace Netherlands3D.SelectionTools
 
         private bool closedLoop = false;
         private bool autoDrawPolygon = false;
+        private bool requireReleaseBeforeRedraw = false;
         private Camera mainCamera;
 
         [SerializeField] private Transform pointerRepresentation;
@@ -121,11 +122,14 @@ namespace Netherlands3D.SelectionTools
                 blockCameraDrag.started.Invoke(false);
             }
 
-            if (autoDrawPolygon)
+            if (!requireReleaseBeforeRedraw && autoDrawPolygon)
             {
                 AutoAddPoint();
             }
-
+            else if(requireReleaseBeforeRedraw && !clickAction.IsPressed())
+            {
+                requireReleaseBeforeRedraw = false;
+            }
             previousFrameWorldCoordinate = currentWorldCoordinate;
         }
 
@@ -168,10 +172,9 @@ namespace Netherlands3D.SelectionTools
             lineRenderer.startColor = lineRenderer.endColor = closedLoopLineColor;
             positions.Add(positions[0]);
 
-            if (!autoDrawPolygon)
-            {
-                FinishPolygon();
-            }
+            requireReleaseBeforeRedraw = true;
+
+            FinishPolygon();
         }
 
         private void Tap()

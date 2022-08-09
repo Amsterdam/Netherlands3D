@@ -182,10 +182,10 @@ MonoBehaviour:
   lineWidthMultiplier: 1
   maxSelectionDistanceFromCamera: 10000
   useWorldSpace: 0
-  closeLoopDistance: 20
+  closeLoopDistance: 10
   minPointsToCloseLoop: 2
   minDistanceBetweenAutoPoints: 1
-  minDirectionThresholdForAutoPoints: 0.8
+  minDirectionThresholdForAutoPoints: 0.9
   positions: []
   pointerRepresentation: {fileID: 965432690250480436}
 --- !u!1 &8454135686281396574
