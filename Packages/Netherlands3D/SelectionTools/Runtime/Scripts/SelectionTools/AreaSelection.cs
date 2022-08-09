@@ -29,7 +29,7 @@ namespace Netherlands3D.SelectionTools
         private MeshRenderer boundsMeshRenderer;
 
         [Header("Invoke")]
-        [SerializeField] private BoolEvent selectingArea;
+        [SerializeField] private BoolEvent blockCameraDragging;
         [SerializeField] private BoundsEvent selectedAreaBounds;
 
         [Header("Settings")]
@@ -55,6 +55,19 @@ namespace Netherlands3D.SelectionTools
 
         void Awake()
         {
+            if(!inputActionAsset)
+            {
+                Debug.LogWarning("No input asset set. Please add the reference in the inspector.", this.gameObject);
+                return;
+            }
+            if (!selectionBlock)
+            {
+                Debug.LogWarning("The selection block reference is not set in the inspector. Please make sure to set the reference.", this.gameObject);
+                return;
+            }
+            boundsMeshRenderer = selectionBlock.GetComponent<MeshRenderer>();
+            selectionBlock.SetActive(false);
+
             areaSelectionActionMap = inputActionAsset.FindActionMap("AreaSelection");
             tapAction = areaSelectionActionMap.FindAction("Tap");
             clickAction = areaSelectionActionMap.FindAction("Click");
@@ -66,15 +79,18 @@ namespace Netherlands3D.SelectionTools
             clickAction.canceled += context => Release();
 
             worldPlane = (useWorldSpace) ? new Plane(Vector3.up, Vector3.zero) : new Plane(this.transform.up, this.transform.position);
-
-            boundsMeshRenderer = selectionBlock.GetComponent<MeshRenderer>();
         }
 
         private void OnValidate()
         {
-            selectionBlock.transform.localScale = Vector3.one * gridSize;
-            gridHighlight.transform.localScale = Vector3.one * gridSize * multiplyHighlightScale;
-            triplanarGridMaterial.SetFloat("GridSize", 1.0f / gridSize);
+            if(selectionBlock)
+                selectionBlock.transform.localScale = Vector3.one * gridSize;
+
+            if(gridHighlight)
+                gridHighlight.transform.localScale = Vector3.one * gridSize * multiplyHighlightScale;
+
+            if(triplanarGridMaterial)
+               triplanarGridMaterial.SetFloat("GridSize", 1.0f / gridSize);
         }
 
         private void OnEnable()
@@ -85,7 +101,8 @@ namespace Netherlands3D.SelectionTools
         private void OnDisable()
         {
             drawingArea = false;
-            selectingArea.started.Invoke(false);
+            selectionBlock.SetActive(false);
+            blockCameraDragging.started.Invoke(false);
             areaSelectionActionMap.Disable();
         }
 
@@ -98,12 +115,12 @@ namespace Netherlands3D.SelectionTools
             if (!drawingArea && clickAction.IsPressed() && modifierAction.IsPressed())
             {
                 drawingArea = true;
-                selectingArea.started.Invoke(true);
+                blockCameraDragging.started.Invoke(true);
             }
             else if (drawingArea && !clickAction.IsPressed())
             {
                 drawingArea = false;
-                selectingArea.started.Invoke(false);
+                blockCameraDragging.started.Invoke(false);
             }
 
             if (drawingArea)

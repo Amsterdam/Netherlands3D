@@ -1653,50 +1653,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &1107191816742312754
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1107191816742312767}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f00732e8e617b3a4498fb736296bb47d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveForwardOnPlane: 1
-  dragOnPlaneThreshold: 0.5
-  dragToMoveCamera: 1
-  multiplySpeedBasedOnHeight: 1
-  moveSpeed: 1
-  upAndDownSpeed: 30
-  dragSpeed: 1
-  easing: 10
-  zoomSpeed: 0.001
-  minimumSpeed: 0.01
-  maximumSpeed: 1000
-  minimumDragSpeed: 20
-  maximumDragSpeed: 2000
-  dragRotateSpeed: 0.08
-  rotateAroundPointSpeed: 0.1
-  gamepadRotateSpeed: 50
-  gamepadMoveSpeed: 10
-  maxPointerDistance: 10000
-  maxCameraHeight: 1500
-  minCameraHeight: -500
-  useRotationLimits: 1
-  horizontalInput: {fileID: 11400000, guid: 47fdda6b64fb95e49b5a0ad3df35497e, type: 2}
-  verticalInput: {fileID: 11400000, guid: 962e73377a6e8f44aa81cda26eaf96e2, type: 2}
-  upDownInput: {fileID: 11400000, guid: 5f9176915754b054ab92230b32ec4a6b, type: 2}
-  lookInput: {fileID: 11400000, guid: 60a5d5ae948894a4b81ce19239f5fb71, type: 2}
-  flyInput: {fileID: 11400000, guid: edd75d8dd8d10e6469004c04033ef7ee, type: 2}
-  rotateInput: {fileID: 11400000, guid: 8176c5b23598cef4ab3ba31f324603c0, type: 2}
-  zoomToPointerInput: {fileID: 11400000, guid: 1ed3a4566e400a645b226800ef524917, type: 2}
-  pointerPosition: {fileID: 11400000, guid: e0761ef641ca8fe458adf20b533a9f89, type: 2}
-  dragModifier: {fileID: 11400000, guid: 8d6fa7b43c0e19d478efb3e4bde47f75, type: 2}
-  rotateModifier: {fileID: 11400000, guid: 61a4ba0ce1e595d458619e2b56009ce9, type: 2}
-  firstPersonModifier: {fileID: 11400000, guid: 78ca7e79ff1e06c4db8fffc011f68a8b, type: 2}
 --- !u!114 &1107191816742312755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1739,13 +1695,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1107191816742312752}
-  - component: {fileID: 1107191816742312754}
   - component: {fileID: 1107191816742312753}
   - component: {fileID: 1107191816742312755}
-  - component: {fileID: 6567033620793934754}
   - component: {fileID: 262063079623470418}
   m_Layer: 0
-  m_Name: FreeCamera
+  m_Name: Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1861,35 +1815,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6567033620793934754
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1107191816742312767}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7204b9895ddf9b41af954d4cd920ec6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ignoreInputWhenHoveringInterface: 1
-  ingoringInput: 0
-  lockDraggingInput: 0
-  isDragging: 0
-  horizontalInput: {fileID: 11400000, guid: 47fdda6b64fb95e49b5a0ad3df35497e, type: 2}
-  verticalInput: {fileID: 11400000, guid: 962e73377a6e8f44aa81cda26eaf96e2, type: 2}
-  lookInput: {fileID: 11400000, guid: 60a5d5ae948894a4b81ce19239f5fb71, type: 2}
-  flyInput: {fileID: 11400000, guid: edd75d8dd8d10e6469004c04033ef7ee, type: 2}
-  rotateInput: {fileID: 11400000, guid: 8176c5b23598cef4ab3ba31f324603c0, type: 2}
-  zoomInput: {fileID: 11400000, guid: 1ed3a4566e400a645b226800ef524917, type: 2}
-  upDownInput: {fileID: 11400000, guid: 5f9176915754b054ab92230b32ec4a6b, type: 2}
-  pointerPosition: {fileID: 11400000, guid: e0761ef641ca8fe458adf20b533a9f89, type: 2}
-  draggingModifier: {fileID: 11400000, guid: 8d6fa7b43c0e19d478efb3e4bde47f75, type: 2}
-  rotateModifier: {fileID: 11400000, guid: 61a4ba0ce1e595d458619e2b56009ce9, type: 2}
-  firstPersonModifier: {fileID: 11400000, guid: 78ca7e79ff1e06c4db8fffc011f68a8b, type: 2}
-  lockedDraggingInput: {fileID: 11400000, guid: 4d1ca83f1f3585141a0bff951d91025b, type: 2}
-  inputActionAsset: {fileID: -944628639613478452, guid: 25ec57cbc06f57641b6f0264d1ec98a2, type: 3}
 --- !u!108 &8590219337825460744
 Light:
   m_ObjectHideFlags: 0
