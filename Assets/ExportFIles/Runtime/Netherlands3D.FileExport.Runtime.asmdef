@@ -1,0 +1,17 @@
+{
+    "name": "nl.netherlands3d.fileexport",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9ca88277166fea644a31588b4f943acc",
+        "GUID:e6010ba0298f7524fb3d3b646f618e8b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
