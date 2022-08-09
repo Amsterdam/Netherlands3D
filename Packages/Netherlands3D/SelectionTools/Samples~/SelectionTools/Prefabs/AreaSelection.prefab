@@ -209,7 +209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputActionAsset: {fileID: -944628639613478452, guid: 7453e4974bbdae94797e583e4600c445, type: 3}
-  selectingArea: {fileID: 11400000, guid: 4d1ca83f1f3585141a0bff951d91025b, type: 2}
+  blockCameraDragging: {fileID: 11400000, guid: 6f7db01491fe7424c850f74556c6321b, type: 2}
   selectedAreaBounds: {fileID: 11400000, guid: 3b5bd5e8a51230645afcb43bfa880fea, type: 2}
   gridSize: 100
   multiplyHighlightScale: 5
