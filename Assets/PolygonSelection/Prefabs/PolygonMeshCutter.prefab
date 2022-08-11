@@ -52,9 +52,10 @@ MonoBehaviour:
   extrusionHeight: 100
   newDrawingObjectName: BooleanPolygon
   addBottom: 1
+  receiveShadows: 0
   setUVCoordinates: 0
   uvCoordinate: {x: 0, y: 0}
-  reverseWindingOrder: 1
+  reverseWindingOrder: 0
   addColliders: 0
   createdPolygonGameObject: {fileID: 11400000, guid: 68675f389f7e5da47b875fdc85a2af25, type: 2}
 --- !u!114 &6125372610684927427

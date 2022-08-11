@@ -282,7 +282,10 @@ namespace Netherlands3D.SelectionTools
             Debug.Log($"Make selection.");
 
             if (forceClockwiseWindingOrder && !PolygonIsClockwise(positions))
+            {
+                Debug.Log("Forcing to clockwise");
                 positions.Reverse();
+            }
 
             selectedPolygonArea.started.Invoke(positions);
             ClearPolygon();
