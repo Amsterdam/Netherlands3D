@@ -58,7 +58,7 @@ namespace Netherlands3D.SelectionTools
         private Vector3 selectionStartPosition = default;
         private Vector3 currentWorldCoordinate = default;
         private Vector3 previousFrameWorldCoordinate = default;
-        private Vector3 lastNormal = Vector3.up;
+        private Vector3 lastNormal = Vector3.zero;
         private Plane worldPlane;
 
         private bool closedLoop = false;
@@ -159,7 +159,7 @@ namespace Netherlands3D.SelectionTools
                 var distance = normal.sqrMagnitude;
                 var normalisedNormal = normal.normalized;
                 var directionThreshold = Vector3.Dot(normalisedNormal, lastNormal);
-                if (distance > minDistanceBetweenAutoPoints && directionThreshold != 0 && directionThreshold < minDirectionThresholdForAutoPoints)
+                if (distance > minDistanceBetweenAutoPoints && (lastNormal == Vector3.zero || (directionThreshold != 0 && directionThreshold < minDirectionThresholdForAutoPoints)))
                 {
                     AddPoint(previousFrameWorldCoordinate);
                     lastNormal = normalisedNormal;
@@ -199,7 +199,7 @@ namespace Netherlands3D.SelectionTools
             lineRenderer.startColor = lineRenderer.endColor = lineColor;
             closedLoop = false;
             positions.Clear();
-            lastNormal = Vector3.up;
+            lastNormal = Vector3.zero;
             UpdateLine();
         }
 
@@ -228,12 +228,7 @@ namespace Netherlands3D.SelectionTools
 
                 if (positions.Count > minPointsToCloseLoop)
                 {
-                    var distanceToStartingPoint = Vector3.Distance(positions[0], pointPosition);
-                    Debug.Log($"distanceBetweenLastTwoPoints {distanceToStartingPoint}");
-                    if (distanceToStartingPoint < closeLoopDistance)
-                    {
-                        CloseLoop(true);
-                    }
+                    CheckLoopClose(pointPosition);
                 }
             }
 
@@ -246,6 +241,17 @@ namespace Netherlands3D.SelectionTools
                 UpdateLine();
             }
         }
+
+        private void CheckLoopClose(Vector3 pointPosition)
+        {
+            var distanceToStartingPoint = Vector3.Distance(positions[0], pointPosition);
+            Debug.Log($"distanceBetweenLastTwoPoints {distanceToStartingPoint}");
+            if (distanceToStartingPoint < closeLoopDistance)
+            {
+                CloseLoop(true);
+            }
+        }
+
         private void UpdateLine()
         {
             lineRenderer.positionCount = positions.Count;

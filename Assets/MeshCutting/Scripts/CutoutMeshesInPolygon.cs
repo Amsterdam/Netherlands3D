@@ -43,11 +43,12 @@ public class CutoutMeshesInPolygon : MonoBehaviour
         if (!booleanMeshGameObject) { Debug.LogWarning("No booleanMeshGameObject set.", this.gameObject); return; }
 
         // Perform boolean operation
-        Model result = CSG.Subtract(targetMeshGameObject, booleanMeshGameObject);
+        Model result = CSG.Intersect(targetMeshGameObject, booleanMeshGameObject);
 
         // Create a gameObject to render the result
         var composite = new GameObject();
         composite.name = targetMeshGameObject.name;
+        composite.tag = targetMeshGameObject.tag;
         composite.transform.SetParent(targetMeshGameObject.transform.parent, true);
         composite.AddComponent<MeshFilter>().sharedMesh = result.mesh;
         composite.AddComponent<MeshRenderer>().sharedMaterials = result.materials.ToArray();

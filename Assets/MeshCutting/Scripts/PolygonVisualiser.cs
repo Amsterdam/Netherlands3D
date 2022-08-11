@@ -53,6 +53,8 @@ namespace Netherlands3D.Events
         [SerializeField]
         private bool addBottom = false;
         [SerializeField]
+        private bool receiveShadows = false;
+        [SerializeField]
         private bool setUVCoordinates = false;
         [SerializeField]
         private Vector2 uvCoordinate = Vector2.zero;
@@ -143,8 +145,13 @@ namespace Netherlands3D.Events
             //Do not bother setting object name outside of Editor untill we need it.
             newPolygonObject.name = newDrawingObjectName;
 #endif
-            newPolygonObject.AddComponent<MeshFilter>().sharedMesh = newPolygonMesh;
-            newPolygonObject.AddComponent<MeshRenderer>().material = defaultMaterial;
+            var meshFilter = newPolygonObject.AddComponent<MeshFilter>();
+            meshFilter.sharedMesh = newPolygonMesh;
+
+            var meshRenderer = newPolygonObject.AddComponent<MeshRenderer>();
+            meshRenderer.material = defaultMaterial;
+            meshRenderer.receiveShadows = receiveShadows;
+
             if (addColliders)
                 newPolygonObject.AddComponent<MeshCollider>().sharedMesh = newPolygonMesh;
 
