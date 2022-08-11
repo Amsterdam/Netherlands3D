@@ -173,6 +173,11 @@ namespace Netherlands3D.SelectionTools
 
         private void CloseLoop(bool snapLastPointToEnd)
         {
+            if (positions.Count < 3)
+            {
+                Debug.Log("Not closing loop. Need more points.");
+                return;
+            }
             //Connect loop to be closed by placing endpoint at same position as start ( or snap last point if close enough )
             closedLoop = true;
             lineRenderer.startColor = lineRenderer.endColor = closedLoopLineColor;

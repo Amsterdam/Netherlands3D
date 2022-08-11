@@ -27,9 +27,9 @@ public class PolygonToGeoJSON : MonoBehaviour
         for (int i = 0; i < polygon.Count; i++)
         {
             var position = polygon[i];
-            var rdCoordinate = CoordConvert.UnitytoRD(position);
+            var rdCoordinate = CoordConvert.UnitytoWGS84(position);
 
-            stringBuilder.AppendLine($"[{rdCoordinate.x},{rdCoordinate.y}]");
+            stringBuilder.AppendLine($"[{rdCoordinate.lon},{rdCoordinate.lat}]");
             if (i != polygon.Count - 1) stringBuilder.Append(",");
         }
 
