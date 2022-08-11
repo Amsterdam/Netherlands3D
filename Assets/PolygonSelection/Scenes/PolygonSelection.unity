@@ -877,7 +877,7 @@ GameObject:
   - component: {fileID: 746330251}
   - component: {fileID: 746330254}
   m_Layer: 5
-  m_Name: GeoJSONOutput
+  m_Name: ExampleGeoJSONOutput
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2277,3 +2277,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2145619430}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &6125372611453091613
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6125372610684927425, guid: a4e8a1ad2192a824b8ae16020fd225e9, type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6125372610684927425, guid: a4e8a1ad2192a824b8ae16020fd225e9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6125372610684927425, guid: a4e8a1ad2192a824b8ae16020fd225e9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6125372610684927425, guid: a4e8a1ad2192a824b8ae16020fd225e9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6125372610684927425, guid: a4e8a1ad2192a824b8ae16020fd225e9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6125372610684927425, guid: a4e8a1ad2192a824b8ae16020fd225e9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6125372610684927425, guid: a4e8a1ad2192a824b8ae16020fd225e9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6125372610684927425, guid: a4e8a1ad2192a824b8ae16020fd225e9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6125372610684927425, guid: a4e8a1ad2192a824b8ae16020fd225e9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6125372610684927425, guid: a4e8a1ad2192a824b8ae16020fd225e9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6125372610684927425, guid: a4e8a1ad2192a824b8ae16020fd225e9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6125372610684927430, guid: a4e8a1ad2192a824b8ae16020fd225e9, type: 3}
+      propertyPath: m_Name
+      value: PolygonMeshCutter
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a4e8a1ad2192a824b8ae16020fd225e9, type: 3}

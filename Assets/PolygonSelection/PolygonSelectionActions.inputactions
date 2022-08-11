@@ -2,7 +2,7 @@
     "name": "PolygonSelectionActions",
     "maps": [
         {
-            "name": "AreaSelection",
+            "name": "PolygonSelection",
             "id": "9e1fd092-eeb1-463c-87c0-34defd052013",
             "actions": [
                 {
@@ -13,6 +13,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Finish",
+                    "type": "Button",
+                    "id": "3e7b8813-94b2-4756-b6bd-74000303bd4a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Click",
@@ -192,6 +201,28 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "TapSecondary",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "397c0f2f-8768-416a-a860-7f5fb992ca3c",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Finish",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cdc5f455-e542-4674-a741-e405b287cc0a",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Finish",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

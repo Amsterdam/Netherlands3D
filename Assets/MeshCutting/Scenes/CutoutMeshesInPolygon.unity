@@ -362,7 +362,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf578b6c2e18f67469e5f4013d8395af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  intersectionMesh: {fileID: 0}
+  targetMeshGameObject: {fileID: 0}
+  intersectionMeshGameObject: {fileID: 0}
 --- !u!4 &1882579680
 Transform:
   m_ObjectHideFlags: 0

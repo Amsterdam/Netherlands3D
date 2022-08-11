@@ -45,9 +45,9 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] private float minDistanceBetweenAutoPoints = 10.0f;
         [SerializeField] private float minDirectionThresholdForAutoPoints = 0.8f;
 
-
         private InputAction pointerAction;
         private InputAction tapAction;
+        private InputAction finishAction;
         private InputAction tapSecondaryAction;
         private InputAction clickAction;
         private InputAction modifierAction;
@@ -76,8 +76,9 @@ namespace Netherlands3D.SelectionTools
             lineRenderer.widthMultiplier = lineWidthMultiplier;
             lineRenderer.positionCount = 1;
 
-            polygonSelectionActionMap = inputActionAsset.FindActionMap("AreaSelection");
+            polygonSelectionActionMap = inputActionAsset.FindActionMap("PolygonSelection");
             tapAction = polygonSelectionActionMap.FindAction("Tap");
+            finishAction = polygonSelectionActionMap.FindAction("Finish");
             tapSecondaryAction = polygonSelectionActionMap.FindAction("TapSecondary");
             clickAction = polygonSelectionActionMap.FindAction("Click");
             pointerAction = polygonSelectionActionMap.FindAction("Point");
@@ -86,6 +87,7 @@ namespace Netherlands3D.SelectionTools
             tapAction.performed += context => Tap();
             clickAction.performed += context => StartClick();
             clickAction.canceled += context => Release();
+            finishAction.performed += context => CloseLoop(false);
 
             worldPlane = (useWorldSpace) ? new Plane(Vector3.up, Vector3.zero) : new Plane(this.transform.up, this.transform.position);
         }
@@ -165,14 +167,22 @@ namespace Netherlands3D.SelectionTools
             }
         }
 
-        private void CloseLoop()
+        private void CloseLoop(bool snapLastPointToEnd)
         {
             //Connect loop to be closed by placing endpoint at same position as start ( or snap last point if close enough )
             closedLoop = true;
             lineRenderer.startColor = lineRenderer.endColor = closedLoopLineColor;
-            positions.Add(positions[0]);
 
+            if (snapLastPointToEnd)
+            {
+                positions[positions.Count - 1] = positions[0];
+            }
+            else
+            {
+                positions.Add(positions[0]);
+            }
             requireReleaseBeforeRedraw = true;
+            UpdateLine();
 
             FinishPolygon();
         }
@@ -222,7 +232,7 @@ namespace Netherlands3D.SelectionTools
                     Debug.Log($"distanceBetweenLastTwoPoints {distanceToStartingPoint}");
                     if (distanceToStartingPoint < closeLoopDistance)
                     {
-                        CloseLoop();
+                        CloseLoop(true);
                     }
                 }
             }

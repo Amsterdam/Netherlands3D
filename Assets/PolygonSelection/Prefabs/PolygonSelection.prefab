@@ -161,7 +161,7 @@ LineRenderer:
     shadowBias: 0.5
     generateLightingData: 0
   m_UseWorldSpace: 1
-  m_Loop: 0
+  m_Loop: 1
 --- !u!114 &6195754652070294114
 MonoBehaviour:
   m_ObjectHideFlags: 0
