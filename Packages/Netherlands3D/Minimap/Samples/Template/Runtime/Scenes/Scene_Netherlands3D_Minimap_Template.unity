@@ -565,7 +565,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 596308594}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 32304b71d01e2c24f8448d1cecc0954c, type: 3}
   m_Name: 
@@ -590,7 +590,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  quadVertices: []
+  quadVertices:
+  - {x: 9, y: 7.83}
+  - {x: 10, y: 50}
+  - {x: 52.55, y: 50}
+  - {x: 27.28, y: 8.18}
 --- !u!222 &596308598
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -787,7 +791,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fc1eb45672fc9842a23410da039183a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapTiles: {fileID: 1038616972}
+  mapTiles: {fileID: 174341547}
   hoverResizeSpeed: 10
   navigation: {fileID: 1602189400}
   hoverSize: {x: 222, y: 222}
