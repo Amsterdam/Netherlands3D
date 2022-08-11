@@ -44,9 +44,11 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] private int minPointsToCloseLoop = 1;
         [SerializeField] private float minDistanceBetweenAutoPoints = 10.0f;
         [SerializeField] private float minDirectionThresholdForAutoPoints = 0.8f;
+        [SerializeField] private bool forceClockwiseWindingOrder = true;
 
         private InputAction pointerAction;
         private InputAction tapAction;
+        private InputAction escapeAction;
         private InputAction finishAction;
         private InputAction tapSecondaryAction;
         private InputAction clickAction;
@@ -78,6 +80,7 @@ namespace Netherlands3D.SelectionTools
 
             polygonSelectionActionMap = inputActionAsset.FindActionMap("PolygonSelection");
             tapAction = polygonSelectionActionMap.FindAction("Tap");
+            escapeAction = polygonSelectionActionMap.FindAction("Escape");
             finishAction = polygonSelectionActionMap.FindAction("Finish");
             tapSecondaryAction = polygonSelectionActionMap.FindAction("TapSecondary");
             clickAction = polygonSelectionActionMap.FindAction("Click");
@@ -87,6 +90,7 @@ namespace Netherlands3D.SelectionTools
             tapAction.performed += context => Tap();
             clickAction.performed += context => StartClick();
             clickAction.canceled += context => Release();
+            escapeAction.canceled += context => ClearPolygon();
             finishAction.performed += context => CloseLoop(false);
 
             worldPlane = (useWorldSpace) ? new Plane(Vector3.up, Vector3.zero) : new Plane(this.transform.up, this.transform.position);
@@ -181,9 +185,8 @@ namespace Netherlands3D.SelectionTools
             {
                 positions.Add(positions[0]);
             }
-            requireReleaseBeforeRedraw = true;
+            requireReleaseBeforeRedraw = false;
             UpdateLine();
-
             FinishPolygon();
         }
 
@@ -199,17 +202,13 @@ namespace Netherlands3D.SelectionTools
             lineRenderer.startColor = lineRenderer.endColor = lineColor;
             closedLoop = false;
             positions.Clear();
+            requireReleaseBeforeRedraw = false;
             lastNormal = Vector3.zero;
             UpdateLine();
         }
 
         private void AddPoint(Vector3 pointPosition)
         {
-            if(closedLoop)
-            {
-                ClearPolygon();
-            }
-
             Debug.Log("Add point at " + pointPosition);
             //Added at start? finish and select
             if(positions.Count == 0)
@@ -244,6 +243,8 @@ namespace Netherlands3D.SelectionTools
 
         private void CheckLoopClose(Vector3 pointPosition)
         {
+            if (positions.Count < 3) return;
+
             var distanceToStartingPoint = Vector3.Distance(positions[0], pointPosition);
             Debug.Log($"distanceBetweenLastTwoPoints {distanceToStartingPoint}");
             if (distanceToStartingPoint < closeLoopDistance)
@@ -274,7 +275,27 @@ namespace Netherlands3D.SelectionTools
         private void FinishPolygon()
         {
             Debug.Log($"Make selection.");
+
+            if (forceClockwiseWindingOrder && !PolygonIsClockwise(positions))
+                positions.Reverse();
+
             selectedPolygonArea.started.Invoke(positions);
+            ClearPolygon();
+        }
+
+        private bool PolygonIsClockwise(List<Vector3> points)
+        {
+            int l = points.Count;
+            float sum = 0f;
+            for (int i = 0; i < l; i++)
+            {
+                int n = i + 1 >= l - 1 ? 0 : i + 1;
+
+                float x = points[n].x - points[i].x;
+                float y = points[n].y + points[i].y;
+                sum += (x * y);
+            }
+            return (sum < 0) ? false : true;
         }
 
         /// <summary>
