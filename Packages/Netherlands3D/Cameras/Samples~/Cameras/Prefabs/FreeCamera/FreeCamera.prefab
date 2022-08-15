@@ -74,6 +74,7 @@ MonoBehaviour:
   lookInput: {fileID: 11400000, guid: 60a5d5ae948894a4b81ce19239f5fb71, type: 2}
   flyInput: {fileID: 11400000, guid: edd75d8dd8d10e6469004c04033ef7ee, type: 2}
   rotateInput: {fileID: 11400000, guid: 8176c5b23598cef4ab3ba31f324603c0, type: 2}
+  blockCameraDrag: {fileID: 11400000, guid: 1707987050c84b04da3c7fd1ada404a4, type: 2}
   zoomToPointerInput: {fileID: 11400000, guid: 1ed3a4566e400a645b226800ef524917, type: 2}
   pointerPosition: {fileID: 11400000, guid: e0761ef641ca8fe458adf20b533a9f89, type: 2}
   dragModifier: {fileID: 11400000, guid: 8d6fa7b43c0e19d478efb3e4bde47f75, type: 2}
@@ -182,8 +183,7 @@ MonoBehaviour:
   draggingModifier: {fileID: 11400000, guid: 8d6fa7b43c0e19d478efb3e4bde47f75, type: 2}
   rotateModifier: {fileID: 11400000, guid: 61a4ba0ce1e595d458619e2b56009ce9, type: 2}
   firstPersonModifier: {fileID: 11400000, guid: 78ca7e79ff1e06c4db8fffc011f68a8b, type: 2}
-  lockedDraggingInput: {fileID: 11400000, guid: 4d1ca83f1f3585141a0bff951d91025b, type: 2}
-  inputActionAsset: {fileID: -944628639613478452, guid: 25ec57cbc06f57641b6f0264d1ec98a2, type: 3}
+  inputActionAsset: {fileID: -944628639613478452, guid: d5b2b155332606d44ac795422ed556b6, type: 3}
 --- !u!114 &262063079913678507
 MonoBehaviour:
   m_ObjectHideFlags: 0
