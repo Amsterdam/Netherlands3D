@@ -45,6 +45,9 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] private float minDistanceBetweenAutoPoints = 10.0f;
         [SerializeField] private float minDirectionThresholdForAutoPoints = 0.8f;
         [SerializeField] private bool forceClockwiseWindingOrder = true;
+        [SerializeField] private bool doubleClickToCloseLoop = true;
+        [SerializeField] private float doubleClickTimer = 0.5f;
+        [SerializeField] private float doubleClickDistance = 10.0f;
 
         private InputAction pointerAction;
         private InputAction tapAction;
@@ -60,6 +63,7 @@ namespace Netherlands3D.SelectionTools
         private Vector3 selectionStartPosition = default;
         private Vector3 currentWorldCoordinate = default;
         private Vector3 previousFrameWorldCoordinate = default;
+        private Vector2 previousFrameScreenCoordinate = default;
         private Vector3 lastNormal = Vector3.zero;
         private Plane worldPlane;
 
@@ -67,6 +71,8 @@ namespace Netherlands3D.SelectionTools
         private bool autoDrawPolygon = false;
         private bool requireReleaseBeforeRedraw = false;
         private Camera mainCamera;
+
+        private float lastTapTime = 0;
 
         [SerializeField] private Transform pointerRepresentation;
 
@@ -200,6 +206,16 @@ namespace Netherlands3D.SelectionTools
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
             currentWorldCoordinate = GetCoordinateInWorld(currentPointerPosition);
             AddPoint(currentWorldCoordinate);
+
+            if (doubleClickToCloseLoop) { 
+                if ((Time.time - lastTapTime) < doubleClickTimer && Vector3.Distance(currentPointerPosition, previousFrameScreenCoordinate) < doubleClickDistance)
+                {
+                    Debug.Log("Double click, closing loop.");
+                    CloseLoop(true);
+                }
+                lastTapTime = Time.time;
+                previousFrameScreenCoordinate = currentPointerPosition;
+            }
         }
         
         private void ClearPolygon()
@@ -293,17 +309,14 @@ namespace Netherlands3D.SelectionTools
 
         private bool PolygonIsClockwise(List<Vector3> points)
         {
-            int l = points.Count;
-            float sum = 0f;
-            for (int i = 0; i < l; i++)
+            bool isClockwise = false;
+            double sum = 0;
+            for (int i = 0; i < points.Count - 1; i++)
             {
-                int n = i + 1 >= l - 1 ? 0 : i + 1;
-
-                float x = points[n].x - points[i].x;
-                float y = points[n].y + points[i].y;
-                sum += (x * y);
+                sum += (points[i + 1].x - points[i].x) * (points[i + 1].z + points[i].z);
             }
-            return (sum < 0) ? false : true;
+            isClockwise = (sum > 0) ? true : false;
+            return isClockwise;
         }
 
         /// <summary>

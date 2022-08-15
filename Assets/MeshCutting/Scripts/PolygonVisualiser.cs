@@ -106,7 +106,7 @@ namespace Netherlands3D.Events
 
             var polygon = new Poly2Mesh.Polygon();
             var outerContour = (List<Vector3>)contours[0];
-            FixSequentialDoubles(outerContour);
+
             if (outerContour.Count < 3) return null;
             if (reverseWindingOrder) outerContour.Reverse();
 
