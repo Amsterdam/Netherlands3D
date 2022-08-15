@@ -209,7 +209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputActionAsset: {fileID: -944628639613478452, guid: 7453e4974bbdae94797e583e4600c445, type: 3}
-  blockCameraDragging: {fileID: 11400000, guid: 6f7db01491fe7424c850f74556c6321b, type: 2}
+  blockCameraDragging: {fileID: 11400000, guid: 1707987050c84b04da3c7fd1ada404a4, type: 2}
   selectedAreaBounds: {fileID: 11400000, guid: 3b5bd5e8a51230645afcb43bfa880fea, type: 2}
   gridSize: 100
   multiplyHighlightScale: 5
@@ -227,7 +227,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7706646580884149493}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55413f0db768d014aa2df56055f2dca2, type: 3}
+  m_Script: {fileID: 11500000, guid: 0838e9ed6fd10ae4a88033f0ce3cd9fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   boundsEvent: {fileID: 11400000, guid: 3b5bd5e8a51230645afcb43bfa880fea, type: 2}
