@@ -21,6 +21,20 @@ namespace Netherlands3D.Minimap
                 centerPointerInView = value;
             }
         }
+        /// <summary>
+        /// The current layer index of the minimap (from which layer images need to be loaded)
+        /// </summary>
+        public int LayerIndex
+        {
+            get { return layerIndex; }
+            set
+            {
+                layerIndex = value;
+                CalculateGridScaling();
+                RemoveNonIndexLayers();
+                ActivateLayerIndex();
+            }
+        }
 
         [Header("Components")]
         [Tooltip("The configuration of the minimap")]
@@ -34,12 +48,20 @@ namespace Netherlands3D.Minimap
         /// <summary>
         /// The current layer index of the minimap (from which layer images need to be loaded)
         /// </summary>
-        private int layerIndex = 5;
+        private int layerIndex;
+        /// <summary>
+        /// The start number at which the layerIndex starts;
+        /// </summary>
+        private int layerStartIndex = 5;
 
         /// <summary>
         /// 
         /// </summary>
         private float startMeterInPixels;
+        /// <summary>
+        /// The size of the tiles
+        /// </summary>
+        private float tileSize;
         /// <summary>
         /// 
         /// </summary>
@@ -72,22 +94,39 @@ namespace Netherlands3D.Minimap
         /// The minimap top left x/y position
         /// </summary>
         private Vector2RD minimapTopLeft;
+        /// <summary>
+        /// The rect transform of the gameobject the wmts is attached on
+        /// </summary>
+        private RectTransform rectTransform;
+        /// <summary>
+        /// The rect transform of the minimap UI
+        /// </summary>
+        private RectTransform rectTransformUI;
 
         /// <summary>
         /// Contains the tiles from each layer
         /// </summary>
         private Dictionary<int, Dictionary<Vector2, Tile>> tileLayers = new Dictionary<int, Dictionary<Vector2, Tile>>();
 
+        private void Awake()
+        {
+            rectTransform = GetComponent<RectTransform>();
+            rectTransformUI = GetComponentInParent<RectTransform>();
+        }
+
         // Start is called before the first frame update
         void Start()
         {
-            mapSizeMeters = config.tileSize * config.pixelsInMeter * config.scaleDenominator;
+            layerIndex = layerStartIndex;
+            tileSize = config.tileSize;
+            mapSizeMeters = tileSize * config.pixelsInMeter * config.scaleDenominator;
             boundingBoxMeters = new Vector2((float)config.topRight.x - (float)config.bottomLeft.x, (float)config.topRight.y - (float)config.bottomLeft.y);
 
             SetupMinimapTopLeft();
             CalculateGridScaling();
+            ActivateLayerIndex();
 
-            startMeterInPixels = (float)tileSizeMeters / config.tileSize;
+            startMeterInPixels = (float)tileSizeMeters / tileSize;
         }
 
         // Update is called once per frame
@@ -106,7 +145,80 @@ namespace Netherlands3D.Minimap
             Vector3 localClickPosition = transform.InverseTransformPoint(eventData.position);
 
             // Distance in meters from the top left corner of the map
+            Vector2 meterDistance = localClickPosition * startMeterInPixels;
+            Vector3 coordinateRD = CoordConvert.RDtoUnity(new Vector3RD((float)config.bottomLeft.x + meterDistance.x, (float)config.topRight.y + meterDistance.y, Camera.main.transform.position.y));
+            Camera.main.transform.position = coordinateRD;
+        }
 
+        /// <summary>
+        /// Update the WMTS tiles, normally called from MinimapUI OnDrag
+        /// </summary>
+        public void UpdateTiles()
+        {
+            Vector2 position;
+            Vector2 tileKey;
+
+            // Update the x / y tile 2D grid
+            for(int x = 0; x < boundingBoxTiles.x; x++)
+            {
+                for(int y = 0; y < boundingBoxTiles.y; y++)
+                {
+                    // Tile position within this container
+                    position = new Vector2((x * tileSize) - (layerTilesOffset.x * tileSize), -((y * tileSize) - (layerTilesOffset.y * tileSize)));
+
+                    // Origin alignment determines the way to count the grid
+                    tileKey = config.alignment switch
+                    {
+                        Configuration.OriginAlignment.bottomLeft => new Vector2(x + tileOffset.x, (float)(divide - 1) - (y + tileOffset.y)),
+                        Configuration.OriginAlignment.topLeft => new Vector2(x + tileOffset.x, y + tileOffset.y),
+                        _ => throw new System.Exception("Invalid enum value")
+                    };
+
+                    // Check if the tile position is viewable
+                    Vector2 comparePosition = new Vector2(position.x * rectTransform.localScale.x + rectTransform.position.x, position.y * rectTransform.localScale.x + rectTransform.localPosition.y); // note: different
+                    
+                    bool xWithinView = comparePosition.x + config.tileSize > 0 && comparePosition.x < rectTransformUI.sizeDelta.x;
+                    bool yWithinView = comparePosition.y > 0 && comparePosition.y - config.tileSize < rectTransformUI.sizeDelta.y;
+
+                    if(xWithinView && yWithinView)
+                    {
+                        if(!tileLayers[layerIndex].ContainsKey(tileKey))
+                        {
+                            // Add a new tile
+                            GameObject a = new GameObject();
+                            Tile tile = a.AddComponent<Tile>();
+                            tile.Initialize();
+                            tileLayers[layerIndex].Add(tileKey, tile);
+                        }
+                    }
+                    else if(tileLayers[layerIndex].ContainsKey(tileKey))
+                    {
+                        // Remove tile
+                        Destroy(tileLayers[layerIndex][tileKey].gameObject);
+                        tileLayers[layerIndex].Remove(tileKey);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Zoom in or out
+        /// </summary>
+        /// <param name="zoom">The zoom level to be added</param>
+        public void Zoom(int zoom)
+        {
+            tileSize = config.tileSize / Mathf.Pow(2, zoom);
+
+            LayerIndex = layerStartIndex + zoom;
+        }
+
+        /// <summary>
+        /// Activates the current layer index tiles
+        /// </summary>
+        private void ActivateLayerIndex()
+        {
+            // Check if the tileLayers already contains the current layerIndex, else add it
+            if(!tileLayers.ContainsKey(layerIndex)) tileLayers.Add(layerIndex, new Dictionary<Vector2, Tile>());
         }
 
         /// <summary>
@@ -128,6 +240,25 @@ namespace Netherlands3D.Minimap
 
             // Calculate the amount of tiles needed for the bounding box
             boundingBoxTiles = new Vector2(Mathf.CeilToInt(boundingBoxMeters.x / (float)tileSizeMeters), Mathf.CeilToInt(boundingBoxMeters.y / (float)tileSizeMeters));
+        }
+
+        /// <summary>
+        /// Removes layers that arent from the current layerIndex
+        /// </summary>
+        private void RemoveNonIndexLayers()
+        {
+            // Item being the tileLayer key index
+            foreach(int item in tileLayers.Keys)
+            {
+                // Remove all layers behind the top layer except the first & one below layerIndex
+                if(item < layerIndex - 1 && item != layerStartIndex || item > layerIndex)
+                {
+                    // Destroy all gameobjects from the layer
+                    foreach(var tile in tileLayers[item]) Destroy(tile.Value.gameObject);
+                    // Remove the layer
+                    tileLayers.Remove(item);
+                }
+            }
         }
 
         /// <summary>

@@ -6,6 +6,11 @@ namespace Netherlands3D.Minimap
 {
     public class Tile : MonoBehaviour
     {
+        public void Initialize()
+        {
+
+        }
+
         // Start is called before the first frame update
         void Start()
         {

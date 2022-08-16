@@ -116,6 +116,7 @@ namespace Netherlands3D.Minimap
         public void OnDrag(PointerEventData eventData)
         {
             wmtsRectTransform.transform.position = (Vector3)eventData.position + onDragStartingPosition;
+            wmts.UpdateTiles();
         }
 
         public void OnEndDrag(PointerEventData eventData)
