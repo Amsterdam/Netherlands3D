@@ -27,7 +27,7 @@ Ga eventueel akkoord met het activeren van een 'FREE personal license'.
 
 Kies in het 'Install Unity Editor' scherm rechtsonderin 'skip installation'. Wij willen namelijk een specifieke versie gaan installeren.
 
-Installeer via 'Installs / Install Editor' de LTS (long term service) versie 2020.3.28f1
+Installeer via 'Installs / Install Editor' de LTS (long term service) versie 2021.3.6f1
 
 ![image-20220509104007559](./imgs/beginnen/image0.png)
 
@@ -79,7 +79,7 @@ Nu maken we in de Assets map een nieuwe map aan met de naam "RenderPipeline" (le
 
 ![](./imgs/beginnen/image8.png)
 
-Geef een rechter-muisklik op deze nieuwe map en kies voor CreateRenderingUniversal Render PipelineAsset (Forward Renderer)
+Geef een rechter-muisklik op deze nieuwe map en kies via create > rendering > voor URP Asset (with Universal Renderer).
 
 ![](./imgs/beginnen/image9.png)
 
