@@ -30,4 +30,4 @@ Wijzig de coördinaten in {x} en {y}, zoals hierboven te zien is en wijzig alle 
 
 Wijzig dan alleen het lod getal in de regel naar de gewenste.
 
-Herhaal deze handeling ook voor de gebouwen en wanneer alle paden correct zijn ingevuld, kan je op play drukken. Als het goed is zie je dan de terreinen en gebouwen van je eigen gebied in beeld. Het kan zijn dat de camera nog niet helemaal goed staat. Kijk daarvoor in de handleiding 'Camera.md'
+Herhaal deze handeling ook voor de gebouwen (hier zelfs twee keer voor verschillende LOD's) en wanneer alle paden correct zijn ingevuld, kan je op play drukken. Als het goed is zie je dan de terreinen en gebouwen van je eigen gebied in beeld. Het kan zijn dat de camera nog niet helemaal goed staat. Kijk daarvoor in de handleiding 'Camera.md'
