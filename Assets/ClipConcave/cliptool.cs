@@ -5,18 +5,55 @@ using Netherlands3D.Events;
 
 public class cliptool : MonoBehaviour
 {
-    [SerializeField] TriggerEvent startClipping;
-    [SerializeField] GameObject GameobjectToClip;
-    [SerializeField] LineRenderer boundary;
+    ClipConcave clipper = new ClipConcave();
+    bool clipperIsActive = false;
+    bool tileDataLoaded = false;
+
+
+    [Header("For Testing")]
+    public GameObject GameobjectToClip;
+    public LineRenderer boundary;
     
 
-    ClipConcave clipper = new ClipConcave();
+    
     Mesh resultMesh;
     [SerializeField] MeshFilter resultMeshFilter;
     // Start is called before the first frame update
     void Start()
     {
-        startClipping.started.AddListener(ClipStart);
+        //start all the listeners
+        //startClipping.started.AddListener(ClipStart);
+    }
+
+
+    public void Clipstart()
+    {
+        if (clipperIsActive) return;
+        clipperIsActive = true;
+        //check if boundingPolygon is set
+
+
+        //wait for tilehandler to finish loading
+        StartCoroutine(waitForTiledData());
+        //ignore if not yet finished
+        //delete old outputfiles?
+        
+
+        //when we start, the tilehander should not be loading/replacing/removing data.
+
+    }
+    IEnumerator waitForTiledData() // keeps looping until tileDataLoaded is true, then triggers ClipStart
+    {
+
+        //send progress-feedback "waiting for data to be loaded"
+        if (!tileDataLoaded)
+        {
+            yield return null;
+        }
+        tileDataLoaded = true;
+        //send progress-feedback "all data loaded"
+        //start clipping.
+
     }
 
     void ClipStart()

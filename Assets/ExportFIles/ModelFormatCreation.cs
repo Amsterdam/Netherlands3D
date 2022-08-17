@@ -8,11 +8,6 @@ using Netherlands3D.Events;
 
 public class ModelFormatCreation : MonoBehaviour
 {
-
-
-   
-    
-
     [Header("during progress")]
     [SerializeField] protected StringEvent progressTitle;
     [SerializeField] protected StringEvent progressMessage;

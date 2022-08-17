@@ -322,7 +322,7 @@ RectTransform:
   m_Children:
   - {fileID: 711542499}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -338,30 +338,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 90797143}
-  - component: {fileID: 90797142}
+  - component: {fileID: 90797144}
   m_Layer: 0
-  m_Name: clipper
+  m_Name: AreaExport
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &90797142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 90797141}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33786c2b978332f4c9610f4053c6ce11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startClipping: {fileID: 11400000, guid: aa3d8a0f12f263f43b5bc44fa02cc7b6, type: 2}
-  GameobjectToClip: {fileID: 0}
-  boundary: {fileID: 2101282513}
-  resultMeshFilter: {fileID: 946807114}
 --- !u!4 &90797143
 Transform:
   m_ObjectHideFlags: 0
@@ -375,8 +359,32 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &90797144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90797141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98eccbd6e975882469313112e7655bf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  registerGameobject: {fileID: 11400000, guid: fe77914a917d1144a931fba2006623bb, type: 2}
+  unregisterGameobject: {fileID: 11400000, guid: 7a553a650874dd5439063c8b00349833, type: 2}
+  receiveBoundaryPolygon: {fileID: 11400000, guid: 1fc167587f2945e45847760c83e0599d, type: 2}
+  startClipping: {fileID: 11400000, guid: aa3d8a0f12f263f43b5bc44fa02cc7b6, type: 2}
+  HasTilehandlerFineshedLoading: {fileID: 0}
+  ExportFileType: {fileID: 0}
+  CancelClipping: {fileID: 0}
+  startedFinished: {fileID: 0}
+  progresstext: {fileID: 0}
+  errorMessage: {fileID: 0}
+  resultingData: {fileID: 0}
+  clipboundary: {fileID: 2101282513}
 --- !u!1 &154083330
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,75 +465,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 154083330}
   m_CullTransparentMesh: 1
---- !u!1 &468518546
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 468518547}
-  - component: {fileID: 468518548}
-  - component: {fileID: 468518549}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &468518547
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 468518546}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &468518548
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 468518546}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8463d4f5a1572f64a8910aa7c215a574, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  progressTitle: {fileID: 0}
-  progressMessage: {fileID: 0}
-  progressPercentage: {fileID: 0}
-  ShowHideprogressWindow: {fileID: 0}
-  filename: {fileID: 0}
-  onError: {fileID: 0}
-  Bounds: {fileID: 0}
-  Layers: {fileID: 0}
-  begin: {fileID: 0}
---- !u!114 &468518549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 468518546}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb5bfe496c094df449e76777aa2e6599, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  availableFileFormats: []
-  SelectedLayers: {fileID: 0}
-  availableLayers: []
 --- !u!1 &480483837
 GameObject:
   m_ObjectHideFlags: 0
@@ -1626,6 +1565,7 @@ MonoBehaviour:
   relativeCenterRD:
     x: 121000
     y: 487000
+  setInvariantCultureInfo: 1
 --- !u!4 &1725853390
 Transform:
   m_ObjectHideFlags: 0
@@ -1728,7 +1668,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1763943516}
   - component: {fileID: 1763943518}
-  - component: {fileID: 1763943517}
+  - component: {fileID: 1763943519}
   m_Layer: 5
   m_Name: Terrein
   m_TagString: Untagged
@@ -1758,18 +1698,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &1763943517
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1763943515}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d29b598ec6db634b91dd0b82779773e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1763943518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1817,9 +1745,9 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1763943517}
-        m_TargetAssemblyTypeName: SendToggleName, nl.netherlands3d.fileexport
-        m_MethodName: SendName
+      - m_Target: {fileID: 11400000, guid: dc921bb52bdfbaf48aae070a116d5378, type: 2}
+        m_TargetAssemblyTypeName: Netherlands3D.Events.BoolEvent, Netherlands3D.Core.Runtime
+        m_MethodName: Invoke
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1829,7 +1757,41 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_IsOn: 1
+  m_IsOn: 0
+--- !u!114 &1763943519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1763943515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bda199de660f4334b8a50d8e350bdf29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEvent: {fileID: 11400000, guid: dc921bb52bdfbaf48aae070a116d5378, type: 2}
+  onTriggered:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1763943518}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Toggle, UnityEngine.UI
+        m_MethodName: set_isOn
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onTrue:
+    m_PersistentCalls:
+      m_Calls: []
+  onFalse:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1880332152
 GameObject:
   m_ObjectHideFlags: 0
@@ -1916,8 +1878,20 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
-  m_IsOn: 1
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: ffe37e305a7a67245bb11ea4979cac49, type: 2}
+        m_TargetAssemblyTypeName: Netherlands3D.Events.BoolEvent, Netherlands3D.Core.Runtime
+        m_MethodName: Invoke
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  m_IsOn: 0
 --- !u!114 &1880332155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1927,9 +1901,31 @@ MonoBehaviour:
   m_GameObject: {fileID: 1880332152}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d29b598ec6db634b91dd0b82779773e, type: 3}
+  m_Script: {fileID: 11500000, guid: bda199de660f4334b8a50d8e350bdf29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onEvent: {fileID: 11400000, guid: ffe37e305a7a67245bb11ea4979cac49, type: 2}
+  onTriggered:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1880332154}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Toggle, UnityEngine.UI
+        m_MethodName: set_isOn
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onTrue:
+    m_PersistentCalls:
+      m_Calls: []
+  onFalse:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1996448330
 GameObject:
   m_ObjectHideFlags: 0
@@ -2181,7 +2177,7 @@ Transform:
   m_Children:
   - {fileID: 946807115}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2123916553
 GameObject:
@@ -2498,6 +2494,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1200672875177179467}
   - component: {fileID: 4681655142019714451}
+  - component: {fileID: 4681655142019714452}
+  - component: {fileID: 4681655142019714453}
   m_Layer: 7
   m_Name: Buildings
   m_TagString: Untagged
@@ -2654,6 +2652,67 @@ MonoBehaviour:
   createMeshcollider: 0
   tileShadowCastingMode: 1
   brotliCompressedExtention: .br
+--- !u!114 &4681655142019714452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2866325024559451942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87a20f28878560d46b92d99bc088d026, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boolEvent: {fileID: 11400000, guid: ffe37e305a7a67245bb11ea4979cac49, type: 2}
+  gameobjectEnabled: {fileID: 11400000, guid: fe77914a917d1144a931fba2006623bb, type: 2}
+  gameobjectDisabled: {fileID: 11400000, guid: 7a553a650874dd5439063c8b00349833, type: 2}
+--- !u!114 &4681655142019714453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2866325024559451942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bda199de660f4334b8a50d8e350bdf29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEvent: {fileID: 11400000, guid: ffe37e305a7a67245bb11ea4979cac49, type: 2}
+  onTriggered:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4681655142019714451}
+        m_TargetAssemblyTypeName: Netherlands3D.TileSystem.Layer, Netherlands3D.Core.Runtime
+        m_MethodName: set_isEnabled
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2866325024559451942}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onTrue:
+    m_PersistentCalls:
+      m_Calls: []
+  onFalse:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &6900577025068275204
 Transform:
   m_ObjectHideFlags: 0
@@ -2694,6 +2753,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2732327054507538776}
   - component: {fileID: 33835187302912205}
+  - component: {fileID: 8850599036120517485}
+  - component: {fileID: 8850599036120517486}
   m_Layer: 6
   m_Name: Terrain
   m_TagString: Untagged
@@ -2701,6 +2762,67 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8850599036120517485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8850599036120517484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87a20f28878560d46b92d99bc088d026, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boolEvent: {fileID: 11400000, guid: dc921bb52bdfbaf48aae070a116d5378, type: 2}
+  gameobjectEnabled: {fileID: 11400000, guid: fe77914a917d1144a931fba2006623bb, type: 2}
+  gameobjectDisabled: {fileID: 11400000, guid: 7a553a650874dd5439063c8b00349833, type: 2}
+--- !u!114 &8850599036120517486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8850599036120517484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bda199de660f4334b8a50d8e350bdf29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEvent: {fileID: 11400000, guid: dc921bb52bdfbaf48aae070a116d5378, type: 2}
+  onTriggered:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 33835187302912205}
+        m_TargetAssemblyTypeName: Netherlands3D.TileSystem.Layer, Netherlands3D.Core.Runtime
+        m_MethodName: set_isEnabled
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8850599036120517484}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onTrue:
+    m_PersistentCalls:
+      m_Calls: []
+  onFalse:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8967557007122675941
 GameObject:
   m_ObjectHideFlags: 0

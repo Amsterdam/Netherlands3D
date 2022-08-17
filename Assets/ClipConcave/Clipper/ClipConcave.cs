@@ -13,6 +13,7 @@ public class ClipConcave
     //objectpools
     SectionPool sectionpool = new SectionPool();
     IntersectionPool intersectionpool = new IntersectionPool();
+    Section testSection = new Section();
 
     //definining properties of the plane of the triangle, to be able to calculate the elevation of points on the boundary
     planeVariables planeValues = new planeVariables();
@@ -317,7 +318,7 @@ public class ClipConcave
     bool isTrianglePointInBoundary()
     {
         //create a section that starts outside the Boundary and ends at a point on the triangle
-        Section testSection = new Section();
+        
         testSection.startpoint2D = new Vector2(BoundaryBounds.min.x-10, BoundaryBounds.min.z-10);
         testSection.endpoint2D = TrianglePoints[0].position2D;
 
@@ -339,7 +340,6 @@ public class ClipConcave
     bool isBoundaryPointInsideTriangle()
     {
         //create a section that starts outside the triangle and ends at a point on the boundary
-        Section testSection = new Section();
         testSection.startpoint2D = new Vector2(TriangleBounds.min.x-10, TriangleBounds.min.z - 10);
         testSection.endpoint2D =BoundaryPoints[0].position2D;
         // count the intersections between the testsection and all the sections in the triangle
