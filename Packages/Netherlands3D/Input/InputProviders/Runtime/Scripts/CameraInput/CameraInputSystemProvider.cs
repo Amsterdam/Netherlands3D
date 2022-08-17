@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using Netherlands3D.Events;
 using UnityEditor;
 #endif
 using UnityEngine;
@@ -11,6 +12,11 @@ using UnityEngine.InputSystem;
 public class CameraInputSystemProvider : BaseCameraInputProvider
 {
 #if ENABLE_INPUT_SYSTEM
+    [Header("Input")]
+    [SerializeField] private InputActionAsset inputActionAsset;
+    private InputActionMap cameraActionMap;
+    private InputActionMap cameraPointerActionMap;
+
     private InputAction dragAction;
     private InputAction moveAction;
     private InputAction lookAction;
@@ -22,30 +28,32 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 
     private InputAction rotateModifierAction;
     private InputAction firstPersonModifierAction;
+
     private InputAction pointerAction;
 
-    private PlayerInput playerInput;
-
-	private void Awake()
+    private void Awake()
 	{
-        playerInput = GetComponent<PlayerInput>();
+        cameraActionMap = inputActionAsset.FindActionMap("Camera");
+        cameraPointerActionMap = inputActionAsset.FindActionMap("CameraPointerActions");
+        cameraActionMap.Enable();
+        cameraPointerActionMap.Enable();
 
-        moveAction = playerInput.actions["Move"];
-        lookAction = playerInput.actions["Look"];
-        flyAction = playerInput.actions["Fly"];
-        rotateAction = playerInput.actions["Rotate"];
-        upAction = playerInput.actions["Up"];
-        downAction = playerInput.actions["Down"];
-        zoomAction = playerInput.actions["Zoom"];
+        moveAction = cameraActionMap.FindAction("Move");
+        lookAction = cameraActionMap.FindAction("Look");
+        flyAction = cameraActionMap.FindAction("Fly");
+        rotateAction = cameraActionMap.FindAction("Rotate");
+        upAction = cameraActionMap.FindAction("Up");
+        downAction = cameraActionMap.FindAction("Down");
+        zoomAction = cameraActionMap.FindAction("Zoom");
+        dragAction = cameraPointerActionMap.FindAction("Drag");
+        rotateModifierAction = cameraActionMap.FindAction("RotateModifier");
+        firstPersonModifierAction = cameraActionMap.FindAction("FirstPersonModifier");
+        pointerAction = cameraActionMap.FindAction("Point");
 
-        dragAction = playerInput.actions["Drag"];
-        rotateModifierAction = playerInput.actions["RotateModifier"];
-        firstPersonModifierAction = playerInput.actions["FirstPersonModifier"];
-
-        pointerAction = playerInput.actions["Point"];
+        lockedDraggingInput.started.AddListener(LockDragging);
     }
 
-	public void Update()
+    public void Update()
 	{
         //Optionaly ignore camera input when the pointer is interacting with UI
         if (!isDragging && ignoreInputWhenHoveringInterface && EventSystem.current && EventSystem.current.IsPointerOverGameObject())
@@ -55,7 +63,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         }
 
         //Modifier inputs
-        var dragging = dragAction.IsPressed();
+        var dragging = !lockDraggingInput && dragAction.IsPressed();
 
         //Only start sending input again after we stopped dragging
         if (ingoringInput && !dragging)
@@ -112,6 +120,17 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
             upDownInput.started.Invoke(-1);
         }
     }
+
+    /// <summary>
+    /// Set dragging input to locked/unlocked. This ignores pointer drag input while still allowing other movement inputs.
+    /// If another feature used mouse pointer but want to stop the camera from dragging while click+dragging, set this to locked.
+    /// </summary>
+    /// <param name="locked">Lock pointer drag events</param>
+    public void LockDragging(bool locked)
+    {
+        lockDraggingInput = locked;
+    }
+
 #endif
 #if UNITY_EDITOR && !ENABLE_INPUT_SYSTEM
     private void OnValidate()

@@ -11,6 +11,8 @@ public class BaseCameraInputProvider : MonoBehaviour
     [HideInInspector]
     public bool ingoringInput = false;
     [HideInInspector]
+    public bool lockDraggingInput = false;
+    [HideInInspector]
     public bool isDragging = false;
 
     [Header("Invoke events")]
@@ -27,4 +29,7 @@ public class BaseCameraInputProvider : MonoBehaviour
     public BoolEvent draggingModifier;
     public BoolEvent rotateModifier;
     public BoolEvent firstPersonModifier;
+
+    [Header("Listen to events")]
+    public BoolEvent lockedDraggingInput;
 }
