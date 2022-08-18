@@ -26,6 +26,13 @@ namespace Netherlands3D.SelectionTools
     [RequireComponent(typeof(LineRenderer))]
     public class PolygonSelection : MonoBehaviour
     {
+        [System.Serializable]
+        public enum WindingOrder
+        {
+            CLOCKWISE,
+            COUNTERCLOCKWISE
+        }
+
         [Header("Input")]
         [SerializeField] private InputActionAsset inputActionAsset;
         private InputActionMap polygonSelectionActionMap;
@@ -44,7 +51,7 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] private int minPointsToCloseLoop = 1;
         [SerializeField] private float minDistanceBetweenAutoPoints = 10.0f;
         [SerializeField] private float minDirectionThresholdForAutoPoints = 0.8f;
-        [SerializeField] private bool forceClockwiseWindingOrder = true;
+        [SerializeField] private WindingOrder windingOrder = WindingOrder.CLOCKWISE;
         [SerializeField] private bool doubleClickToCloseLoop = true;
         [SerializeField] private float doubleClickTimer = 0.5f;
         [SerializeField] private float doubleClickDistance = 10.0f;
@@ -296,10 +303,10 @@ namespace Netherlands3D.SelectionTools
         private void FinishPolygon()
         {
             Debug.Log($"Make selection.");
-
-            if (forceClockwiseWindingOrder && !PolygonIsClockwise(positions))
+            var polygonIsClockwise = PolygonIsClockwise(positions);
+            if ((windingOrder == WindingOrder.COUNTERCLOCKWISE && polygonIsClockwise) || (windingOrder == WindingOrder.CLOCKWISE && !polygonIsClockwise))
             {
-                Debug.Log("Forcing to clockwise");
+                Debug.Log($"Forcing to {windingOrder}");
                 positions.Reverse();
             }
 
