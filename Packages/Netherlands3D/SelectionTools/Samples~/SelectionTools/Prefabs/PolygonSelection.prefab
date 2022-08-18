@@ -186,6 +186,10 @@ MonoBehaviour:
   minPointsToCloseLoop: 2
   minDistanceBetweenAutoPoints: 1
   minDirectionThresholdForAutoPoints: 0.9
+  windingOrder: 1
+  doubleClickToCloseLoop: 1
+  doubleClickTimer: 0.5
+  doubleClickDistance: 10
   positions: []
   pointerRepresentation: {fileID: 965432690250480436}
 --- !u!1 &8454135686281396574

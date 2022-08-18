@@ -75,6 +75,7 @@ namespace Netherlands3D.SelectionTools
         private Plane worldPlane;
 
         private bool closedLoop = false;
+        private bool lineCrossed = false;
         private bool autoDrawPolygon = false;
         private bool requireReleaseBeforeRedraw = false;
         private Camera mainCamera;
@@ -152,12 +153,74 @@ namespace Netherlands3D.SelectionTools
             previousFrameWorldCoordinate = currentWorldCoordinate;
         }
 
+        /// <summary>
+        /// Keep last line part attached to pointer, to preview next placement.
+        /// Turn red if the line crosses another line ( no cross sections allowed in our polygon! )
+        /// </summary>
         private void SnapLastPositionToPointer()
         {
-            if(lineRenderer.positionCount > 0)
+            if(positions.Count > 0)
             {
                 lineRenderer.SetPosition(lineRenderer.positionCount - 1, currentWorldCoordinate);
+                if(positions.Count > 3)
+                {
+                    lineCrossed = LastLineCrossesOtherLine();
+                    if (lineCrossed)
+                    {
+                        lineRenderer.endColor = Color.red;
+                    }
+                    else
+                    {
+                        lineRenderer.endColor = lineColor;
+                    }
+                }
+                else
+                {
+                    lineCrossed = false;
+                }
             }
+        }
+
+        private bool LastLineCrossesOtherLine(bool includeClosingLineCheck = false)
+        {
+            var lastPoint = lineRenderer.GetPosition(lineRenderer.positionCount-1);
+            var previousPoint = lineRenderer.GetPosition(lineRenderer.positionCount - 2);
+            for (int i = 1; i < lineRenderer.positionCount; i++)
+            {
+                var comparisonStart = lineRenderer.GetPosition(i - 1);
+                var comparisonEnd = lineRenderer.GetPosition(i);
+                if (LinesIntersectOnPlane(lastPoint,previousPoint, comparisonStart,comparisonEnd))
+                {
+                    Debug.Log("Line to be placed is crossing another line");
+                    return true;
+                }
+            }
+
+            if(includeClosingLineCheck)
+            {
+                var firstPoint = lineRenderer.GetPosition(0);
+                for (int i = 1; i < lineRenderer.positionCount-1; i++)
+                {
+                    var comparisonStart = lineRenderer.GetPosition(i - 1);
+                    var comparisonEnd = lineRenderer.GetPosition(i);
+                    if (LinesIntersectOnPlane(lastPoint, firstPoint, comparisonStart, comparisonEnd))
+                    {
+                        Debug.Log("Closing line crosses another line");
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        }
+
+
+        public static bool LinesIntersectOnPlane(Vector3 lineOneA, Vector3 lineOneB, Vector3 lineTwoA, Vector3 lineTwoB) { 
+            return 
+                (((lineTwoB.z - lineOneA.z) * (lineTwoA.x - lineOneA.x) > (lineTwoA.z - lineOneA.z) * (lineTwoB.x - lineOneA.x)) != 
+                ((lineTwoB.z - lineOneB.z) * (lineTwoA.x - lineOneB.x) > (lineTwoA.z - lineOneB.z) * (lineTwoB.x - lineOneB.x)) && 
+                ((lineTwoA.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoA.x - lineOneA.x)) != 
+                ((lineTwoB.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoB.x - lineOneA.x))); 
         }
 
         /// <summary>
@@ -191,6 +254,13 @@ namespace Netherlands3D.SelectionTools
                 Debug.Log("Not closing loop. Need more points.");
                 return;
             }
+
+            if(LastLineCrossesOtherLine(true))
+            {
+                Debug.Log("Not closing loop. There is an intersection.");
+                return;
+            }
+
             //Connect loop to be closed by placing endpoint at same position as start ( or snap last point if close enough )
             closedLoop = true;
             lineRenderer.startColor = lineRenderer.endColor = closedLoopLineColor;
@@ -229,6 +299,7 @@ namespace Netherlands3D.SelectionTools
         {
             lineRenderer.startColor = lineRenderer.endColor = lineColor;
             closedLoop = false;
+            lineCrossed = false;
             positions.Clear();
             requireReleaseBeforeRedraw = false;
             lastNormal = Vector3.zero;
@@ -237,6 +308,11 @@ namespace Netherlands3D.SelectionTools
 
         private void AddPoint(Vector3 pointPosition)
         {
+            if(lineCrossed)
+            {
+                Debug.Log("Cant place point. Crossing own line.");
+                return;
+            }
             Debug.Log("Add point at " + pointPosition);
             //Added at start? finish and select
             if(positions.Count == 0)
@@ -281,6 +357,9 @@ namespace Netherlands3D.SelectionTools
             }
         }
 
+        /// <summary>
+        /// Apply positions to LineRenderer positions
+        /// </summary>
         private void UpdateLine()
         {
             lineRenderer.positionCount = positions.Count;
