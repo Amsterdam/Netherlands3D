@@ -49,8 +49,6 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         rotateModifierAction = cameraActionMap.FindAction("RotateModifier");
         firstPersonModifierAction = cameraActionMap.FindAction("FirstPersonModifier");
         pointerAction = cameraActionMap.FindAction("Point");
-
-        lockedDraggingInput.started.AddListener(LockDragging);
     }
 
     public void Update()
@@ -119,16 +117,6 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         {
             upDownInput.started.Invoke(-1);
         }
-    }
-
-    /// <summary>
-    /// Set dragging input to locked/unlocked. This ignores pointer drag input while still allowing other movement inputs.
-    /// If another feature used mouse pointer but want to stop the camera from dragging while click+dragging, set this to locked.
-    /// </summary>
-    /// <param name="locked">Lock pointer drag events</param>
-    public void LockDragging(bool locked)
-    {
-        lockDraggingInput = locked;
     }
 
 #endif
