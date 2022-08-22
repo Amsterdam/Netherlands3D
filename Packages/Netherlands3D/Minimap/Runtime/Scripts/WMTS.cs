@@ -56,8 +56,7 @@ namespace Netherlands3D.Minimap
         /// <summary>
         /// The start number at which the layerIndex starts;
         /// </summary>
-        private int layerStartIndex = 5;
-
+        private int layerStartIndex = 6;
         /// <summary>
         /// 
         /// </summary>
@@ -133,11 +132,6 @@ namespace Netherlands3D.Minimap
             startMeterInPixels = (float)tileSizeMeters / tileSize;
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-        
-        }
 
         /// <summary>
         /// User clicked on MinimapUI
@@ -175,7 +169,7 @@ namespace Netherlands3D.Minimap
 
             Vector2 position;
             Vector2 tileKey;
-
+            print(boundingBoxTiles);
             // Update the x / y tile 2D grid
             for(int x = 0; x < boundingBoxTiles.x; x++)
             {
@@ -193,7 +187,7 @@ namespace Netherlands3D.Minimap
                     };
 
                     // Check if the tile position is viewable
-                    Vector2 comparePosition = new Vector2(position.x * rectTransform.localScale.x + rectTransform.position.x, position.y * rectTransform.localScale.x + rectTransform.localPosition.y); // note: different
+                    Vector2 comparePosition = new Vector2(position.x * rectTransform.localScale.x + rectTransform.localPosition.x, position.y * rectTransform.localScale.x + rectTransform.localPosition.y); // note: different
                     
                     bool xWithinView = comparePosition.x + config.tileSize > 0 && comparePosition.x < rectTransformUI.sizeDelta.x;
                     bool yWithinView = comparePosition.y > 0 && comparePosition.y - config.tileSize < rectTransformUI.sizeDelta.y;
@@ -203,18 +197,22 @@ namespace Netherlands3D.Minimap
                         if(!tileLayers[layerIndex].ContainsKey(tileKey))
                         {
                             // Add a new tile
-                            GameObject a = new GameObject();
+                            GameObject a = new GameObject("Tile " + tileKey);
                             Tile tile = a.AddComponent<Tile>();
                             tile.Initialize(layerIndex, tileSize, position, tileKey, config);
                             tile.transform.SetParent(transform);
                             tileLayers[layerIndex].Add(tileKey, tile);
                         }
                     }
-                    else if(tileLayers[layerIndex].ContainsKey(tileKey))
+                    else 
                     {
-                        // Remove tile
-                        Destroy(tileLayers[layerIndex][tileKey].gameObject);
-                        tileLayers[layerIndex].Remove(tileKey);
+                        print("not visuable");
+                        if(tileLayers[layerIndex].ContainsKey(tileKey))
+                        {
+                            // Remove tile
+                            Destroy(tileLayers[layerIndex][tileKey].gameObject);
+                            tileLayers[layerIndex].Remove(tileKey);
+                        }
                     }
                 }
             }
