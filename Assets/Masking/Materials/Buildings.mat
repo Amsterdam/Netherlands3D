@@ -107,8 +107,8 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - MaskOffset: {r: 0, g: 2.5105488, b: 0, a: 0}
-    - MaskTiling: {r: 0, g: 0, b: 0, a: 0}
+    - MaskOffset: {r: 0.5352867, g: 0.45832574, b: 0, a: 0}
+    - MaskTiling: {r: 0.018608253, g: 0.018608253, b: 0, a: 0}
     - Tiling: {r: 1, g: 0, b: 1, a: 0}
     - Vector2_a053d6784ab440dc9bea8a74fa53151c: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 0.67079365, b: 0.2688679, a: 1}

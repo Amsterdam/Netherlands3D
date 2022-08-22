@@ -17,6 +17,9 @@ public class MaskRenderer : MonoBehaviour
     private Extent cameraExtent;
     private Extent lastCameraExtent;
 
+    [SerializeField] private float maskingMaxDistance = 1000;
+    private int textureSize = 1024;
+
     [SerializeField] private float offset = 500;
     [SerializeField] private float correction = 0;
     [SerializeField] private Material[] targetMaterials;
@@ -38,7 +41,7 @@ public class MaskRenderer : MonoBehaviour
 
     void LateUpdate()
     {
-        cameraExtent = Camera.main.GetExtent();
+        cameraExtent = Camera.main.GetExtent(maskingMaxDistance);
 
         if (!cameraExtent.Equals(lastCameraExtent))
         {
@@ -71,8 +74,9 @@ public class MaskRenderer : MonoBehaviour
     private void UpdateMaterialBounds()
     {
         //We do this square so we do not need dynamic rendertexture
+        var scale = (float)cameraExtent.Width * (1.0f + (2.0f / textureSize));
         maskTiling.Set(1.0f/(float)cameraExtent.Width, 1.0f/(float)cameraExtent.Width);
-        maskOffset.Set((float)cameraExtent.CenterX * correction, (float)cameraExtent.CenterY * correction);
+        maskOffset.Set((-(float)cameraExtent.CenterX / scale) + 0.5f, (-(float)cameraExtent.CenterY / scale) + 0.5f);
 
         foreach(var material in targetMaterials)
         {
