@@ -473,10 +473,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onHoverResize:
     serializedVersion: 2
-    x: 200
-    y: 200
-    width: 200
-    height: 200
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   wmts: {fileID: 155432377}
   navigation: {fileID: 674035189}
 --- !u!114 &316713661
