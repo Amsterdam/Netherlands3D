@@ -190,7 +190,6 @@ namespace Netherlands3D.Minimap
 		public void Zoomed(int viewerZoom)
 		{
 			tileSize = baseTileSize / Mathf.Pow(2, viewerZoom);
-			print("zoomed");
 			layerIdentifier = startIdentifier + viewerZoom;
 			CalculateGridScaling();
 			ActivateMapLayer();
@@ -198,12 +197,8 @@ namespace Netherlands3D.Minimap
 
 		private void CalculateGridScaling()
 		{
-			print(layerIdentifier);
 			divide = Mathf.Pow(2, layerIdentifier);
-			print(divide);
 			tileSizeInMeters = mapSizeInMeters / divide;
-			print(mapSizeInMeters);
-			print(tileSizeInMeters);
 
 			//The tile 0,0 its top left does not align with our region top left. So here we determine the offset.
 			layerTilesOffset = new Vector2(
@@ -222,7 +217,6 @@ namespace Netherlands3D.Minimap
 			//Calculate the amount of tiles needed for our app bounding box
 			boundsTilesX = Mathf.CeilToInt(boundsWidthInMeters / (float)tileSizeInMeters);
 			boundsTilesY = Mathf.CeilToInt(boundsHeightInMeters / (float)tileSizeInMeters);
-			print(boundsTilesX + " " + boundsTilesY);
 		}
 
 		private void RemoveOtherLayers()

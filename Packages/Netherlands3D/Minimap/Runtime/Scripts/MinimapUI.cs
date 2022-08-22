@@ -31,6 +31,14 @@ namespace Netherlands3D.Minimap
         /// </summary>
         private bool isDragging;
         /// <summary>
+        /// Min amount of zoom index
+        /// </summary>
+        private float zoomIndexMin = 0;
+        /// <summary>
+        /// Max amount of zoom index
+        /// </summary>
+        private float zoomIndexMax = 6;
+        /// <summary>
         /// The default size of the rect transform
         /// </summary>
         private Rect rectSizeDefault;
@@ -126,8 +134,23 @@ namespace Netherlands3D.Minimap
         }
 
         public void OnScroll(PointerEventData eventData)
-        {
-            throw new NotImplementedException();
+        {            
+            if(eventData.scrollDelta.y > 0)
+            {
+                // zoom in
+                if(wmts.LayerIndex < zoomIndexMax)
+                {
+                    wmts.Zoom(1);
+                }
+            }
+            else
+            {
+                // zoom out
+                if(wmts.LayerIndex > zoomIndexMin)
+                {
+                    wmts.Zoom(-1);
+                }
+            }
         }
 
         public void OnPointerEnter(PointerEventData eventData)

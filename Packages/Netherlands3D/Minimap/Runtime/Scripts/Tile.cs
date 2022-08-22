@@ -36,7 +36,7 @@ namespace Netherlands3D.Minimap
             Destroy(rawImage);
         }
 
-        public void Initialize(int layerIndex, float size, Vector2 position, Vector2 key, Configuration config)
+        public void Initialize(int layerIndex, Vector2 sizeDelta, Vector2 position, Vector2 key, Configuration config)
         {
             this.layerIndex = layerIndex;
             this.key = key;
@@ -47,8 +47,9 @@ namespace Netherlands3D.Minimap
             rawImage = gameObject.AddComponent<RawImage>();
             rawImage.raycastTarget = false;
             rawImage.rectTransform.pivot = new Vector2(0, 1);
-            rawImage.rectTransform.anchorMin = rawImage.rectTransform.anchorMax = new Vector2(0, 1);
-            rawImage.rectTransform.sizeDelta = Vector2.one * size;
+            //rawImage.rectTransform.anchorMin = rawImage.rectTransform.anchorMax = new Vector2(0, 1);
+            rawImage.rectTransform.localScale = Vector3.one;
+            rawImage.rectTransform.sizeDelta = sizeDelta;
             rawImage.enabled = false;
             rawImage.color = new Color(1f, 1f, 1f, 0);
 
