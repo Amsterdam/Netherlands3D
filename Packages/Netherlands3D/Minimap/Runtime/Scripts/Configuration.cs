@@ -11,6 +11,8 @@ namespace Netherlands3D.Minimap
     [CreateAssetMenu(fileName = "Minimap Configuration", menuName = "Netherlands3D/Minimap/Configuration")]
     public class Configuration : ScriptableObject
     {
+        [Tooltip("The url where to get the data from")]
+        public string serviceUrl;
         [Tooltip("The size of a tile")]
         public float tileSize = 256;
         [Tooltip("The amount of pixels in a meter")]

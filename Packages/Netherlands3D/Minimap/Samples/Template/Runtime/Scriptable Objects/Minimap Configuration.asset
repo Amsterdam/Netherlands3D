@@ -12,11 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0e30f5856ba3d14e83d9d715461e076, type: 3}
   m_Name: Minimap Configuration
   m_EditorClassIdentifier: 
+  serviceUrl: https://t1.data.amsterdam.nl/topo_rd/{zoom}/{x}/{y}.png
   tileSize: 256
-  pixelsInMeter: 0
-  scaleDenominator: 0
-  mapRect:
-    topRightX: 0
-    topRightY: 0
-    bottomLeftX: 0
-    bottomLeftY: 0
+  pixelsInMeter: 0.00028
+  scaleDenominator: 12288000
+  minimapTopLeft:
+    x: -285401.9
+    y: 22598.08
+  topRight:
+    x: 141000
+    y: 501000
+  bottomLeft:
+    x: 109000
+    y: 474000
+  alignment: 0

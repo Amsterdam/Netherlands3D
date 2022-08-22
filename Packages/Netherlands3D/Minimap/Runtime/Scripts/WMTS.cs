@@ -39,6 +39,10 @@ namespace Netherlands3D.Minimap
         [Header("Components")]
         [Tooltip("The configuration of the minimap")]
         [SerializeField] private Configuration config;
+        [Tooltip("The rect transform of the FOV")]
+        [SerializeField] private RectTransform rectTransformFOV;
+        [Tooltip("The rect transform of pointer")]
+        [SerializeField] private RectTransform rectTransformPointer;
 
         /// <summary>
         /// Center the pointer in the view
@@ -151,10 +155,24 @@ namespace Netherlands3D.Minimap
         }
 
         /// <summary>
+        /// Position a rect transform on the map
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="targetPosition"></param>
+        public void PositionOnMap(RectTransform target, Vector3RD targetPosition)
+        {
+            target.transform.localScale = Vector3.one / rectTransform.localScale.x;
+            target.transform.localPosition = DeterminePositionOnMap(targetPosition);
+        }
+
+        /// <summary>
         /// Update the WMTS tiles, normally called from MinimapUI OnDrag
         /// </summary>
         public void UpdateTiles()
         {
+            Debug.Log("update t");
+            Clamp();
+
             Vector2 position;
             Vector2 tileKey;
 
@@ -187,7 +205,8 @@ namespace Netherlands3D.Minimap
                             // Add a new tile
                             GameObject a = new GameObject();
                             Tile tile = a.AddComponent<Tile>();
-                            tile.Initialize();
+                            tile.Initialize(layerIndex, tileSize, position, tileKey, config);
+                            tile.transform.SetParent(transform);
                             tileLayers[layerIndex].Add(tileKey, tile);
                         }
                     }
@@ -199,6 +218,8 @@ namespace Netherlands3D.Minimap
                     }
                 }
             }
+
+            MovePointer();
         }
 
         /// <summary>
@@ -240,6 +261,42 @@ namespace Netherlands3D.Minimap
 
             // Calculate the amount of tiles needed for the bounding box
             boundingBoxTiles = new Vector2(Mathf.CeilToInt(boundingBoxMeters.x / (float)tileSizeMeters), Mathf.CeilToInt(boundingBoxMeters.y / (float)tileSizeMeters));
+        }
+
+        /// <summary>
+        /// Clamp the minimap
+        /// </summary>
+        private void Clamp()
+        {
+            Vector2 maxPosUnits = new Vector2(-(boundingBoxMeters.x / startMeterInPixels), (boundingBoxMeters.y / startMeterInPixels)) * transform.localScale.x;
+
+            transform.localPosition = new Vector3(Mathf.Clamp(transform.localPosition.x, maxPosUnits.x + rectTransformUI.sizeDelta.x, 0), Mathf.Clamp(transform.localPosition.y, rectTransformUI.sizeDelta.y, maxPosUnits.y), 0);
+        }
+
+        /// <summary>
+        /// Determine the RD position on the map
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        private Vector3 DeterminePositionOnMap(Vector3RD position)
+        {
+            Vector2RD meters = new Vector2RD(position.x - (float)config.bottomLeft.x, position.y - (float)config.topRight.y);
+            Vector2RD pixels = new Vector2RD(meters.x / startMeterInPixels, meters.y / startMeterInPixels);
+
+            return new Vector3((float)pixels.x, (float)pixels.y);
+        }
+
+        /// <summary>
+        /// Move the pointer to correct position
+        /// </summary>
+        private void MovePointer()
+        {
+            rectTransformFOV.SetAsLastSibling();
+            rectTransformPointer.SetAsLastSibling();
+
+            PositionOnMap(rectTransformPointer, CoordConvert.UnitytoRD(Camera.main.transform.position));
+
+            if(CenterPointerInView) transform.localPosition = -rectTransformPointer.localPosition * rectTransform.localScale.x + (Vector3)rectTransformUI.sizeDelta * 0.5f;
         }
 
         /// <summary>
