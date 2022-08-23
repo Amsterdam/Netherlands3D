@@ -92,6 +92,10 @@ namespace Netherlands3D.FileExport.DXF
 
         }
 
+        /// <summary>
+        /// reads the coordinate-list in the file and turns it into dxf-meshes
+        /// </summary>
+        /// <param name="vertexfile"></param>
         public override void AddMesh(string vertexfile)
         {
 
