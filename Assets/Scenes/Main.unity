@@ -413,9 +413,10 @@ MonoBehaviour:
   unregisterGameobject: {fileID: 11400000, guid: 7a553a650874dd5439063c8b00349833, type: 2}
   receiveBoundaryPolygon: {fileID: 11400000, guid: 1fc167587f2945e45847760c83e0599d, type: 2}
   startClipping: {fileID: 11400000, guid: aa3d8a0f12f263f43b5bc44fa02cc7b6, type: 2}
-  HasTilehandlerFineshedLoading: {fileID: 0}
+  TileHandlerIsBusy: {fileID: 11400000, guid: 020969526a9e9154ea816f62868df9d2, type: 2}
   ExportFileType: {fileID: 0}
   CancelClipping: {fileID: 0}
+  PauseTileHandler: {fileID: 11400000, guid: 117b4496db64b1746b53c53badfa7aed, type: 2}
   startedFinished: {fileID: 11400000, guid: 4f59239d3aaee8c4e918d954af556bba, type: 2}
   progresstext: {fileID: 11400000, guid: 92e9db6eb55b0a24795e010fe26d487f, type: 2}
   progresspercentage: {fileID: 11400000, guid: 4a6ebd29931d30842861f9ded8bd2e4e, type: 2}
