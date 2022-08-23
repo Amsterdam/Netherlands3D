@@ -22,86 +22,52 @@ public class FreeCamera : MonoBehaviour
 {
     [Header("Options")]
     [Tooltip("Move forward on world plane instead of camera forward")]
-    [SerializeField]
-    private bool moveForwardOnPlane = true;
+    [SerializeField] private bool moveForwardOnPlane = true;
     [Tooltip("Value threshold from 0 to 1 to switch to dragging coplanar")]
-    [SerializeField]
-    private float dragOnPlaneThreshold = 0.5f;
-    [SerializeField]
-    private bool dragToMoveCamera = true;
-    [SerializeField]
-    private bool multiplySpeedBasedOnHeight = true;
+    [SerializeField] private float dragOnPlaneThreshold = 0.5f;
+    [SerializeField] private bool dragToMoveCamera = true;
+    [SerializeField] private bool multiplySpeedBasedOnHeight = true;
 
     [Header("Speeds")]
-    [SerializeField]
-    private float moveSpeed = 1.0f;
-    [SerializeField]
-    private float upAndDownSpeed = 10.0f;
-    [SerializeField]
-    private float dragSpeed = 1.0f;
-    [SerializeField]
-    private float easing = 1.0f;
-    [SerializeField]
-    private float zoomSpeed = 1.0f;
+    [SerializeField] private float moveSpeed = 1.0f;
+    [SerializeField] private float upAndDownSpeed = 10.0f;
+    [SerializeField] private float dragSpeed = 1.0f;
+    [SerializeField] private float easing = 1.0f;
+    [SerializeField] private float zoomSpeed = 1.0f;
     private float dynamicMoveSpeed = 1.0f;
     private float dynamicDragSpeed = 1.0f;
     private float dynamicZoomSpeed = 1.0f;
 
-    [SerializeField]
-    private float minimumSpeed = 5.0f;
-    [SerializeField]
-    private float maximumSpeed = 1000.0f;
-    [SerializeField]
-    private float minimumDragSpeed = 5.0f;
-    [SerializeField]
-    private float maximumDragSpeed = 1000.0f;
-    [SerializeField]
-    private float dragRotateSpeed = 1.0f;
-
-    [SerializeField]
-    private float rotateAroundPointSpeed = 1.0f;
+    [SerializeField] private float minimumSpeed = 5.0f;
+    [SerializeField] private float maximumSpeed = 1000.0f;
+    [SerializeField] private float minimumDragSpeed = 5.0f;
+    [SerializeField] private float maximumDragSpeed = 1000.0f;
+    [SerializeField] private float dragRotateSpeed = 1.0f;
+    [SerializeField] private float rotateAroundPointSpeed = 1.0f;
 
     [Header("Gamepad")]
-    [SerializeField]
-    private float gamepadRotateSpeed = 1.0f;
-    [SerializeField]
-    private float gamepadMoveSpeed = 1.0f;
+    [SerializeField] private float gamepadRotateSpeed = 1.0f;
+    [SerializeField] private float gamepadMoveSpeed = 1.0f;
 
     [Header("Limits")]
-    [SerializeField]
-    private float maxPointerDistance = 10000;
-    [SerializeField]
-    private float maxCameraHeight = 1500;
-    [SerializeField]
-    private float minCameraHeight = -500;
-    [SerializeField]
-    private bool useRotationLimits = true;
+    [SerializeField] private float maxPointerDistance = 10000;
+    [SerializeField] private float maxCameraHeight = 1500;
+    [SerializeField] private float minCameraHeight = -500;
+    [SerializeField] private bool useRotationLimits = true;
 
     [Header("Listen to input events")]
-    [SerializeField]
-    private FloatEvent horizontalInput;
-    [SerializeField]
-    private FloatEvent verticalInput;
-    [SerializeField]
-    private FloatEvent upDownInput;
-    [SerializeField]
-    private Vector3Event lookInput;
-    [SerializeField]
-    private Vector3Event flyInput;
-    [SerializeField]
-    private Vector3Event rotateInput;
-
-    [SerializeField]
-    private FloatEvent zoomToPointerInput;
-    [SerializeField]
-    private Vector3Event pointerPosition;
-
-    [SerializeField]
-    private BoolEvent dragModifier;
-    [SerializeField]
-    private BoolEvent rotateModifier;
-    [SerializeField]
-    private BoolEvent firstPersonModifier;
+    [SerializeField] private FloatEvent horizontalInput;
+    [SerializeField] private FloatEvent verticalInput;
+    [SerializeField] private FloatEvent upDownInput;
+    [SerializeField] private Vector3Event lookInput;
+    [SerializeField] private Vector3Event flyInput;
+    [SerializeField] private Vector3Event rotateInput;
+    [SerializeField] public BoolEvent blockCameraDrag;
+    [SerializeField] private FloatEvent zoomToPointerInput;
+    [SerializeField] private Vector3Event pointerPosition;
+    [SerializeField] private BoolEvent dragModifier;
+    [SerializeField] private BoolEvent rotateModifier;
+    [SerializeField] private BoolEvent firstPersonModifier;
 
     private Vector3 currentPointerPosition;
     private Vector3 zoomTarget;
@@ -113,6 +79,7 @@ public class FreeCamera : MonoBehaviour
     private Vector3 currentPointerDelta;
 
     private bool dragging = false;
+    private bool lockDraggingInput = false;
     private bool rotate = false;
     private bool rotatingAroundPoint = false;
     private bool firstPersonRotate = false;
@@ -139,6 +106,18 @@ public class FreeCamera : MonoBehaviour
         dragModifier.started.AddListener(Drag);
         rotateModifier.started.AddListener(Rotate);
         firstPersonModifier.started.AddListener(RotateFirstPerson);
+
+        blockCameraDrag.started.AddListener(LockDragging);
+    }
+
+    /// <summary>
+    /// Set dragging input to locked/unlocked. This ignores pointer drag input while still allowing other movement inputs.
+    /// If another feature used mouse pointer but want to stop the camera from dragging while click+dragging, set this to locked.
+    /// </summary>
+    /// <param name="locked">Lock pointer drag events</param>
+    public void LockDragging(bool locked)
+    {
+        lockDraggingInput = locked;
     }
 
     /// <summary>
@@ -318,6 +297,11 @@ public class FreeCamera : MonoBehaviour
 	public void Drag(bool isDragging)
 	{
         if (!dragToMoveCamera) return;
+        if(lockDraggingInput)
+        {
+            dragVelocity = Vector3.zero;
+            return;
+        }
 
 		if(!dragging && isDragging)
         {

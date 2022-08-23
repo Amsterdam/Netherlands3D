@@ -11,6 +11,8 @@ public class BaseCameraInputProvider : MonoBehaviour
     [HideInInspector]
     public bool ingoringInput = false;
     [HideInInspector]
+    public bool lockDraggingInput = false;
+    [HideInInspector]
     public bool isDragging = false;
 
     [Header("Invoke events")]
