@@ -4,23 +4,40 @@ using UnityEngine;
 using Netherlands3D.Events;
 using System.IO;
 using Netherlands3D.FileExport.DXF;
+using System.Runtime.InteropServices;
+using System.Text;
 
 public class SelectionExport : MonoBehaviour
 {
-    #region Events
-    [Header("listening To (required:")]
-    [SerializeField] GameObjectEvent registerGameobject;
-    [SerializeField] GameObjectEvent unregisterGameobject;
-    [SerializeField] Vector3ListEvent receiveBoundaryPolygon;
-    [SerializeField] TriggerEvent startClipping;
-    [SerializeField] BoolEvent TileHandlerIsBusy;
-    
-    [Header("listening To (optional:")]
-    [SerializeField] StringEvent ExportFileType; //needed?
-    [SerializeField] TriggerEvent CancelClipping;
 
-    [Header("Sending (optional)")]
+
+    #region Events
+
+
+
+    [Header("geometry-interaction")]
+    [Tooltip("called by Geometry-objects that want their data clipped")]
+    [SerializeField] GameObjectEvent registerGameobject;
+    [Tooltip("called by Geometry-objects that don't want their data clipped anymore")]
+    [SerializeField] GameObjectEvent unregisterGameobject;
+
+    [Tooltip("(optional) tells the tilehandler to pause loading and changing objects")]
     [SerializeField] BoolEvent PauseTileHandler;
+    [Tooltip("(optional) if set: waits for this call, bwfore starting the clipping-procedure")]
+    [SerializeField] BoolEvent TileHandlerIsBusy;
+
+
+    [Header ("clipsettings")]
+    [Tooltip("tells the clipper alongt which boundary to clip")]
+    [SerializeField] Vector3ListEvent receiveBoundaryPolygon;
+    [Tooltip("event is sent when a Boundary-polygon has been received")]//boundary-polygon-creator should de-activate itself after creating a polygon?
+    [SerializeField] BoolEvent DeactivatePolygonSelection;
+    [Tooltip("which filetype to create. dxf or collada")]
+    [SerializeField] StringEvent ExportFileType;
+
+    [SerializeField] TriggerEvent startClipping;
+    
+
 
     [Header("progressEvents (optional)")]
     [SerializeField] BoolEvent startedFinished;
@@ -28,8 +45,10 @@ public class SelectionExport : MonoBehaviour
     [SerializeField] FloatEvent progresspercentage;
     [SerializeField] StringEvent errorMessage;
 
-    [Header("outputEvents")]
-    [SerializeField] StringListEvent resultingData; //only listen if we are expecting data.
+    [Header("not yet inplemented")]
+    [SerializeField] TriggerEvent CancelClipping;
+
+
     List<string> resultingFiles = new List<string>();
     #endregion
 
@@ -40,6 +59,7 @@ public class SelectionExport : MonoBehaviour
     #endregion
 
     #region variables
+    string filetype;
     bool tilehandlerIsBusy;
     List<MeshFilter> meshFiltersToClip = new List<MeshFilter>();
     long trianglesToClipCount;    
@@ -50,18 +70,6 @@ public class SelectionExport : MonoBehaviour
 
 
     ClipConcave clipper;
-    public LineRenderer clipboundary;
-    void ReadClipLineRenderer()
-    {
-        boundaryBounds = new Bounds();
-        boundaryPolygon.Clear();
-        for (int i = 0; i < clipboundary.positionCount; i++)
-        {
-            boundaryPolygon.Add(clipboundary.GetPosition(i));
-            boundaryBounds.Encapsulate(clipboundary.GetPosition(i));
-        }
-    }
-   
 
 
     private void Awake()
@@ -71,6 +79,10 @@ public class SelectionExport : MonoBehaviour
         receiveBoundaryPolygon.started.AddListener(OnReceiveBoundaryPolygon);
         startClipping.started.AddListener(OnStartClipping);
         TileHandlerIsBusy.started.AddListener(OnTileHandlerChangedStatus);
+        if (ExportFileType)
+        {
+            ExportFileType.started.AddListener(OnFileTypeChanged);
+        }
 
     }
 
@@ -91,12 +103,23 @@ public class SelectionExport : MonoBehaviour
     }
     void OnReceiveBoundaryPolygon(List<Vector3> value)
     {
-        boundaryPolygon = value;
+       
+        
+        boundaryPolygon.Clear();
         boundaryBounds = new Bounds();
 
-        for (int i = 0; i < boundaryPolygon.Count; i++)
+        for (int i = 0; i < value.Count; i++)
         {
+            boundaryPolygon.Add(value[i]);
             boundaryBounds.Encapsulate(boundaryPolygon[i]);
+        }
+        if (errorMessage)
+        {
+            errorMessage.started.Invoke("");
+        }
+        if (DeactivatePolygonSelection)
+        {
+            DeactivatePolygonSelection.started.Invoke(false);
         }
     }
 
@@ -104,16 +127,41 @@ public class SelectionExport : MonoBehaviour
     {
         tilehandlerIsBusy = value;
     }
+    void OnFileTypeChanged(string value)
+    {
+        if (value == "collada")
+        {
+            filetype = value;
+        }
+        else if (value == "dxf")
+        {
+            filetype = value;
+        }
+        else
+        {
+            Debug.LogError($"(value) is not a valid filetype");
+        }
+    }
 
     void OnStartClipping()
     {
-        ReadClipLineRenderer();
+        //ReadClipLineRenderer();
         clipper = new ClipConcave();
         //check if input is complete
-        if (boundaryPolygon is null)
+        if (boundaryPolygon.Count==0)
         {
+            if (errorMessage)
+            {
+                errorMessage.started.Invoke("please select an area to download first");
+            }
             return;
         }
+        if (errorMessage)
+        {
+            errorMessage.started.Invoke("");
+        }
+
+
         if (selectedGameObjects.Count == 0)
         {
             // nothing to export
@@ -351,12 +399,22 @@ public class SelectionExport : MonoBehaviour
 
     IEnumerator WriteToFile()
     {
-        if (outputcreator is null)
+        outputcreator = null;
+        if (filetype=="dxf")
         {
             outputcreator = new dxf();
         }
+        if (filetype =="collada")
+        {
+            outputcreator = new Collada();
+        }
+        if (outputcreator is null)
+        {
+            Debug.Log("cannot create " + filetype + "-files");
+            yield break; ;
+        }
         
-        outputcreator.SetupFile(Application.persistentDataPath, "output.dxf");
+        outputcreator.SetupFile(Application.persistentDataPath, "output");
         for (int i = 0; i < resultingFiles.Count; i++)
         {
             string filename = Path.GetFileName(resultingFiles[i]).Replace(".bin","");
@@ -370,5 +428,11 @@ public class SelectionExport : MonoBehaviour
 
         BroadcastStartedFInished(false);
         Debug.Log("file created: "+Path.Combine(Application.persistentDataPath,"output.dxf" ));
+
+
+
+
     }
+
+   
 }

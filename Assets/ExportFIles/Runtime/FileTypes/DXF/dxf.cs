@@ -6,12 +6,14 @@ using netDxf;
 using netDxf.Entities;
 using netDxf.Tables;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Netherlands3D.FileExport.DXF
 {
     public class dxf : Geometryfile
     {
-
+        [DllImport("__Internal")]
+        private static extern void DownloadFile(byte[] array, int byteLength, string fileName);
         private DxfDocument dxfDocument;
         private string fullPath;
         List<Vector3RD> RDCoordinates = new List<Vector3RD>();
@@ -44,7 +46,21 @@ namespace Netherlands3D.FileExport.DXF
 
         public override void SaveFile()
         {
-            dxfDocument.Save(fullPath, true);
+#if UNITY_EDITOR
+            dxfDocument.Save(Path.Combine(Application.dataPath,"output"), true);
+#else
+            using (var stream = new MemoryStream())
+            {
+                if (dxfDocument.Save(stream))
+                {
+                    DownloadFile(stream.ToArray(), stream.ToArray().Length, "testfile.dxf");
+                }
+                else
+                {
+                    Debug.Log("cant write file");
+                }
+            }
+#endif
         }
 
         private void AddMesh(List<Vector3RD> triangleVertices, Layer dxfLayer)
