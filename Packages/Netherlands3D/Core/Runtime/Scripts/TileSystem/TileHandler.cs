@@ -23,6 +23,7 @@ using Netherlands3D.Core;
 using System.Linq;
 using UnityEngine.Networking;
 using UnityEditor;
+using Netherlands3D.Events;
 
 namespace Netherlands3D.TileSystem
 {
@@ -32,15 +33,19 @@ namespace Netherlands3D.TileSystem
 		/// if true, prevents all layers from updating tiles
 		/// downloading data continues if already started
 		/// </summary>
+		public bool loadingPaused;
 		public bool pauseLoading
 		{
+			
             set
             {
-                foreach (Layer layer in layers)
-                {
-					layer.pauseLoading = value; 
-                }
+				loadingPaused = value;
+				//foreach (Layer layer in layers)
+                //{
+				//	layer.pauseLoading = value; 
+                //}
             }
+
 		}
 		public int maximumConcurrentDownloads = 6;
 
@@ -108,7 +113,22 @@ namespace Netherlands3D.TileSystem
 
 		private float groundLevelClipRange = 1000;
 
-		void Start()
+		[Header("listening to EVents:")]
+		[SerializeField] BoolEvent pauseLoadingEvent;
+
+		[Header("sending events")]
+		public bool isbusy = false;
+		[SerializeField] BoolEvent isBusyEvent;
+
+        private void Awake()
+        {
+            if (pauseLoadingEvent)
+            {
+				pauseLoadingEvent.started.AddListener(OnPauseLoading);
+            }
+        }
+
+        void Start()
 		{
 			layers = GetComponentsInChildren<Layer>(false).ToList();
 			if (layers.Count == 0)
@@ -128,6 +148,23 @@ namespace Netherlands3D.TileSystem
 			if (tileSizes.Count == 0)
 			{
 				GetTilesizes();
+			}
+		}
+
+		public void OnPauseLoading(bool value)
+        {
+			pauseLoading = value;
+        }
+
+		public void BroadcastBusyState(bool value)
+        {
+            if (isbusy!=value)
+            {
+            if (isBusyEvent)
+            {
+					isbusy = value;
+				isBusyEvent.started.Invoke(value);
+            }
 			}
 		}
 
@@ -182,23 +219,50 @@ namespace Netherlands3D.TileSystem
 
 		void Update()
 		{
+
             if (layers.Count==0)
             {
+				BroadcastBusyState(false);
 				return;
             }
+            
 			viewRange = GetViewRange();
 			cameraPosition = GetRDCameraPosition();
 
-			GetTileDistancesInView(tileSizes, viewRange, cameraPosition);
+			
 
 			pendingTileChanges.Clear();
+            if (loadingPaused)
+            {
+                if (activeTileChanges.Count == 0)
+                {
+					BroadcastBusyState(false);
+					return;
+                }
+            }
+
+			GetTileDistancesInView(tileSizes, viewRange, cameraPosition);
 			RemoveOutOfViewTiles();
 			GetTileChanges();
+            if (pendingTileChanges.Count+activeTileChanges.Count>0)
+            {
+				BroadcastBusyState(true);
+            }
+			else
+            {
+				BroadcastBusyState(false);
+            }
 
-			if (pendingTileChanges.Count == 0) 	return; 
+			
+			
 
+			
 			//Start with all remove changes to clear resources. We to all remove actions, and stop any running tilechanges that share the same position and layerindex
 			InstantlyStartRemoveChanges();
+			if (loadingPaused)
+			{
+				return;
+			}
 
 			if (activeTileChanges.Count < maximumConcurrentDownloads && pendingTileChanges.Count > 0)
 			{
