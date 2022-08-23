@@ -33,11 +33,11 @@ namespace Netherlands3D.Minimap
         /// <summary>
         /// Min amount of zoom index
         /// </summary>
-        private float zoomIndexMin = 0;
+        private float zoomIndexMin = 6;
         /// <summary>
         /// Max amount of zoom index
         /// </summary>
-        private float zoomIndexMax = 6;
+        private float zoomIndexMax = 11;
         /// <summary>
         /// The default size of the rect transform
         /// </summary>
@@ -138,15 +138,15 @@ namespace Netherlands3D.Minimap
             if(eventData.scrollDelta.y > 0)
             {
                 // zoom in
-                if(wmts.LayerIndex < zoomIndexMax)
+                if(wmts.LayerIndex + 1 <= zoomIndexMax)
                 {
-                    wmts.Zoom(1);
+                    wmts.Zoom(1);                    
                 }
             }
             else
             {
                 // zoom out
-                if(wmts.LayerIndex > zoomIndexMin)
+                if(wmts.LayerIndex - 1 >= zoomIndexMin)
                 {
                     wmts.Zoom(-1);
                 }

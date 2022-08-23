@@ -28,6 +28,7 @@ namespace Netherlands3D.Minimap
 
         private void OnDestroy()
         {
+            rawImage.enabled = false;
             StopAllCoroutines();
             // Cleanup
             if(request != null) request.Dispose();

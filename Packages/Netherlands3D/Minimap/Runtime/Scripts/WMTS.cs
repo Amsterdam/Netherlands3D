@@ -29,10 +29,11 @@ namespace Netherlands3D.Minimap
             get { return layerIndex; }
             set
             {
+                RemoveTiles();
                 layerIndex = value;
                 CalculateGridScaling();
-                RemoveNonIndexLayers();
                 ActivateLayerIndex();
+                UpdateTiles();
             }
         }
 
@@ -109,7 +110,7 @@ namespace Netherlands3D.Minimap
         /// <summary>
         /// Contains the tiles from each layer
         /// </summary>
-        private Dictionary<int, Dictionary<Vector2, Tile>> tileLayers = new Dictionary<int, Dictionary<Vector2, Tile>>();
+        private Dictionary<int, Dictionary<Vector2, Tile>> tileLayers = new Dictionary<int, Dictionary<Vector2, Tile>>(); // Why have multiple layers? Its a performance hit
 
         private void Awake()
         {
@@ -184,13 +185,12 @@ namespace Netherlands3D.Minimap
                         _ => throw new System.Exception("Invalid enum value")
                     };
 
-                    // Check if the tile position is viewable
-                    Vector2 comparePosition = new Vector2(position.x * rectTransform.localScale.x + rectTransform.localPosition.x, position.y * rectTransform.localScale.x + rectTransform.localPosition.y); // note: different
-                    
-                    bool xWithinView = comparePosition.x + config.tileSize > 0 && comparePosition.x < rectTransformUI.sizeDelta.x;
-                    bool yWithinView = comparePosition.y > 0 && comparePosition.y - config.tileSize < rectTransformUI.sizeDelta.y;
+                    // Check if the tile position is viewable (generate a 3x3 grid around center
+                    Vector2 relPos = new Vector2(position.x + rectTransform.localPosition.x, position.y + rectTransform.localPosition.y);
+                    bool inViewX = Mathf.Abs(relPos.x) <= rectTransformUI.rect.width + rectTransformUI.rect.width * 0.5f;
+                    bool inViewY = Mathf.Abs(relPos.y) <= rectTransformUI.rect.height + rectTransformUI.rect.height * 0.5f;
 
-                    if(true || xWithinView && yWithinView)
+                    if(inViewX && inViewY)
                     {
                         if(!tileLayers[layerIndex].ContainsKey(tileKey))
                         {
@@ -204,7 +204,6 @@ namespace Netherlands3D.Minimap
                     }
                     else 
                     {
-                        print("not visuable");
                         if(tileLayers[layerIndex].ContainsKey(tileKey))
                         {
                             // Remove tile
@@ -221,12 +220,15 @@ namespace Netherlands3D.Minimap
         /// <summary>
         /// Zoom in or out
         /// </summary>
-        /// <param name="zoom">The zoom level to be added</param>
-        public void Zoom(int zoom)
+        /// <param name="zoom">The zoom level to be added to layerIndex</param>
+        public void Zoom(int zoom, PointerEventData eventData = null)
         {
             tileSize = config.tileSize / Mathf.Pow(2, zoom);
-
-            LayerIndex = layerStartIndex + zoom;
+            Vector3 preZoomPos = transform.localPosition;
+            LayerIndex += zoom;
+            if(zoom > 0) transform.localPosition = preZoomPos * 2; else transform.localPosition = preZoomPos * 0.5f;
+            //if(eventData != null) transform.localPosition += transform.InverseTransformPoint(eventData.position);
+            UpdateTiles(); // Not optimal but works
         }
 
         /// <summary>
@@ -257,6 +259,7 @@ namespace Netherlands3D.Minimap
 
             // Calculate the amount of tiles needed for the bounding box
             boundingBoxTiles = new Vector2(Mathf.CeilToInt(boundingBoxMeters.x / (float)tileSizeMeters), Mathf.CeilToInt(boundingBoxMeters.y / (float)tileSizeMeters));
+            boundingBoxTiles.y += 1;
         }
 
         /// <summary>
@@ -296,12 +299,21 @@ namespace Netherlands3D.Minimap
         }
 
         /// <summary>
-        /// Removes layers that arent from the current layerIndex
+        /// Removes all tiles
         /// </summary>
-        private void RemoveNonIndexLayers()
+        private void RemoveTiles()
         {
+            foreach(var item in tileLayers[LayerIndex])
+            {
+                Destroy(item.Value.gameObject);
+            }
+            tileLayers[LayerIndex].Clear();
+
+            return;
+            // First make a copy to avoid "Collection was modified; enumeration operation may not execute." error
+            List<int> tileLayerKeys = new List<int>(tileLayers.Keys);
             // Item being the tileLayer key index
-            foreach(int item in tileLayers.Keys)
+            foreach(int item in tileLayerKeys)
             {
                 // Remove all layers behind the top layer except the first & one below layerIndex
                 if(item < layerIndex - 1 && item != layerStartIndex || item > layerIndex)
