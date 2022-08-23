@@ -7,90 +7,95 @@ using UnityEngine.EventSystems;
 
 namespace Netherlands3D.Minimap
 {
-    public class Tile : MonoBehaviour
-    {
-        /// <summary>
-        /// The layerIndex of the minimap
-        /// </summary>
-        private int layerIndex;
-        /// <summary>
-        /// The key of this tile (position on the minimap)
-        /// </summary>
-        private Vector2 key;
-        /// <summary>
-        /// The raw image used for minimap texture
-        /// </summary>
-        private RawImage rawImage;
+	/// <summary>
+	/// A minimap tile
+	/// </summary>
+	public class Tile : MonoBehaviour
+	{
+		public RawImage TextureTargetRawImage { get => rawImage; private set => rawImage = value; }
 
-        private Configuration config;
+		private const float fadeSpeed = 3.0f;
+		private int zoomLevel = 0;
+		private Vector2 tileKey;
+		private RawImage rawImage;
+		private UnityWebRequest uwr;
+		private MinimapConfig config;
+		private void OnDestroy()
+		{
+			StopAllCoroutines();
 
-        private UnityWebRequest request;
+			//Makes sure the UnityWebRequestTexture is disposed of
+			//It holds an internal Texture2D that cant be GC'd
+			if(uwr != null) uwr.Dispose();
 
-        private void OnDestroy()
-        {
-            rawImage.enabled = false;
-            StopAllCoroutines();
-            // Cleanup
-            if(request != null) request.Dispose();
-            Destroy(rawImage.texture);
-            rawImage.texture = null;
-            Destroy(rawImage);
-        }
+			//Cleanup texture from memory
+			Destroy(TextureTargetRawImage.texture);
+			TextureTargetRawImage.texture = null;
 
-        public void Initialize(int layerIndex, Vector2 sizeDelta, Vector2 position, Vector2 key, Configuration config)
-        {
-            this.layerIndex = layerIndex;
-            this.key = key;
-            this.config = config;
-            transform.localPosition = position;
+			Destroy(TextureTargetRawImage);
+		}
 
-            // Generate raw image
-            rawImage = gameObject.AddComponent<RawImage>();
-            rawImage.raycastTarget = false;
-            rawImage.rectTransform.pivot = new Vector2(0, 1);
-            //rawImage.rectTransform.anchorMin = rawImage.rectTransform.anchorMax = new Vector2(0, 1);
-            rawImage.rectTransform.localScale = Vector3.one;
-            rawImage.rectTransform.sizeDelta = sizeDelta;
-            rawImage.enabled = false;
-            rawImage.color = new Color(1f, 1f, 1f, 0);
+		public void Initialize(Transform container, int zoom, float size, float xLocation, float yLocation, Vector2 key, MinimapConfig config)
+		{
+			zoomLevel = zoom;
+			tileKey = key;
+			name = tileKey.x + "/" + tileKey.y;
 
-            StartCoroutine(LoadTexture());
-        }
+			this.config = config;
 
-        /// <summary>
-        /// Loads the texture from the internet based on zoomIndex, & key
-        /// </summary>
-        /// <returns></returns>
-        private IEnumerator LoadTexture()
-        {
-            string url = config.serviceUrl.Replace("{zoom}", layerIndex.ToString()).Replace("{x}", key.x.ToString()).Replace("{y}", key.y.ToString());
+			transform.SetParent(container, false);
 
-            using(request = UnityWebRequestTexture.GetTexture(url, true))
-            {
-                yield return request.SendWebRequest();
+			//generate a new rawimage
+			TextureTargetRawImage = this.gameObject.AddComponent<RawImage>();
+			TextureTargetRawImage.raycastTarget = false;
+			TextureTargetRawImage.rectTransform.pivot = new Vector2(0, 1);
+			TextureTargetRawImage.rectTransform.anchorMin = TextureTargetRawImage.rectTransform.anchorMax = new Vector2(0, 1);
+			TextureTargetRawImage.rectTransform.sizeDelta = Vector2.one * size;
+			ClearTextureImage();
 
-                if(request.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.LogWarning("[Minimap] Could not find minimap tile: " + key.ToString());
-                }
-                else
-                {
-                    Texture2D texture = DownloadHandlerTexture.GetContent(request);
-                    texture.wrapMode = TextureWrapMode.Clamp;
-                    rawImage.texture = texture;
-                    rawImage.enabled = true;
-                    StartCoroutine(RawImageFadeIn());
-                }
-            }
-        }
+			//Position it in our parent according to x an y grid
+			transform.localPosition = new Vector3(xLocation, yLocation, 0);
 
-        private IEnumerator RawImageFadeIn()
-        {
-            while(rawImage.color.a < 1f)
-            {
-                rawImage.color = new Color(rawImage.color.r, rawImage.color.g, rawImage.color.b, rawImage.color.a + 3 * Time.deltaTime);
-                yield return new WaitForEndOfFrame();
-            }
-        }
-    }
+			StartCoroutine(LoadTexture(zoomLevel, (int)tileKey.x, (int)tileKey.y));
+		}
+
+		private void ClearTextureImage()
+		{
+			TextureTargetRawImage.enabled = false;
+			TextureTargetRawImage.color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+		}
+
+		private IEnumerator FadeInRawImage()
+		{
+			while(TextureTargetRawImage.color.a < 1.0f)
+			{
+				TextureTargetRawImage.color = new Color(TextureTargetRawImage.color.r, TextureTargetRawImage.color.g, TextureTargetRawImage.color.b, TextureTargetRawImage.color.a + fadeSpeed * Time.deltaTime);
+				yield return new WaitForEndOfFrame();
+			}
+		}
+
+		private IEnumerator LoadTexture(int zoom, int x, int y)
+		{
+			var tileImageUrl = config.ServiceUrl.Replace("{zoom}", zoom.ToString()).Replace("{x}", x.ToString()).Replace("{y}", y.ToString());
+
+			using(uwr = UnityWebRequestTexture.GetTexture(tileImageUrl, true))
+			{
+				yield return uwr.SendWebRequest();
+
+				if(uwr.result != UnityWebRequest.Result.Success)
+				{
+					Debug.Log("Could not find minimap tile :" + tileImageUrl);
+				}
+				else
+				{
+					var texture = DownloadHandlerTexture.GetContent(uwr);
+					texture.wrapMode = TextureWrapMode.Clamp;
+					TextureTargetRawImage.texture = texture;
+					TextureTargetRawImage.enabled = true;
+					TextureTargetRawImage.color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+					StartCoroutine(FadeInRawImage());
+				}
+			}
+		}
+	}
 }

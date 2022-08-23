@@ -3,7 +3,6 @@ using Netherlands3D.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SLIDDES.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -11,169 +10,229 @@ using UnityEngine.InputSystem;
 namespace Netherlands3D.Minimap
 {
     /// <summary>
-    /// Handles all the UI interaction of the minimap
+    /// Handles the minimap UI interaction
     /// </summary>
-    [AddComponentMenu("Netherlands3D/Minimap/MinimapUI")]
     public class MinimapUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
         [Header("Values")]
-        [Tooltip("The top, bottom, left, right values that increase the rect on hover")]
-        [SerializeField] private Rect onHoverResize;
+        [Tooltip("The max zoomscale of the minimap")]
+        [SerializeField] private float maxZoomScale = 6.0f;
+        [Tooltip("The speed at which the minimap resizes on hover")]
+        [SerializeField] private float hoverResizeSpeed = 10.0f;
+        [Tooltip("The new rect delta size when hoverd")]
+        [SerializeField] private Vector2 hoverSize;
 
         [Header("Components")]
-        [Tooltip("The wmts script that handles the minimap data")]
-        [SerializeField] private WMTS wmts;
-        [Tooltip("Gameobject that holds UI for navigating the map")]
-        [SerializeField] private GameObject navigation;
+        [SerializeField] private RectTransform mapTiles;
+        [SerializeField] private RectTransform navigation;
 
         /// <summary>
-        /// Is the user dragging the UI?
+        /// The drag offset when the user starts dragging (position where the user clicked before dragging)
         /// </summary>
-        private bool isDragging;
+        private Vector3 dragOffset;
         /// <summary>
-        /// Min amount of zoom index
+        /// The wmts map script that handles the minimap functionallity
         /// </summary>
-        private float zoomIndexMin = 6;
+        private WMTSMap wmtsMap;
         /// <summary>
-        /// Max amount of zoom index
-        /// </summary>
-        private float zoomIndexMax = 11;
-        /// <summary>
-        /// The default size of the rect transform
-        /// </summary>
-        private Rect rectSizeDefault;
-        /// <summary>
-        /// The rect default offset max
-        /// </summary>
-        private Vector2 rectOffsetMax;
-        /// <summary>
-        /// The rect default offset min
-        /// </summary>
-        private Vector2 rectOffsetMin;
-        /// <summary>
-        /// The starting position where the cursor started grabbing
-        /// </summary>
-        private Vector3 onDragStartingPosition;
-        /// <summary>
-        /// The rect transform of the wmts component containing the tiles
-        /// </summary>
-        private RectTransform wmtsRectTransform;
-        /// <summary>
-        /// The rect transform attached to this gameobject
+        /// The rect transform of this gameobject
         /// </summary>
         private RectTransform rectTransform;
+        /// <summary>
+        /// The default size delta of this rect transform before hover resize
+        /// </summary>
+        private Vector2 defaultSizeDelta;
+        /// <summary>
+        /// Is the minimap being dragged?
+        /// </summary>
+        private bool dragging = false;
+        /// <summary>
+        /// The minimum zoom scale
+        /// </summary>
+        private float minZoomScale = 0.0f;
+        /// <summary>
+        /// The current zoom scale
+        /// </summary>
+        private float zoomScale = 0.0f;
 
         private void Awake()
         {
-            rectTransform = GetComponent<RectTransform>();
-            wmtsRectTransform = wmts.GetComponent<RectTransform>();
-        }
+            zoomScale = minZoomScale;
+            wmtsMap = mapTiles.GetComponent<WMTSMap>();
+            rectTransform = this.GetComponent<RectTransform>();
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            navigation.SetActive(false);
-            rectSizeDefault = rectTransform.rect;
-            rectOffsetMax = rectTransform.offsetMax;
-            rectOffsetMin = rectTransform.offsetMin;
+            defaultSizeDelta = rectTransform.sizeDelta;
+            navigation.gameObject.SetActive(false);
         }
 
         /// <summary>
-        /// Resize the minimap rect transform
+        /// For resizing the UI when the mouse enters the minimap UI
         /// </summary>
-        /// <param name="expand">Should it expand or resize back to default</param>
-        private void ResizeRect(bool expand)
+        /// <param name="targetScale"></param>
+        /// <returns></returns>
+        IEnumerator HoverResize(Vector2 targetScale)
         {
-            // The top and right are connected so need a different calculation (and take in account the width/height)
-            rectTransform.SetTop(expand ? -rectSizeDefault.height + rectOffsetMax.y + onHoverResize.x * -1 : rectOffsetMax.y * -1); // using a *-1 to keep interface for user simple (OnHoverResize)            
-            rectTransform.SetBottom(expand ? rectOffsetMin.y + onHoverResize.y * -1 : rectOffsetMin.y);
-            rectTransform.SetLeft(expand ? rectOffsetMin.x + onHoverResize.width * -1 : rectOffsetMin.x);
-            rectTransform.SetRight(expand ? -rectSizeDefault.width + rectOffsetMax.x + onHoverResize.height * -1 : rectOffsetMax.x * -1);
+            while(true)
+            {
+                if(Vector2.Distance(targetScale, rectTransform.sizeDelta) > 0.5f)
+                {
+                    //Eaze out to target scale
+                    rectTransform.sizeDelta = Vector2.Lerp(rectTransform.sizeDelta, targetScale, hoverResizeSpeed * Time.deltaTime);
+                }
+                else
+                {
+                    //Finish animation
+                    rectTransform.sizeDelta = targetScale;
+                    yield break;
+                }
+                yield return null;
+            }
         }
 
         /// <summary>
-        /// Start the user interaction with the map
+        /// When the user starts interacting with the map
         /// </summary>
-        private void StartMapInteraction()
+        private void StartedMapInteraction()
         {
-            navigation.SetActive(true);
+            navigation.gameObject.SetActive(true);
             ChangePointerStyleHandler.ChangeCursor(ChangePointerStyleHandler.Style.POINTER);
-            ResizeRect(true);
+
+            StopAllCoroutines();
+            StartCoroutine(HoverResize(hoverSize));
         }
 
         /// <summary>
-        /// Stop the user interaction with the map
+        /// When the user stops interacting with the map
         /// </summary>
-        private void StopMapInteraction()
+        private void StoppedMapInteraction()
         {
-            navigation.SetActive(false);
+            navigation.gameObject.SetActive(false);
+            wmtsMap.CenterPointerInView = true;
             ChangePointerStyleHandler.ChangeCursor(ChangePointerStyleHandler.Style.AUTO);
-            ResizeRect(false);
+
+            StopAllCoroutines();
+            StartCoroutine(HoverResize(defaultSizeDelta));
+        }
+
+        /// <summary>
+        /// Scale the map over a set origin
+        /// </summary>
+        /// <param name="scaleOrigin"></param>
+        /// <param name="newScale"></param>
+        public void ScaleMapOverOrigin(Vector3 scaleOrigin, Vector3 newScale)
+        {
+            var targetPosition = mapTiles.position;
+            var origin = scaleOrigin;
+            var newOrigin = targetPosition - origin;
+            var relativeScale = newScale.x / mapTiles.localScale.x;
+            var finalPosition = origin + newOrigin * relativeScale;
+
+            mapTiles.localScale = newScale;
+            mapTiles.position = finalPosition;
+        }
+
+        /// <summary>
+        /// Zoom in on the minimap
+        /// </summary>
+        /// <param name="useMousePosition"></param>
+        public void ZoomIn(bool useMousePosition = true)
+        {
+            if(zoomScale < maxZoomScale)
+            {
+                zoomScale++;
+                ZoomTowardsLocation(useMousePosition);
+                wmtsMap.Zoomed((int)zoomScale);
+            }
+        }
+
+        /// <summary>
+        /// Zoom out on the minimap
+        /// </summary>
+        /// <param name="useMousePosition"></param>
+        public void ZoomOut(bool useMousePosition = true)
+        {
+            if(zoomScale > minZoomScale)
+            {
+                zoomScale--;
+                ZoomTowardsLocation(useMousePosition);
+                wmtsMap.Zoomed((int)zoomScale);
+            }
+        }
+
+        /// <summary>
+        /// Zoom on a given location on the minimap
+        /// </summary>
+        /// <param name="useMouse"></param>
+        private void ZoomTowardsLocation(bool useMouse = true)
+        {
+            var zoomTarget = Vector3.zero;
+            if(useMouse)
+            {
+                zoomTarget = Mouse.current.position.ReadValue();
+            }
+            else
+            {
+                zoomTarget = rectTransform.position + new Vector3(rectTransform.sizeDelta.x * 0.5f, rectTransform.sizeDelta.y * 0.5f);
+            }
+
+            ScaleMapOverOrigin(zoomTarget, Vector3.one * Mathf.Pow(2.0f, zoomScale));
         }
 
         #region Interfaces
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            isDragging = true;
+            dragging = true;
+            wmtsMap.CenterPointerInView = false;
             ChangePointerStyleHandler.ChangeCursor(ChangePointerStyleHandler.Style.GRABBING);
-            wmts.CenterPointerInView = true;
-            onDragStartingPosition = wmtsRectTransform.position - (Vector3)eventData.position;
+            dragOffset = mapTiles.position - (Vector3)eventData.position;
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            wmtsRectTransform.transform.position = (Vector3)eventData.position + onDragStartingPosition;
-            wmts.UpdateTiles();
+            mapTiles.transform.position = (Vector3)eventData.position + dragOffset;
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            isDragging = false;
+            dragging = false;
             ChangePointerStyleHandler.ChangeCursor(ChangePointerStyleHandler.Style.POINTER);
         }
 
         public void OnScroll(PointerEventData eventData)
-        {            
+        {
             if(eventData.scrollDelta.y > 0)
             {
-                // zoom in
-                if(wmts.LayerIndex + 1 <= zoomIndexMax)
-                {
-                    wmts.Zoom(1, eventData);                    
-                }
+                ZoomIn();
             }
-            else
+            else if(eventData.scrollDelta.y < 0)
             {
-                // zoom out
-                if(wmts.LayerIndex - 1 >= zoomIndexMin)
-                {
-                    wmts.Zoom(-1, eventData);
-                }
+                ZoomOut();
             }
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            // When the mouse enters the ui
-            StartMapInteraction();
+            StartedMapInteraction();
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            // When the pointer is off the map UI & the user is not dragging stop the map interaction
-            if(!isDragging) StopMapInteraction();
+            if(!dragging)
+            {
+                StoppedMapInteraction();
+            }
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if(!isDragging) wmts.ClickedMap(eventData);
-
-            print(eventData.position);
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
-            print("Point On Rect: " + localPoint);
+            if(!dragging)
+            {
+                wmtsMap.ClickedMap(eventData);
+            }
         }
 
-        #endregion
+        #endregion Interfaces
+
     }
 }
