@@ -21,7 +21,7 @@ namespace Netherlands3D.Minimap
         private RectTransform rectTransform;
 
         [SerializeField]
-        private float hoverResizeSpeed = 1.0f;
+        private float hoverResizeSpeed = 10.0f;
 
         [SerializeField]
         private RectTransform navigation;
@@ -57,6 +57,7 @@ namespace Netherlands3D.Minimap
 
             StopAllCoroutines();
             StartCoroutine(HoverResize(hoverSize));
+            print("sMI");
         }
 
         private void StoppedMapInteraction()

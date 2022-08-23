@@ -34,15 +34,15 @@ namespace Netherlands3D.Minimap
 		private UnityWebRequest uwr;
 
 		private int zoomLevel = 0;
-		private MinimapConfig minimapConfig;
+		private Configuration config;
 
-		public void Initialize(Transform container, int zoom, float size, float xLocation, float yLocation, Vector2 key, MinimapConfig minimapConfig)
+		public void Initialize(Transform container, int zoom, float size, float xLocation, float yLocation, Vector2 key, Configuration config)
 		{
 			zoomLevel = zoom;
 			tileKey = key;
 			name = tileKey.x + "/" + tileKey.y;
 
-			this.minimapConfig = minimapConfig;
+			this.config = config;
 
 			transform.SetParent(container, false);
 
@@ -68,7 +68,7 @@ namespace Netherlands3D.Minimap
 
 		private IEnumerator LoadTexture(int zoom, int x, int y)
 		{
-			var tileImageUrl = minimapConfig.ServiceUrl.Replace("{zoom}", zoom.ToString()).Replace("{x}", x.ToString()).Replace("{y}", y.ToString());
+			var tileImageUrl = config.serviceUrl.Replace("{zoom}", zoom.ToString()).Replace("{x}", x.ToString()).Replace("{y}", y.ToString());
 
 			using(uwr = UnityWebRequestTexture.GetTexture(tileImageUrl, true))
 			{

@@ -26,12 +26,6 @@ namespace Netherlands3D.Minimap
 	[HelpURL("https://portal.opengeospatial.org/files/?artifact_id=35326")]
 	public class WMTSMap : MonoBehaviour
 	{
-		[Header("Values")]
-		[SerializeField] private double TopRightRDX;
-		[SerializeField] private double TopRightRDY;
-		[SerializeField] private double BottomLeftRDX;
-		[SerializeField] private double BottomLeftRDY;
-
 		private double minimapTopLeftX = -285401.92;
 		private double minimapTopLeftY = 903401.92;
 
@@ -77,7 +71,7 @@ namespace Netherlands3D.Minimap
 		public bool CenterPointerInView { get => centerPointerInView; set => centerPointerInView = value; }
 
 		[SerializeField]
-		private MinimapConfig minimapConfig;
+		private Configuration config;
 
 		[SerializeField]
 		private bool clampWithinParent = true;
@@ -87,13 +81,13 @@ namespace Netherlands3D.Minimap
 			layerIdentifier = startIdentifier;
 
 			//Use settingsprofile values
-			tileSize = minimapConfig.TileMatrixSet.TileSize;
-			pixelInMeters = minimapConfig.TileMatrixSet.PixelInMeters;
-			scaleDenominator = minimapConfig.TileMatrixSet.ScaleDenominator;
+			tileSize = config.tileSize;
+			pixelInMeters = config.pixelsInMeter;
+			scaleDenominator = config.scaleDenominator;
 
 			//Coverage of our application bounds
-			boundsWidthInMeters = (float)TopRightRDX - (float)BottomLeftRDX;
-			boundsHeightInMeters = (float)TopRightRDY - (float)BottomLeftRDY;
+			boundsWidthInMeters = (float)config.topRight.x - (float)config.bottomLeft.x;
+			boundsHeightInMeters = (float)config.topRight.y - (float)config.bottomLeft.y;
 
 			baseTileSize = tileSize;
 
@@ -119,15 +113,15 @@ namespace Netherlands3D.Minimap
 
 		private void DetermineTopLeftOrigin()
 		{
-			switch(minimapConfig.TileMatrixSet.minimapOriginAlignment)
+			switch(config.alignment)
 			{
-				case TileMatrixSet.OriginAlignment.BottomLeft:
-					minimapTopLeftX = minimapConfig.TileMatrixSet.Origin.x;
-					minimapTopLeftY = minimapConfig.TileMatrixSet.Origin.y + mapSizeInMeters;
+				case Configuration.OriginAlignment.bottomLeft:
+					minimapTopLeftX = config.minimapTopLeft.x;
+					minimapTopLeftY = config.minimapTopLeft.y + mapSizeInMeters;
 					break;
 				default:
-					minimapTopLeftX = minimapConfig.TileMatrixSet.Origin.x;
-					minimapTopLeftY = minimapConfig.TileMatrixSet.Origin.y;
+					minimapTopLeftX = config.minimapTopLeft.x;
+					minimapTopLeftY = config.minimapTopLeft.y;
 					break;
 			}
 		}
@@ -143,8 +137,8 @@ namespace Netherlands3D.Minimap
 
 			var RDcoordinate = CoordConvert.RDtoUnity(new Vector3RD
 			{
-				x = (float)BottomLeftRDX + meterX,
-				y = (float)TopRightRDY + meterY,
+				x = (float)config.bottomLeft.x + meterX,
+				y = (float)config.topRight.y + meterY,
 				z = 0.0
 			});
 			RDcoordinate.y = Camera.main.transform.position.y;
@@ -173,8 +167,8 @@ namespace Netherlands3D.Minimap
 		/// <returns></returns>
 		public Vector3 DeterminePositionOnMap(Vector3RD sourceRDPosition)
 		{
-			var meterX = sourceRDPosition.x - (float)BottomLeftRDX;
-			var meterY = sourceRDPosition.y - (float)TopRightRDY;
+			var meterX = sourceRDPosition.x - (float)config.bottomLeft.x;
+			var meterY = sourceRDPosition.y - (float)config.topRight.y;
 
 			var pixelX = meterX / startMeterInPixels;
 			var pixelY = meterY / startMeterInPixels;
@@ -190,6 +184,7 @@ namespace Netherlands3D.Minimap
 		public void Zoomed(int viewerZoom)
 		{
 			tileSize = baseTileSize / Mathf.Pow(2, viewerZoom);
+
 			layerIdentifier = startIdentifier + viewerZoom;
 			CalculateGridScaling();
 			ActivateMapLayer();
@@ -202,8 +197,8 @@ namespace Netherlands3D.Minimap
 
 			//The tile 0,0 its top left does not align with our region top left. So here we determine the offset.
 			layerTilesOffset = new Vector2(
-				((float)BottomLeftRDX - (float)minimapTopLeftX) / (float)tileSizeInMeters,
-				((float)minimapTopLeftY - (float)TopRightRDY) / (float)tileSizeInMeters
+				((float)config.bottomLeft.x - (float)minimapTopLeftX) / (float)tileSizeInMeters,
+				((float)minimapTopLeftY - (float)config.topRight.y) / (float)tileSizeInMeters
 			);
 
 			//Based on tile numbering type
@@ -299,12 +294,12 @@ namespace Netherlands3D.Minimap
 					float yPosition = -((y * tileSize) - (layerTilesOffset.y * tileSize));
 
 					//Origin alignment determines the way we count our grid
-					switch(minimapConfig.TileMatrixSet.minimapOriginAlignment)
+					switch(config.alignment)
 					{
-						case TileMatrixSet.OriginAlignment.BottomLeft:
+						case Configuration.OriginAlignment.bottomLeft:
 							tileKey = new Vector2(x + tileOffsetX, (float)(divide - 1) - (y + tileOffsetY));
 							break;
-						case TileMatrixSet.OriginAlignment.TopLeft:
+						case Configuration.OriginAlignment.topLeft:
 						default:
 							tileKey = new Vector2(x + tileOffsetX, y + tileOffsetY);
 							break;
@@ -324,7 +319,7 @@ namespace Netherlands3D.Minimap
 						{
 							var newTileObject = new GameObject();
 							var mapTile = newTileObject.AddComponent<MapTile>();
-							mapTile.Initialize(this.transform, layerIdentifier, tileSize, xPosition, yPosition, tileKey, minimapConfig);
+							mapTile.Initialize(this.transform, layerIdentifier, tileSize, xPosition, yPosition, tileKey, config);
 
 							tileList.Add(tileKey, mapTile);
 						}

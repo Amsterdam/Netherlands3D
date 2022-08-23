@@ -153,6 +153,7 @@ namespace Netherlands3D.Minimap
             RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransformUI, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
             transform.localPosition -= new Vector3(localPoint.x, localPoint.y, transform.localPosition.z);
             Clamp();
+            UpdateTiles();
         }
 
         /// <summary>
@@ -233,9 +234,11 @@ namespace Netherlands3D.Minimap
             LayerIndex += zoom;
             if(zoom > 0) transform.localPosition = preZoomPos * 2; else transform.localPosition = preZoomPos * 0.5f;
             if(eventData != null)
-            {
+            {                
                 RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
-                transform.localPosition += new Vector3(localPoint.x, localPoint.y, transform.localPosition.z);
+                //print(localPoint);
+                //localPoint = zoom > 0 ? localPoint * 2 : localPoint * 0.5f;
+                //transform.localPosition += new Vector3(localPoint.x, localPoint.y, transform.localPosition.z);
             }
             UpdateTiles(); // Not optimal but works
         }

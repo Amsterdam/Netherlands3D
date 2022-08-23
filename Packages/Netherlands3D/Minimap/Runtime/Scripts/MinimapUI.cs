@@ -140,7 +140,7 @@ namespace Netherlands3D.Minimap
                 // zoom in
                 if(wmts.LayerIndex + 1 <= zoomIndexMax)
                 {
-                    wmts.Zoom(1);                    
+                    wmts.Zoom(1, eventData);                    
                 }
             }
             else
@@ -148,7 +148,7 @@ namespace Netherlands3D.Minimap
                 // zoom out
                 if(wmts.LayerIndex - 1 >= zoomIndexMin)
                 {
-                    wmts.Zoom(-1);
+                    wmts.Zoom(-1, eventData);
                 }
             }
         }
