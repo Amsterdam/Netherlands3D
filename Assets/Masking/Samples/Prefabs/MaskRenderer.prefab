@@ -123,14 +123,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8681777da47c3f943a352f7a19e32451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maskingMaxDistance: 1000
+  maxDistance: 1000
   offset: 300
   maskingObjectsMaterial: {fileID: 2100000, guid: 5013fbcc69b02f84b989fa8ea7edb763, type: 2}
   targetMaterials:
   - {fileID: 2100000, guid: 5839868d17ba04849ba9e6e5ef15aacd, type: 2}
   - {fileID: 2100000, guid: 3c31c623a46246a4faf6813b1aba2134, type: 2}
+  textureSize: 2048
   invertedMask: 1
+  onlyUpdateOnCameraChange: 0
   renderTextureFormat: 16
+  lookDirectionResolution:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.1503601
+      inSlope: 0.048576355
+      outSlope: 0.048576355
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0.19893646
+      inSlope: 0.048576355
+      outSlope: 0.048576355
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &1828456204011077960
 MonoBehaviour:
   m_ObjectHideFlags: 0

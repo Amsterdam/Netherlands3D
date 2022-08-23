@@ -20,7 +20,7 @@ namespace Netherlands3D.Rendering
         private Extent lastCameraExtent;
 
         [Header("Mask camera settings")]
-        [SerializeField] private float maskingMaxDistance = 1000;
+        [SerializeField] private float maxDistance = 1000;
         [SerializeField] private float offset = 500;
         
         [Header("Material references")]
@@ -30,7 +30,9 @@ namespace Netherlands3D.Rendering
         [Header("Mask texture settings")]
         [SerializeField] private int textureSize = 1024;
         [SerializeField] private bool invertedMask = false;
+        [SerializeField] private bool onlyUpdateOnCameraChange = true;
         [SerializeField] private RenderTextureFormat renderTextureFormat = RenderTextureFormat.R8;
+        [SerializeField] private AnimationCurve lookDirectionResolution;
 
         void Awake()
         {
@@ -78,18 +80,13 @@ namespace Netherlands3D.Rendering
 
         void LateUpdate()
         {
-            cameraExtent = Camera.main.GetExtent(maskingMaxDistance);
-
-            if (!cameraExtent.Equals(lastCameraExtent))
+            var lookingForward = 1-Math.Abs(Vector3.Dot(Vector3.down, mainCamera.transform.forward));
+            var sampleMaxDistance = lookDirectionResolution.Evaluate(lookingForward) * maxDistance;
+            cameraExtent = mainCamera.GetExtent(sampleMaxDistance);
+            if (!onlyUpdateOnCameraChange || !cameraExtent.Equals(lastCameraExtent))
             {
                 CameraChanged();
             }
-#if UNITY_EDITOR
-            else
-            {
-                CameraChanged();
-            }
-#endif
         }
 
         /// <summary>
