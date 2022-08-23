@@ -14,7 +14,7 @@ namespace Netherlands3D.FileExport.DXF
 
         private DxfDocument dxfDocument;
         private string fullPath;
-
+        List<Vector3RD> RDCoordinates = new List<Vector3RD>();
 
         public override string filetype
         {
@@ -28,7 +28,7 @@ namespace Netherlands3D.FileExport.DXF
             dxfDocument.DrawingVariables.InsUnits = netDxf.Units.DrawingUnits.Meters;
         }
 
-        public override void AddMesh(List<Vector3RD> vertices, string layername, Color color)
+        public override void AddMesh(List<UnityEngine.Vector3> vertices, string layername, Color color)
         {
             Layer dxfLayer = new Layer(layername);
             //translate the color
@@ -39,7 +39,7 @@ namespace Netherlands3D.FileExport.DXF
 
             dxfDocument.Layers.Add(dxfLayer);
 
-            AddMesh(vertices, dxfLayer);
+            //AddMesh(vertices, dxfLayer);
         }
 
         public override void SaveFile()
@@ -59,7 +59,7 @@ namespace Netherlands3D.FileExport.DXF
             Debug.Log(triangleVertices.Count);
             int vertexIndex = 0;
 
-            for (int i = 0; i < triangleVertices.Count; i += 3)
+            for (int i = 0; i < triangleVertices.Count-3; i += 3)
             {
 
 
@@ -92,6 +92,34 @@ namespace Netherlands3D.FileExport.DXF
 
         }
 
+        public override void AddMesh(string vertexfile)
+        {
 
+            long vertexcount;
+            int SingelBytecount = 4;
+            long counter = 0;
+                RDCoordinates.Clear();
+            string filename = Path.GetFileName(vertexfile);
+
+                Layer dxfLayer = new Layer(filename.Replace(".bin", ""));
+                dxfLayer.Color = netDxf.AciColor.LightGray;
+                using (var stream = File.Open(vertexfile, FileMode.OpenOrCreate))
+                {
+                vertexcount = (stream.Length / SingelBytecount);
+                    using (var reader = new BinaryReader(stream, System.Text.Encoding.UTF8, false))
+                    {
+                    while (counter < vertexcount)
+                    {
+
+                        counter += 3;
+                        UnityEngine.Vector3 vert = new UnityEngine.Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                        Vector3RD RDvert = CoordConvert.UnitytoRD(vert);
+                        RDCoordinates.Add(RDvert);
+                    }
+                    }
+                }
+                AddMesh(RDCoordinates, dxfLayer);
+
+        }
     }
 }

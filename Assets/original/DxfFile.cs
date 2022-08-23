@@ -9,6 +9,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Netherlands3D.Core;
 
+
 public class DxfFile 
 {
     private DxfDocument dxfDocument;
@@ -36,8 +37,7 @@ public class DxfFile
         dxfLayer.Color = layerColor;
         dxfDocument.Layers.Add(dxfLayer);
         
-        //AddTriangles(triangleVertices, layerName);
-
+        
 
         AddMesh(triangleVertices, layerName);
     }
@@ -87,6 +87,7 @@ public class DxfFile
 
     private void AddMesh(List<Vector3RD> triangleVertices, string layerName)
     {
+        
         PolyfaceMesh pfm;
         // create Mesh
         List<netDxf.Vector3> pfmVertices = new List<netDxf.Vector3>();

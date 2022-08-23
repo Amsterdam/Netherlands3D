@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Netherlands3D.Events;
 using System.IO;
+using Netherlands3D.FileExport.DXF;
 
 public class SelectionExport : MonoBehaviour
 {
@@ -12,27 +13,39 @@ public class SelectionExport : MonoBehaviour
     [SerializeField] GameObjectEvent unregisterGameobject;
     [SerializeField] Vector3ListEvent receiveBoundaryPolygon;
     [SerializeField] TriggerEvent startClipping;
-    [SerializeField] BoolEvent HasTilehandlerFineshedLoading;
+    [SerializeField] BoolEvent TileHandlerIsBusy;
     
     [Header("listening To (optional:")]
     [SerializeField] StringEvent ExportFileType; //needed?
     [SerializeField] TriggerEvent CancelClipping;
+
+    [Header("Sending (optional)")]
+    [SerializeField] BoolEvent PauseTileHandler;
+
     [Header("progressEvents (optional)")]
     [SerializeField] BoolEvent startedFinished;
     [SerializeField] StringEvent progresstext;
+    [SerializeField] FloatEvent progresspercentage;
     [SerializeField] StringEvent errorMessage;
 
     [Header("outputEvents")]
     [SerializeField] StringListEvent resultingData; //only listen if we are expecting data.
-    List<string> resultingFiles;
+    List<string> resultingFiles = new List<string>();
     #endregion
 
 
     #region input
     List<GameObject> selectedGameObjects = new List<GameObject>();
     List<Vector3> boundaryPolygon = new List<Vector3>();
+    #endregion
+
+    #region variables
+    bool tilehandlerIsBusy;
+    List<MeshFilter> meshFiltersToClip = new List<MeshFilter>();
+    long trianglesToClipCount;    
     List<Vector2> boundaryPolygon2D = new List<Vector2>();
     Bounds boundaryBounds;
+    Geometryfile outputcreator;
     #endregion
 
 
@@ -57,6 +70,8 @@ public class SelectionExport : MonoBehaviour
         unregisterGameobject.started.AddListener(OnUnregisterGameObject);
         receiveBoundaryPolygon.started.AddListener(OnReceiveBoundaryPolygon);
         startClipping.started.AddListener(OnStartClipping);
+        TileHandlerIsBusy.started.AddListener(OnTileHandlerChangedStatus);
+
     }
 
 
@@ -85,6 +100,11 @@ public class SelectionExport : MonoBehaviour
         }
     }
 
+    void OnTileHandlerChangedStatus(bool value)
+    {
+        tilehandlerIsBusy = value;
+    }
+
     void OnStartClipping()
     {
         ReadClipLineRenderer();
@@ -101,25 +121,91 @@ public class SelectionExport : MonoBehaviour
         }
         StartCoroutine(Clipit());
     }
-    IEnumerator Clipit()
+
+    void BroadcastProgressPercentage(float value)
     {
-        List<Vector3> triangleVertices = new List<Vector3>();
-        triangleVertices.Add(Vector3.zero);
-        triangleVertices.Add(Vector3.zero);
-        triangleVertices.Add(Vector3.zero);
+        if (progresspercentage!=null)
+        {
+            progresspercentage.started.Invoke(value);
+        }
+    }
 
-        List<Vector3> ClippedVertices = new List<Vector3>();
-        Mesh thismesh;
-        string layerName;
-        System.DateTime datetime = System.DateTime.Now;
-
-        bool resultAvailable = false;
+    void BroadcastProgresstext(string value)
+    {
+        if (progresstext != null)
+        {
+            progresstext.started.Invoke(value);
+        }
+    }
+    void BroadcastStartedFInished(bool value)
+    {
+        if (startedFinished!=null)
+        {
+            startedFinished.started.Invoke(value);
+        }
+    }
+    void SelectGameObjects()
+    {
+        meshFiltersToClip.Clear();
+        int submeshcount;
+        trianglesToClipCount = 0;
         foreach (var gameobject in selectedGameObjects)
         {
             MeshFilter[] meshfilters = gameobject.GetComponentsInChildren<MeshFilter>(false);
             foreach (var meshfilter in meshfilters)
             {
-                UpdatePolygon(meshfilter.gameObject.transform.position);
+                if (!boundaryBounds.Intersects(meshfilter.gameObject.GetComponent<MeshRenderer>().bounds))
+                {
+                   //this mesh is completely outside the selectionpolygon
+                    continue;
+                }
+                meshFiltersToClip.Add(meshfilter);
+                submeshcount = meshfilter.sharedMesh.subMeshCount;
+                for (int i = 0; i < submeshcount; i++)
+                {
+                    trianglesToClipCount += meshfilter.sharedMesh.GetIndexCount(i);
+                }
+            }
+        }
+    }
+
+    IEnumerator Clipit()
+    {
+        //set up all the variables
+        System.DateTime datetime = System.DateTime.Now;
+        List<Vector3> triangleVertices = new List<Vector3>();
+        triangleVertices.Add(Vector3.zero);
+        triangleVertices.Add(Vector3.zero);
+        triangleVertices.Add(Vector3.zero);
+        List<Vector3> ClippedVertices = new List<Vector3>();
+        Mesh thismesh;
+        string layerName;
+        long trianglesprocessed=0;
+        Vector3 offset;
+        bool resultAvailable;
+        resultingFiles.Clear();
+        BroadcastStartedFInished(true);
+        
+
+        //pause the tilehandler
+        if (PauseTileHandler)
+        {
+            PauseTileHandler.started.Invoke(true);
+        }
+        //wait for the tilehandler to finish
+        BroadcastProgresstext("Waiting for all the data to be loaded...");
+        while (tilehandlerIsBusy)
+        {
+            yield return null;
+        }
+
+        // clip all the gameobjects
+        BroadcastProgresstext("Cutting out the model.");
+        SelectGameObjects();
+        foreach (var meshfilter in meshFiltersToClip)
+            {
+            offset = meshfilter.gameObject.transform.position;
+                UpdatePolygon(offset);
                 if (!boundaryBounds.Intersects(meshfilter.gameObject.GetComponent<MeshRenderer>().bounds))
                 {
                     Debug.Log(meshfilter.gameObject.name + " is outside");
@@ -146,16 +232,22 @@ public class SelectionExport : MonoBehaviour
                     {
                         using (var writer = new BinaryWriter(stream, System.Text.Encoding.UTF8, false))
                         {
-                            for (int ind = 0; ind < (indicescount - 4); ind += 3)
+                            for (int ind = 0; ind < (indicescount - 3); ind += 3)
                             {
                                 triangleVertices[0] = vertices[indices[ind + startindex]];
                                 triangleVertices[1] = vertices[indices[ind + startindex+1]];
                                 triangleVertices[2] = vertices[indices[ind + startindex + 2]];
                                 resultAvailable = clipper.setTriangle(triangleVertices);
+                            trianglesprocessed+=3;
                                 while(resultAvailable)
                                 {
                                     ClippedVertices.Clear();
                                     resultAvailable = clipper.FindNextPolygon(ClippedVertices);
+                                //move the vertices to worldspace
+                                for (int j = 0; j < ClippedVertices.Count; j++)
+                                {
+                                    ClippedVertices[j] += offset;
+                                }
                                     if (ClippedVertices.Count > 4)
                                     {
                                         Poly2Mesh.Polygon poly = new Poly2Mesh.Polygon();
@@ -204,6 +296,7 @@ public class SelectionExport : MonoBehaviour
 
                                     if ((System.DateTime.Now - datetime).TotalMilliseconds > 400)
                                     {
+                                    BroadcastProgressPercentage(100 * trianglesprocessed / trianglesToClipCount);
                                         yield return null;
                                         datetime = System.DateTime.Now;
                                     }
@@ -217,18 +310,20 @@ public class SelectionExport : MonoBehaviour
                 }
             }
 
-        }
 
-        Debug.Log("finished");
+        //pause the tilehandler
+        if (PauseTileHandler)
+        {
+            PauseTileHandler.started.Invoke(false);
+        }
+        StartCoroutine(WriteToFile());
     }
 
     void UpdatePolygon(Vector3 offset)
     {
-        boundaryBounds = new Bounds();
         boundaryPolygon2D.Clear();
         for (int i = 0; i < boundaryPolygon.Count; i++)
         {
-            boundaryBounds.Encapsulate(boundaryPolygon[i]);
             boundaryPolygon2D.Add(new Vector2(boundaryPolygon[i].x - offset.x, boundaryPolygon[i].z - offset.z));
         }
         //boundaryBounds.Encapsulate(boundaryBounds.center-new Vector3(0,-1000,0));
@@ -254,15 +349,26 @@ public class SelectionExport : MonoBehaviour
         return layerName;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    IEnumerator WriteToFile()
     {
-       
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        if (outputcreator is null)
+        {
+            outputcreator = new dxf();
+        }
         
+        outputcreator.SetupFile(Application.persistentDataPath, "output.dxf");
+        for (int i = 0; i < resultingFiles.Count; i++)
+        {
+            string filename = Path.GetFileName(resultingFiles[i]).Replace(".bin","");
+            BroadcastProgresstext($"Writing {filename} to file");
+            BroadcastProgressPercentage(100 * i / resultingFiles.Count);
+            yield return null;
+            outputcreator.AddMesh(resultingFiles[i]);
+            File.Delete(resultingFiles[i]);
+        }
+        outputcreator.SaveFile();
+
+        BroadcastStartedFInished(false);
+        Debug.Log("file created: "+Path.Combine(Application.persistentDataPath,"output.dxf" ));
     }
 }
