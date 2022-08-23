@@ -95,6 +95,9 @@
         },
         {
             "m_Id": "a6c4a64d33a24dd9997669c903abb788"
+        },
+        {
+            "m_Id": "63e70710a0a446c693e6a6f46864a082"
         }
     ],
     "m_GroupDatas": [
@@ -172,6 +175,20 @@
                     "m_Id": "6debd5322f674ca2bf6efb1e77cd712f"
                 },
                 "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "63e70710a0a446c693e6a6f46864a082"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "bb089e1c8f2e4958b8ef70dc2180b17b"
+                },
+                "m_SlotId": 3
             }
         },
         {
@@ -953,14 +970,14 @@
     },
     "m_Name": "AlphaMask",
     "m_DefaultReferenceName": "Texture2D_38b47bd5d63142d4b2db17af269c0a3e",
-    "m_OverrideReferenceName": "AlphaMask",
+    "m_OverrideReferenceName": "_MainTex",
     "m_GeneratePropertyBlock": true,
     "m_Precision": 0,
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "m_SerializedTexture": "{\"texture\":{\"fileID\":8400000,\"guid\":\"fe2befcbff0d1964999e68be2d40e069\",\"type\":2}}",
+        "m_SerializedTexture": "{\"texture\":{\"instanceID\":0}}",
         "m_Guid": ""
     },
     "m_Modifiable": true,
@@ -1129,7 +1146,7 @@
     },
     "m_Name": "Color",
     "m_DefaultReferenceName": "Color_4544c70c50a14fc2825a22d3fdaf4563",
-    "m_OverrideReferenceName": "_BaseColor",
+    "m_OverrideReferenceName": "_Color",
     "m_GeneratePropertyBlock": true,
     "m_Precision": 0,
     "overrideHLSLDeclaration": false,
@@ -1225,6 +1242,19 @@
         "m_SerializableColors": []
     },
     "m_SerializedDescriptor": "SurfaceDescription.Alpha"
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.SamplerStateMaterialSlot",
+    "m_ObjectId": "52b4add2fde04e118283cc1f7e89210c",
+    "m_Id": 0,
+    "m_DisplayName": "Out",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_BareResource": false
 }
 
 {
@@ -1460,6 +1490,40 @@
         "w": 0.0
     },
     "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.SamplerStateNode",
+    "m_ObjectId": "63e70710a0a446c693e6a6f46864a082",
+    "m_Group": {
+        "m_Id": "2b40a71ac35940ce8fe06d86db9e8c91"
+    },
+    "m_Name": "Sampler State",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -780.0,
+            "y": 1486.0,
+            "width": 145.0,
+            "height": 140.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "52b4add2fde04e118283cc1f7e89210c"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_filter": 0,
+    "m_wrap": 1
 }
 
 {
