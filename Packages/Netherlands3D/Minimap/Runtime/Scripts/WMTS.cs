@@ -142,12 +142,17 @@ namespace Netherlands3D.Minimap
         public void ClickedMap(PointerEventData eventData)
         {
             // The point clicked on the map in local coordinates
-            Vector3 localClickPosition = transform.InverseTransformPoint(eventData.position);
+            //Vector3 localClickPosition = transform.InverseTransformPoint(eventData.position);
 
             // Distance in meters from the top left corner of the map
-            Vector2 meterDistance = localClickPosition * startMeterInPixels;
-            Vector3 coordinateRD = CoordConvert.RDtoUnity(new Vector3RD((float)config.bottomLeft.x + meterDistance.x, (float)config.topRight.y + meterDistance.y, Camera.main.transform.position.y));
-            Camera.main.transform.position = coordinateRD;
+            //Vector2 meterDistance = localClickPosition * startMeterInPixels;
+            //Vector3 coordinateRD = CoordConvert.RDtoUnity(new Vector3RD((float)config.bottomLeft.x + meterDistance.x, (float)config.topRight.y + meterDistance.y, Camera.main.transform.position.y));
+            //Camera.main.transform.position = coordinateRD;
+
+            // Set the map to center the point where was clicked
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransformUI, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
+            transform.localPosition -= new Vector3(localPoint.x, localPoint.y, transform.localPosition.z);
+            Clamp();
         }
 
         /// <summary>
@@ -227,7 +232,11 @@ namespace Netherlands3D.Minimap
             Vector3 preZoomPos = transform.localPosition;
             LayerIndex += zoom;
             if(zoom > 0) transform.localPosition = preZoomPos * 2; else transform.localPosition = preZoomPos * 0.5f;
-            //if(eventData != null) transform.localPosition += transform.InverseTransformPoint(eventData.position);
+            if(eventData != null)
+            {
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
+                transform.localPosition += new Vector3(localPoint.x, localPoint.y, transform.localPosition.z);
+            }
             UpdateTiles(); // Not optimal but works
         }
 

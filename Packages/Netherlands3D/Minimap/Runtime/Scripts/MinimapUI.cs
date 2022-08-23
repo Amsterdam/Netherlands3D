@@ -168,6 +168,10 @@ namespace Netherlands3D.Minimap
         public void OnPointerClick(PointerEventData eventData)
         {
             if(!isDragging) wmts.ClickedMap(eventData);
+
+            print(eventData.position);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
+            print("Point On Rect: " + localPoint);
         }
 
         #endregion
