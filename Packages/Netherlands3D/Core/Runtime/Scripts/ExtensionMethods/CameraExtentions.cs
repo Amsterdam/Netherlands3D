@@ -6,31 +6,29 @@ public static class CameraExtensions
 {
     public static Vector3[] corners = new Vector3[4];
 
+    private static Vector3 unityMin;
+    private static Vector3 unityMax;
+
     private static Vector2 topLeft = new Vector2(0, 1);
     private static Vector2 topRight = new Vector2(1, 1);
     private static Vector2 bottomRight = new Vector2(1, 0);
     private static Vector2 bottomLeft = new Vector2(0, 0);
 
+    public static Extent GetExtent(this Camera camera, float maximumViewDistance = 0)
+    {
+        if (maximumViewDistance == 0) maximumViewDistance = camera.farClipPlane;
+        CalculateCornerExtents(camera, maximumViewDistance);
+
+        // Area that should be loaded
+        var extent = new Extent(unityMin.x, unityMin.z, unityMax.x, unityMax.z);
+
+        return extent;
+    }
+
     public static Extent GetRDExtent(this Camera camera, float maximumViewDistance = 0)
     {
         if (maximumViewDistance == 0) maximumViewDistance = camera.farClipPlane;
-
-        // Determine what world coordinates are in the corners of our view
-        corners[0] = GetCornerPoint(camera, topLeft, maximumViewDistance);
-        corners[1] = GetCornerPoint(camera, topRight, maximumViewDistance);
-        corners[2] = GetCornerPoint(camera, bottomRight, maximumViewDistance);
-        corners[3] = GetCornerPoint(camera, bottomLeft, maximumViewDistance);
-
-        // Determine the min and max X- en Z-value of the visible coordinates
-        var unityMax = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
-        var unityMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
-        for (int i = 0; i < 4; i++)
-        {
-            unityMin.x = Mathf.Min(unityMin.x, corners[i].x);
-            unityMin.z = Mathf.Min(unityMin.z, corners[i].z);
-            unityMax.x = Mathf.Max(unityMax.x, corners[i].x);
-            unityMax.z = Mathf.Max(unityMax.z, corners[i].z);
-        }
+        CalculateCornerExtents(camera, maximumViewDistance);
 
         // Convert min and max to WGS84 coordinates
         var rdMin = CoordConvert.UnitytoRD(unityMin);
@@ -40,6 +38,26 @@ public static class CameraExtensions
         var extent = new Extent(rdMin.x, rdMin.y, rdMax.x, rdMax.y);
 
         return extent;
+    }
+
+    private static void CalculateCornerExtents(Camera camera, float maximumViewDistance)
+    {
+        // Determine what world coordinates are in the corners of our view
+        corners[0] = GetCornerPoint(camera, topLeft, maximumViewDistance);
+        corners[1] = GetCornerPoint(camera, topRight, maximumViewDistance);
+        corners[2] = GetCornerPoint(camera, bottomRight, maximumViewDistance);
+        corners[3] = GetCornerPoint(camera, bottomLeft, maximumViewDistance);
+
+        // Determine the min and max X- en Z-value of the visible coordinates
+        unityMax = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
+        unityMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+        for (int i = 0; i < 4; i++)
+        {
+            unityMin.x = Mathf.Min(unityMin.x, corners[i].x);
+            unityMin.z = Mathf.Min(unityMin.z, corners[i].z);
+            unityMax.x = Mathf.Max(unityMax.x, corners[i].x);
+            unityMax.z = Mathf.Max(unityMax.z, corners[i].z);
+        }
     }
 
     private static Vector3 GetCornerPoint(this Camera camera, Vector2 screenPosition, float maximumViewDistance)

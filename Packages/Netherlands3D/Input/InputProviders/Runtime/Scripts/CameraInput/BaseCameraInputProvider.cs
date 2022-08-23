@@ -29,7 +29,4 @@ public class BaseCameraInputProvider : MonoBehaviour
     public BoolEvent draggingModifier;
     public BoolEvent rotateModifier;
     public BoolEvent firstPersonModifier;
-
-    [Header("Listen to events")]
-    public BoolEvent lockedDraggingInput;
 }
