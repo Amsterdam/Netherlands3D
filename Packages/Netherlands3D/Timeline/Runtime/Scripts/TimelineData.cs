@@ -28,6 +28,28 @@ namespace Netherlands3D.Timeline
         [HideInInspector] public UnityEvent OnOrderTimePeriods;
 
         /// <summary>
+        /// Add a timePeriod to the data
+        /// </summary>
+        /// <param name="timePeriod">The time period to add</param>
+        /// <param name="triggerRefresh">If you want to trigger the UnityEvent OnOrderTimePeriods</param>
+        public void AddTimePeriod(TimePeriod timePeriod, bool triggerRefresh)
+        {
+            timePeriods.Add(timePeriod);
+            if(triggerRefresh) OrderTimePeriods();
+        }
+
+        /// <summary>
+        /// Add timePeriods to the data
+        /// </summary>
+        /// <param name="timePeriods">The time periods to add</param>
+        /// <param name="triggerRefresh">If you want to trigger the UnityEvent OnOrderTimePeriods</param>
+        public void AddTimePeriod(List<TimePeriod> timePeriods, bool triggerRefresh)
+        {
+            this.timePeriods.AddRange(timePeriods);
+            if(triggerRefresh) OrderTimePeriods();
+        }
+
+        /// <summary>
         /// Clear all data
         /// </summary>
         public void ClearData()

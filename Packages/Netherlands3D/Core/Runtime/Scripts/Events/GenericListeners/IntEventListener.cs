@@ -21,8 +21,8 @@ public class IntEventListener : MonoBehaviour
         }
     }
 
-	public void Invoke(int arg0)
+	public void Invoke(int value)
 	{
-        trigger.Invoke(arg0);
+        trigger.Invoke(value);
     }
 }

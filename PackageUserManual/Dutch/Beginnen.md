@@ -1,5 +1,12 @@
 # Beginnen met Netherlands3D in Unity
 
+## Systeemeisen
+
+Een laptop waarop je software mag installeren (nog) geen Apple en het liefst met een i5 CPU (of hoger) 
+en een externe GPU (grafische kaart).
+Windows 10 of hoger (in ieder geval 64 bits).
+Een losse muis om beter te kunnen navigeren.
+
 ## Git installeren
 
 Zorg om te beginnen dat Git is geinstalleerd op het systeem. Dit maakt het mogelijk om pakketjes te installeren.
@@ -20,7 +27,7 @@ Ga eventueel akkoord met het activeren van een 'FREE personal license'.
 
 Kies in het 'Install Unity Editor' scherm rechtsonderin 'skip installation'. Wij willen namelijk een specifieke versie gaan installeren.
 
-Installeer via 'Installs / Install Editor' de LTS (long term service) versie 2020.3.28f1
+Installeer via 'Installs / Install Editor' de LTS (long term service) versie 2021.3.6f1
 
 ![image-20220509104007559](./imgs/beginnen/image0.png)
 
@@ -72,7 +79,7 @@ Nu maken we in de Assets map een nieuwe map aan met de naam "RenderPipeline" (le
 
 ![](./imgs/beginnen/image8.png)
 
-Geef een rechter-muisklik op deze nieuwe map en kies voor CreateRenderingUniversal Render PipelineAsset (Forward Renderer)
+Geef een rechter-muisklik op deze nieuwe map en kies via create > rendering > voor URP Asset (with Universal Renderer).
 
 ![](./imgs/beginnen/image9.png)
 
@@ -117,3 +124,5 @@ En vervolgens in de inspector de Position en Rotation aan te passen.
 Nu we toch in de Inspector voor de camera bezig zijn zetten we ook onder het kopje "Camera", "Projection", "Clipping plane" de afstand voor Far even van 1000 op 6000.
 
 Klik vervolgens op **"Play"**, et voila, we zien het 3D-model van Amsterdam.
+
+Je bent nu klaar om met de volgende stap te beginnen "het koppelen van je eigen dataset", volg hiervoor de handleiding 'DataKlaarzetten.md'

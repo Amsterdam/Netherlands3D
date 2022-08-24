@@ -9,6 +9,7 @@ using SLIDDES.UI;
 using TMPro;
 using System.Globalization;
 using UnityEngine.EventSystems;
+using Netherlands3D.Events;
 
 namespace Netherlands3D.Timeline
 {
@@ -23,8 +24,11 @@ namespace Netherlands3D.Timeline
         /// </summary>
         public float TimeBarParentWidth { get { return timeBarParent.rect.width; } }
 
+        [Header("Scriptable Objects")]
         [Tooltip("The scriptable so data")]
         public TimelineData timelineData;
+        [Tooltip("Event callback when the currentDate is changed")]
+        public DateTimeEvent dateTimeEvent;
 
         [Header("Values")]
         [SerializeField] private float mouseSensitivity = 10;
@@ -73,6 +77,7 @@ namespace Netherlands3D.Timeline
                 previousCurrentDate = currentDate;
                 currentDate = value;
                 onCurrentDateChange?.Invoke(currentDate);
+                if(dateTimeEvent != null) dateTimeEvent.Invoke(currentDate);
             }
         }
 
@@ -220,12 +225,13 @@ namespace Netherlands3D.Timeline
             eventLayers.Clear();
             visibleTimePeriodsUI.Clear();
 
-            // Create each category & event layer
+            // Create each time period layer & layer
             string[] keys = timelineData.sortedTimePeriods.Keys.ToArray();
             foreach(string item in keys)
             {
                 TimePeriodsLayer e = Instantiate(prefabTimePeriodsUILayer, parentTimePeriodsLayers).GetComponent<TimePeriodsLayer>();
                 eventLayers.Add(item, e);
+
                 LayerUI c = Instantiate(prefabLayerUI, parentLayersUI).GetComponent<LayerUI>();
                 c.Initialize(item, e, this);
                 categories.Add(c);
@@ -266,8 +272,9 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// Scroll the time bar horizontally by a amount
         /// </summary>
-        /// <param name="scrollAmount"></param>
-        public void ScrollTimeBar(float scrollAmount)
+        /// <param name="scrollAmount">The amount to scroll the time bar</param>
+        /// <param name="resetTimeScrubber">Should the time scrubber be resetted when scrolling the time bar?</param>
+        public void ScrollTimeBar(float scrollAmount, bool resetTimeScrubber = true)
         {
             // Check scroll direction
             if(scrollAmount < 0)
@@ -327,7 +334,7 @@ namespace Netherlands3D.Timeline
             UpdateVisableDateRange();
 
             // Reset timescrubber
-            timeScrubber.StoppedUsing();
+            if(resetTimeScrubber) timeScrubber.StoppedUsing();
         }
 
         /// <summary>
@@ -360,8 +367,27 @@ namespace Netherlands3D.Timeline
         public void SetTimeUnit(int valueToAdd)
         {
             TimeUnit.ChangeUnit(ref timeUnit, valueToAdd);
-            SetCurrentDate(CurrentDate);
+            // If timeUnit is 5x/10x round the current date to the x number (2022 becomes 2020, 2026 becomes 2025 with a 5x zoom)
+            DateTime dt = CurrentDate;
+            if(timeUnit < TimeUnit.Unit.year)
+            {
+                int year = dt.Year;
+                switch(timeUnit)
+                {
+                    case TimeUnit.Unit.year10:
+                        year = ((int)Math.Round(year / 10.0)) * 10;
+                        break;
+                    case TimeUnit.Unit.year5:
+                        year = ((int)Math.Round(year / 5.0)) * 5;
+                        break;
+                    default:
+                        break;
+                }
+                dt = new DateTime(year, dt.Month, dt.Day);
+            }            
+            SetCurrentDate(dt);
             UpdateCurrentDateVisual();
+            timeScrubber.StoppedUsing();
         }
 
         /// <summary>
@@ -554,7 +580,7 @@ namespace Netherlands3D.Timeline
             {
                 // Get left and right x positions correlating to the bar
                 // but check if no *X timeunit is used
-                float xL = 0, xR = 0;
+                float xL, xR;
                 if(timeUnit == TimeUnit.Unit.year5 || timeUnit == TimeUnit.Unit.year10)
                 {
                     // *X used (as in 5 years, 10 years etc)

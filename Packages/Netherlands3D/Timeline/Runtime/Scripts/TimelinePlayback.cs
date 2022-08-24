@@ -66,6 +66,7 @@ namespace Netherlands3D.Timeline
         {
             if(play)
             {
+                timelineUI.timeScrubber.PlaybackScroll = true;
                 // Check if timeline or time scrubber
                 if(timelineUI.timeScrubber.IsActive)
                 {
@@ -82,6 +83,7 @@ namespace Netherlands3D.Timeline
             {
                 if(coroutineScrollTimeBarAutomaticly != null) StopCoroutine(coroutineScrollTimeBarAutomaticly);
                 if(coroutineScrollScrubberAutomaticly != null) StopCoroutine(coroutineScrollScrubberAutomaticly);
+                timelineUI.timeScrubber.PlaybackScroll = false;
             }
         }
 
