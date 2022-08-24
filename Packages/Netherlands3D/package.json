@@ -37,7 +37,7 @@
     {
       "displayName": "Minimap Template",
       "description": "Template example of how to use the minimap",
-      "path": "Minimap/Samples~/Template"
+      "path": "Minimap/Samples~/Minimap"
     },
     {
       "displayName": "Selection Tools",
