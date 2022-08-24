@@ -4,7 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0]
+## [Unreleased]
+
+### Added
+
+- Manual for WMS layer example
+- Added minimap example template using PDOK maps
+- WMS layer LOD and distance setting available in editor inspector
+- EventContainers with basic payload types can now be invoked from the asset in inspector during playmode
+- Added script to find and count unique instances of ScriptableObjects in the scene (available in rightclick context menu in the project page)
+
+### Changed
+
+- Invariant Culture is now set globaly using SetGlobalRDOrigin (for consistent parsing of comma's or dots in large numbers)
+- Camera input script is now on FreeCamera prefab (instead of seperate object) and legacy input is removed
+
+## [0.3.0] - 12-07-2022
+
 - Added Traffic package with VISSIM traffic and signal head import and visualisation
 - Fixed version numbering for in-editor updates
 

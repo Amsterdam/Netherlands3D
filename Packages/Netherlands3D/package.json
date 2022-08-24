@@ -20,19 +20,14 @@
   "changelogURL": "https://github.com/Amsterdam/Netherlands3D/blob/main/CHANGELOG.md",
   "samples": [
     {
-      "displayName": "TileSystem",
-      "description": "Basic TileSystem",
-      "path": "Core/Samples~/TileSystem"
-    },
-    {
       "displayName": "Cameras",
       "description": "Example of a camera based on the one used in 3DAmsterdam and 3DUtrecht, with dragging, scroll zooming etc.",
       "path": "Cameras/Samples~/Cameras"
     },
     {
-      "displayName": "Selection Tools",
-      "description": "Example for selecting areas using pointer",
-      "path": "SelectionTools/Samples~/SelectionTools"
+      "displayName": "BAG-information",
+      "description": "Example of showing pdok.nl BAG information in a canvas after clicking on buildings",
+      "path": "BAGInformation/Samples~/BAGInformation"
     },
     {
       "displayName": "File Importer",
@@ -40,10 +35,40 @@
       "path": "File Importer/Samples~/Scene Setup"
     },
     {
+      "displayName": "Minimap Template",
+      "description": "Template example of how to use the minimap",
+      "path": "Minimap/Samples~/Minimap"
+    },
+    {
+      "displayName": "Selection Tools",
+      "description": "Example for selecting areas using pointer",
+      "path": "SelectionTools/Samples~/SelectionTools"  
+    },
+    {
       "displayName": "Sun/Shadows",
       "description": "Example of a Directional Light with shadows based on the position of the sun according to the location,date and time.",
       "path": "Sun/Samples~/Sun"
     },
+    {
+      "displayName": "Subobject-filtering",
+      "description": "Example showing filtering out subobjects based on a buildyear slider",
+      "path": "SubobjectFiltering/Samples~/SubobjectFiltering"
+    },
+    {
+      "displayName": "TileSystem",
+      "description": "Basic TileSystem",
+      "path": "Core/Samples~/TileSystem"
+    },
+    {
+      "displayName": "Timeline UI Mockup",
+      "description": "Ready to use timeline UI prefab",
+      "path": "Timeline/Samples~/Scene Setup"
+    },
+    {
+      "displayName": "Traffic Sample",
+      "description": "Ready to use traffic example",
+      "path": "Traffic/Samples~/Traffic Example"
+    },    
     {
       "displayName": "WMS-layer",
       "description": "Example of a wms-layer",
@@ -55,30 +80,10 @@
       "path": "getWMSUrl/GeoService/Samples~/WMSSelector"
     },
     {
-      "displayName": "BAG-information",
-      "description": "Example of showing pdok.nl BAG information in a canvas after clicking on buildings",
-      "path": "BAGInformation/Samples~/BAGInformation"
-    },
-    {
-      "displayName": "Subobject-filtering",
-      "description": "Example showing filtering out subobjects based on a buildyear slider",
-      "path": "SubobjectFiltering/Samples~/SubobjectFiltering"
-    },
-    {
       "displayName": "WebGL template example",
       "description": "A WebGL template example to use for Netherlands3D WebGL projects with unityInstance reference and responsive full browser window behaviour.",
       "path": "WebGL/Samples~/WebGL"
-    },
-    {
-      "displayName": "Timeline UI Mockup",
-      "description": "Ready to use timeline UI prefab",
-      "path": "Timeline/Samples~/Scene Setup"
-    },
-    {
-      "displayName": "Traffic Sample",
-      "description": "Ready to use traffic example",
-      "path": "Traffic/Samples~/Traffic Example"
-    }
+    }    
   ],
   "hideInEditor": false,
   "author": {
