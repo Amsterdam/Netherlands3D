@@ -55,6 +55,7 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] private bool doubleClickToCloseLoop = true;
         [SerializeField] private float doubleClickTimer = 0.5f;
         [SerializeField] private float doubleClickDistance = 10.0f;
+        [SerializeField] private bool displayLineUntilRedraw = true;
 
         private InputAction pointerAction;
         private InputAction tapAction;
@@ -104,8 +105,8 @@ namespace Netherlands3D.SelectionTools
             tapAction.performed += context => Tap();
             clickAction.performed += context => StartClick();
             clickAction.canceled += context => Release();
-            escapeAction.canceled += context => ClearPolygon();
-            finishAction.performed += context => CloseLoop(false);
+            escapeAction.canceled += context => ClearPolygon(true);
+            finishAction.performed += context => CloseLoop(false,false);
 
             worldPlane = (useWorldSpace) ? new Plane(Vector3.up, Vector3.zero) : new Plane(this.transform.up, this.transform.position);
         }
@@ -210,7 +211,6 @@ namespace Netherlands3D.SelectionTools
                     }
                 }
             }
-            
             return false;
         }
 
@@ -247,7 +247,7 @@ namespace Netherlands3D.SelectionTools
             }
         }
 
-        private void CloseLoop(bool snapLastPointToEnd)
+        private void CloseLoop(bool snapLastPointToEnd, bool checkClosingLine = true)
         {
             if (positions.Count < 3)
             {
@@ -255,7 +255,7 @@ namespace Netherlands3D.SelectionTools
                 return;
             }
 
-            if(LastLineCrossesOtherLine(true))
+            if(LastLineCrossesOtherLine(checkClosingLine))
             {
                 Debug.Log("Not closing loop. There is an intersection.");
                 return;
@@ -273,7 +273,6 @@ namespace Netherlands3D.SelectionTools
             {
                 positions.Add(positions[0]);
             }
-            requireReleaseBeforeRedraw = false;
             UpdateLine();
             FinishPolygon();
         }
@@ -282,38 +281,44 @@ namespace Netherlands3D.SelectionTools
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
             currentWorldCoordinate = GetCoordinateInWorld(currentPointerPosition);
-            AddPoint(currentWorldCoordinate);
 
-            if (doubleClickToCloseLoop) { 
+            if (doubleClickToCloseLoop)
+            {
                 if ((Time.time - lastTapTime) < doubleClickTimer && Vector3.Distance(currentPointerPosition, previousFrameScreenCoordinate) < doubleClickDistance)
                 {
                     Debug.Log("Double click, closing loop.");
-                    CloseLoop(true);
+                    CloseLoop(true,false);
+                }
+                else
+                {
+                    AddPoint(currentWorldCoordinate);
                 }
                 lastTapTime = Time.time;
                 previousFrameScreenCoordinate = currentPointerPosition;
             }
+            else
+            {
+                AddPoint(currentWorldCoordinate);
+            }
         }
         
-        private void ClearPolygon()
+        private void ClearPolygon(bool redraw = false)
         {
             lineRenderer.startColor = lineRenderer.endColor = lineColor;
             closedLoop = false;
             lineCrossed = false;
             positions.Clear();
-            requireReleaseBeforeRedraw = false;
             lastNormal = Vector3.zero;
-            UpdateLine();
+
+            if(redraw)
+                UpdateLine();
         }
 
         private void AddPoint(Vector3 pointPosition)
         {
-            if(lineCrossed)
-            {
-                Debug.Log("Cant place point. Crossing own line.");
-                return;
-            }
-            Debug.Log("Add point at " + pointPosition);
+            
+            Debug.Log("PLacing point at " + pointPosition);
+
             //Added at start? finish and select
             if(positions.Count == 0)
             {
@@ -324,8 +329,23 @@ namespace Netherlands3D.SelectionTools
                 //Add extra point that we snap to our pointer to preview the next line
                 positions.Add(pointPosition);
             }
+            else if(positions.Count > 1 && pointPosition == positions[positions.Count - 2])
+            {
+                Debug.Log("Point at same location, skip");
+                return;
+            }
             else
             {
+                if (positions.Count > 2)
+                {
+                    lineCrossed = LastLineCrossesOtherLine();
+                }
+                if (lineCrossed)
+                {
+                    Debug.Log("Cant place point. Crossing own line.");
+                    return;
+                }
+
                 //Add point at our current preview position
                 positions[positions.Count-1] = pointPosition;
 
@@ -353,7 +373,7 @@ namespace Netherlands3D.SelectionTools
             Debug.Log($"distanceBetweenLastTwoPoints {distanceToStartingPoint}");
             if (distanceToStartingPoint < closeLoopDistance)
             {
-                CloseLoop(true);
+                CloseLoop(true,false);
             }
         }
 
@@ -382,6 +402,8 @@ namespace Netherlands3D.SelectionTools
         private void FinishPolygon()
         {
             Debug.Log($"Make selection.");
+            requireReleaseBeforeRedraw = true;
+
             var polygonIsClockwise = PolygonIsClockwise(positions);
             if ((windingOrder == WindingOrder.COUNTERCLOCKWISE && polygonIsClockwise) || (windingOrder == WindingOrder.CLOCKWISE && !polygonIsClockwise))
             {
@@ -390,7 +412,7 @@ namespace Netherlands3D.SelectionTools
             }
 
             selectedPolygonArea.started.Invoke(positions);
-            ClearPolygon();
+            ClearPolygon(!displayLineUntilRedraw);
         }
 
         private bool PolygonIsClockwise(List<Vector3> points)
