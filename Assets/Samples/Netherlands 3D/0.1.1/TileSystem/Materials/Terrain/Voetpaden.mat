@@ -12,17 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 4
+  version: 5
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Voetpaden
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_ShaderKeywords: 
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -58,7 +59,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 8e7f2695ea7a0114e88f2c86d8c12579, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskMap:
@@ -101,6 +102,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _AlphaClip: 0
     - _Blend: 0
@@ -134,7 +136,7 @@ Material:
     - _BaseColor: {r: 0.4528302, g: 0.42815563, b: 0.39943042, a: 1}
     - _ClippingMask: {r: 3.4028235e+38, g: 3.4028235e+38, b: 3.4028235e+38, a: 3.4028235e+38}
     - _ClippingMaskDome: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 0.49056602, g: 0.43622363, b: 0.3910644, a: 1}
+    - _Color: {r: 0.45283014, g: 0.4281556, b: 0.3994304, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Size: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
