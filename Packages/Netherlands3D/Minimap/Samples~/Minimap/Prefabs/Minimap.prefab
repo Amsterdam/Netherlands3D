@@ -532,12 +532,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   centerPointerInView: 1
-  clampWithinParent: 1
   layerStartIndex: 6
+  topRight:
+    x: 141000
+    y: 501000
+  bottomLeft:
+    x: 109000
+    y: 474000
   pointer: {fileID: 2568988434725556389}
   fov: {fileID: 2568988435099580100}
-  minimapConfig: {fileID: 11400000, guid: 72a4342d66ddad64d8ca7628496466da, type: 2}
-  config: {fileID: 11400000, guid: c9f22367c437e9f468e4cfadb382fb9d, type: 2}
+  minimapConfig: {fileID: 11400000, guid: 286df90aac780c44f8394ec2f9efaf3d, type: 2}
 --- !u!1 &2568988434725556390
 GameObject:
   m_ObjectHideFlags: 0
