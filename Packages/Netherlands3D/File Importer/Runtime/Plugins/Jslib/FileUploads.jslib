@@ -150,6 +150,39 @@ mergeInto(LibraryManager.library, {
             alert("Kan geen verbinding maken met de indexedDatabase");
         }
     },
+	DownloadFromIndexedDB: function (filePath) {
+        var fileName = Pointer_stringify(filePath);	
+        var dbConnectionRequest = window.indexedDB.open("/idbfs", window.dbVersion);
+        dbConnectionRequest.onsuccess = function () {
+            console.log("Connected to database");
+            window.databaseConnection = dbConnectionRequest.result;
+
+            var transaction = window.databaseConnection.transaction(["FILE_DATA"], "readonly");
+            var indexedFilePath = window.databaseName + "/" + fileName;
+            console.log("Downloading from IndexedDB file: " + indexedFilePath);
+
+            var dbRequest = transaction.objectStore("FILE_DATA").get(indexedFilePath);
+            dbRequest.onsuccess = function (e) {
+                var record = e.target.result;
+                var blob = new Blob([record.contents], { type: 'application/octetstream' });
+				var url = window.URL.createObjectURL(blob);
+				var onlyFileName = fileName.replace(/^.*[\\\/]/, '');
+				const a = document.createElement("a");
+			    a.href = url;
+			    a.setAttribute("download", onlyFileName);
+			    document.body.appendChild(a);
+			    a.click();
+			    document.body.removeChild(a);
+                window.databaseConnection.close();
+            };
+            dbRequest.onerror = function () {
+                window.databaseConnection.close();
+            };
+        }
+        dbConnectionRequest.onerror = function () {
+            alert("Kan geen verbinding maken met de indexedDatabase");
+        }
+    },
 	AddFileInput: function (inputName,fileExtentions,multiSelect) {
 		var inputNameID = Pointer_stringify(inputName);
         var allowedFileExtentions = Pointer_stringify(fileExtentions);
