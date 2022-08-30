@@ -150,15 +150,21 @@ mergeInto(LibraryManager.library, {
             alert("Kan geen verbinding maken met de indexedDatabase");
         }
     },
-	DownloadFromIndexedDB: function (filePath) {
-        var fileName = Pointer_stringify(filePath);	
+	DownloadFromIndexedDB: function (filePath, callbackObject, callbackMethod) {
+        var fileNameString = Pointer_stringify(filePath);	
+		var callbackObjectString = Pointer_stringify(callbackObject);	
+		var callbackMethodString = Pointer_stringify(callbackMethod);	
+		
+		console.log("Set callback object to " + callbackObjectString);
+		console.log("Set callback method to " + callbackMethodString);
+		
         var dbConnectionRequest = window.indexedDB.open("/idbfs", window.dbVersion);
         dbConnectionRequest.onsuccess = function () {
             console.log("Connected to database");
             window.databaseConnection = dbConnectionRequest.result;
 
             var transaction = window.databaseConnection.transaction(["FILE_DATA"], "readonly");
-            var indexedFilePath = window.databaseName + "/" + fileName;
+            var indexedFilePath = window.databaseName + "/" + fileNameString;
             console.log("Downloading from IndexedDB file: " + indexedFilePath);
 
             var dbRequest = transaction.objectStore("FILE_DATA").get(indexedFilePath);
@@ -166,7 +172,7 @@ mergeInto(LibraryManager.library, {
                 var record = e.target.result;
                 var blob = new Blob([record.contents], { type: 'application/octetstream' });
 				var url = window.URL.createObjectURL(blob);
-				var onlyFileName = fileName.replace(/^.*[\\\/]/, '');
+				var onlyFileName = fileNameString.replace(/^.*[\\\/]/, '');
 				const a = document.createElement("a");
 			    a.href = url;
 			    a.setAttribute("download", onlyFileName);
@@ -175,6 +181,7 @@ mergeInto(LibraryManager.library, {
 				setTimeout(() => {
 				  window.URL.revokeObjectURL(url);
 				  document.body.removeChild(a);
+				  unityInstance.SendMessage(callbackObjectString, callbackMethodString, fileNameString);
 				}, 0);
                 window.databaseConnection.close();
             };
