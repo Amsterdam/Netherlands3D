@@ -178,7 +178,7 @@ mergeInto(LibraryManager.library, {
 			    a.setAttribute("download", onlyFileName);
 			    document.body.appendChild(a);
 			    a.click();
-				setTimeout(() => {
+				window.setTimeout(() => {
 				  window.URL.revokeObjectURL(url);
 				  document.body.removeChild(a);
 				  unityInstance.SendMessage(callbackObjectString, callbackMethodString, fileNameString);
