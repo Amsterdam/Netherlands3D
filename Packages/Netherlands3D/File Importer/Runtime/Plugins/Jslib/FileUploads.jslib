@@ -172,7 +172,10 @@ mergeInto(LibraryManager.library, {
 			    a.setAttribute("download", onlyFileName);
 			    document.body.appendChild(a);
 			    a.click();
-			    document.body.removeChild(a);
+				setTimeout(() => {
+				  window.URL.revokeObjectURL(url);
+				  document.body.removeChild(a);
+				}, 0);
                 window.databaseConnection.close();
             };
             dbRequest.onerror = function () {
