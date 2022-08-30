@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using Netherlands3D.JavascriptConnection;
 #endif
 using Netherlands3D.Events;
+
 #if UNITY_STANDALONE || UNITY_EDITOR
 using Netherlands3D.FileImporter.SFB;
 #endif
@@ -33,7 +34,7 @@ namespace Netherlands3D.FileImporter
         [Tooltip("HTML DOM ID")]
         [SerializeField] private string fileInputName = "fileInput";
         [Tooltip("The allowed file extention to load. Don't put a '.' at the start")]
-        [SerializeField] private string fileExtention = "csv";
+        [SerializeField] string fileExtention = "obj";
         [Tooltip("Allow user to select multiple files")]
         [SerializeField] private bool multiSelect;
         
