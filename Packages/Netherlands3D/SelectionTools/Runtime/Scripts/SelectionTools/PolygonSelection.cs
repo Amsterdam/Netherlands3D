@@ -47,7 +47,8 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] private float lineWidthMultiplier = 10.0f;
         [SerializeField] private float maxSelectionDistanceFromCamera = 10000;
         [SerializeField] private bool useWorldSpace = false;
-        [SerializeField] private bool snapToEnd = true;
+        [SerializeField] private bool snapToStart = true;
+        [SerializeField, Tooltip("If you click close to the starting point the loop will finish")] private bool closeLoopAtStart = true;
         [SerializeField] private int minPointsToCloseLoop = 3;
         [SerializeField] private float minPointDistance = 0.1f;
         [SerializeField] private float minDistanceBetweenAutoPoints = 10.0f;
@@ -78,7 +79,7 @@ namespace Netherlands3D.SelectionTools
         private Plane worldPlane;
 
         private bool closedLoop = false;
-        private bool snappingToEnd = false;
+        private bool snappingToStartPoint = false;
         private bool previewLineCrossed = false;
         private bool autoDrawPolygon = false;
         private bool requireReleaseBeforeRedraw = false;
@@ -163,13 +164,13 @@ namespace Netherlands3D.SelectionTools
         {
             if (positions.Count == 0) return;
 
-            snappingToEnd = false;
-            if(snapToEnd && positions.Count > 2)
+            snappingToStartPoint = false;
+            if(snapToStart && positions.Count > 2)
             {
                 if (Vector3.Distance(currentWorldCoordinate, positions[0]) < minPointDistance)
                 {
                     currentWorldCoordinate = positions[0];
-                    snappingToEnd = true;
+                    snappingToStartPoint = true;
                 }
             }
 
@@ -182,7 +183,7 @@ namespace Netherlands3D.SelectionTools
             //Compare all lines in drawing if we do not cross (except last, we cant cross that one)
             for (int i = 1; i < polygonLineRenderer.positionCount-1; i++)
             {
-                if (snappingToEnd && i == 1) continue; //Skip first line check if we are snapping to it
+                if (snappingToStartPoint && i == 1) continue; //Skip first line check if we are snapping to it
 
                 var comparisonStart = polygonLineRenderer.GetPosition(i - 1);
                 var comparisonEnd = polygonLineRenderer.GetPosition(i);
@@ -314,18 +315,16 @@ namespace Netherlands3D.SelectionTools
                 {
                     Debug.Log("Double click, closing loop.");
                     CloseLoop(true);
+                    return;
                 }
                 else
                 {
-                    AddPoint(currentWorldCoordinate);
+                    lastTapTime = Time.time;
+                    previousFrameScreenCoordinate = currentPointerPosition;
                 }
-                lastTapTime = Time.time;
-                previousFrameScreenCoordinate = currentPointerPosition;
             }
-            else
-            {
-                AddPoint(currentWorldCoordinate);
-            }
+
+            AddPoint(currentWorldCoordinate);
         }
 
         private void ClearPolygon(bool redraw = false)
@@ -367,12 +366,13 @@ namespace Netherlands3D.SelectionTools
                 Debug.Log("Adding new point.");
                 positions.Add(pointPosition);
                 lastAddedPoint = pointPosition;
+                if (closeLoopAtStart && snappingToStartPoint)
+                {
+                    CloseLoop(true);
+                }
             }
 
-            if (!closedLoop)
-            {
-                UpdateLine();
-            }
+            UpdateLine();
         }
 
         /// <summary>
