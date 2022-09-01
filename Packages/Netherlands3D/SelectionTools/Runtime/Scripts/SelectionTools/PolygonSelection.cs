@@ -170,6 +170,8 @@ namespace Netherlands3D.SelectionTools
                 {
                     currentWorldCoordinate = positions[0];
                     snappingToEnd = true;
+
+
                 }
             }
 
@@ -198,9 +200,19 @@ namespace Netherlands3D.SelectionTools
             previewLineRenderer.startColor = previewLineRenderer.endColor = Color.green;
         }
 
-        private bool LineCrossesOtherLine(Vector3 linePointA, Vector3 linePointB)
+        /// <summary>
+        /// Compare line with placed lines to check if they do not intersect.
+        /// </summary>
+        /// <param name="linePointA">Start point of the line we want to check</param>
+        /// <param name="linePointB">End point of the line we want to check</param>
+        /// <param name="skipFirst">Skip the first line in our chain</param>
+        /// <param name="skipLast">Skip the last line in our chain</param>
+        /// <returns>Returns true if an intersection was found</returns>
+        private bool LineCrossesOtherLine(Vector3 linePointA, Vector3 linePointB, bool skipFirst = false, bool skipLast = false)
         {
-            for (int i = 1; i < polygonLineRenderer.positionCount; i++)
+            int startIndex = (skipFirst) ? 2 : 1;
+            int endIndex = (skipLast) ? polygonLineRenderer.positionCount-1 : polygonLineRenderer.positionCount;
+            for (int i = startIndex; i < endIndex; i++)
             {
                 var comparisonStart = polygonLineRenderer.GetPosition(i - 1);
                 var comparisonEnd = polygonLineRenderer.GetPosition(i);
@@ -247,7 +259,7 @@ namespace Netherlands3D.SelectionTools
             }
         }
 
-        private void CloseLoop(bool connectLastPointToStart)
+        private void CloseLoop(bool connectLastPointToStart, bool checkPreviewLine = true)
         {
             if (positions.Count < minPointsToCloseLoop)
             {
@@ -255,7 +267,7 @@ namespace Netherlands3D.SelectionTools
                 return;
             }
 
-            if (previewLineCrossed)
+            if (checkPreviewLine && previewLineCrossed)
             {
                 Debug.Log("Not closing loop. Preview line is crossing another line");
                 return;
@@ -278,7 +290,7 @@ namespace Netherlands3D.SelectionTools
                     Debug.Log("Try to add a finishing line.");
                     var closingLineStart = positions[positions.Count - 1];
                     var closingLineEnd = positions[0];
-                    if (LineCrossesOtherLine(closingLineStart, closingLineEnd))
+                    if (LineCrossesOtherLine(closingLineStart, closingLineEnd, true,true))
                     {
                         Debug.Log("Cant close loop, closing line will cross another line.");
                         return;
