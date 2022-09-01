@@ -80,6 +80,7 @@ namespace Netherlands3D.SelectionTools
 
         private bool closedLoop = false;
         private bool snappingToStartPoint = false;
+        private bool polygonFinished = false;
         private bool previewLineCrossed = false;
         private bool autoDrawPolygon = false;
         private bool requireReleaseBeforeRedraw = false;
@@ -239,6 +240,9 @@ namespace Netherlands3D.SelectionTools
         /// </summary>
         private void AutoAddPoint()
         {
+            //Clear on fresh start
+            if(polygonFinished) ClearPolygon(true);
+
             //automatically add a new point if pointer is far enough from last point, or edge normal is different enough from last line
             if (positions.Count == 0)
             {
@@ -296,7 +300,7 @@ namespace Netherlands3D.SelectionTools
                     }
                 }
             }
-            //Connect loop to be closed by placing endpoint at same position as start ( or snap last point if close enough )
+
             closedLoop = true;
             polygonLineRenderer.startColor = polygonLineRenderer.endColor = closedLoopLineColor;
 
@@ -329,6 +333,8 @@ namespace Netherlands3D.SelectionTools
 
         private void ClearPolygon(bool redraw = false)
         {
+            polygonFinished = false;
+
             polygonLineRenderer.startColor = polygonLineRenderer.endColor = lineColor;
             closedLoop = false;
             previewLineCrossed = false;
@@ -342,6 +348,9 @@ namespace Netherlands3D.SelectionTools
 
         private void AddPoint(Vector3 pointPosition)
         {
+            //Clear on fresh start
+            if (polygonFinished) ClearPolygon(true);
+
             //Added at start? finish and select
             if (positions.Count == 0)
             {
@@ -372,7 +381,8 @@ namespace Netherlands3D.SelectionTools
                 }
             }
 
-            UpdateLine();
+            if (!closedLoop)
+                UpdateLine();
         }
 
         /// <summary>
@@ -400,6 +410,9 @@ namespace Netherlands3D.SelectionTools
         {
             Debug.Log($"Make selection.");
             requireReleaseBeforeRedraw = true;
+            polygonFinished = true;
+
+            previewLineRenderer.enabled = false;
 
             var polygonIsClockwise = PolygonIsClockwise(positions);
             if ((windingOrder == WindingOrder.COUNTERCLOCKWISE && polygonIsClockwise) || (windingOrder == WindingOrder.CLOCKWISE && !polygonIsClockwise))
@@ -409,7 +422,6 @@ namespace Netherlands3D.SelectionTools
             }
 
             selectedPolygonArea.started.Invoke(positions);
-            ClearPolygon(!displayLineUntilRedraw);
         }
 
         private bool PolygonIsClockwise(List<Vector3> points)
