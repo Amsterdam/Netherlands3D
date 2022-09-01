@@ -167,7 +167,7 @@ public static class Poly2Mesh
 	{
 		//	long profileID = Profiler.Enter("Poly2Mesh.CreateMesh");
 		// Check for the easy case (a triangle)
-		if (polygon.holes.Count == 0 && (polygon.outside.Count == 3
+		if (thickness == 0 && polygon.holes.Count == 0 && (polygon.outside.Count == 3
 			   || (polygon.outside.Count == 4 && polygon.outside[3] == polygon.outside[0])))
 		{
 			return CreateTriangle(polygon);
