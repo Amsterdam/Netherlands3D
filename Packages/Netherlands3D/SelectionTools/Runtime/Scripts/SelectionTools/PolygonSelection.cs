@@ -170,8 +170,6 @@ namespace Netherlands3D.SelectionTools
                 {
                     currentWorldCoordinate = positions[0];
                     snappingToEnd = true;
-
-
                 }
             }
 
@@ -273,10 +271,6 @@ namespace Netherlands3D.SelectionTools
                 return;
             }
 
-            //Connect loop to be closed by placing endpoint at same position as start ( or snap last point if close enough )
-            closedLoop = true;
-            polygonLineRenderer.startColor = polygonLineRenderer.endColor = closedLoopLineColor;
-
             if (connectLastPointToStart)
             {
                 var lastPointOnTopOfFirst = (Vector3.Distance(positions[0], positions[positions.Count - 1]) < minPointDistance);
@@ -301,6 +295,10 @@ namespace Netherlands3D.SelectionTools
                     }
                 }
             }
+            //Connect loop to be closed by placing endpoint at same position as start ( or snap last point if close enough )
+            closedLoop = true;
+            polygonLineRenderer.startColor = polygonLineRenderer.endColor = closedLoopLineColor;
+
             UpdateLine();
             FinishPolygon();
         }
