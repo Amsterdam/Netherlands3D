@@ -120,7 +120,6 @@ namespace Netherlands3D.BIMPlanning
                 displayID = displayID,
                 taskname = taskname,
                 taskType = taskType,
-
                 dateFrom = dateFrom,
                 dateTo = dateTo,
                 startDate = startDate,
