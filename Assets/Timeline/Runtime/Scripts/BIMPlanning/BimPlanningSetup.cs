@@ -10,9 +10,9 @@ using System.IO;
 namespace Netherlands3D.BIMPlanning
 {
     /// <summary>
-    /// This object reads Navisworks planning files (as .csv)
-    /// And tries to link child objects (with matching ID's) to DateTime's.
-    /// This allows showing/hiding/coloring of the objects based on the time.
+    /// This object reads planning .CSV files ( Based on Navisworks export )
+    /// and can link child objects (with matching ID's) to the parsed DateTime's.
+    /// This allows showing/hiding/coloring of the objects based on the chosen time in a Timeline.
     /// </summary>
     public class BimPlanningSetup : MonoBehaviour
     {
@@ -20,6 +20,23 @@ namespace Netherlands3D.BIMPlanning
         public Material DestroyMaterial;
 
         private TimelineUI timeline;
+
+        private List<BIMPlanningData> BIMPlanningDataLine = new List<BIMPlanningData>();
+
+        /// <summary>
+        /// Data object for parsed Navisworks CSV lines
+        /// </summary>
+        private class BIMPlanningData
+        {
+            public string displayID;
+            public string taskname;
+            public string taskType;
+            public string dateFrom;
+            public string dateTo;
+
+            public DateTime startDate;
+            public DateTime endDate;
+        }
 
         private void Start()
         {
@@ -30,15 +47,6 @@ namespace Netherlands3D.BIMPlanning
             }
         }
 
-        public void OnEnable()
-        {
-            
-        }
-        public void OnDisable()
-        {
-
-        }
-
         /// <summary>
         /// Read all text from CSV planning file.
         /// A specific order is assumed based on Navisworks export: displayID,taskName,taskType,fromDate,toDate
@@ -46,10 +54,17 @@ namespace Netherlands3D.BIMPlanning
         /// <param name="csvPath">Path to the CSV file</param>
         public void ReadPlanningFromCSV(string csvPath)
         {
+            BIMPlanningDataLine.Clear();
             timeline.timelineData.timePeriods.Clear();
 
             var csvText = File.ReadAllText(csvPath);
             string[] lines = csvText.Split('\n');
+
+            if (!VerifyNavisworksCSV(lines))
+            {
+                Debug.Log("Navisworks CSV could not be verified", this.gameObject);
+                return;
+            }
 
             for (int i = 1; i < lines.Length; i++)
             {
@@ -60,8 +75,22 @@ namespace Netherlands3D.BIMPlanning
             {
                 child.Initialize(timeline);
             }
-
             timeline.timelineData.OrderTimePeriods();
+
+            FindPlanningGameObjects();
+        }
+
+        /// <summary>
+        /// Check if lines appear to be a Navisworks CSV.
+        /// </summary>
+        /// <param name="csvLines">The array of csv lines</param>
+        /// <returns></returns>
+        private bool VerifyNavisworksCSV(string[] csvLines)
+        {
+            if (csvLines.Length < 2)
+                return false;
+            //TODO: We might want to add more checks here, probably on CSV header (csvLines[0])
+            return true;
         }
 
         private void ParseLine(string line)
@@ -78,7 +107,6 @@ namespace Netherlands3D.BIMPlanning
             var taskType = items[2];
             var dateFrom = items[5].ToLower();
             var dateTo = items[6].ToLower();
-
             var startDate = new DateTime();
             var endDate = new DateTime();
             if (!DateTime.TryParse(dateFrom, out startDate) || !DateTime.TryParse(dateTo, out endDate))
@@ -87,38 +115,41 @@ namespace Netherlands3D.BIMPlanning
                 return;
             }
 
-            bool childfound = GetChildWithID(displayID, out GameObject child);
-            if (childfound)
+            var newPlanningData = new BIMPlanningData()
             {
-                AddPlanningItemToGameObject(child, taskname, taskType, startDate, endDate);
-            }
+                displayID = displayID,
+                taskname = taskname,
+                taskType = taskType,
+
+                dateFrom = dateFrom,
+                dateTo = dateTo,
+                startDate = startDate,
+                endDate = endDate,
+            };
+            BIMPlanningDataLine.Add(newPlanningData);
+
+            FindPlanningGameObjects();
         }
 
         /// <summary>
-        /// Find a child object which name matches the display ID
+        /// For all planning data lines, try to find a child gameobject with matching ID and connect it to the data.
         /// </summary>
-        /// <param name="displayID">ID of the object</param>
-        /// <param name="child">Output of the child if it is found</param>
-        /// <returns></returns>
-        private bool GetChildWithID(string displayID, out GameObject child)
+        public void FindPlanningGameObjects()
         {
-            child = null;
-            var childcount = transform.childCount;
-            for (int i = 0; i < childcount; i++)
+            foreach (var planningData in BIMPlanningDataLine)
             {
-                if (transform.GetChild(i).gameObject.name == displayID)
+                bool childfound = GetChildWithID(planningData.displayID, out GameObject child);
+                if (childfound)
                 {
-                    child = transform.GetChild(i).gameObject;
-                    return true;
+                    SetAsPlanningObject(child, planningData.taskname, planningData.taskType, planningData.startDate, planningData.endDate);
                 }
             }
-            return false;
         }
 
         /// <summary>
         /// Add a planning item component on a corresponding GameObject
         /// </summary>
-        private void AddPlanningItemToGameObject(GameObject child, string taskname, string taskType, DateTime startDate, DateTime endDate)
+        private void SetAsPlanningObject(GameObject child, string taskname, string taskType, DateTime startDate, DateTime endDate)
         {
             BimPlanningItem bimPlanningItem = child.GetComponent<BimPlanningItem>();
             if (bimPlanningItem is null)
@@ -140,6 +171,27 @@ namespace Netherlands3D.BIMPlanning
                 bimPlanningItem.BuildStartDateTime = startDate;
                 bimPlanningItem.BuildEndDateTime = endDate;
             }
+        }
+
+        /// <summary>
+        /// Find a child object of this transform which name matches the display ID
+        /// </summary>
+        /// <param name="displayID">ID of the object</param>
+        /// <param name="child">Output of the child if it is found</param>
+        /// <returns></returns>
+        private bool GetChildWithID(string displayID, out GameObject child)
+        {
+            child = null;
+            var childcount = transform.childCount;
+            for (int i = 0; i < childcount; i++)
+            {
+                if (transform.GetChild(i).gameObject.name == displayID)
+                {
+                    child = transform.GetChild(i).gameObject;
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
