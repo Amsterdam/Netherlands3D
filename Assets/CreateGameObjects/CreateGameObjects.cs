@@ -2,18 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Netherlands3D.ModelParsing;
-using Netherlands3D.Events;
+
 
 public class CreateGameObjects : MonoBehaviour
 {
     
-    public GameObjectDataSet gameObjectData;
-    // Start is called before the first frame update
-    public Material BaseMaterial;
+    [HideInInspector]
+    GameObjectDataSet gameObjectData;
+
+    [HideInInspector]
+    Material BaseMaterial;
     
     [HideInInspector]
-    public FloatEvent progressPercentage;
-    public GameObjectEvent createdGameObject;
+    public System.Action<float> BroadcastProgressPercentage;
     int gameobjectindex;
     int totalgameobjects;
 
@@ -33,13 +34,15 @@ public class CreateGameObjects : MonoBehaviour
     void BroadCastProgress()
     {
         float progress = 100 * gameobjectindex / totalgameobjects;
-        if (progressPercentage) progressPercentage.started.Invoke(progress);
+        if (BroadcastProgressPercentage!=null) BroadcastProgressPercentage(progress);
     }
 
-    public void Create(System.Action<GameObject> callbackToFunction = null)
+    public void Create(GameObjectDataSet gamobjectDataset,Material basematerial, System.Action<GameObject> callbackToFunction = null)
     {
+        gameObjectData = gamobjectDataset;
+        BaseMaterial = basematerial;
         callback = callbackToFunction;
-        time = System.DateTime.Now;
+        time = System.DateTime.UtcNow;
         parentobject = new GameObject();
         totalgameobjects = gameObjectData.gameObjects.Count;
         gameobjectindex = 0;
@@ -60,7 +63,6 @@ public class CreateGameObjects : MonoBehaviour
             }
         }
 
-        if (createdGameObject) createdGameObject.started.Invoke(parentobject);
         if (callback !=null)
         {
             callback(parentobject);
@@ -146,10 +148,10 @@ public class CreateGameObjects : MonoBehaviour
         Vector3[] meshvector3 = new Vector3[vertexcount];
         for (int i = 0; i < vertexcount; i++)
         {
-            if ((System.DateTime.Now-time).TotalMilliseconds>400)
+            if ((System.DateTime.UtcNow-time).TotalMilliseconds>400)
             {
                 yield return null;
-                time = System.DateTime.Now;
+                time = System.DateTime.UtcNow;
             }
             meshvector3[i] = vertices.ReadItem(i);
         }
@@ -161,15 +163,15 @@ public class CreateGameObjects : MonoBehaviour
 
         // add indices
         intList indices = new intList();
-        indices.SetupReading(meshdata.indicesFilename);
+        indices.SetupReading(meshdata.indicesFileName);
         int indexcount = indices.numberOfVertices();
         int[] meshindices = new int[indexcount];
         for (int i = 0; i < indexcount; i++)
         {
-            if ((System.DateTime.Now - time).TotalMilliseconds > 400)
+            if ((System.DateTime.UtcNow - time).TotalMilliseconds > 400)
             {
                 yield return null;
-                time = System.DateTime.Now;
+                time = System.DateTime.UtcNow;
             }
             meshindices[i] = indices.ReadNext();
         }
@@ -188,10 +190,10 @@ public class CreateGameObjects : MonoBehaviour
             int normalscount = normals.Count();
             if (normalscount==vertexcount)
             {
-                if ((System.DateTime.Now - time).TotalMilliseconds > 400)
+                if ((System.DateTime.UtcNow - time).TotalMilliseconds > 400)
                 {
                     yield return null;
-                    time = System.DateTime.Now;
+                    time = System.DateTime.UtcNow;
                 }
                 hasnormals = true;
                 Vector3[] meshnormals = new Vector3[normalscount];
@@ -232,10 +234,10 @@ public class CreateGameObjects : MonoBehaviour
         {
             createdMesh.RecalculateNormals();
         }
-        if ((System.DateTime.Now - time).TotalMilliseconds > 400)
+        if ((System.DateTime.UtcNow - time).TotalMilliseconds > 400)
         {
             yield return null;
-            time = System.DateTime.Now;
+            time = System.DateTime.UtcNow;
         }
         createdMesh.RecalculateBounds();
         meshcreated = true;

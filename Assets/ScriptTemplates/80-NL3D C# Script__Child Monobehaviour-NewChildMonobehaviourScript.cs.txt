@@ -1,0 +1,41 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class #SCRIPTNAME# : MonoBehaviour
+{
+	#region communicating progress and errors
+	public System.Action<string> currentActivity;           //title of activity
+	public System.Action<string> currentAction;             //name of smaller action inside activity
+    public System.Action<float> progressPercentage;         // 0 - 100
+
+    public System.Action<string> alertmessage;              //if something wasn't as expected, but the function can continue
+    public System.Action<string> errormessage;              //if the function can't finish
+
+	void BroadcastCurrentActivity(string value)
+    {
+		if (currentActivity != null) currentActivity(value);
+    }
+	void BroadcastCurrentAction(string Value)
+    {
+		if (currentAction != null) currentAction(Value);
+    }
+	void BroadcastProgressPercentage(float value)
+    {
+		if (progressPercentage != null) progressPercentage(value);
+    }
+    void BroadcastAlertMessage(string value)
+    {
+        if (alertmessage != null) alertmessage(value);
+    }
+    void BroadCastErrormessage(string value)
+    {
+        if (errormessage != null) errormessage(value);
+    }
+
+    #endregion
+    public void Start()
+	{
+	    //should receive a System.Action<type> to be able to send the results back to the caller
+	}
+
+}

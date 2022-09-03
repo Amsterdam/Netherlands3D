@@ -1,0 +1,57 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Netherlands3D.Events;
+
+public class #SCRIPTNAME# : MonoBehaviour
+{
+    #region progress- and error events setup
+    [Header("progress")]
+    [SerializeField] BoolEvent started;
+    [SerializeField] StringEvent currentActivity;
+    [SerializeField] StringEvent currentAction;
+    [SerializeField] FloatEvent progressPercentage;
+
+    [Header("error")]
+    [SerializeField] StringEvent alertmessage;
+    [SerializeField] StringEvent errormessage;
+
+    void BroadcastCurrentActivity(string value)
+    {
+        if (currentActivity != null) currentActivity.started.Invoke(value);
+    }
+    void BroadcastCurrentAction(string value)
+    {
+        if (currentAction != null) currentAction.started.Invoke(value);
+    }
+
+    void BroadcastProgressPercentage(float value)
+    {
+        if (progressPercentage != null) progressPercentage.started.Invoke(value);
+    }
+
+    void BroadcastAlertmessage(string value)
+    {
+        if (alertmessage != null) alertmessage.started.Invoke(value);
+    }
+    void BroadcastErrormessage(string value)
+    {
+        if (errormessage != null) errormessage.started.Invoke(value);
+    }
+    #endregion
+
+    #region connect Child-MonoBehaviour to progress- and error events
+    //Child_MonoBehaviour childbehaviour;
+    //void ConnectToImporter()
+    //{
+    //    if (childbehaviour != null) return;
+    //    childbehaviour = gameObject.AddComponent<Child_MonoBehaviour>();
+    //    // give the importer handles for progress- and errormessaging
+    //    childbehaviour.currentActivity = BroadcastCurrentActivity;
+    //    childbehaviour.currentAction = BroadcastCurrentAction;
+    //    childbehaviour.progressPercentage = BroadcastProgressPercentage;
+    //    childbehaviour.alertmessage = BroadcastAlertmessage;
+    //    childbehaviour.errormessage = BroadcastErrormessage;
+    //}
+    #endregion
+}

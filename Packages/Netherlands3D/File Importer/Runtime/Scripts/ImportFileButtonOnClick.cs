@@ -8,9 +8,6 @@ using Netherlands3D.JavascriptConnection;
 #endif
 using Netherlands3D.Events;
 
-#if UNITY_STANDALONE || UNITY_EDITOR
-using Netherlands3D.FileImporter.SFB;
-#endif
 
 namespace Netherlands3D.FileImporter
 {
@@ -39,11 +36,6 @@ namespace Netherlands3D.FileImporter
         [SerializeField] private bool multiSelect;
         
         /// <summary>
-        /// The string event that gets called upon loading a file
-        /// </summary>
-        [SerializeField] private StringEvent eventFileLoaderFileImported;
-
-        /// <summary>
         /// The button component attached to this same gameobject
         /// </summary>
         private Button button;
@@ -57,42 +49,17 @@ namespace Netherlands3D.FileImporter
             name = fileInputName;
 
             // Execute setup based on platform
-            // Standalone
-#if UNITY_STANDALONE || UNITY_EDITOR
-            SetupUnityStandalone();
-#endif
-            // Unity Editor
-#if UNITY_EDITOR
-            //SetupUnityEditor(); // Doesnt allow for multiple file selection
-#endif
+
             // WebGL
 #if UNITY_WEBGL && !UNITY_EDITOR
             SetupWebGL();
+#else
+            SetupUnityEditor();
 #endif
         }
 
 
         // Standalone
-#if UNITY_STANDALONE || UNITY_EDITOR
-                
-        private void SetupUnityStandalone()
-        {
-            button.onClick.AddListener(OnButtonClickUnityStandalone);
-        }
-
-        /// <summary>
-        /// When the user clicks the button in standalone mode
-        /// </summary>
-        private void OnButtonClickUnityStandalone()
-        {
-            var result = StandaloneFileBrowser.OpenFilePanel("Select File", "", fileExtention, multiSelect);
-            if(result.Length != 0)
-            {
-                // Invoke the event with joined string values
-                eventFileLoaderFileImported.Invoke(string.Join(",", result));
-            }
-        }
-#endif
 
         // Unity Editor
 #if UNITY_EDITOR
@@ -107,12 +74,13 @@ namespace Netherlands3D.FileImporter
         /// </summary>
         private void OnButtonClickUnityEditor()
         {
-            string filePath = UnityEditor.EditorUtility.OpenFilePanel("Select File", "", fileExtention);
-            if(filePath.Length != 0)
+            FileInputIndexedDB inputhandler = GameObject.FindObjectOfType<FileInputIndexedDB>();
+            if (inputhandler)
             {
-                UnityEngine.Debug.Log("[File Importer] Import file from file path: " + filePath);
-                eventFileLoaderFileImported.Invoke(filePath);
+                
+                inputhandler.SelectFiles(fileExtention, false);
             }
+            
         }
 #endif
 
@@ -134,7 +102,7 @@ namespace Netherlands3D.FileImporter
         {
             if(button != null)
             {
-                Debug.Log("Invoked native Unity button click event on " + this.gameObject.name);
+                //Debug.Log("Invoked native Unity button click event on " + this.gameObject.name);
                 button.onClick.Invoke();
             }
         }
