@@ -37,13 +37,14 @@ public class CreateGameObjects : MonoBehaviour
         if (BroadcastProgressPercentage!=null) BroadcastProgressPercentage(progress);
     }
 
-    public void Create(GameObjectDataSet gamobjectDataset,Material basematerial, System.Action<GameObject> callbackToFunction = null)
+    public void Create(GameObjectDataSet gameobjectDataset,Material basematerial, System.Action<GameObject> callbackToFunction = null)
     {
-        gameObjectData = gamobjectDataset;
+        gameObjectData = gameobjectDataset;
         BaseMaterial = basematerial;
         callback = callbackToFunction;
         time = System.DateTime.UtcNow;
         parentobject = new GameObject();
+        parentobject.name = gameObjectData.name;
         totalgameobjects = gameObjectData.gameObjects.Count;
         gameobjectindex = 0;
         StartCoroutine(createGameObjects());
@@ -51,6 +52,13 @@ public class CreateGameObjects : MonoBehaviour
 
     IEnumerator createGameObjects()
     {
+        if (gameObjectData.gameObjects.Count==1)
+        {
+            yield return StartCoroutine(AddGameObject(gameObjectData.gameObjects[0],parentobject));
+            parentobject.name = gameObjectData.name;
+        }
+        else 
+        { 
         foreach (var gameobjectdata in gameObjectData.gameObjects)
         {
             gameobjectindex++;
@@ -62,7 +70,7 @@ public class CreateGameObjects : MonoBehaviour
                 yield return null;
             }
         }
-
+        }
         if (callback !=null)
         {
             callback(parentobject);
@@ -71,20 +79,24 @@ public class CreateGameObjects : MonoBehaviour
     }
 
 
-    IEnumerator AddGameObject(GameObjectData gameobjectdata)
+    IEnumerator AddGameObject(GameObjectData gameobjectdata, GameObject GameObject = null)
     {
-        GameObject gameobject = new GameObject();
+        GameObject gameobject;
+        if (GameObject != null)
+        {
+            gameobject = GameObject;
+        }
+        else
+        {
+            gameobject = new GameObject();
+        }
         gameobject.name = gameobjectdata.name;
         gameobject.transform.parent = parentobject.transform;
-        meshcreated = false;
-        StartCoroutine(CreateMesh(gameobjectdata.meshdata));
-        while (meshcreated==false)
-        {
-            yield return null;
-        }
+        
+        yield return StartCoroutine(CreateMesh(gameobjectdata.meshdata));
+
         if (createdMesh is null)
-        {
-            gameObjectCreated = true;
+        {   gameObjectCreated = true;
             Destroy(gameobject);
             yield break;
         }
@@ -118,6 +130,7 @@ public class CreateGameObjects : MonoBehaviour
             {
                 if (gameObjectData.materials[i].Name==materialname)
                 {
+                    returnmaterial.name = gameObjectData.materials[i].DisplayName;
                     returnmaterial.color = gameObjectData.materials[i].Diffuse;
                     createdMaterials.Add(materialname, returnmaterial);
                 }

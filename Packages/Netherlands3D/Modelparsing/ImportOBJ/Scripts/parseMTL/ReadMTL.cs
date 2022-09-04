@@ -32,6 +32,7 @@ namespace Netherlands3D.ModelParsing
 
         private string line;
         private string[] linePart;
+        string filenameWithoutExtention;
 
         private const char faceSplitChar = '/';
         private const char lineSplitChar = '\n';
@@ -69,11 +70,11 @@ namespace Netherlands3D.ModelParsing
         //	/// Sets the material string and turns in into an array with every newline
         //	/// </summary>
         //	/// <param name="data">obj string</param>
-        public void StartMTLParse(string data, System.Action<bool> callback)
+        public void StartMTLParse(string data, System.Action<bool> callback, string filename)
         {
             needToCancel = false;
             stringReader = new StringReader(data);
-
+            filenameWithoutExtention = System.IO.Path.GetFileName(filename).Replace(".mtl", "");
             //Count newlines
             totalDataLines = 0;
             foreach (var character in data)
@@ -147,6 +148,15 @@ namespace Netherlands3D.ModelParsing
                     case NML:
                         targetMaterialData = new MaterialData();
                         targetMaterialData.Name = linePart[1].Trim();
+                        int filenamebase = targetMaterialData.Name.IndexOf(filenameWithoutExtention);
+                        if (filenamebase>0)
+                        {
+                            targetMaterialData.DisplayName = targetMaterialData.Name.Substring(0, filenamebase);
+                        }
+                        else
+                        {
+                            targetMaterialData.DisplayName = targetMaterialData.Name;
+                        }
                         materialDataSlots.Add(targetMaterialData);
                         break;
                     case KA:

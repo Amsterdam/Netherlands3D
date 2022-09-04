@@ -6,6 +6,7 @@ namespace Netherlands3D.ModelParsing
     public class MaterialData
     {
         public string Name;
+        public string DisplayName;
         public Color Ambient;
         public Color Diffuse;
         public Color Specular;

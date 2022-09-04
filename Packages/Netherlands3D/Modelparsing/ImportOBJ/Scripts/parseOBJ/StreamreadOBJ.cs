@@ -18,7 +18,8 @@ namespace Netherlands3D.ModelParsing
 		public GameObject createdGameObject;
 		[HideInInspector]
 		public List<MaterialData> materialDataSlots;
-		
+
+		string fileNameWithoutExtention;
 		int currentCharStartIndex;
 		int currentcharindex;
 		char[] readCharsinArray = new char[1024];
@@ -113,6 +114,11 @@ namespace Netherlands3D.ModelParsing
 				activeSubmesh.rawData = new SubMeshRawData();
 				activeSubmesh.rawData.SetupWriting(submeshName);
 				activeSubmesh.name = submeshName;
+				int startindexFilenameInMaterialName = submeshName.IndexOf(fileNameWithoutExtention);
+                if (startindexFilenameInMaterialName>0)
+                {
+					activeSubmesh.displayName = submeshName.Substring(0,( startindexFilenameInMaterialName - 1));
+                }
 				activeSubmesh.startIndex = 0;
 				submeshes.Add(submeshName, activeSubmesh);
 			}
@@ -144,6 +150,7 @@ namespace Netherlands3D.ModelParsing
         }
 		public void ReadOBJ(string filename, System.Action<bool> callback)
 		{
+			fileNameWithoutExtention = System.IO.Path.GetFileName(filename).Replace(".obj", "");
 			populateCharToDecimal();
 			needToCancel = false;
 			faces.Capacity = 4;

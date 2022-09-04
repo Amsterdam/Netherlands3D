@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Samples/Netherlands 3D/0.3.1/File Importer/Scenes/Scene_Netherlands3D_FileImporter_Sample_SceneSetup.unity
-    guid: 4ba25d8d5d47bc84b8b4948029b5b97b
-  - enabled: 1
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
     path: Packages/nl.netherlands3d/Modelparsing/ImportOBJ/Samples/Import obj-file/Scene/SampleScene.unity
     guid: 960c0f67fe3cb244094d459395399d98
   m_configObjects:

@@ -103,7 +103,8 @@ namespace Netherlands3D.ModelParsing
                 return;
             }
             createdGameobjectIsMoveable = !objreader.ObjectUsesRDCoordinates;
-            objfilename = "";
+            
+
             if (mtlfilename!="")
             {
                 if (mtlreader is null)
@@ -112,7 +113,7 @@ namespace Netherlands3D.ModelParsing
                     mtlreader.broadcastProgressPercentage = BroadcastProgressPercentage;
                 }
                 BroadcastCurrentActivity("mtl-file lezen");
-                mtlreader.StartMTLParse(System.IO.File.ReadAllText(mtlfilename),onMTLRead);
+                mtlreader.StartMTLParse(System.IO.File.ReadAllText(mtlfilename),onMTLRead,mtlfilename);
             }
             else
             {
@@ -163,14 +164,16 @@ namespace Netherlands3D.ModelParsing
             objectDataCreator.submeshes = submeshes;
             objectDataCreator.CreateGameObjectDataSet(OnGameObjectDataSetCreated,!createSubMeshes);
 
+
             
 
-           
         }
 
         void OnGameObjectDataSetCreated(GameObjectDataSet gods)
         {
             gameObjectData = gods;
+            gods.name = System.IO.Path.GetFileName(objfilename).Replace(".obj", "");
+            objfilename = "";
             if (needToCancel)
             {
                 Debug.Log("cancelled while creating GameObjectDataSet");

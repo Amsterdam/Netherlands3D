@@ -23,6 +23,7 @@ namespace Netherlands3D.ModelParsing
         // variables determining how the gameobjectDataSet is set up
         public bool createSingelMesh = true;
         public bool isRD = false;
+        string objfilename;
 
         // variables containing the input
         public Vector3List vertices;
@@ -37,6 +38,7 @@ namespace Netherlands3D.ModelParsing
         SubMeshData createdSubMeshData;
         GameObjectDataSet container = new GameObjectDataSet();
         int nextindex = 0;
+
 
         // variable for string the returnAdress
         System.Action<GameObjectDataSet> callback;
@@ -53,8 +55,11 @@ namespace Netherlands3D.ModelParsing
 
         public void CreateGameObjectDataSet(System.Action<GameObjectDataSet> callbacktoFunction,bool createMultipleObjects=false)
         {
+
+
             needToCancel = false;
             container = new GameObjectDataSet();
+            
             totalSubmeshCount = submeshes.Count;
             currentSubmeshindex = 0;
             callback = callbacktoFunction;
@@ -114,7 +119,7 @@ namespace Netherlands3D.ModelParsing
 
                 submesheslist.Add(submesh);
                 GameObjectData childObject = new GameObjectData();
-                childObject.name = submesh.name;
+                childObject.name = submesh.displayName;
 
                 yield return StartCoroutine(CreateMeshData(submesheslist));
 
@@ -225,7 +230,8 @@ namespace Netherlands3D.ModelParsing
             normals.EndReading();
         }
 
-        string randomString(int length)
+
+       string randomString(int length)
         {
             string returnstring = "";
             for (int i = 0; i < length; i++)

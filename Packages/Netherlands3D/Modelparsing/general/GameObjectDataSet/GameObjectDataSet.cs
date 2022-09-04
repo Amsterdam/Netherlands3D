@@ -5,6 +5,7 @@ namespace Netherlands3D.ModelParsing
     [Serializable]
     public class GameObjectDataSet
     {
+        public string name;
         public List<MaterialData> materials = new List<MaterialData>();
         public List<GameObjectData> gameObjects = new List<GameObjectData>();
         public void Clear()
