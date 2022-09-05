@@ -255,13 +255,13 @@ namespace Netherlands3D.ModelParsing
 			switch (tag)
 			{
 				case objTag.Object:
-					ReadString();
+					SkipLine();
 					break;
 				case objTag.Vertex:
 					ReadVertex();
 					break;
 				case objTag.VertexTexture:
-					ReadString();
+					SkipLine();
 					break;
 				case objTag.VertexNormal:
 					ReadNormal();
@@ -270,13 +270,13 @@ namespace Netherlands3D.ModelParsing
 					ReadFaceLine();
 					break;
 				case objTag.MtlLib:
-					ReadString();
+					SkipLine();
 					break;
 				case objTag.UseMTL:
 					AddSubMesh(ReadString());
 					break;
 				case objTag.Other:
-					ReadString();
+					SkipLine();
 					break;
 				default:
 					break;
@@ -529,6 +529,25 @@ namespace Netherlands3D.ModelParsing
 			}
 		}
 
+		void SkipLine()
+        {
+			char readChar;
+			while (true)
+            {
+				if (NextChar(out readChar))
+				{
+					if (readChar == '\r')
+					{
+						return;
+					}
+					else if (readChar == '\n')
+					{
+						return;
+					}
+				}
+				else { return; }
+			}
+        }
 		string ReadString()
 		{
 			char readChar;
