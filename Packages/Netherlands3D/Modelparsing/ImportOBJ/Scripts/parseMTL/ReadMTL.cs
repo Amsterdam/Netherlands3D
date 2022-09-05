@@ -151,7 +151,7 @@ namespace Netherlands3D.ModelParsing
                         int filenamebase = targetMaterialData.Name.IndexOf(filenameWithoutExtention);
                         if (filenamebase>0)
                         {
-                            targetMaterialData.DisplayName = targetMaterialData.Name.Substring(0, filenamebase);
+                            targetMaterialData.DisplayName = targetMaterialData.Name.Substring(0, filenamebase-1);
                         }
                         else
                         {
