@@ -9,7 +9,7 @@ namespace Netherlands3D.ModelParsing
 {
 	public class StreamreadOBJ : MonoBehaviour
 	{
-
+		const string glyphs = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //add the characters you want
 		public System.Action<float> broadcastProgressPercentage;
 		public System.Action<string> BroadcastErrorMessage;
 		bool needToCancel;
@@ -58,7 +58,7 @@ namespace Netherlands3D.ModelParsing
 		public bool ObjectUsesRDCoordinates { get => RDCoordinates; set => RDCoordinates = value; }
 		public bool FlipYZ { get => flipYZ; set => flipYZ = value; }
 		public bool FlipFaceDirection { get => flipFaceDirection; set => flipFaceDirection = value; }
-
+		SubMeshRawData rawdata = new SubMeshRawData();
 		StreamReader streamReader;
 		[HideInInspector]
 		public bool isFinished = false;
@@ -84,7 +84,7 @@ namespace Netherlands3D.ModelParsing
 			
 			if (activeSubmesh.name != null)
 			{
-				activeSubmesh.rawData.EndWriting();
+				rawdata.EndWriting();
 				if (activeSubmesh.vertexCount > 0)
 				{
 					if (submeshes.ContainsKey(activeSubmesh.name))
@@ -105,15 +105,16 @@ namespace Netherlands3D.ModelParsing
 			if (submeshes.ContainsKey(submeshName))
 			{
 				activeSubmesh = submeshes[submeshName];
-				activeSubmesh.rawData.SetupWriting(submeshName);
+				rawdata.SetupWriting(activeSubmesh.filename);
 
 			}
 			else
 			{
 				activeSubmesh = new Submesh();
-				activeSubmesh.rawData = new SubMeshRawData();
-				activeSubmesh.rawData.SetupWriting(submeshName);
 				activeSubmesh.name = submeshName;
+				activeSubmesh.filename = randomString(30);
+				rawdata.SetupWriting(activeSubmesh.filename);
+				
 				int startindexFilenameInMaterialName = submeshName.IndexOf(fileNameWithoutExtention);
                 if (startindexFilenameInMaterialName>0)
                 {
@@ -218,7 +219,7 @@ namespace Netherlands3D.ModelParsing
 					
 					normals.EndWriting();
 					
-					activeSubmesh.rawData.EndWriting();
+					rawdata.EndWriting();
 					File.Delete(filename);
 					rollback();
 					isFinished = true;
@@ -232,7 +233,7 @@ namespace Netherlands3D.ModelParsing
 			fileStream.Close();
 			vertices.EndWriting();
 			normals.EndWriting();
-			activeSubmesh.rawData.EndWriting();
+			rawdata.EndWriting();
 			File.Delete(filename);
 			isFinished = true;
 			callback(true);
@@ -241,10 +242,11 @@ namespace Netherlands3D.ModelParsing
         {
             foreach (var item in submeshes)
             {
-				item.Value.rawData.RemoveData();
-				vertices.RemoveData();
-				normals.RemoveData();
+				rawdata.RemoveData(item.Value.filename);
+				
 			}
+			vertices.RemoveData();
+			normals.RemoveData();
 			submeshes.Clear();
 
         }
@@ -721,7 +723,7 @@ namespace Netherlands3D.ModelParsing
 		}
 		void SaveVertexToSubmesh(FaceIndices v1)
         {
-			activeSubmesh.rawData.Add(v1.vertexIndex, v1.vertexNormal, v1.vertexUV);
+			rawdata.Add(v1.vertexIndex, v1.vertexNormal, v1.vertexUV);
 			activeSubmesh.vertexCount++;
 			return;
 		}
@@ -989,6 +991,15 @@ namespace Netherlands3D.ModelParsing
 			public int vertexIndex;
 			public int vertexUV;
 			public int vertexNormal;
+		}
+		string randomString(int length)
+		{
+			string returnstring = "";
+			for (int i = 0; i < length; i++)
+			{
+				returnstring += glyphs[Random.Range(0, glyphs.Length)];
+			}
+			return returnstring;
 		}
 	}
 }

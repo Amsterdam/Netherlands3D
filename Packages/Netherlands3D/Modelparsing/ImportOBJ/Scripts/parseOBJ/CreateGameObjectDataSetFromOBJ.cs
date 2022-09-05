@@ -37,6 +37,7 @@ namespace Netherlands3D.ModelParsing
         MeshData createdMeshData;
         SubMeshData createdSubMeshData;
         GameObjectDataSet container = new GameObjectDataSet();
+        SubMeshRawData rawdata = new SubMeshRawData();
         int nextindex = 0;
 
 
@@ -83,7 +84,7 @@ namespace Netherlands3D.ModelParsing
                 foreach (var item in submeshes)
                 {
 
-                    item.rawData.RemoveData();
+                    rawdata.RemoveData(item.filename);
                 }
                 submeshes.Clear();
             }
@@ -184,19 +185,19 @@ namespace Netherlands3D.ModelParsing
             currentSubmeshindex++;
 
             createdSubMeshData = new SubMeshData();
-            SubMeshRawData smrd = submesh.rawData;
+            
             createdSubMeshData.materialname = submesh.name;
-            smrd.SetupReading();
+            rawdata.SetupReading(submesh.filename);
             vertices.SetupReading();
             normals.SetupReading();
-            long indexcount = smrd.numberOfVertices();
+            long indexcount = rawdata.numberOfVertices();
             createdSubMeshData.startIndex = nextindex;
             for (int i = 0; i < indexcount; i++)
             {
                 if (needToCancel)
                 {
-                    smrd.EndReading();
-                    smrd.RemoveData();
+                    rawdata.EndReading();
+                    rawdata.RemoveData(submesh.filename);
                     vertices.EndReading();
                     normals.EndReading();
                     vertices.RemoveData();
@@ -214,7 +215,7 @@ namespace Netherlands3D.ModelParsing
                     yield return null;
                     time = System.DateTime.UtcNow;
                 }
-                Vector3Int data = smrd.ReadNext();
+                Vector3Int data = rawdata.ReadNext();
                 Vector3 vertex = vertices.ReadItem(data.x);
                 Vector3 normal = normals.ReadItem(data.y);
                 meshVertices.Add(vertex.x, vertex.y, vertex.z);
@@ -223,8 +224,8 @@ namespace Netherlands3D.ModelParsing
             }
             createdSubMeshData.Indexcount = nextindex - createdSubMeshData.startIndex;
             
-            smrd.EndReading();
-            smrd.RemoveData();
+            rawdata.EndReading();
+            rawdata.RemoveData(submesh.filename);
             vertices.EndReading();
             normals.EndReading();
         }

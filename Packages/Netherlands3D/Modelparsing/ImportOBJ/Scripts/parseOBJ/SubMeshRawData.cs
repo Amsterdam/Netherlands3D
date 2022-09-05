@@ -13,14 +13,13 @@ namespace Netherlands3D.ModelParsing
         int[] intArray = new int[3];
         byte[] intBinaryArray = new byte[12];
 
+        string datapath = "";
         string filepath;
         string filename;
         public void SetupWriting(string name)
         {
-            filename = name.Replace('/', '-');
-            filename = filename.Replace(".", "");
-            filename = filename.Replace("$", "");
-            filepath = Application.persistentDataPath + "/" + filename + ".dat";
+
+            filepath = Application.persistentDataPath + "/" + name + ".dat";
             // create the file if it doesnt already exist
             var datafile = File.Exists(filepath) ? File.Open(filepath, FileMode.Append) : File.Open(filepath, FileMode.CreateNew);
             datafile.Close();
@@ -49,21 +48,21 @@ namespace Netherlands3D.ModelParsing
             }
 
         }
-        public void SetupReading(string name = "")
+        public void SetupReading(string name)
         {
-            if (name != "")
+            if (datapath=="")
             {
-                filename = name.Replace('/', '-');
-                filename = filename.Replace(".", "");
-                filename = filename.Replace("$", "");
-                filepath = Application.persistentDataPath + "/" + filename + ".dat";
+                datapath = Application.persistentDataPath;
             }
+          filepath = datapath + "/" + name + ".dat";
+
             fs = File.OpenRead(filepath);
             bReader = new BinaryReader(fs);
         }
 
-        public void RemoveData()
+        public void RemoveData(string filename)
         {
+            filepath = Application.persistentDataPath + "/" + filename + ".dat";
             EndWriting();
             if (File.Exists(filepath))
             {
