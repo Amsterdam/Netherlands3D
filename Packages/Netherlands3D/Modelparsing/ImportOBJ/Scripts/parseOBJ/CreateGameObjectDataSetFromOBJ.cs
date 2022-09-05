@@ -26,14 +26,14 @@ namespace Netherlands3D.ModelParsing
         string objfilename;
 
         // variables containing the input
-        public Vector3List vertices;
-        public Vector3List normals;
+        public Vector3List vertices = new Vector3List();
+        public Vector3List normals = new Vector3List();
         public List<Submesh> submeshes;
 
         // variable for creating the dataset
-        Vector3List meshVertices;
-        Vector3List meshNormals;
-        intList meshIndices;
+        Vector3List meshVertices = new Vector3List();
+        Vector3List meshNormals = new Vector3List();
+        intList meshIndices = new intList();
         MeshData createdMeshData;
         SubMeshData createdSubMeshData;
         GameObjectDataSet container = new GameObjectDataSet();
@@ -138,13 +138,12 @@ namespace Netherlands3D.ModelParsing
 
        IEnumerator CreateMeshData(List<Submesh> submeshes, bool broadcast = false)
         {
-            meshVertices = new Vector3List();
+
             string meshvertexname = randomString(20);
-            meshNormals = new Vector3List();
             string meshnormalname = randomString(20);
             meshVertices.SetupWriting(meshvertexname);
             meshNormals.SetupWriting(meshnormalname);
-            meshIndices = new intList();
+
             string meshindicesname = randomString(20);
             meshIndices.SetupWriting(meshindicesname);
 

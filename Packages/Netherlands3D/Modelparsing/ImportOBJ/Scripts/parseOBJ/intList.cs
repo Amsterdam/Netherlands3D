@@ -9,10 +9,15 @@ namespace Netherlands3D.ModelParsing
         BinaryWriter writer;
         FileStream fs;
         BinaryReader bReader;
+        string datapath = "";
         string filepath;
         public void SetupWriting(string name)
         {
-            filepath = Application.persistentDataPath + "/" + name + ".dat";
+            if (datapath=="")
+            {
+                datapath = Application.persistentDataPath;
+            }
+            filepath = datapath + "/" + name + ".dat";
             writer = new BinaryWriter(File.Open(filepath, FileMode.OpenOrCreate));
         }
         public void Add(int vertexIndex)

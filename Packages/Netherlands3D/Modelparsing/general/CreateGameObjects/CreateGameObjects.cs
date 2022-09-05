@@ -23,7 +23,9 @@ public class CreateGameObjects : MonoBehaviour
 
     GameObject parentobject;
     Dictionary<string, Material> createdMaterials = new Dictionary<string, Material>();
-
+    Vector3List vertices = new Vector3List();
+    Vector3List normals = new Vector3List();
+    intList indices = new intList();
 
     bool gameObjectCreated = false;
      //GameObject createdGameObject;
@@ -146,7 +148,7 @@ public class CreateGameObjects : MonoBehaviour
         createdMesh = new Mesh();
         createdMesh.Clear();
         // add vertices
-        Vector3List vertices = new Vector3List();
+        
         vertices.SetupReading(meshdata.vertexFileName);
         int vertexcount = vertices.Count();
         if (vertexcount==0)
@@ -175,7 +177,7 @@ public class CreateGameObjects : MonoBehaviour
         vertices.RemoveData();
 
         // add indices
-        intList indices = new intList();
+        
         indices.SetupReading(meshdata.indicesFileName);
         int indexcount = indices.numberOfVertices();
         int[] meshindices = new int[indexcount];
@@ -198,7 +200,7 @@ public class CreateGameObjects : MonoBehaviour
         if (meshdata.normalsFileName!="")
         {
            
-            Vector3List normals = new Vector3List();
+            
             normals.SetupReading(meshdata.normalsFileName);
             int normalscount = normals.Count();
             if (normalscount==vertexcount)

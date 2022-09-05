@@ -155,8 +155,6 @@ namespace Netherlands3D.ModelParsing
 			needToCancel = false;
 			faces.Capacity = 4;
 			submeshes.Clear();
-			vertices = new Vector3List();
-			normals = new Vector3List();
 			submeshes.Clear();
 			activeSubmesh = new Submesh();
 			faces.Clear();

@@ -8,12 +8,11 @@ namespace Netherlands3D.ModelParsing
 {
        BinaryWriter writer;
        FileStream reader;
-        float[] BiglistVectorFloatArray = new float[1024*3];
         int baseindex;
         float[] vectorFloatArray = new float[3];
         byte[] vectorBinaryArray = new byte[12];
-        
-        byte[] readBytes;
+        string basepath="";
+        byte[] readBytes = new byte[12 * 1024];
         private int vectorCount = 0;
         string filepath;
 
@@ -33,7 +32,11 @@ namespace Netherlands3D.ModelParsing
 
         public void SetupWriting(string name)
         {
-            filepath = Application.persistentDataPath + "/" + name + ".dat";
+            if (basepath=="")
+            {
+                basepath = Application.persistentDataPath;
+            }
+            filepath = System.IO.Path.Combine(basepath,name + ".dat");
             writer = new BinaryWriter(File.Open(filepath, FileMode.Create,FileAccess.Write,FileShare.None));
 
 
@@ -58,7 +61,7 @@ namespace Netherlands3D.ModelParsing
         }
         public void SetupReading(string name = "")
         {
-            readBytes = new byte[12*1024];
+            
             if (name !="")
             {
                 filepath = Application.persistentDataPath + "/" + name + ".dat";
@@ -95,11 +98,11 @@ namespace Netherlands3D.ModelParsing
             Vector3 ReturnItem = new Vector3();
             //reader.Read(readBytes, 0, 12);
             int startindex = index - baseindex;
-            System.Buffer.BlockCopy(readBytes, startindex*12, BiglistVectorFloatArray, 0, 12);
+            System.Buffer.BlockCopy(readBytes, startindex*12, vectorFloatArray, 0, 12);
             
-            ReturnItem.x = BiglistVectorFloatArray[0];
-            ReturnItem.y = BiglistVectorFloatArray[1];
-            ReturnItem.z = BiglistVectorFloatArray[2];
+            ReturnItem.x = vectorFloatArray[0];
+            ReturnItem.y = vectorFloatArray[1];
+            ReturnItem.z = vectorFloatArray[2];
 
 
             return ReturnItem;
@@ -112,6 +115,7 @@ namespace Netherlands3D.ModelParsing
         }
         public void RemoveData()
         {
+            vectorCount = 0;
             File.Delete(filepath);
         }
     }
