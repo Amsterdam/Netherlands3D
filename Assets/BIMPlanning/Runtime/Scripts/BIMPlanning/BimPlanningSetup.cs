@@ -23,7 +23,6 @@ using System;
 using System.Globalization;
 using Netherlands3D.Events;
 using System.IO;
-using UnityEngine.InputSystem.HID;
 
 namespace Netherlands3D.BIMPlanning
 {
@@ -34,9 +33,6 @@ namespace Netherlands3D.BIMPlanning
     /// </summary>
     public class BimPlanningSetup : MonoBehaviour
     {
-        public Material BuildMaterial;
-        public Material DestroyMaterial;
-
         private TimelineUI timeline;
 
         /// <summary>
@@ -53,6 +49,7 @@ namespace Netherlands3D.BIMPlanning
             public DateTime startDate;
             public DateTime endDate;
         }
+
         private List<BIMPlanningData> BIMPlanningDataList = new List<BIMPlanningData>();
 
         private string displayIDColumnHeader = "displayID";
@@ -156,59 +153,6 @@ namespace Netherlands3D.BIMPlanning
                 endDate = endDate,
             };
             BIMPlanningDataList.Add(newPlanningData);
-            FindPlanningGameObjects();
-        }
-
-        /// <summary>
-        /// For all planning data lines, try to find a child gameobject with matching ID and connect it to the data.
-        /// </summary>
-        public void FindPlanningGameObjects()
-        {
-            foreach (var planningData in BIMPlanningDataList)
-            {
-                SetPlanningObjects(planningData);
-            }
-        }
-
-        private void SetPlanningObjects(BIMPlanningData planningData)
-        {
-            //All children that match ID get linked to planning data
-            var childcount = transform.childCount;
-            for (int i = 0; i < childcount; i++)
-            {
-                var child = transform.GetChild(i);
-                if (child.gameObject.name == planningData.displayID)
-                {
-                    SetAsPlanningObject(child.gameObject, planningData.taskname, planningData.taskType, planningData.startDate, planningData.endDate);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Add a planning item component on a corresponding GameObject
-        /// </summary>
-        private void SetAsPlanningObject(GameObject child, string taskname, string taskType, DateTime startDate, DateTime endDate)
-        {
-            BimPlanningItem bimPlanningItem = child.GetComponent<BimPlanningItem>();
-            if (bimPlanningItem is null)
-            {
-                bimPlanningItem = child.AddComponent<BimPlanningItem>();
-                bimPlanningItem.TaskName = taskname;
-            }
-            if (taskType == "V")
-            {
-                bimPlanningItem.planningType = BimPlanningItem.PlanningType.REMOVED;
-                bimPlanningItem.HighlightMaterialDestroy = DestroyMaterial;
-                bimPlanningItem.DestroyStartDateTime = startDate;
-                bimPlanningItem.DestroyEndDateTime = endDate;
-            }
-            else if (taskType == "N")
-            {
-                bimPlanningItem.planningType = BimPlanningItem.PlanningType.NEW;
-                bimPlanningItem.HighlightMaterialBuild = BuildMaterial;
-                bimPlanningItem.BuildStartDateTime = startDate;
-                bimPlanningItem.BuildEndDateTime = endDate;
-            }
         }
     }
 }

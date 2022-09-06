@@ -594,10 +594,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 7078713874569698860, guid: c4bc061828770d145bbe098641827bbf, type: 3}
-      propertyPath: createSubMeshes
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7078713874569698861, guid: c4bc061828770d145bbe098641827bbf, type: 3}
       propertyPath: m_RootOrder
       value: 2
