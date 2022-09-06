@@ -2,6 +2,7 @@ using Netherlands3D.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,6 +13,8 @@ namespace Netherlands3D.BIMPlanning
         [SerializeField] private StringEvent fileSelected;
 
         BimPlanningSetup csvImporter;
+        BimPlanningSetup objImporter;
+
         void Start()
         {
             if(!csvImporter) csvImporter = gameObject.AddComponent<BimPlanningSetup>();
@@ -21,17 +24,33 @@ namespace Netherlands3D.BIMPlanning
         {
             fileSelected.started.AddListener(OnFileSelected);
         }
+        private void OnDisable()
+        {
+            fileSelected.started.RemoveListener(OnFileSelected);
+        }
 
         private void OnFileSelected(string value)
         {
+            if (value == "") return;
+
             var files = value.Split(',');
-            foreach(var file in files)
+            foreach(var filePath in files)
             {
-                //check csv extention
+                if(Path.GetExtension(filePath) == ".csv")
+                {
+                    //Read CSV using Navisworks .csv export based column headers
+                    csvImporter.ReadPlanningFromCSV(filePath,
+                        "displayID",
+                        "taskName",
+                        "taskType",
+                        "fromDate",
+                        "toDate"
+                    );
+                }
             }
         }
 
-        void Combine()
+        private void Combine()
         {
             //got obj?
 

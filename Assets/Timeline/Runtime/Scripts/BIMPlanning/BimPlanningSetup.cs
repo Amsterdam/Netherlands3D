@@ -55,6 +55,12 @@ namespace Netherlands3D.BIMPlanning
         }
         private List<BIMPlanningData> BIMPlanningDataList = new List<BIMPlanningData>();
 
+        private string displayIDColumnHeader = "displayID";
+        private string taskNameColumnHeader = "taskName";
+        private string taskTypeColumnHeader = "taskType";
+        private string fromDateColumnHeader = "fromDate";
+        private string toDateColumnHeader = "toDate";
+
         private void Start()
         {
             timeline = FindObjectOfType<TimelineUI>(true);
@@ -71,6 +77,12 @@ namespace Netherlands3D.BIMPlanning
         /// <param name="csvPath">Path to the CSV file</param>
         public List<BIMPlanningData> ReadPlanningFromCSV(string csvPath, string displayIDColumnHeader, string taskNameColumnHeader, string taskTypeColumnHeader, string fromDateColumnHeader, string toDateColumnHeader)
         {
+            this.displayIDColumnHeader = displayIDColumnHeader;
+            this.taskNameColumnHeader = taskNameColumnHeader;
+            this.taskTypeColumnHeader = taskTypeColumnHeader;
+            this.fromDateColumnHeader = fromDateColumnHeader;
+            this.toDateColumnHeader = toDateColumnHeader;
+
             BIMPlanningDataList = new List<BIMPlanningData>();
             BIMPlanningDataList.Clear();
             timeline.timelineData.timePeriods.Clear();
