@@ -34,6 +34,11 @@
       "description": "For importing files.",
       "path": "File Importer/Samples~/Scene Setup"
     },
+	{
+      "displayName": "Import OBJ",
+      "description": "For importing OBJ-files.",
+      "path": "Modelparsing/ImportOBJ/Samples~/Import obj-file"
+    },
     {
       "displayName": "Minimap Template",
       "description": "Template example of how to use the minimap",
