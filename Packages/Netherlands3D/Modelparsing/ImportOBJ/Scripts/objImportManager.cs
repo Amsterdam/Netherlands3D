@@ -4,7 +4,7 @@ using UnityEngine;
 using Netherlands3D.Events;
 using Netherlands3D.ModelParsing;
 
-public class objImportManager : MonoBehaviour
+public class ObjImportManager : MonoBehaviour
 {
     [Header("required input")]
     [SerializeField] Material baseMaterial;
@@ -73,7 +73,7 @@ public class objImportManager : MonoBehaviour
         }
     }
 
-    objImporter importer;
+    ObjImporter importer;
     private void Awake()
     {
         if(startImporting) startImporting.started.AddListener(OnStartImporting);
@@ -94,7 +94,7 @@ public class objImportManager : MonoBehaviour
         {
             expectingMTLFile = true;
         }
-        if (cancelImporting) cancelImporting.started.AddListener(onCancel);
+        if (cancelImporting) cancelImporting.started.AddListener(OnCancel);
         if (true)
         {
 
@@ -173,7 +173,7 @@ public class objImportManager : MonoBehaviour
 #endregion
 
 
-    public void onCancel()
+    public void OnCancel()
     {
         BroadcastMessage("Cancel");
         if (currentActivity) currentActivity.started.Invoke("cancelling the import");
@@ -199,8 +199,8 @@ public class objImportManager : MonoBehaviour
             
         }
 #endif
-        importer.objfilename = objfilename;
-        importer.mtlfilename = mtlfilename;
+        importer.objFilePath = objfilename;
+        importer.mtlFilePath = mtlfilename;
         importer.BaseMaterial = baseMaterial;
         importer.createSubMeshes = createSubMeshes;
         if(started)started.started.Invoke(true);
@@ -228,7 +228,7 @@ public class objImportManager : MonoBehaviour
     void ConnectToImporter()
     {
         if (importer!=null) return;
-        importer = gameObject.AddComponent<objImporter>();
+        importer = gameObject.AddComponent<ObjImporter>();
         // give the importer handles for progress- and errormessaging
         importer.currentActivity = BroadcastCurrentActivity;
         importer.currentAction = BroadcastCurrentAction;
@@ -250,7 +250,6 @@ public class objImportManager : MonoBehaviour
     {
         if (progressPercentage != null) progressPercentage.started.Invoke(value);
     }
-
     void BroadcastAlertmessage(string value)
     {
         if (alertmessage != null) alertmessage.started.Invoke(value);

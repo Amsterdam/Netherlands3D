@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Netherlands3D.ModelParsing
 {
-    public class objImporter : MonoBehaviour
+    public class ObjImporter : MonoBehaviour
     {
         StreamreadOBJ objreader;
         ReadMTL mtlreader;
@@ -17,10 +17,10 @@ namespace Netherlands3D.ModelParsing
         [HideInInspector]
         public Material BaseMaterial;
         [HideInInspector]
-        public string objfilename = "";
+        public string objFilePath = "";
         
         [HideInInspector]
-        public string mtlfilename = "";
+        public string mtlFilePath = "";
 
         bool isbusy = false;
         [HideInInspector]
@@ -81,7 +81,7 @@ namespace Netherlands3D.ModelParsing
             }
             BroadcastCurrentActivity("obj-bestand inlezen");
 
-            objreader.ReadOBJ(objfilename, OnOBJRead);
+            objreader.ReadOBJ(objFilePath, OnOBJRead);
         }
 
         public void Cancel()
@@ -97,15 +97,15 @@ namespace Netherlands3D.ModelParsing
             if (!succes) //something went wrong
             {
                 isbusy = false;
-                objfilename = "";
-                mtlfilename = "";
+                objFilePath = "";
+                mtlFilePath = "";
                 returnObjectTo(null);
                 return;
             }
             createdGameobjectIsMoveable = !objreader.ObjectUsesRDCoordinates;
             
 
-            if (mtlfilename!="")
+            if (mtlFilePath!="")
             {
                 if (mtlreader is null)
                 {
@@ -113,7 +113,7 @@ namespace Netherlands3D.ModelParsing
                     mtlreader.broadcastProgressPercentage = BroadcastProgressPercentage;
                 }
                 BroadcastCurrentActivity("mtl-file lezen");
-                mtlreader.StartMTLParse(System.IO.File.ReadAllText(mtlfilename),onMTLRead,mtlfilename);
+                mtlreader.StartMTLParse(System.IO.File.ReadAllText(mtlFilePath),onMTLRead,mtlFilePath);
             }
             else
             {
@@ -128,8 +128,8 @@ namespace Netherlands3D.ModelParsing
             {
                 mtlreader = null;
             }
-            System.IO.File.Delete(mtlfilename);
-            mtlfilename = "";
+            System.IO.File.Delete(mtlFilePath);
+            mtlFilePath = "";
             if (needToCancel)
             {
                 Debug.Log("cancelled while reading materialFile");
@@ -172,8 +172,8 @@ namespace Netherlands3D.ModelParsing
         void OnGameObjectDataSetCreated(GameObjectDataSet gods)
         {
             gameObjectData = gods;
-            gods.name = System.IO.Path.GetFileName(objfilename).Replace(".obj", "");
-            objfilename = "";
+            gods.name = System.IO.Path.GetFileName(objFilePath).Replace(".obj", "");
+            objFilePath = "";
             if (needToCancel)
             {
                 Debug.Log("cancelled while creating GameObjectDataSet");
