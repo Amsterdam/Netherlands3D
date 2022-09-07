@@ -640,7 +640,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7078713874569698863, guid: c4bc061828770d145bbe098641827bbf, type: 3}
       propertyPath: m_Name
-      value: objImportManager
+      value: ObjImportManager
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4bc061828770d145bbe098641827bbf, type: 3}
