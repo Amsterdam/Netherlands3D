@@ -21,22 +21,19 @@ namespace Netherlands3D.FileImporter
     [RequireComponent(typeof(RectTransform))]
     public class ImportFileButtonOnClick : MonoBehaviour
     {
-        /// <summary>
-        /// Method that gets called from javascript
-        /// </summary>
-        /// <param name="inputName"></param>
-        /// <param name="fileExtension"></param>
-        /// <param name="multiSelect"></param>
+
+
         [DllImport("__Internal")]        
         private static extern void AddFileInput(string inputName, string fileExtension, bool multiSelect);
-
         [Tooltip("HTML DOM ID")]
         [SerializeField] private string fileInputName = "fileInput";
+        FileInputIndexedDB javaScriptFileInputHandler;
+
+
         [Tooltip("The allowed file extention to load. Don't put a '.' at the start")]
         [SerializeField] private string fileExtention = "csv";
         [Tooltip("Allow user to select multiple files")]
         [SerializeField] private bool multiSelect;
-        
         /// <summary>
         /// The string event that gets called upon loading a file
         /// </summary>
@@ -50,43 +47,76 @@ namespace Netherlands3D.FileImporter
         // Start is called before the first frame update
         void Start()
         {
-            button = GetComponent<Button>();
+
+        button = GetComponent<Button>();
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+            javaScriptFileInputHandler = FindObjectOfType<FileInputIndexedDB>();
+            if (javaScriptFileInputHandler == null)
+            {
+                GameObject go = new GameObject("UserFileUploads");
+                go.AddComponent<FileInputIndexedDB>();
+            }
+
+            
             // Set file input name with generated id to avoid html conflictions
             fileInputName += "_" + gameObject.GetInstanceID();
             name = fileInputName;
+            
+            AddFileInput(fileInputName, fileExtention, multiSelect);
+            gameObject.AddComponent<DrawHTMLOverCanvas>().AlignObjectID(fileInputName);
+            // A html button gets generated over this button so the pivot has to be 0,0 (bottom left) since it gets generated from the bottom left
+            GetComponent<RectTransform>().pivot = Vector2.zero;
+#endif
 
             // Execute setup based on platform
             // Standalone
-#if UNITY_STANDALONE || UNITY_EDITOR
-            SetupUnityStandalone();
+#if UNITY_STANDALONE && !UNITY_EDITOR
+            button.onClick.AddListener(OnButtonClickUnityStandalone);
 #endif
-            // Unity Editor
+
 #if UNITY_EDITOR
-            //SetupUnityEditor(); // Doesnt allow for multiple file selection
-#endif
-            // WebGL
-#if UNITY_WEBGL && !UNITY_EDITOR
-            SetupWebGL();
+            button.onClick.AddListener(OnButtonClickUnityEditor);
 #endif
         }
 
+
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+
+        /// <summary>
+        /// If the click is registerd from the HTML overlay side, this method triggers the onClick events on the button
+        /// </summary>
+        public void ClickNativeButton()
+        {
+            if(button != null)
+            {
+                javaScriptFileInputHandler.SetCallbackAdress(SendResults);
+                Debug.Log("Invoked native Unity button click event on " + this.gameObject.name);
+                button.onClick.Invoke();
+            }
+        }
+#endif
 
         // Standalone
-#if UNITY_STANDALONE || UNITY_EDITOR
-                
-        private void SetupUnityStandalone()
-        {
-            button.onClick.AddListener(OnButtonClickUnityStandalone);
-        }
+#if UNITY_STANDALONE && !UNITY_EDITOR
 
         /// <summary>
         /// When the user clicks the button in standalone mode
         /// </summary>
         private void OnButtonClickUnityStandalone()
         {
-            var result = StandaloneFileBrowser.OpenFilePanel("Select File", "", fileExtention, multiSelect);
+            string[] result = StandaloneFileBrowser.OpenFilePanel("Select File", "", fileExtention, multiSelect);
             if(result.Length != 0)
             {
+                for (int i = 0; i < result.Length; i++)
+                {
+                    if (result[i]=="") continue;
+                    string filename = System.IO.Path.GetFileName(result[i]);
+                    string newFilepath = System.IO.Path.Combine(Application.persistentDataPath, filename);
+                    result[i] = filename;
+                    System.IO.File.Copy(result[i], newFilepath,true);
+                }
                 // Invoke the event with joined string values
                 eventFileLoaderFileImported.Invoke(string.Join(",", result));
             }
@@ -96,48 +126,32 @@ namespace Netherlands3D.FileImporter
         // Unity Editor
 #if UNITY_EDITOR
 
-        private void SetupUnityEditor()
-        {
-            button.onClick.AddListener(OnButtonClickUnityEditor);
-        }
-
         /// <summary>
         /// When the user clicks the button in editor mode
         /// </summary>
         private void OnButtonClickUnityEditor()
         {
             string filePath = UnityEditor.EditorUtility.OpenFilePanel("Select File", "", fileExtention);
-            if(filePath.Length != 0)
+            if (filePath.Length != 0)
             {
-                UnityEngine.Debug.Log("[File Importer] Import file from file path: " + filePath);
-                eventFileLoaderFileImported.Invoke(filePath);
+                string filename = System.IO.Path.GetFileName(filePath);
+                string newFilePath = System.IO.Path.Combine(Application.persistentDataPath, filename);
+                System.IO.File.Copy(filePath, newFilePath,true);
+                UnityEngine.Debug.Log("[File Importer-unityEditor] Import file from file path: " + filename);
+                eventFileLoaderFileImported.Invoke(filename);
             }
         }
 #endif
 
         // WebGL
-#if UNITY_WEBGL && !UNITY_EDITOR
 
-        private void SetupWebGL()
-        {
-            AddFileInput(fileInputName, fileExtention, multiSelect);
-            gameObject.AddComponent<DrawHTMLOverCanvas>().AlignObjectID(fileInputName);
-            // A html button gets generated over this button so the pivot has to be 0,0 (bottom left) since it gets generated from the bottom left
-            GetComponent<RectTransform>().pivot = Vector2.zero;
-        }
 
-        /// <summary>
-        /// If the click is registerd from the HTML overlay side, this method triggers the onClick events on the button
-        /// </summary>
-        public void ClickNativeButton()
+        public void SendResults(string filePaths)
         {
-            if(button != null)
-            {
-                Debug.Log("Invoked native Unity button click event on " + this.gameObject.name);
-                button.onClick.Invoke();
-            }
+            
+            Debug.Log("button received: " + filePaths);
+            eventFileLoaderFileImported.Invoke(filePaths);
         }
-#endif
 
 #if UNITY_EDITOR
         private void OnValidate()
