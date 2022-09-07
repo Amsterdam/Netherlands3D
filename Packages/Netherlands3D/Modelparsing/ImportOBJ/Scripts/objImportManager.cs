@@ -136,11 +136,15 @@ public class objImportManager : MonoBehaviour
             string fileextention = System.IO.Path.GetExtension(file);
             if (fileextention == ".obj")
             {
-                objfilename = file;
+                objfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
             }
             else if (fileextention == ".mtl")
             {
-                mtlfilename = file;
+                mtlfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
+            }
+            else
+            {
+                System.IO.File.Delete(System.IO.Path.Combine(Application.persistentDataPath, file));
             }
         }
         if (objfilename!="")
