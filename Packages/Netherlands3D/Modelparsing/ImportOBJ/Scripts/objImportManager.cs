@@ -182,23 +182,7 @@ public class objImportManager : MonoBehaviour
     void OnStartImporting()
     {
         if (!importer) ConnectToImporter();
-#if UNITY_EDITOR
-        if (System.IO.Path.GetFullPath(objfilename) != Application.persistentDataPath)
-        {
-            string filename = System.IO.Path.GetFileName(objfilename);
-            string newfilename = System.IO.Path.Combine(Application.persistentDataPath, filename);
-            System.IO.File.Copy(objfilename, newfilename,true);
-            objfilename = newfilename;
-            if(mtlfilename!="")
-            {
-                filename = System.IO.Path.GetFileName(mtlfilename);
-                newfilename = System.IO.Path.Combine(Application.persistentDataPath, filename);
-                System.IO.File.Copy(mtlfilename, newfilename, true);
-                mtlfilename = newfilename;
-            }
-            
-        }
-#endif
+
         importer.objfilename = objfilename;
         importer.mtlfilename = mtlfilename;
         importer.BaseMaterial = baseMaterial;
