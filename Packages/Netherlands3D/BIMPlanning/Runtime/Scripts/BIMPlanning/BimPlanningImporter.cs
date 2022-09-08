@@ -46,6 +46,8 @@ namespace Netherlands3D.BIMPlanning
         [SerializeField] private BoolEvent onMtlReady;
         [SerializeField] private BoolEvent onCsvReady;
 
+        [SerializeField] private BoolEvent onCsvVerified;
+
         [SerializeField] private BoolEvent onReadyForImports;
 
         private List<BIMPlanningData> BIMPlanningDataList = new List<BIMPlanningData>();
@@ -178,6 +180,8 @@ namespace Netherlands3D.BIMPlanning
             {
                 CsvReady = true;
             }
+
+            onCsvVerified.started.Invoke(csvReady);
         }
 
         /// <summary>
