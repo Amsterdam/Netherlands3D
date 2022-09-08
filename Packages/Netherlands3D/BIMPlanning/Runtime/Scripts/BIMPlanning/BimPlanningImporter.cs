@@ -31,7 +31,10 @@ namespace Netherlands3D.BIMPlanning
     {
         [Header("Required input")]
         [SerializeField] Material baseMaterial;
-        [SerializeField] private StringEvent fileSelected;
+        [SerializeField] private StringEvent objFileSelected;
+        [SerializeField] private StringEvent mtlFileSelected;
+        [SerializeField] private StringEvent csvFileSelected;
+
         [SerializeField] private Material BuildMaterial;
         [SerializeField] private Material DestroyMaterial;
 
@@ -39,41 +42,42 @@ namespace Netherlands3D.BIMPlanning
         ObjImporter objImporter;
 
         [Header("Optional output")]
-        [SerializeField] private BoolEvent onObjSelected;
-        [SerializeField] private BoolEvent onMtlSelected;
-        [SerializeField] private BoolEvent onCsvSelected;
+        [SerializeField] private BoolEvent onObjReady;
+        [SerializeField] private BoolEvent onMtlReady;
+        [SerializeField] private BoolEvent onCsvReady;
+
         [SerializeField] private BoolEvent onReadyForImports;
 
         private List<BIMPlanningData> BIMPlanningDataList = new List<BIMPlanningData>();
 
         //Requirements matched
-        private bool objSelected = false;
-        private bool csvSelected = false;
+        private bool objReady = false;
+        private bool csvReady = false;
 
         //Optional
-        private bool mtlSelected = false;
+        private bool mtlReady = false;
 
-        public bool ObjSelected
+        public bool ObjReady
         {
-            get => objSelected;
-            set { objSelected = value; if(onObjSelected) onObjSelected.started.Invoke(objSelected); }
+            get => objReady;
+            set { objReady = value; if(onObjReady) onObjReady.started.Invoke(objReady); }
         }
-        public bool CsvSelected
+        public bool CsvReady
         {
-            get => csvSelected;
-            set { csvSelected = value; if (onCsvSelected) onCsvSelected.started.Invoke(csvSelected); }
+            get => csvReady;
+            set { csvReady = value; if (onCsvReady) onCsvReady.started.Invoke(csvReady); }
         }
-        public bool MtlSelected { 
-            get => mtlSelected; 
-            set { mtlSelected = value; if (onMtlSelected) onMtlSelected.started.Invoke(mtlSelected); }
+        public bool MtlReady { 
+            get => mtlReady; 
+            set { mtlReady = value; if (onMtlReady) onMtlReady.started.Invoke(mtlReady); }
         }
 
         public void StartImport()
         {
             objImporter.StartImporting(OnOBJImported);
 
-            ObjSelected = false;
-            MtlSelected = false;
+            ObjReady = false;
+            MtlReady = false;
             onReadyForImports.started.Invoke(false);
         }
 
@@ -89,14 +93,18 @@ namespace Netherlands3D.BIMPlanning
 
         private void OnEnable()
         {
-            fileSelected.started.AddListener(OnFileSelected);
+            objFileSelected.started.AddListener(OnOBJFileSelected);
+            mtlFileSelected.started.AddListener(OnOBJFileSelected);
+            csvFileSelected.started.AddListener(OnCSVileSelected);
         }
         private void OnDisable()
         {
-            fileSelected.started.RemoveListener(OnFileSelected);
+            objFileSelected.started.RemoveListener(OnOBJFileSelected);
+            mtlFileSelected.started.RemoveListener(OnOBJFileSelected);
+            csvFileSelected.started.RemoveListener(OnCSVileSelected);
         }
 
-        private void OnFileSelected(string value)
+        private void OnOBJFileSelected(string value)
         {
             AddImporters();
 
@@ -109,13 +117,31 @@ namespace Netherlands3D.BIMPlanning
                 switch (extention)
                 {
                     case ".obj":
-                        ObjSelected = true;
+                        ObjReady = true;
                         objImporter.mtlFilePath = filePath;
                         break;
                     case ".mtl":
-                        MtlSelected = true;
+                        MtlReady = true;
                         objImporter.objFilePath = filePath;
                         break;
+                }
+            }
+
+            onReadyForImports.started.Invoke(ObjReady && CsvReady);
+        }
+
+        private void OnCSVileSelected(string value)
+        {
+            AddImporters();
+
+            if (value == "") return;
+
+            var files = value.Split(',');
+            foreach (var filePath in files)
+            {
+                var extention = Path.GetExtension(filePath);
+                switch (extention)
+                {
                     case ".csv":
                         ReadPlanning(filePath);
                         break;
@@ -125,7 +151,7 @@ namespace Netherlands3D.BIMPlanning
                 }
             }
 
-            onReadyForImports.started.Invoke(ObjSelected && CsvSelected);
+            onReadyForImports.started.Invoke(ObjReady && CsvReady);
         }
 
         private void AddImporters()
@@ -150,7 +176,7 @@ namespace Netherlands3D.BIMPlanning
                            );
             if (BIMPlanningDataList != null && BIMPlanningDataList.Count > 0)
             {
-                CsvSelected = true;
+                CsvReady = true;
             }
         }
 
