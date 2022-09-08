@@ -68,15 +68,6 @@ namespace Netherlands3D.BIMPlanning
             set { mtlSelected = value; if (onMtlSelected) onMtlSelected.started.Invoke(mtlSelected); }
         }
 
-        void Start()
-        {
-            if (!csvImporter) csvImporter = gameObject.AddComponent<BimPlanningSetup>();
-            if (!objImporter) objImporter = gameObject.AddComponent<ObjImporter>();
-
-            objImporter.BaseMaterial = baseMaterial;
-            objImporter.createSubMeshes = false;
-        }
-
         public void StartImport()
         {
             objImporter.StartImporting(OnOBJImported);
@@ -107,10 +98,12 @@ namespace Netherlands3D.BIMPlanning
 
         private void OnFileSelected(string value)
         {
+            AddImporters();
+
             if (value == "") return;
 
             var files = value.Split(',');
-            foreach(var filePath in files)
+            foreach (var filePath in files)
             {
                 var extention = Path.GetExtension(filePath);
                 switch (extention)
@@ -133,6 +126,17 @@ namespace Netherlands3D.BIMPlanning
             }
 
             onReadyForImports.started.Invoke(ObjSelected && CsvSelected);
+        }
+
+        private void AddImporters()
+        {
+            if (!csvImporter) csvImporter = gameObject.AddComponent<BimPlanningSetup>();
+            if (!objImporter)
+            {
+                objImporter = gameObject.AddComponent<ObjImporter>();
+                objImporter.BaseMaterial = baseMaterial;
+                objImporter.createSubMeshes = false;
+            }
         }
 
         private void ReadPlanning(string filePath)
