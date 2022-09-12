@@ -10,10 +10,11 @@ public class SliceCamera : MonoBehaviour
 
     private Camera sliceCamera;
 
-    private Texture2D lineTexture;
+    [SerializeField] private Texture2D lineTexture;
 
     private Texture2D outputTexture;
     public RawImage rawImagePreview;
+    public RawImage rawImageLine;
     private Rect rect = new Rect(0,0,512,1);
     void Start()
     {
@@ -23,12 +24,14 @@ public class SliceCamera : MonoBehaviour
         outputTexture = new Texture2D(512,512, TextureFormat.ARGB32, false);
         lineTexture = new Texture2D(512,1, TextureFormat.ARGB32, false);
 
-        rawImagePreview.texture = lineTexture;
+        rawImagePreview.texture = outputTexture;
+        rawImageLine.texture = lineTexture;
     }
 
     [ContextMenu("Slice")]
     public void RenderClices()
     {
+        StopAllCoroutines();
         StartCoroutine(SliceLoop());
     }
 
@@ -44,7 +47,7 @@ public class SliceCamera : MonoBehaviour
             //Render line
             sliceCamera.Render();
             yield return new WaitForEndOfFrame();
-            lineTexture.ReadPixels(rect,0,0);
+            lineTexture.ReadPixels(rect,0,0,false);
             lineTexture.Apply();
 
             var linePixels = lineTexture.GetPixels();
@@ -54,11 +57,10 @@ public class SliceCamera : MonoBehaviour
 
             //for every pixel draw one in our map
             outputTexture.SetPixels(0, i, 512, 1, linePixels);
-
             outputTexture.Apply();
 
-            RenderTexture.active = null;
         }
+        RenderTexture.active = null;
     }
 
     void Update()
