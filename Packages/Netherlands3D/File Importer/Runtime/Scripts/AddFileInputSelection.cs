@@ -50,7 +50,7 @@ namespace Netherlands3D.JavascriptConnection
             fileInputName += "_" + gameObject.GetInstanceID();
             name = fileInputName;
             
-            AddFileInput(fileInputName, fileExtention, multiSelect);
+            AddFileInput(fileInputName, fileExtentions, multiSelect);
             gameObject.AddComponent<DrawHTMLOverCanvas>().AlignObjectID(fileInputName);
             // A html button gets generated over this button so the pivot has to be 0,0 (bottom left) since it gets generated from the bottom left
             GetComponent<RectTransform>().pivot = Vector2.zero;
@@ -93,7 +93,7 @@ namespace Netherlands3D.JavascriptConnection
         /// </summary>
         private void OnButtonClickUnityStandalone()
         {
-            string[] result = StandaloneFileBrowser.OpenFilePanel("Select File", "", fileExtention, multiSelect);
+            string[] result = StandaloneFileBrowser.OpenFilePanel("Select File", "", fileExtentions, multiSelect);
             if(result.Length != 0)
             {
                 for (int i = 0; i < result.Length; i++)
