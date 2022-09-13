@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ public class SliceCamera : MonoBehaviour
     [SerializeField] int slicesHeight = 512;
     [SerializeField] int depthFromCamera = 200;
     [SerializeField] int width = 512;
+    [SerializeField] int slicesPerFrame = 10;
     [SerializeField] float waitBetweenLines = 0.2f;
     private RenderTexture lineRenderTexture;
 
@@ -26,6 +28,11 @@ public class SliceCamera : MonoBehaviour
     {
         sliceCamera = GetComponent<Camera>();
         sliceCamera.enabled = false;
+    }
+
+    private void Start()
+    {
+        RenderClices();
     }
 
     private void OnValidate()
@@ -76,6 +83,8 @@ public class SliceCamera : MonoBehaviour
     {
         while (true)
         {
+            ClearPixels();
+
             yield return new WaitForEndOfFrame();
             sliceCamera.nearClipPlane = 0;
             sliceCamera.farClipPlane = 0;
@@ -83,27 +92,20 @@ public class SliceCamera : MonoBehaviour
             var startRotation = sliceCamera.transform.rotation;
             var startPosition = sliceCamera.transform.position;
 
+            RenderTexture.active = lineRenderTexture;
             //From topdown
             for (int i = 0; i < slicesHeight; i++)
             {
                 //Render line
+                MoveCameraClipRanges(i);
+
                 sliceCamera.Render();
 
-                RenderTexture.active = lineRenderTexture;
                 lineTexture.ReadPixels(rect, 0, 0, false);
                 lineTexture.Apply();
                 linePixels = lineTexture.GetPixels();
 
-                float startClip = (float)i * ((float)depthFromCamera / (float)slicesHeight);
-                sliceCamera.nearClipPlane = startClip;
-                sliceCamera.farClipPlane = startClip + (depthFromCamera/ (float)slicesHeight); //1meter per slice for now
-
-                //for every pixel draw one in our map
-                outputTexture.SetPixels(0, (slicesHeight-1) - i, width, 1, linePixels);
-                outputTexture.Apply();
-
-                if (waitBetweenLines > 0)
-                    yield return new WaitForSeconds(waitBetweenLines);
+                OverwritePixels(i, linePixels);
             }
 
             //Turn to side
@@ -114,38 +116,65 @@ public class SliceCamera : MonoBehaviour
             for (int i = 0; i < slicesHeight; i++)
             {
                 //Render line
+                MoveCameraClipRanges(i);
+
                 sliceCamera.Render();
 
-                RenderTexture.active = lineRenderTexture;
+
                 lineTexture.ReadPixels(rect, 0, 0, false);
                 lineTexture.Apply();
                 linePixels = lineTexture.GetPixels();
 
-                float startClip = (float)i * ((float)depthFromCamera / (float)slicesHeight);
-
-                sliceCamera.nearClipPlane = startClip;
-                sliceCamera.farClipPlane = startClip + (depthFromCamera / (float)slicesHeight); //1meter per slice for now
-
-                //Keep existing pixels
-                var existingPixels = outputTexture.GetPixels(i, 0, 1, width);
-                for (int j = 0; j < linePixels.Length; j++)
-                {
-                    if (existingPixels[j].r > 0)
-                        linePixels[j] = existingPixels[j];
-                }
-
-                //for every pixel draw one in our map
-                outputTexture.SetPixels(i, 0, 1, width, linePixels);
-                outputTexture.Apply();
-
-                if(waitBetweenLines > 0)
-                    yield return new WaitForSeconds(waitBetweenLines);
+                OverwritePixelsVertical(i, linePixels);
             }
+
+            outputTexture.SetPixels(outputPixels);
+            outputTexture.Apply();
 
             sliceCamera.transform.position = startPosition;
             sliceCamera.transform.rotation = startRotation;
 
             RenderTexture.active = null;
+        }
+    }
+
+    private void ClearPixels()
+    {
+        for (int i = 0; i < outputPixels.Length; i++)
+        {
+            outputPixels[i] = Color.black;
+        }
+    }
+
+    private void MoveCameraClipRanges(int sliceNumber)
+    {
+        float startClip = depthFromCamera-((float)sliceNumber * ((float)depthFromCamera / (float)slicesHeight));
+        sliceCamera.nearClipPlane = startClip;
+        sliceCamera.farClipPlane = startClip + (depthFromCamera / (float)slicesHeight); //1meter per slice for now
+    }
+
+    /// <summary>
+    /// Draw colors in our output pixel (if not set already)
+    /// </summary>
+    private void OverwritePixels(int pixelLine, Color[] linePixels)
+    {
+        for (int i = 0; i < linePixels.Length; i++)
+        {
+            int targetPixel = i+(pixelLine * width);
+
+            if(outputPixels[targetPixel].r == 0)
+                outputPixels[targetPixel] = linePixels[i];
+        }
+    }
+
+    private void OverwritePixelsVertical(int pixelLine, Color[] linePixels)
+    {
+        for (int i = 0; i < width; i++)
+        {
+            
+            int targetPixel = (i*width) + ((width-1)-pixelLine);
+            if (outputPixels[targetPixel].r == 0)
+                outputPixels[targetPixel] = linePixels[i];
         }
     }
 }
