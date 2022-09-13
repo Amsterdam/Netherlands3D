@@ -19,10 +19,21 @@ public class SliceCamera : MonoBehaviour
     public RawImage rawImagePreview;
     public RawImage rawImageLine;
     private Rect rect;
+    private Color[] linePixels;
+    private Color[] outputPixels;
+
     void Awake()
     {
         sliceCamera = GetComponent<Camera>();
         sliceCamera.enabled = false;
+    }
+
+    private void OnValidate()
+    {
+        if(!sliceCamera) sliceCamera = GetComponent<Camera>();
+        sliceCamera.enabled = false;
+
+        sliceCamera.orthographicSize = 0.5f;
     }
 
     [ContextMenu("Slice")]
@@ -45,8 +56,10 @@ public class SliceCamera : MonoBehaviour
         lineRenderTexture = new RenderTexture(width, 1, 0);
         sliceCamera.targetTexture = lineRenderTexture;
 
-        outputTexture = new Texture2D(width, slicesHeight, TextureFormat.ARGB32, false);
-        lineTexture = new Texture2D(width, 1, TextureFormat.ARGB32, false);
+        outputTexture = new Texture2D(width, slicesHeight, TextureFormat.R8, false);
+        lineTexture = new Texture2D(width, 1, TextureFormat.R8, false);
+
+        outputPixels = new Color[width * slicesHeight];
 
         rawImagePreview.texture = outputTexture;
         rawImageLine.texture = lineTexture;
@@ -54,8 +67,9 @@ public class SliceCamera : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(this.transform.position, this.transform.forward * depthFromCamera);
+        Gizmos.color = new Color(1,0,0,0.5f);
+        Gizmos.matrix = transform.localToWorldMatrix;
+        Gizmos.DrawCube(Vector3.zero + (Vector3.forward* (depthFromCamera/2.0f)), new Vector3(width, 0, depthFromCamera));
     }
 
     private IEnumerator SliceLoop()
@@ -66,6 +80,10 @@ public class SliceCamera : MonoBehaviour
             sliceCamera.nearClipPlane = 0;
             sliceCamera.farClipPlane = 0;
 
+            var startRotation = sliceCamera.transform.rotation;
+            var startPosition = sliceCamera.transform.position;
+
+            //From topdown
             for (int i = 0; i < slicesHeight; i++)
             {
                 //Render line
@@ -74,11 +92,9 @@ public class SliceCamera : MonoBehaviour
                 RenderTexture.active = lineRenderTexture;
                 lineTexture.ReadPixels(rect, 0, 0, false);
                 lineTexture.Apply();
-
-                var linePixels = lineTexture.GetPixels();
+                linePixels = lineTexture.GetPixels();
 
                 float startClip = (float)i * ((float)depthFromCamera / (float)slicesHeight);
-
                 sliceCamera.nearClipPlane = startClip;
                 sliceCamera.farClipPlane = startClip + (depthFromCamera/ (float)slicesHeight); //1meter per slice for now
 
@@ -86,8 +102,49 @@ public class SliceCamera : MonoBehaviour
                 outputTexture.SetPixels(0, (slicesHeight-1) - i, width, 1, linePixels);
                 outputTexture.Apply();
 
-                //yield return new WaitForSeconds(waitBetweenLines);
+                if (waitBetweenLines > 0)
+                    yield return new WaitForSeconds(waitBetweenLines);
             }
+
+            //Turn to side
+            sliceCamera.transform.Translate(Vector3.forward * (depthFromCamera / 2.0f),Space.Self);
+            sliceCamera.transform.Rotate(0, 90, 0, Space.Self);
+            sliceCamera.transform.Translate(Vector3.back * (width / 2.0f), Space.Self);
+
+            for (int i = 0; i < slicesHeight; i++)
+            {
+                //Render line
+                sliceCamera.Render();
+
+                RenderTexture.active = lineRenderTexture;
+                lineTexture.ReadPixels(rect, 0, 0, false);
+                lineTexture.Apply();
+                linePixels = lineTexture.GetPixels();
+
+                float startClip = (float)i * ((float)depthFromCamera / (float)slicesHeight);
+
+                sliceCamera.nearClipPlane = startClip;
+                sliceCamera.farClipPlane = startClip + (depthFromCamera / (float)slicesHeight); //1meter per slice for now
+
+                //Keep existing pixels
+                var existingPixels = outputTexture.GetPixels(i, 0, 1, width);
+                for (int j = 0; j < linePixels.Length; j++)
+                {
+                    if (existingPixels[j].r > 0)
+                        linePixels[j] = existingPixels[j];
+                }
+
+                //for every pixel draw one in our map
+                outputTexture.SetPixels(i, 0, 1, width, linePixels);
+                outputTexture.Apply();
+
+                if(waitBetweenLines > 0)
+                    yield return new WaitForSeconds(waitBetweenLines);
+            }
+
+            sliceCamera.transform.position = startPosition;
+            sliceCamera.transform.rotation = startRotation;
+
             RenderTexture.active = null;
         }
     }
