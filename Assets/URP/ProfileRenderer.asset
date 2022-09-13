@@ -22,7 +22,7 @@ MonoBehaviour:
         serializedVersion: 2
         m_Bits: 192
       PassNames: []
-    overrideMaterial: {fileID: 2100000, guid: df35d3ccecdf6f4489f41b05fe27ed48, type: 2}
+    overrideMaterial: {fileID: 2100000, guid: 91e5c92ba76964b469f843eed6baf974, type: 2}
     overrideMaterialPassIndex: 0
     overrideDepthState: 1
     depthCompareFunction: 4
@@ -35,7 +35,7 @@ MonoBehaviour:
       failOperation: 0
       zFailOperation: 0
     cameraSettings:
-      overrideCamera: 1
+      overrideCamera: 0
       restoreCamera: 1
       offset: {x: 0, y: 0, z: 0, w: 0}
       cameraFieldOfView: 60

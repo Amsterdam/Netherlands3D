@@ -5,8 +5,11 @@ using UnityEngine.UI;
 
 public class SliceCamera : MonoBehaviour
 {
-    [SerializeField] int slices = 512;
-    [SerializeField] RenderTexture lineRenderTexture;
+    [SerializeField] int slicesHeight = 512;
+    [SerializeField] int depthFromCamera = 200;
+    [SerializeField] int width = 512;
+    [SerializeField] float waitBetweenLines = 0.2f;
+    private RenderTexture lineRenderTexture;
 
     private Camera sliceCamera;
 
@@ -15,56 +18,77 @@ public class SliceCamera : MonoBehaviour
     private Texture2D outputTexture;
     public RawImage rawImagePreview;
     public RawImage rawImageLine;
-    private Rect rect = new Rect(0,0,512,1);
-    void Start()
+    private Rect rect;
+    void Awake()
     {
         sliceCamera = GetComponent<Camera>();
         sliceCamera.enabled = false;
-
-        outputTexture = new Texture2D(512,512, TextureFormat.ARGB32, false);
-        lineTexture = new Texture2D(512,1, TextureFormat.ARGB32, false);
-
-        rawImagePreview.texture = outputTexture;
-        rawImageLine.texture = lineTexture;
     }
 
     [ContextMenu("Slice")]
     public void RenderClices()
     {
+        CreateTextures();
+
+        rect = new Rect(0, 0, width, 1);
+
         StopAllCoroutines();
         StartCoroutine(SliceLoop());
     }
 
-    private IEnumerator SliceLoop()
+    private void CreateTextures()
     {
-        yield return new WaitForEndOfFrame();
-        sliceCamera.nearClipPlane = 0;
-        sliceCamera.farClipPlane = 0;
+        if (lineRenderTexture) Destroy(lineRenderTexture);
+        if (outputTexture) Destroy(outputTexture);
+        if (lineTexture) Destroy(lineTexture);
 
-        for (int i = 0; i < slices; i++)
-        {
-            RenderTexture.active = lineRenderTexture;
-            //Render line
-            sliceCamera.Render();
-            yield return new WaitForEndOfFrame();
-            lineTexture.ReadPixels(rect,0,0,false);
-            lineTexture.Apply();
+        lineRenderTexture = new RenderTexture(width, 1, 0);
+        sliceCamera.targetTexture = lineRenderTexture;
 
-            var linePixels = lineTexture.GetPixels();
+        outputTexture = new Texture2D(width, slicesHeight, TextureFormat.ARGB32, false);
+        lineTexture = new Texture2D(width, 1, TextureFormat.ARGB32, false);
 
-            sliceCamera.nearClipPlane = i;
-            sliceCamera.farClipPlane = i + 1; //1meter per slice for now
-
-            //for every pixel draw one in our map
-            outputTexture.SetPixels(0, i, 512, 1, linePixels);
-            outputTexture.Apply();
-
-        }
-        RenderTexture.active = null;
+        rawImagePreview.texture = outputTexture;
+        rawImageLine.texture = lineTexture;
     }
 
-    void Update()
+    private void OnDrawGizmos()
     {
-        
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(this.transform.position, this.transform.forward * depthFromCamera);
+    }
+
+    private IEnumerator SliceLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForEndOfFrame();
+            sliceCamera.nearClipPlane = 0;
+            sliceCamera.farClipPlane = 0;
+
+            for (int i = 0; i < slicesHeight; i++)
+            {
+                //Render line
+                sliceCamera.Render();
+
+                RenderTexture.active = lineRenderTexture;
+                lineTexture.ReadPixels(rect, 0, 0, false);
+                lineTexture.Apply();
+
+                var linePixels = lineTexture.GetPixels();
+
+                float startClip = (float)i * ((float)depthFromCamera / (float)slicesHeight);
+
+                sliceCamera.nearClipPlane = startClip;
+                sliceCamera.farClipPlane = startClip + (depthFromCamera/ (float)slicesHeight); //1meter per slice for now
+
+                //for every pixel draw one in our map
+                outputTexture.SetPixels(0, (slicesHeight-1) - i, width, 1, linePixels);
+                outputTexture.Apply();
+
+                //yield return new WaitForSeconds(waitBetweenLines);
+            }
+            RenderTexture.active = null;
+        }
     }
 }
