@@ -125,7 +125,7 @@ namespace Netherlands3D.JavascriptConnection
                 string newFilePath = System.IO.Path.Combine(Application.persistentDataPath, filename);
                 System.IO.File.Copy(filePath, newFilePath, true);
                 UnityEngine.Debug.Log("[File Importer-unityEditor] Import file from file path: " + filename);
-                eventFileLoaderFileImported.Invoke(filename);
+                eventFileLoaderFileImported.Invoke(newFilePath);
             }
         }
 #endif
