@@ -136,11 +136,11 @@ public class ObjImportManager : MonoBehaviour
             string fileextention = System.IO.Path.GetExtension(file);
             if (fileextention == ".obj")
             {
-                objfilename = file;
+                objfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
             }
             else if (fileextention == ".mtl")
             {
-                mtlfilename = file;
+                mtlfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
             }
         }
         if (objfilename!="")
@@ -182,23 +182,7 @@ public class ObjImportManager : MonoBehaviour
     void OnStartImporting()
     {
         if (!importer) ConnectToImporter();
-#if UNITY_EDITOR
-        if (System.IO.Path.GetFullPath(objfilename) != Application.persistentDataPath)
-        {
-            string filename = System.IO.Path.GetFileName(objfilename);
-            string newfilename = System.IO.Path.Combine(Application.persistentDataPath, filename);
-            System.IO.File.Copy(objfilename, newfilename,true);
-            objfilename = newfilename;
-            if(mtlfilename!="")
-            {
-                filename = System.IO.Path.GetFileName(mtlfilename);
-                newfilename = System.IO.Path.Combine(Application.persistentDataPath, filename);
-                System.IO.File.Copy(mtlfilename, newfilename, true);
-                mtlfilename = newfilename;
-            }
-            
-        }
-#endif
+
         importer.objFilePath = objfilename;
         importer.mtlFilePath = mtlfilename;
         importer.BaseMaterial = baseMaterial;
