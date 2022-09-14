@@ -37,7 +37,7 @@ public class FileInputIndexedDB : MonoBehaviour
     private static extern void SyncFilesToIndexedDB();
     [DllImport("__Internal")]
     private static extern void ClearFileInputFields();
-
+    Action<string> callbackAdress;
     private List<string> filenames = new List<string>();
     private int numberOfFilesToLoad = 0;
     private int fileCount = 0;
@@ -56,6 +56,11 @@ public class FileInputIndexedDB : MonoBehaviour
 #if !UNITY_EDITOR && UNITY_WEBGL
         InitializeIndexedDB(Application.persistentDataPath);
 #endif
+    }
+
+    public void SetCallbackAdress(Action<string> callback)
+    {
+        callbackAdress = callback;
     }
 
     // Called from javascript, the total number of files that are being loaded.
@@ -114,7 +119,15 @@ public class FileInputIndexedDB : MonoBehaviour
         //LoadingScreen.Instance.Hide();
 
         var files = string.Join(",", filenames);
-        filesImportedEvent.started.Invoke(files);
+        if (callbackAdress == null)
+        {
+            if (filesImportedEvent) filesImportedEvent.started.Invoke(files);
+        }
+        else
+        {
+            callbackAdress(files);
+            callbackAdress = null;
+        }
     }
 
     public void ClearDatabase(bool succes)
