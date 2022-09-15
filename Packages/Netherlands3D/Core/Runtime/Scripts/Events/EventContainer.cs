@@ -28,6 +28,10 @@ public class EventContainer<T> : ScriptableObject
 
     [HideInInspector]
     public T started;
+	[HideInInspector]
+	public UnityEvent received;
+	[HideInInspector]
+	public UnityEvent cancelled;
 
 	private void OnValidate()
 	{
