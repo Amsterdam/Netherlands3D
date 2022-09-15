@@ -963,7 +963,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &567031792
 GameObject:
@@ -1665,7 +1665,7 @@ Transform:
   - {fileID: 602741848}
   - {fileID: 405119802}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1219818703
 GameObject:
@@ -2312,7 +2312,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onCutMeshes: {fileID: 11400000, guid: cae20b46240f42b48a2cecf3b8701932, type: 2}
   onReceiveCuttingLine: {fileID: 11400000, guid: 777e7bc0e0d3e4c4496e3278d9b50a7c, type: 2}
-  cuttingLine: []
   layerMask:
     serializedVersion: 2
     m_Bits: 192
@@ -2329,7 +2328,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1747518723
 GameObject:
@@ -2426,7 +2425,7 @@ RectTransform:
   - {fileID: 1337512823}
   - {fileID: 567031793}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

@@ -89,9 +89,12 @@ public class MeshesProfileCutter : MonoBehaviour
         List<Vector3> edgeVertices = new List<Vector3>();
         for (int i = 0; i < triangles.Length; i+=3)
         {
+            var pointA = vertices[triangles[i]];
+            var pointB = vertices[triangles[i+1]];
+            var pointC = vertices[triangles[i+2]];
             //TODO: check all 3 lines of triangle for intersection point
             //If two points are found, add the line (two vector3) to our edgeLines list
-
+            //Just for testing just take an edge of the triangle
         }
 
         int[] indices = new int[edgeVertices.Count]; 
