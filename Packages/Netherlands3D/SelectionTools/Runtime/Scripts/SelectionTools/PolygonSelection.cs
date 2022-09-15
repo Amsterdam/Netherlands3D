@@ -19,6 +19,7 @@ using Netherlands3D.Events;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace Netherlands3D.SelectionTools
@@ -316,6 +317,9 @@ namespace Netherlands3D.SelectionTools
 
         private void Tap()
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+                return;
+
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
             currentWorldCoordinate = GetCoordinateInWorld(currentPointerPosition);
 
