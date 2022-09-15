@@ -400,6 +400,7 @@ namespace Netherlands3D.SelectionTools
         {
             polygonLineRenderer.positionCount = positions.Count;
             polygonLineRenderer.SetPositions(positions.ToArray());
+            polygonLineRenderer.enabled = true;
 
             if (positions.Count > 1 && lineHasChanged)
             {
@@ -426,6 +427,9 @@ namespace Netherlands3D.SelectionTools
             polygonFinished = true;
 
             previewLineRenderer.enabled = false;
+
+            if(!displayLineUntilRedraw)
+                polygonLineRenderer.enabled = false;
 
             var polygonIsClockwise = PolygonIsClockwise(positions);
             if ((windingOrder == WindingOrder.COUNTERCLOCKWISE && polygonIsClockwise) || (windingOrder == WindingOrder.CLOCKWISE && !polygonIsClockwise))

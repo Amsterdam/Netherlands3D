@@ -19,12 +19,18 @@ public class ProfileRenderer : MonoBehaviour
     private Camera renderCamera;
     [SerializeField] private Transform cuttingLine;
 
+    [SerializeField] private RenderTexture renderTexture;
     private List<Vector3> linePoints;
     private float worldSliceHeight = 0;
 
     private void Awake()
     {
         renderCamera = this.GetComponent<Camera>();
+        renderCamera.targetTexture = renderTexture;
+        renderCamera.enabled = false;
+        //We render manualy using renderCamera.Render();
+
+
         onReceiveCuttingLine.started.AddListener(Align);
 
         if(onReveiceHeightRange)
@@ -53,8 +59,9 @@ public class ProfileRenderer : MonoBehaviour
         var worldSliceWidth = Vector3.Distance(linePoints[0], linePoints[1]);
         cuttingLine.localScale = new Vector3(worldSliceWidth, heightRange, 1);
 
-        worldSliceHeight = (worldSliceWidth / renderCamera.activeTexture.width) * renderCamera.activeTexture.height;
+        worldSliceHeight = (worldSliceWidth / renderTexture.width) * renderTexture.height;
 
         renderCamera.orthographicSize = worldSliceHeight / 2.0f;
+        renderCamera.Render();
     }
 }
