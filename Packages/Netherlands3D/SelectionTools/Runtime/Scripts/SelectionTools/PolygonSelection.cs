@@ -40,6 +40,7 @@ namespace Netherlands3D.SelectionTools
         [Header("Invoke")]
         [SerializeField] private BoolEvent blockCameraDrag;
         [SerializeField] private Vector3ListEvent selectedPolygonArea;
+        [SerializeField, Tooltip("Contains the list of points the line is made of")] private Vector3ListEvent lineHasChanged;
 
         [Header("Settings")]
         [SerializeField] Color lineColor = Color.red;
@@ -48,6 +49,7 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] private float maxSelectionDistanceFromCamera = 10000;
         [SerializeField] private bool useWorldSpace = false;
         [SerializeField] private bool snapToStart = true;
+        [SerializeField, Tooltip("Closing a polygon shape is required. If set to false, you can output lines.")] private bool requireClosedPolygon = true;
         [SerializeField, Tooltip("If you click close to the starting point the loop will finish")] private bool closeLoopAtStart = true;
         [SerializeField] private int minPointsToCloseLoop = 3;
         [SerializeField] private float minPointDistance = 0.1f;
@@ -264,39 +266,42 @@ namespace Netherlands3D.SelectionTools
 
         private void CloseLoop(bool connectLastPointToStart, bool checkPreviewLine = true)
         {
-            if (positions.Count < minPointsToCloseLoop)
+            if (requireClosedPolygon)
             {
-                Debug.Log("Not closing loop. Need more points.");
-                return;
-            }
-
-            if (checkPreviewLine && previewLineCrossed)
-            {
-                Debug.Log("Not closing loop. Preview line is crossing another line");
-                return;
-            }
-
-            if (connectLastPointToStart)
-            {
-                var lastPointOnTopOfFirst = (Vector3.Distance(positions[0], positions[positions.Count - 1]) < minPointDistance);
-                if (lastPointOnTopOfFirst)
+                if (positions.Count < minPointsToCloseLoop)
                 {
-                    Debug.Log("Closing loop by placing last point on first");
-                    positions[positions.Count - 1] = positions[0];
+                    Debug.Log("Not closing loop. Need more points.");
+                    return;
                 }
-                else
+
+                if (checkPreviewLine && previewLineCrossed)
                 {
-                    Debug.Log("Try to add a finishing line.");
-                    var closingLineStart = positions[positions.Count - 1];
-                    var closingLineEnd = positions[0];
-                    if (LineCrossesOtherLine(closingLineStart, closingLineEnd, true,true))
+                    Debug.Log("Not closing loop. Preview line is crossing another line");
+                    return;
+                }
+
+                if (connectLastPointToStart)
+                {
+                    var lastPointOnTopOfFirst = (Vector3.Distance(positions[0], positions[positions.Count - 1]) < minPointDistance);
+                    if (lastPointOnTopOfFirst)
                     {
-                        Debug.Log("Cant close loop, closing line will cross another line.");
-                        return;
+                        Debug.Log("Closing loop by placing last point on first");
+                        positions[positions.Count - 1] = positions[0];
                     }
                     else
                     {
-                        positions.Add(closingLineEnd);
+                        Debug.Log("Try to add a finishing line.");
+                        var closingLineStart = positions[positions.Count - 1];
+                        var closingLineEnd = positions[0];
+                        if (LineCrossesOtherLine(closingLineStart, closingLineEnd, true, true))
+                        {
+                            Debug.Log("Cant close loop, closing line will cross another line.");
+                            return;
+                        }
+                        else
+                        {
+                            positions.Add(closingLineEnd);
+                        }
                     }
                 }
             }
@@ -392,6 +397,8 @@ namespace Netherlands3D.SelectionTools
         {
             polygonLineRenderer.positionCount = positions.Count;
             polygonLineRenderer.SetPositions(positions.ToArray());
+
+            if (lineHasChanged) lineHasChanged.started.Invoke(positions);
         }
 
         private void StartClick()
