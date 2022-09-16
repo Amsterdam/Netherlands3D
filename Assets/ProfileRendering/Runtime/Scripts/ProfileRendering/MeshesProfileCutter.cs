@@ -97,17 +97,12 @@ public class MeshesProfileCutter : MonoBehaviour
                     Debug.Log($"Generating profile for {meshFilter.gameObject.name}", meshFilter.gameObject);
                     var meshProfile = GetMeshProfile(meshFilter);
                     profileLines.AddRange(meshProfile);
-
-                    /*
-                    int[] indices = new int[edgeVertices.Count]; 
-                    var lineTopologyMesh = new Mesh();
-                    lineTopologyMesh.SetVertices(edgeVertices);
-                    lineTopologyMesh.SetIndices(indices, MeshTopology.Lines, 0);
-                    return lineTopologyMesh;
-                    */
                 }
             }
         }
+
+        outputProfilePolyline.Invoke(profileLines);
+
         yield return null;
     }
 
