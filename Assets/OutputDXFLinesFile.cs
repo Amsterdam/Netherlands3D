@@ -17,6 +17,7 @@ public class OutputDXFLinesFile : MonoBehaviour
 
     [SerializeField] Vector3ListEvent onReceiveLines;
     [SerializeField] private bool binary = false;
+    [SerializeField] private string outputFileName = "Profile_Netherlands3D.dxf";
     void Awake()
     {
         onReceiveLines.started.AddListener(OutputAsDXF);
@@ -45,7 +46,7 @@ public class OutputDXFLinesFile : MonoBehaviour
     public void SaveFile(DxfDocument dxfDocument)
     {
 #if UNITY_EDITOR
-        string path = EditorUtility.SaveFilePanel("Save profile DXF", "", "Profile.dxf", "dxf");
+        string path = EditorUtility.SaveFilePanel("Save profile DXF", "", outputFileName, "dxf");
         if (path.Length != 0)
         {
             if(dxfDocument.Save(path, binary))
@@ -62,7 +63,7 @@ public class OutputDXFLinesFile : MonoBehaviour
             {
                 if (dxfDocument.Save(stream, binary))
                 {
-                    DownloadFile(stream.ToArray(), stream.ToArray().Length, "testfile.dxf");
+                    DownloadFile(stream.ToArray(), stream.ToArray().Length, outputFileName);
                 }
                 else
                 {
