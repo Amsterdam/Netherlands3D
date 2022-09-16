@@ -145,15 +145,15 @@ public class MeshesProfileCutter : MonoBehaviour
                     edgeVertices.Add(triangleIntersections[1]);
                     continue; //We have our line, next triangle!
                 } 
-                else if (LineCrossingCuttingPlane(pointCWorld, pointAWorld, out intersection))
+            }
+            if (LineCrossingCuttingPlane(pointCWorld, pointAWorld, out intersection))
+            {
+                triangleIntersections.Add(intersection);
+                if (triangleIntersections.Count == 2)
                 {
-                    triangleIntersections.Add(intersection);
-                    if (triangleIntersections.Count == 2)
-                    {
-                        edgeVertices.Add(triangleIntersections[0]);
-                        edgeVertices.Add(triangleIntersections[1]);
-                        continue; //We have our line, next triangle!
-                    }
+                    edgeVertices.Add(triangleIntersections[0]);
+                    edgeVertices.Add(triangleIntersections[1]);
+                    continue; //We have our line, next triangle!
                 }
             }
         }
