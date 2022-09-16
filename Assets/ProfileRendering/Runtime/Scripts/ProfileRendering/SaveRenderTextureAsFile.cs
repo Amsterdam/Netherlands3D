@@ -26,7 +26,7 @@ public class SaveRenderTextureAsFile : MonoBehaviour
         byte[] bytes;
         bytes = texture.EncodeToPNG();
 
-#if UNITY_EDITOR && !UNITY_WEBGL
+#if !UNITY_EDITOR && UNITY_WEBGL
         DownloadFile(bytes, bytes.Length, "Profile.png");
 #elif UNITY_EDITOR
         string path = EditorUtility.SaveFilePanel("Save profile PNG", "", "Profile.png","png");
