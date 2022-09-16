@@ -17,7 +17,7 @@ public class MeshesProfileCutter : MonoBehaviour
     [Header("Settings")]
     [SerializeField, Tooltip("The meshes on these layers will be cut, and included in the profile")] 
     private LayerMask layerMask;
-    private bool drawBoundsGizmo = true;
+    private bool drawInEditorGizmos = true;
 
     private Plane cuttingPlane;
     private Bounds lineBounds;
@@ -47,15 +47,6 @@ public class MeshesProfileCutter : MonoBehaviour
         cuttingPlane = new Plane(planeNormal,lineCenter);
     }
 
-    private void OnDrawGizmos()
-    {
-        if (drawBoundsGizmo && lineBounds != null)
-        {
-            Gizmos.color = new Color(1,1,0,0.5f);
-            Gizmos.DrawCube(lineBounds.center, lineBounds.size);
-        }
-    }
-
     private void CutMeshes()
     {
         if(cuttingLine == null || cuttingLine.Count < 2)
@@ -70,15 +61,23 @@ public class MeshesProfileCutter : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.green;
-        if(profileLines.Count > 1)
+        if (!drawInEditorGizmos) return;
+
+        if (lineBounds != null)
         {
-            for (int i = 0; i < profileLines.Count; i ++)
+            Gizmos.color = new Color(1, 1, 0, 0.5f);
+            Gizmos.DrawCube(lineBounds.center, lineBounds.size);
+        }
+
+        Gizmos.color = Color.green;
+        if (profileLines.Count > 1)
+        {
+            for (int i = 0; i < profileLines.Count; i++)
             {
-                Gizmos.DrawSphere(profileLines[i],0.5f);
+                Gizmos.DrawSphere(profileLines[i], 0.5f);
             }
 
-            for (int i = 0; i < profileLines.Count; i+=2)
+            for (int i = 0; i < profileLines.Count; i += 2)
             {
                 Gizmos.DrawLine(profileLines[i], profileLines[i + 1]);
             }
@@ -141,21 +140,19 @@ public class MeshesProfileCutter : MonoBehaviour
                 triangleIntersections.Add(intersection);
                 if(triangleIntersections.Count == 2)
                 {
-                    edgeVertices.Add(triangleIntersections[0]);
-                    edgeVertices.Add(triangleIntersections[1]);
+                    edgeVertices.AddRange(triangleIntersections);
                     continue; //We have our line, next triangle!
                 } 
             }
             if (LineCrossingCuttingPlane(pointCWorld, pointAWorld, out intersection))
-            {
-                triangleIntersections.Add(intersection);
-                if (triangleIntersections.Count == 2)
                 {
-                    edgeVertices.Add(triangleIntersections[0]);
-                    edgeVertices.Add(triangleIntersections[1]);
-                    continue; //We have our line, next triangle!
+                    triangleIntersections.Add(intersection);
+                    if (triangleIntersections.Count == 2)
+                    {
+                        edgeVertices.AddRange(triangleIntersections);
+                        continue; //We have our line, next triangle!
+                    }
                 }
-            }
         }
 
         return edgeVertices;
