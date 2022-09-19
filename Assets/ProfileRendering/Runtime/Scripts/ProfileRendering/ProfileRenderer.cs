@@ -9,6 +9,8 @@ public class ProfileRenderer : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float heightRange = 300;
     [SerializeField] private float heightOffset = -100;
+    [SerializeField] private RenderTexture renderTexture;
+    [SerializeField] private Transform cuttingLine;
 
     [Header("Listen to")]
     [SerializeField] private Vector3ListEvent onReceiveCuttingLine;
@@ -17,9 +19,7 @@ public class ProfileRenderer : MonoBehaviour
     [SerializeField] private FloatEvent onReveiceHeightOffset;
 
     private Camera renderCamera;
-    [SerializeField] private Transform cuttingLine;
 
-    [SerializeField] private RenderTexture renderTexture;
     private List<Vector3> linePoints;
     private float worldSliceHeight = 0;
 
@@ -27,9 +27,8 @@ public class ProfileRenderer : MonoBehaviour
     {
         renderCamera = this.GetComponent<Camera>();
         renderCamera.targetTexture = renderTexture;
-        renderCamera.enabled = false;
         //We render manualy using renderCamera.Render();
-
+        renderCamera.enabled = false;
 
         onReceiveCuttingLine.started.AddListener(Align);
 
@@ -38,15 +37,6 @@ public class ProfileRenderer : MonoBehaviour
 
         if(onReveiceHeightRange)
             onReveiceHeightRange.started.AddListener((value) => heightOffset = value);
-    }
-
-    private void OnDrawGizmos()
-    {
-        if(linePoints!=null && linePoints.Count>1)
-        {
-            Gizmos.DrawLine(linePoints[0] + (Vector3.up * heightOffset), linePoints[0] + (Vector3.up * worldSliceHeight));
-            Gizmos.DrawLine(linePoints[1] + (Vector3.up * heightOffset), linePoints[1] + (Vector3.up * worldSliceHeight));
-        }
     }
 
     private void Align(List<Vector3> linePoints)
@@ -63,5 +53,13 @@ public class ProfileRenderer : MonoBehaviour
 
         renderCamera.orthographicSize = worldSliceHeight / 2.0f;
         renderCamera.Render();
+    }
+    private void OnDrawGizmos()
+    {
+        if(linePoints!=null && linePoints.Count>1)
+        {
+            Gizmos.DrawLine(linePoints[0] + (Vector3.up * heightOffset), linePoints[0] + (Vector3.up * worldSliceHeight));
+            Gizmos.DrawLine(linePoints[1] + (Vector3.up * heightOffset), linePoints[1] + (Vector3.up * worldSliceHeight));
+        }
     }
 }
