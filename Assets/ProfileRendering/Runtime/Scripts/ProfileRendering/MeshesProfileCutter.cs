@@ -12,39 +12,46 @@ public class MeshesProfileCutter : MonoBehaviour
 
     [SerializeField] private Vector3ListEvent outputProfilePolyline;
 
+    [Header("Output")]
     private List<Vector3> cuttingLine;
 
     [Header("Settings")]
     [SerializeField, Tooltip("The meshes on these layers will be cut, and included in the profile")] 
     private LayerMask layerMask;
-    private bool drawInEditorGizmos = true;
+    [SerializeField] private bool drawInEditorGizmos = true;
+    [SerializeField] private int maxTrianglesPerFrame = 1000;
 
     private Plane cuttingPlane;
     private Bounds lineBounds;
     private Vector3 lineCenter;
 
-    private List<Vector3> triangleIntersections = new List<Vector3>();
-    [SerializeField] private List<Vector3> profileLines = new List<Vector3>();
+    private List<Vector3> triangleIntersectionLine = new List<Vector3>();
+    private List<Vector3> profileLines = new List<Vector3>();
 
     void Awake()
     {
         onReceiveCuttingLine.started.AddListener(SetLine);
         onCutMeshes.started.AddListener(CutMeshes);
 
-        triangleIntersections.Capacity = 2;
+        triangleIntersectionLine.Capacity = 2;
     }
 
     private void SetLine(List<Vector3> cuttingLine)
     {
         this.cuttingLine = cuttingLine;
-        lineCenter = Vector3.Lerp(this.cuttingLine[0], this.cuttingLine[1], 0.5f);
-        var width = Mathf.Abs(this.cuttingLine[0].x - this.cuttingLine[1].x);
-        var depth = Mathf.Abs(this.cuttingLine[0].z - this.cuttingLine[1].z);
-
-        lineBounds = new Bounds(lineCenter, new Vector3(width, 300, depth));
+        lineBounds = GetBoundsFromLine(cuttingLine);
 
         var planeNormal = Vector3.Cross((this.cuttingLine[0] - this.cuttingLine[1]).normalized, Vector3.up);
-        cuttingPlane = new Plane(planeNormal,lineCenter);
+        cuttingPlane = new Plane(planeNormal, lineCenter);
+    }
+
+    private Bounds GetBoundsFromLine(List<Vector3> line)
+    {
+        lineCenter = Vector3.Lerp(line[0], line[1], 0.5f);
+        var width = Mathf.Abs(line[0].x - line[1].x);
+        var depth = Mathf.Abs(line[0].z - line[1].z);
+
+        return new Bounds(lineCenter, new Vector3(width, 300, depth));
     }
 
     private void CutMeshes()
@@ -87,6 +94,7 @@ public class MeshesProfileCutter : MonoBehaviour
     private IEnumerator CutLoop(MeshFilter[] meshFilters)
     {
         profileLines.Clear();
+        List<Vector3> meshProfile = new List<Vector3>();
         foreach (var meshFilter in meshFilters)
         {
             if (IsInLayerMask(meshFilter.gameObject.layer))
@@ -95,7 +103,9 @@ public class MeshesProfileCutter : MonoBehaviour
                 if (renderer != null && renderer.bounds.Intersects(lineBounds))
                 {
                     Debug.Log($"Generating profile for {meshFilter.gameObject.name}", meshFilter.gameObject);
-                    var meshProfile = GetMeshProfile(meshFilter);
+                    meshProfile.Clear();
+                    yield return GetMeshProfile(meshFilter, meshProfile);
+
                     profileLines.AddRange(meshProfile);
                 }
             }
@@ -106,7 +116,7 @@ public class MeshesProfileCutter : MonoBehaviour
         yield return null;
     }
 
-    private List<Vector3> GetMeshProfile(MeshFilter meshFilter)
+    private IEnumerator GetMeshProfile(MeshFilter meshFilter, List<Vector3> meshProfile)
     {
         var targetMesh = meshFilter.sharedMesh;
 
@@ -114,10 +124,12 @@ public class MeshesProfileCutter : MonoBehaviour
         var triangles = targetMesh.triangles;
 
         //For each triangle, add the intersection line to our list
-        List<Vector3> edgeVertices = new List<Vector3>();
         for (int i = 0; i < triangles.Length; i+=3)
         {
-            triangleIntersections.Clear();
+            //Render a frame sometimes
+            if ((i % maxTrianglesPerFrame) == 0) yield return new WaitForEndOfFrame();
+
+            triangleIntersectionLine.Clear();
 
             //Get all vertex world positions ( so we support transformed objects )
             Matrix4x4 localToWorld = meshFilter.transform.localToWorldMatrix;
@@ -128,29 +140,33 @@ public class MeshesProfileCutter : MonoBehaviour
             Vector3 intersection;
             if(LineCrossingCuttingPlane(pointAWorld, pointBWorld, out intersection))
             {
-                triangleIntersections.Add(intersection);
+                triangleIntersectionLine.Add(intersection);
             }
             if (LineCrossingCuttingPlane(pointBWorld, pointCWorld, out intersection))
             {
-                triangleIntersections.Add(intersection);
-                if(triangleIntersections.Count == 2)
+                triangleIntersectionLine.Add(intersection);
+                if(triangleIntersectionLine.Count == 2)
                 {
-                    edgeVertices.AddRange(triangleIntersections);
+                    if (GetBoundsFromLine(triangleIntersectionLine).Intersects(lineBounds))
+                    {
+                        meshProfile.AddRange(triangleIntersectionLine);
+                    }
                     continue; //We have our line, next triangle!
                 } 
             }
             if (LineCrossingCuttingPlane(pointCWorld, pointAWorld, out intersection))
+            {
+                triangleIntersectionLine.Add(intersection);
+                if (triangleIntersectionLine.Count == 2)
                 {
-                    triangleIntersections.Add(intersection);
-                    if (triangleIntersections.Count == 2)
+                    if (GetBoundsFromLine(triangleIntersectionLine).Intersects(lineBounds))
                     {
-                        edgeVertices.AddRange(triangleIntersections);
-                        continue; //We have our line, next triangle!
+                        meshProfile.AddRange(triangleIntersectionLine);
                     }
+                    continue; //We have our line, next triangle!
                 }
+            }
         }
-
-        return edgeVertices;
     }
 
     private bool LineCrossingCuttingPlane(Vector3 pointAWorld, Vector3 pointBWorld, out Vector3 intersection)
@@ -166,11 +182,11 @@ public class MeshesProfileCutter : MonoBehaviour
 
     private Vector3 PointOnPlaneBetweenTwoPoints(Plane plane, Vector3 a, Vector3 b)
     {
-        Vector3 q = (b - a);
+        var q = (b - a);
         q.Normalize();
         Vector3 planeEqation;
-        Vector3 pointOnPlane = plane.ClosestPointOnPlane(Vector3.zero);
-        Vector3 normal = plane.normal;
+        var pointOnPlane = plane.ClosestPointOnPlane(Vector3.zero);
+        var normal = plane.normal;
         planeEqation = normal;
         var offset = Vector3.Dot(pointOnPlane, normal);
         var t = (offset - Vector3.Dot(a, planeEqation)) / Vector3.Dot(q, planeEqation);
