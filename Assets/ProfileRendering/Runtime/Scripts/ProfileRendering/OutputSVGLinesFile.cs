@@ -18,7 +18,8 @@ public class OutputSVGLinesFile : MonoBehaviour
     [SerializeField] private string outputFileName = "Profile_Netherlands3D.svg";
     [SerializeField] private int addLinesPerFrame = 1000;
 
-    [SerializeField] private float multiplyCoordinates = 1f;
+    [SerializeField] private float strokeWidth = 0.1f;
+    //[SerializeField] private float multiplyCoordinates = 1f;
 
 
     void Awake()
@@ -41,17 +42,24 @@ public class OutputSVGLinesFile : MonoBehaviour
         var minY = lines.Min(vector => vector.y);
         var maxY = lines.Max(vector => vector.y);
 
-        var width = (maxX - minX) * multiplyCoordinates;
-        var height = (maxY - minY) * multiplyCoordinates;
+        var width = (maxX - minX);
+        var height = (maxY - minY);
 
-        svgStringBuilder.AppendLine($"<svg viewBox=\"{-(width/2.0f)} {-(height / 2.0f)} {width} {height}\" xmlns=\"http://www.w3.org/2000/svg\">");
+        svgStringBuilder.AppendLine($"<svg viewBox=\"0 0 {width} {height}\" xmlns=\"http://www.w3.org/2000/svg\">");
         for (int i = 0; i < lines.Count; i += 2)
         {
             if ((i % addLinesPerFrame) == 0) yield return new WaitForEndOfFrame();
 
-            var lineStart = lines[i] * multiplyCoordinates; 
-            var lineEnd = lines[i+1] * multiplyCoordinates; 
-            svgStringBuilder.AppendLine($"<line x1=\"{lineStart.x}\" y1=\"{height-lineStart.y}\" x2=\"{lineEnd.x}\" y2=\"{height-lineEnd.y}\" stroke=\"black\" />");
+            var lineStart = lines[i]; 
+            var lineEnd = lines[i+1];
+
+            lineStart.x = (lineStart.x-minX);
+            lineStart.y = (lineStart.y - minY);
+
+            lineEnd.x = (lineEnd.x - minX);
+            lineEnd.y = (lineEnd.y - minY);
+
+            svgStringBuilder.AppendLine($"<line x1=\"{lineStart.x}\" y1=\"{height-lineStart.y}\" x2=\"{lineEnd.x}\" y2=\"{height-lineEnd.y}\" stroke=\"black\" stroke-width=\"{strokeWidth}\" />");
         }
         svgStringBuilder.AppendLine(" </svg>");
         yield return new WaitForEndOfFrame();

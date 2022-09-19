@@ -305,10 +305,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d1c408536c7235429306fe68736c6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  heightRange: 250
-  heightOffset: 50
+  heightRange: 300
+  heightOffset: 0
+  renderTexture: {fileID: 8400000, guid: 69c519a8b00254245b3d67e3f2dce9e1, type: 2}
+  cuttingLine: {fileID: 4968407319315594453}
   onReceiveCuttingLine: {fileID: 11400000, guid: 777e7bc0e0d3e4c4496e3278d9b50a7c, type: 2}
   onReveiceHeightRange: {fileID: 0}
   onReveiceHeightOffset: {fileID: 0}
-  cuttingLine: {fileID: 4968407319315594453}
-  renderTexture: {fileID: 8400000, guid: 69c519a8b00254245b3d67e3f2dce9e1, type: 2}

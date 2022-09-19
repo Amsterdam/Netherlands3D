@@ -96,7 +96,7 @@ public class MeshesProfileCutter : MonoBehaviour
         List<Vector3> meshProfile = new List<Vector3>();
         foreach (var meshFilter in meshFilters)
         {
-            if (IsInLayerMask(meshFilter.gameObject.layer))
+            if (meshFilter && IsInLayerMask(meshFilter.gameObject.layer))
             {
                 var renderer = meshFilter.GetComponent<Renderer>();
                 if (renderer != null && renderer.bounds.Intersects(lineBounds))
@@ -121,6 +121,7 @@ public class MeshesProfileCutter : MonoBehaviour
 
         var vertices = targetMesh.vertices;
         var triangles = targetMesh.triangles;
+        Matrix4x4 localToWorld = meshFilter.transform.localToWorldMatrix;
 
         //For each triangle, add the intersection line to our list
         for (int i = 0; i < triangles.Length; i+=3)
@@ -130,8 +131,7 @@ public class MeshesProfileCutter : MonoBehaviour
 
             triangleIntersectionLine.Clear();
 
-            //Get all vertex world positions ( so we support transformed objects )
-            Matrix4x4 localToWorld = meshFilter.transform.localToWorldMatrix;
+            //Get all vertex world positions ( so we support transformed objects )  
             var pointAWorld = localToWorld.MultiplyPoint3x4(vertices[triangles[i]]);
             var pointBWorld = localToWorld.MultiplyPoint3x4(vertices[triangles[i + 1]]);
             var pointCWorld = localToWorld.MultiplyPoint3x4(vertices[triangles[i + 2]]);
