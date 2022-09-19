@@ -30,8 +30,8 @@ public class OutputDXFLinesFile : MonoBehaviour
 
         for (int i = 0; i < lines.Count; i += 2)
         {
-            var rdStart = CoordConvert.UnitytoRD(lines[0]);
-            var rdEnd = CoordConvert.UnitytoRD(lines[1]);
+            var rdStart = CoordConvert.UnitytoRD(lines[i]);
+            var rdEnd = CoordConvert.UnitytoRD(lines[i+1]);
 
             netDxf.Vector3 lineStart = new netDxf.Vector3(rdStart.x, rdStart.y, rdStart.z);
             netDxf.Vector3 lineEnd = new netDxf.Vector3(rdEnd.x, rdEnd.y, rdEnd.z);
