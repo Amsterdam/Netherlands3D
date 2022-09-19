@@ -17,6 +17,7 @@ public class OutputDXFLinesFile : MonoBehaviour
 
     [SerializeField] Vector3ListEvent onReceiveLines;
     [SerializeField] private bool binary = false;
+    [SerializeField] private int addLinesPerFrame = 1000;
     [SerializeField] private string outputFileName = "Profile_Netherlands3D.dxf";
     void Awake()
     {
@@ -25,13 +26,20 @@ public class OutputDXFLinesFile : MonoBehaviour
 
     private void OutputAsDXF(List<UnityEngine.Vector3> lines)
     {
+        StartCoroutine(CreateDXFDocument(lines));
+    }
+
+    private IEnumerator CreateDXFDocument(List<UnityEngine.Vector3> lines)
+    {
         DxfDocument dxfDocument = new DxfDocument();
         dxfDocument.DrawingVariables.InsUnits = netDxf.Units.DrawingUnits.Meters;
 
         for (int i = 0; i < lines.Count; i += 2)
         {
+            if((i%addLinesPerFrame) == 0) yield return new WaitForEndOfFrame();
+
             var rdStart = CoordConvert.UnitytoRD(lines[i]);
-            var rdEnd = CoordConvert.UnitytoRD(lines[i+1]);
+            var rdEnd = CoordConvert.UnitytoRD(lines[i + 1]);
 
             netDxf.Vector3 lineStart = new netDxf.Vector3(rdStart.x, rdStart.y, rdStart.z);
             netDxf.Vector3 lineEnd = new netDxf.Vector3(rdEnd.x, rdEnd.y, rdEnd.z);
@@ -40,6 +48,7 @@ public class OutputDXFLinesFile : MonoBehaviour
             dxfDocument.Entities.Add(entity);
         }
 
+        yield return new WaitForEndOfFrame();
         SaveFile(dxfDocument);
     }
 
@@ -58,12 +67,13 @@ public class OutputDXFLinesFile : MonoBehaviour
                 Debug.Log($"Could not save: {path}");
             }
         }
-#else
+#elif !UNITY_EDITOR && UNITY_WEBGL
             using (var stream = new MemoryStream())
             {
                 if (dxfDocument.Save(stream, binary))
                 {
-                    DownloadFile(stream.ToArray(), stream.ToArray().Length, outputFileName);
+                    var streamArray = stream.ToArray();
+                    DownloadFile(streamArray, streamArray.Length, outputFileName);
                 }
                 else
                 {

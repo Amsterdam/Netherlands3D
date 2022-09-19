@@ -9,10 +9,9 @@ public class MeshesProfileCutter : MonoBehaviour
     [Header("Listen to")]
     [SerializeField] private TriggerEvent onCutMeshes;
     [SerializeField] private Vector3ListEvent onReceiveCuttingLine;
-
+    [Header("Output")]
     [SerializeField] private Vector3ListEvent outputProfilePolyline;
 
-    [Header("Output")]
     private List<Vector3> cuttingLine;
 
     [Header("Settings")]
