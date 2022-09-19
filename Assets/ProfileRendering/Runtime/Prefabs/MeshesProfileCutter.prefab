@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onCutMeshes: {fileID: 11400000, guid: cae20b46240f42b48a2cecf3b8701932, type: 2}
   onReceiveCuttingLine: {fileID: 11400000, guid: 777e7bc0e0d3e4c4496e3278d9b50a7c, type: 2}
-  outputProfilePolyline: {fileID: 11400000, guid: 34c8fd9923114bc4babf089836604e3e, type: 2}
+  outputProfilePolyline: {fileID: 11400000, guid: b9e8579c8e444ae40a23574a9f4e21b9, type: 2}
   layerMask:
     serializedVersion: 2
     m_Bits: 192
@@ -64,4 +64,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66bb4016c2c054c4bbe06344c2783c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onReceiveLines: {fileID: 11400000, guid: 34c8fd9923114bc4babf089836604e3e, type: 2}
+  onReceiveLines: {fileID: 11400000, guid: b9e8579c8e444ae40a23574a9f4e21b9, type: 2}
+  binary: 1
+  outputFileName: Profile.dxf
