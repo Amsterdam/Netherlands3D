@@ -14,13 +14,16 @@ public class OutputSVGLinesFile : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void DownloadFile(byte[] array, int byteLength, string fileName);
 
+    [Header("Input")]
     [SerializeField] Vector3ListEvent onReceiveLines;
+
+    [Header("Output")]
+    [SerializeField] FloatEvent outputProgress;
+
+    [Header("Settings")]
     [SerializeField] private string outputFileName = "Profile_Netherlands3D.svg";
     [SerializeField] private int addLinesPerFrame = 1000;
-
     [SerializeField] private float strokeWidth = 0.1f;
-    //[SerializeField] private float multiplyCoordinates = 1f;
-
 
     void Awake()
     {
@@ -48,7 +51,11 @@ public class OutputSVGLinesFile : MonoBehaviour
         svgStringBuilder.AppendLine($"<svg viewBox=\"0 0 {width} {height}\" xmlns=\"http://www.w3.org/2000/svg\">");
         for (int i = 0; i < lines.Count; i += 2)
         {
-            if ((i % addLinesPerFrame) == 0) yield return new WaitForEndOfFrame();
+            if ((i % addLinesPerFrame) == 0)
+            {
+                if (outputProgress && i > 0) outputProgress.Invoke((float)i / lines.Count);
+                yield return new WaitForEndOfFrame();
+            }
 
             var lineStart = lines[i]; 
             var lineEnd = lines[i+1];
@@ -62,6 +69,8 @@ public class OutputSVGLinesFile : MonoBehaviour
             svgStringBuilder.AppendLine($"<line x1=\"{lineStart.x}\" y1=\"{height-lineStart.y}\" x2=\"{lineEnd.x}\" y2=\"{height-lineEnd.y}\" stroke=\"black\" stroke-width=\"{strokeWidth}\" />");
         }
         svgStringBuilder.AppendLine(" </svg>");
+
+        if (outputProgress) outputProgress.Invoke(1.0f);
         yield return new WaitForEndOfFrame();
         SaveFile(svgStringBuilder);
 

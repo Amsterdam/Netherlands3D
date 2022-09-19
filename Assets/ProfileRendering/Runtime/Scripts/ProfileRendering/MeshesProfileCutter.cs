@@ -6,10 +6,11 @@ using UnityEngine;
 
 public class MeshesProfileCutter : MonoBehaviour
 {
-    [Header("Listen to")]
+    [Header("Input")]
     [SerializeField] private TriggerEvent onCutMeshes;
     [SerializeField] private Vector3ListEvent onReceiveCuttingLine;
     [Header("Output")]
+    [SerializeField] private FloatEvent outputProgress;
     [SerializeField] private Vector3ListEvent outputProfilePolyline;
 
     private List<Vector3> cuttingLine;
@@ -94,8 +95,13 @@ public class MeshesProfileCutter : MonoBehaviour
     {
         profileLines.Clear();
         List<Vector3> meshProfile = new List<Vector3>();
-        foreach (var meshFilter in meshFilters)
+        if (outputProgress) outputProgress.Invoke(0.001f);
+
+        for (int i = 0; i < meshFilters.Length; i++)
         {
+            var meshFilter = meshFilters[i];
+            if(outputProgress && i>0) outputProgress.Invoke( (float)i/meshFilters.Length );
+
             if (meshFilter && IsInLayerMask(meshFilter.gameObject.layer))
             {
                 var renderer = meshFilter.GetComponent<Renderer>();
@@ -110,6 +116,7 @@ public class MeshesProfileCutter : MonoBehaviour
             }
         }
 
+        if (outputProgress) outputProgress.Invoke(0.001f);
         outputProfilePolyline.Invoke(profileLines);
 
         yield return null;

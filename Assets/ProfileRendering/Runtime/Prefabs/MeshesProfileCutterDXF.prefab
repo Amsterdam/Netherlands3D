@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onCutMeshes: {fileID: 11400000, guid: ff5a9a44aa735b74fbf458203d8b9d8d, type: 2}
   onReceiveCuttingLine: {fileID: 11400000, guid: 777e7bc0e0d3e4c4496e3278d9b50a7c, type: 2}
+  outputProgress: {fileID: 11400000, guid: 5ec0a9f132b109c4a829cd53685b5303, type: 2}
   outputProfilePolyline: {fileID: 11400000, guid: b9e8579c8e444ae40a23574a9f4e21b9, type: 2}
   layerMask:
     serializedVersion: 2
@@ -66,5 +67,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   onReceiveLines: {fileID: 11400000, guid: b9e8579c8e444ae40a23574a9f4e21b9, type: 2}
+  outputProgress: {fileID: 11400000, guid: 5ec0a9f132b109c4a829cd53685b5303, type: 2}
   binary: 1
+  addLinesPerFrame: 1000
   outputFileName: Profile.dxf

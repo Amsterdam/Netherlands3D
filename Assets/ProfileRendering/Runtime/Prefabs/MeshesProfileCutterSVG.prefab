@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onCutMeshes: {fileID: 11400000, guid: 76a321098cc604140b448c387ac90ba3, type: 2}
   onReceiveCuttingLine: {fileID: 11400000, guid: 777e7bc0e0d3e4c4496e3278d9b50a7c, type: 2}
+  outputProgress: {fileID: 11400000, guid: 5ec0a9f132b109c4a829cd53685b5303, type: 2}
   outputProfilePolyline: {fileID: 11400000, guid: aeeabebd7fe901848b44a9371ebcb507, type: 2}
   layerMask:
     serializedVersion: 2
@@ -66,6 +67,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   onReceiveLines: {fileID: 11400000, guid: aeeabebd7fe901848b44a9371ebcb507, type: 2}
+  outputProgress: {fileID: 11400000, guid: 5ec0a9f132b109c4a829cd53685b5303, type: 2}
   outputFileName: Profile_Netherlands3D.svg
   addLinesPerFrame: 1000
-  multiplyCoordinates: 1
+  strokeWidth: 0.1

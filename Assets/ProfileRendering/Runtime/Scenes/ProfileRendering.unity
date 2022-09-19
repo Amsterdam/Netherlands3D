@@ -1576,84 +1576,6 @@ Transform:
   m_Father: {fileID: 1160699526}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &816271682
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 816271684}
-  - component: {fileID: 816271683}
-  m_Layer: 0
-  m_Name: StreetNames
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &816271683
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 816271682}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a38316f36dee24748a32f2b70687e118, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isenabled: 1
-  tileSize: 1000
-  layerPriority: 2
-  Datasets:
-  - Description: 
-    lod: 0
-    path: 
-    maximumDistance: 1000
-    maximumDistanceSquared: 0
-    enabled: 1
-  pauseLoading: 0
-  onLayerEnabled:
-    m_PersistentCalls:
-      m_Calls: []
-  onLayerDisabled:
-    m_PersistentCalls:
-      m_Calls: []
-  textPrefab: {fileID: 6092693534695716574, guid: 7e0a4ae1636fabf438177d3baef1ec6e, type: 3}
-  geoJsonUrl: https://geodata.nationaalgeoregister.nl/kadastralekaart/wfs/v4_0?service=WFS&version=2.0.0&request=GetFeature&TypeNames=kadastralekaartv4:openbareruimtenaam&&propertyName=plaatsingspunt,tekst,hoek,relatieveHoogteligging,openbareRuimteType&outputformat=geojson&srs=EPSG:28992&bbox=
-  maxSpawnsPerFrame: 100
-  textsAndSizes:
-  - textPropertyName: tekst
-    drawWithSize: 0.5
-    offset: 10
-  positionSourceType: 0
-  autoOrientationMode: 2
-  drawGeometry: 0
-  lineRenderMaterial: {fileID: 2100000, guid: 9dc045a69ee65694da7669f5e52a4db1, type: 2}
-  lineColor: {r: 0.8235294, g: 0.39215687, b: 0.19607843, a: 1}
-  lineWidth: 5
-  readAngleFromProperty: 1
-  angleProperty: hoek
-  filterUniqueNames: 1
-  textMinDrawDistance: 0
---- !u!4 &816271684
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 816271682}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1038324012}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &912760451
 GameObject:
   m_ObjectHideFlags: 0
@@ -1994,6 +1916,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1038324012}
   - component: {fileID: 1038324011}
+  - component: {fileID: 1038324013}
   m_Layer: 0
   m_Name: TileHandler
   m_TagString: Untagged
@@ -2019,9 +1942,9 @@ MonoBehaviour:
   - {fileID: 1924317588}
   - {fileID: 2023076483}
   - {fileID: 2005338052}
-  - {fileID: 1456252658}
-  - {fileID: 816271683}
-  - {fileID: 1130995352}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!4 &1038324012
 Transform:
   m_ObjectHideFlags: 0
@@ -2037,90 +1960,22 @@ Transform:
   - {fileID: 1924317589}
   - {fileID: 2023076484}
   - {fileID: 2005338053}
-  - {fileID: 1456252659}
-  - {fileID: 816271684}
-  - {fileID: 1130995353}
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1130995351
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1130995353}
-  - component: {fileID: 1130995352}
-  m_Layer: 0
-  m_Name: Wijknamen
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1130995352
+--- !u!114 &1038324013
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1130995351}
-  m_Enabled: 0
+  m_GameObject: {fileID: 1038324010}
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a38316f36dee24748a32f2b70687e118, type: 3}
+  m_Script: {fileID: 11500000, guid: 65c549ef37fc1fe4390b61b0b654fd38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isenabled: 1
-  tileSize: 1000
-  layerPriority: 2
-  Datasets:
-  - Description: 
-    lod: 0
-    path: 
-    maximumDistance: 1000
-    maximumDistanceSquared: 0
-    enabled: 1
-  pauseLoading: 0
-  onLayerEnabled:
-    m_PersistentCalls:
-      m_Calls: []
-  onLayerDisabled:
-    m_PersistentCalls:
-      m_Calls: []
-  textPrefab: {fileID: 6092693534695716574, guid: 7e0a4ae1636fabf438177d3baef1ec6e, type: 3}
-  geoJsonUrl: https://geodata.nationaalgeoregister.nl/wijkenbuurten2020/wfs?service=WFS&version=2.0.0&request=GetFeature&outputFormat=json&typeName=wijkenbuurten2020:cbs_wijken_2020&propertyName=wijknaam,geom&bbox=
-  maxSpawnsPerFrame: 100
-  textsAndSizes:
-  - textPropertyName: wijknaam
-    drawWithSize: 1
-    offset: 60
-  positionSourceType: 1
-  autoOrientationMode: 1
-  drawGeometry: 1
-  lineRenderMaterial: {fileID: 2100000, guid: 9dc045a69ee65694da7669f5e52a4db1, type: 2}
-  lineColor: {r: 0.8235294, g: 0.39215687, b: 0.19607843, a: 1}
-  lineWidth: 5
-  readAngleFromProperty: 0
-  angleProperty: hoek
-  filterUniqueNames: 1
-  textMinDrawDistance: 0
---- !u!4 &1130995353
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1130995351}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1038324012}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  serverRootWebAddress: https://acc.3d.amsterdam.nl
 --- !u!1 &1160699525
 GameObject:
   m_ObjectHideFlags: 0
@@ -2773,84 +2628,11 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &1456252657
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+--- !u!224 &1444748942 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+  m_PrefabInstance: {fileID: 4888022043817112357}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1456252659}
-  - component: {fileID: 1456252658}
-  m_Layer: 0
-  m_Name: Buurtnamen
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1456252658
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1456252657}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a38316f36dee24748a32f2b70687e118, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isenabled: 1
-  tileSize: 1000
-  layerPriority: 2
-  Datasets:
-  - Description: 
-    lod: 0
-    path: 
-    maximumDistance: 2000
-    maximumDistanceSquared: 0
-    enabled: 1
-  pauseLoading: 0
-  onLayerEnabled:
-    m_PersistentCalls:
-      m_Calls: []
-  onLayerDisabled:
-    m_PersistentCalls:
-      m_Calls: []
-  textPrefab: {fileID: 8383371600766724334, guid: 226771f56b5021248b0ab1f2e594a611, type: 3}
-  geoJsonUrl: https://geodata.nationaalgeoregister.nl/wijkenbuurten2020/wfs?service=WFS&version=2.0.0&request=GetFeature&outputFormat=json&typeName=wijkenbuurten2020:cbs_buurten_2020&propertyName=buurtnaam,geom&bbox=
-  maxSpawnsPerFrame: 100
-  textsAndSizes:
-  - textPropertyName: buurtnaam
-    drawWithSize: 0.5
-    offset: 15
-  positionSourceType: 1
-  autoOrientationMode: 1
-  drawGeometry: 1
-  lineRenderMaterial: {fileID: 2100000, guid: 9dc045a69ee65694da7669f5e52a4db1, type: 2}
-  lineColor: {r: 0.8235294, g: 0.39215687, b: 0.19607843, a: 1}
-  lineWidth: 5
-  readAngleFromProperty: 0
-  angleProperty: hoek
-  filterUniqueNames: 1
-  textMinDrawDistance: 0
---- !u!4 &1456252659
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1456252657}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1038324012}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1498324984
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3087,6 +2869,7 @@ RectTransform:
   - {fileID: 203459195}
   - {fileID: 567031793}
   - {fileID: 1273937937}
+  - {fileID: 1444748942}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3265,13 +3048,13 @@ MonoBehaviour:
   Datasets:
   - Description: 
     lod: 0
-    path: https://3d.amsterdam.nl/data/buildings1.1/buildings_{x}_{y}.1.2.bin
+    path: /data/buildings1.1/buildings_{x}_{y}.1.2.bin
     maximumDistance: 6000
     maximumDistanceSquared: 36000000
     enabled: 1
   - Description: 
     lod: 1
-    path: https://3d.amsterdam.nl/data/buildings1.1/buildings_{x}_{y}.2.2.bin
+    path: /data/buildings1.1/buildings_{x}_{y}.2.2.bin
     maximumDistance: 3000
     maximumDistanceSquared: 9000000
     enabled: 1
@@ -3434,7 +3217,7 @@ MonoBehaviour:
   Datasets:
   - Description: 
     lod: 0
-    path: https://3d.amsterdam.nl/data/trees1.1/trees_{x}-{y}-lod1.bin
+    path: /data/trees1.1/trees_{x}-{y}-lod1.bin
     maximumDistance: 3000
     maximumDistanceSquared: 9000000
     enabled: 1
@@ -3500,13 +3283,13 @@ MonoBehaviour:
   Datasets:
   - Description: 
     lod: 0
-    path: https://3d.amsterdam.nl/data/terrain1.1/terrain_{x}-{y}-lod0.bin
+    path: /data/terrain1.1/terrain_{x}-{y}-lod0.bin
     maximumDistance: 6000
     maximumDistanceSquared: 36000000
     enabled: 1
   - Description: 
     lod: 1
-    path: https://3d.amsterdam.nl/data/terrain1.1/terrain_{x}-{y}-lod1.bin
+    path: /data/terrain1.1/terrain_{x}-{y}-lod1.bin
     maximumDistance: 3000
     maximumDistanceSquared: 9000000
     enabled: 1
@@ -3776,6 +3559,103 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27fdf3e6f3ff8424d8d39be98c7b630d, type: 3}
+--- !u!1001 &4888022043817112357
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1747518727}
+    m_Modifications:
+    - target: {fileID: 4888022045056724392, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_Name
+      value: ProgressBar
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888022045056724395, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5ee64a11637065243a910f899a7bbe16, type: 3}
 --- !u!1001 &6781047679535250704
 PrefabInstance:
   m_ObjectHideFlags: 0

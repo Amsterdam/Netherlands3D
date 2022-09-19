@@ -14,11 +14,17 @@ public class OutputDXFLinesFile : MonoBehaviour
 {
     [DllImport("__Internal")]
     private static extern void DownloadFile(byte[] array, int byteLength, string fileName);
-
+    [Header("Input")]
     [SerializeField] Vector3ListEvent onReceiveLines;
+    [Header("Output")]
+    [SerializeField] FloatEvent outputProgress;
+
+    [Header("Settings")]
     [SerializeField] private bool binary = false;
     [SerializeField] private int addLinesPerFrame = 1000;
     [SerializeField] private string outputFileName = "Profile_Netherlands3D.dxf";
+
+
     void Awake()
     {
         onReceiveLines.started.AddListener(OutputAsDXF);
@@ -36,7 +42,11 @@ public class OutputDXFLinesFile : MonoBehaviour
 
         for (int i = 0; i < lines.Count; i += 2)
         {
-            if((i%addLinesPerFrame) == 0) yield return new WaitForEndOfFrame();
+            if ((i % addLinesPerFrame) == 0)
+            {
+                if (outputProgress && i > 0) outputProgress.Invoke((float)i / lines.Count);
+                yield return new WaitForEndOfFrame();
+            }
 
             var rdStart = CoordConvert.UnitytoRD(lines[i]);
             var rdEnd = CoordConvert.UnitytoRD(lines[i + 1]);
@@ -47,7 +57,7 @@ public class OutputDXFLinesFile : MonoBehaviour
             Line entity = new Line(lineStart, lineEnd);
             dxfDocument.Entities.Add(entity);
         }
-
+        if (outputProgress) outputProgress.Invoke(1.0f);
         yield return new WaitForEndOfFrame();
         SaveFile(dxfDocument);
     }

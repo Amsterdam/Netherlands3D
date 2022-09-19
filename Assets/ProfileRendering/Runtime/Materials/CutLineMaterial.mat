@@ -124,14 +124,14 @@ Material:
     - _ProjectionAngleDiscardEnable: 0
     - _ProjectionAngleDiscardThreshold: 0.01
     - _QueueOffset: 0
-    - _ReadMask: 0
+    - _ReadMask: 255
     - _ReceiveShadows: 1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
     - _StencilComp: 0
-    - _StencilRef: 0
+    - _StencilRef: 7
     - _SupportOrthographicCamera: 1
     - _Surface: 0
     - _UnityFogEnable: 0
