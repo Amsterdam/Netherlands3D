@@ -1,0 +1,17 @@
+{
+    "name": "Netherlands3D.ProfileRendering.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9ca88277166fea644a31588b4f943acc",
+        "GUID:b7e30da48b5744942ae617355aa08a93"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
