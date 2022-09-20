@@ -55,7 +55,7 @@ public class OutputDXFLinesFile : MonoBehaviour
             netDxf.Vector3 lineEnd = new netDxf.Vector3(rdEnd.x, rdEnd.y, rdEnd.z);
 
             Line entity = new Line(lineStart, lineEnd);
-            dxfDocument.Entities.Add(entity);
+            dxfDocument.AddEntity(entity);
         }
         if (outputProgress) outputProgress.Invoke(1.0f);
         yield return new WaitForEndOfFrame();
