@@ -19,6 +19,7 @@ using Netherlands3D.Events;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace Netherlands3D.SelectionTools
@@ -51,6 +52,7 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] private bool snapToStart = true;
         [SerializeField, Tooltip("Closing a polygon shape is required. If set to false, you can output lines.")] private bool requireClosedPolygon = true;
         [SerializeField, Tooltip("If you click close to the starting point the loop will finish")] private bool closeLoopAtStart = true;
+        [SerializeField] private int maxPoints = 1000;
         [SerializeField] private int minPointsToCloseLoop = 3;
         [SerializeField] private float minPointDistance = 0.1f;
         [SerializeField] private float minDistanceBetweenAutoPoints = 10.0f;
@@ -315,6 +317,9 @@ namespace Netherlands3D.SelectionTools
 
         private void Tap()
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+                return;
+
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
             currentWorldCoordinate = GetCoordinateInWorld(currentPointerPosition);
 
@@ -380,11 +385,13 @@ namespace Netherlands3D.SelectionTools
                 Debug.Log("Adding new point.");
                 positions.Add(pointPosition);
                 lastAddedPoint = pointPosition;
-                if (closeLoopAtStart && snappingToStartPoint)
+                if ((positions.Count >= maxPoints) || closeLoopAtStart && snappingToStartPoint)
                 {
                     CloseLoop(true);
                 }
             }
+
+            
 
             if (!closedLoop)
                 UpdateLine();
@@ -397,8 +404,12 @@ namespace Netherlands3D.SelectionTools
         {
             polygonLineRenderer.positionCount = positions.Count;
             polygonLineRenderer.SetPositions(positions.ToArray());
+            polygonLineRenderer.enabled = true;
 
-            if (lineHasChanged) lineHasChanged.started.Invoke(positions);
+            if (positions.Count > 1 && lineHasChanged)
+            {
+                lineHasChanged.started.Invoke(positions);
+            }
         }
 
         private void StartClick()
@@ -421,6 +432,9 @@ namespace Netherlands3D.SelectionTools
 
             previewLineRenderer.enabled = false;
 
+            if(!displayLineUntilRedraw)
+                polygonLineRenderer.enabled = false;
+
             var polygonIsClockwise = PolygonIsClockwise(positions);
             if ((windingOrder == WindingOrder.COUNTERCLOCKWISE && polygonIsClockwise) || (windingOrder == WindingOrder.CLOCKWISE && !polygonIsClockwise))
             {
@@ -428,7 +442,8 @@ namespace Netherlands3D.SelectionTools
                 positions.Reverse();
             }
 
-            selectedPolygonArea.started.Invoke(positions);
+            if(positions.Count > 1)
+                selectedPolygonArea.started.Invoke(positions);
         }
 
         private bool PolygonIsClockwise(List<Vector3> points)
