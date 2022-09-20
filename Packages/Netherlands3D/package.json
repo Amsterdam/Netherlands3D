@@ -50,6 +50,11 @@
       "path": "SelectionTools/Samples~/SelectionTools"  
     },
     {
+      "displayName": "Profile Tool",
+      "description": "Example showing the profile rendering tool and the DXF or SVG exporting of selected profiles.",
+      "path": "ProfileRendering/Samples~/ProfileRendering"
+    },
+    {
       "displayName": "Sun/Shadows",
       "description": "Example of a Directional Light with shadows based on the position of the sun according to the location,date and time.",
       "path": "Sun/Samples~/Sun"
