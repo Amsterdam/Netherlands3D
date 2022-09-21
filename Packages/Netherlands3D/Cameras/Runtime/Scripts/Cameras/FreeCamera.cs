@@ -62,12 +62,15 @@ public class FreeCamera : MonoBehaviour
     [SerializeField] private Vector3Event lookInput;
     [SerializeField] private Vector3Event flyInput;
     [SerializeField] private Vector3Event rotateInput;
-    [SerializeField] public BoolEvent blockCameraDrag;
     [SerializeField] private FloatEvent zoomToPointerInput;
     [SerializeField] private Vector3Event pointerPosition;
     [SerializeField] private BoolEvent dragModifier;
     [SerializeField] private BoolEvent rotateModifier;
     [SerializeField] private BoolEvent firstPersonModifier;
+
+    [Header("Other setting events")]
+    [SerializeField] public BoolEvent blockCameraDrag;
+    [SerializeField] public BoolEvent ortographicEnabled;
 
     private Vector3 currentPointerPosition;
     private Vector3 zoomTarget;
@@ -107,7 +110,17 @@ public class FreeCamera : MonoBehaviour
         rotateModifier.started.AddListener(Rotate);
         firstPersonModifier.started.AddListener(RotateFirstPerson);
 
-        blockCameraDrag.started.AddListener(LockDragging);
+        if(blockCameraDrag) blockCameraDrag.started.AddListener(LockDragging);
+        if(ortographicEnabled) ortographicEnabled.started.AddListener(EnableOrtographic);
+    }
+
+    /// <summary>
+    /// Switch camera to ortographic mode and limit its controls
+    /// </summary>
+    /// <param name="enableOrtographic">Ortographic mode enabled</param>
+    public void EnableOrtographic(bool enableOrtographic)
+    {
+        cameraComponent.orthographic = enableOrtographic;
     }
 
     /// <summary>
