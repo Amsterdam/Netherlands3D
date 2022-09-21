@@ -120,11 +120,11 @@ namespace Netherlands3D.BIMPlanning
                 {
                     case ".obj":
                         ObjReady = true;
-                        objImporter.mtlFilePath = filePath;
+                        objImporter.objFilePath = filePath;
                         break;
                     case ".mtl":
                         MtlReady = true;
-                        objImporter.objFilePath = filePath;
+                        objImporter.mtlFilePath = filePath;
                         break;
                 }
             }
