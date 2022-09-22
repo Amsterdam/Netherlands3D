@@ -167,7 +167,7 @@ namespace Netherlands3D.SelectionTools
         /// </summary>
         private void UpdatePreviewLine()
         {
-            if (positions.Count == 0) return;
+            if (positions.Count == 0 || closedLoop) return;
 
             snappingToStartPoint = false;
             if(snapToStart && positions.Count > 2)
