@@ -120,7 +120,24 @@ public class FreeCamera : MonoBehaviour
     /// <param name="enableOrtographic">Ortographic mode enabled</param>
     public void EnableOrtographic(bool enableOrtographic)
     {
+        if (ortographicEnabled)
+        {
+            var cameraLookWorldPosition = GetWorldPoint(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0));
+            cameraLookWorldPosition.y = this.transform.position.y;
+            this.transform.position = cameraLookWorldPosition;
+
+            var flattenedForward = this.transform.forward;
+            flattenedForward.y = 0;
+            this.transform.rotation = Quaternion.LookRotation(Vector3.down, flattenedForward);
+        }
+
         cameraComponent.orthographic = enableOrtographic;
+    }
+
+    private void OrtographicLimitations()
+    {
+        //Link size and camera height to support features depending on camera height
+        cameraComponent.orthographicSize = this.transform.position.y;
     }
 
     /// <summary>
@@ -265,12 +282,14 @@ public class FreeCamera : MonoBehaviour
 	{
         EaseDragTarget();
         Clamp();
-	}
+
+        if (ortographicEnabled) OrtographicLimitations();
+    }
 
     /// <summary>
     /// Clamp camera to limits
     /// </summary>
-	private void Clamp()
+    private void Clamp()
 	{
 		if(this.transform.position.y > maxCameraHeight)
         {
