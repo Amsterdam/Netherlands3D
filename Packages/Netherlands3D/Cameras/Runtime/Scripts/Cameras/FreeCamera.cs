@@ -186,9 +186,11 @@ public class FreeCamera : MonoBehaviour
 		StorePreviousTransform();
 
 		this.transform.Rotate(0, value.x * dragRotateSpeed, 0, Space.World);
-		this.transform.Rotate(value.y * dragRotateSpeed, 0, 0, Space.Self);
-
-		RevertIfOverAxis();
+        if (!cameraComponent.orthographic)
+        {
+            this.transform.Rotate(value.y * dragRotateSpeed, 0, 0, Space.Self);
+            RevertIfOverAxis();
+        }	
 	}
 
     /// <summary>
@@ -203,9 +205,11 @@ public class FreeCamera : MonoBehaviour
         StorePreviousTransform();
 
         this.transform.Rotate(0, value.x * gamepadRotateSpeed * Time.deltaTime, 0, Space.World);
-        this.transform.Rotate(value.y * gamepadRotateSpeed * Time.deltaTime, 0, 0, Space.Self);
-
-        RevertIfOverAxis();
+        if (!cameraComponent.orthographic)
+        {
+            this.transform.Rotate(value.y * gamepadRotateSpeed * Time.deltaTime, 0, 0, Space.Self);
+            RevertIfOverAxis();
+        }
     }
 
     /// <summary>
@@ -227,10 +231,12 @@ public class FreeCamera : MonoBehaviour
 
         StorePreviousTransform();
 
-        this.transform.RotateAround(dragStart, this.transform.right, -pointerDelta.y * rotateAroundPointSpeed);
-		this.transform.RotateAround(dragStart, Vector3.up, pointerDelta.x * rotateAroundPointSpeed);
-
-        RevertIfOverAxis();
+        this.transform.RotateAround(dragStart, Vector3.up, pointerDelta.x * rotateAroundPointSpeed);
+        if (!cameraComponent.orthographic)
+        {
+            this.transform.RotateAround(dragStart, this.transform.right, -pointerDelta.y * rotateAroundPointSpeed);
+            RevertIfOverAxis();
+        }
     }
 
     /// <summary>
@@ -283,7 +289,7 @@ public class FreeCamera : MonoBehaviour
         EaseDragTarget();
         Clamp();
 
-        if (ortographicEnabled) OrtographicLimitations();
+        if (cameraComponent.orthographic) OrtographicLimitations();
     }
 
     /// <summary>
