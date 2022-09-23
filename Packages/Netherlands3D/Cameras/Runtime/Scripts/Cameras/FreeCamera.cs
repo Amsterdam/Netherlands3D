@@ -120,7 +120,7 @@ public class FreeCamera : MonoBehaviour
     /// <param name="enableOrtographic">Ortographic mode enabled</param>
     public void EnableOrtographic(bool enableOrtographic)
     {
-        if (ortographicEnabled)
+        if (enableOrtographic)
         {
             var cameraLookWorldPosition = GetWorldPoint(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0));
             cameraLookWorldPosition.y = this.transform.position.y;
@@ -346,9 +346,10 @@ public class FreeCamera : MonoBehaviour
             var screenMove = currentPointerDelta / Screen.height;
 
             StorePreviousTransform();
-            if (Vector3.Dot(Vector3.down, transform.forward) >= dragOnPlaneThreshold)
+            var lookingDown = Vector3.Dot(Vector3.down, transform.forward);
+            if (lookingDown >= dragOnPlaneThreshold)
             {
-                var flattenedForward = this.transform.forward;
+                var flattenedForward = this.transform.up;
                 flattenedForward.y = 0;
                 this.transform.Translate(flattenedForward.normalized * -screenMove.y * dynamicDragSpeed, Space.World);
                 screenMove.y = 0;
