@@ -52,8 +52,6 @@ namespace Netherlands3D.JavascriptConnection
             
             AddFileInput(fileInputName, fileExtentions, multiSelect);
             gameObject.AddComponent<DrawHTMLOverCanvas>().AlignObjectID(fileInputName);
-            // A html button gets generated over this button so the pivot has to be 0,0 (bottom left) since it gets generated from the bottom left
-            GetComponent<RectTransform>().pivot = Vector2.zero;
 #endif
 
             // Execute setup based on platform
