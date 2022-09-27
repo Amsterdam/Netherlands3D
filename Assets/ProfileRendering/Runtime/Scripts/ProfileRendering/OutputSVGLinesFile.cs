@@ -17,8 +17,9 @@ namespace Netherlands3D.ProfileRendering
         private static extern void DownloadFile(byte[] array, int byteLength, string fileName);
 
         [Header("Input")]
-        [SerializeField] Vector3ListEvent onReceiveLines;
-
+        [SerializeField] Vector3ListEvent onReceiveLayerLines;
+        [SerializeField] ColorEvent onReceiveLayerColor;
+        [SerializeField] TriggerEvent onReadyForExport;
         [Header("Output")]
         [SerializeField] FloatEvent outputProgress;
 
@@ -27,9 +28,11 @@ namespace Netherlands3D.ProfileRendering
         [SerializeField] private int addLinesPerFrame = 1000;
         [SerializeField] private float strokeWidth = 0.1f;
 
+        private StringBuilder svgStringBuilder;
+
         void Awake()
         {
-            onReceiveLines.started.AddListener(OutputAsSVG);
+            onReceiveLayerLines.started.AddListener(OutputAsSVG);
         }
 
         private void OutputAsSVG(List<Vector3> lines)
@@ -37,10 +40,16 @@ namespace Netherlands3D.ProfileRendering
             StartCoroutine(CreatSVGDocument(lines));
         }
 
+        private void CreateBaseSVG()
+        {
+            if(svgStringBuilder == null)
+            {
+                svgStringBuilder = new StringBuilder();
+            }
+        }
+
         private IEnumerator CreatSVGDocument(List<Vector3> lines)
         {
-            StringBuilder svgStringBuilder = new StringBuilder();
-
             var minX = lines.Min(vector => vector.x);
             var maxX = lines.Max(vector => vector.x);
 

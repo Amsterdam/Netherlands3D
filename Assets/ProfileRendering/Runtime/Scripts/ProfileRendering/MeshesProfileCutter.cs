@@ -13,7 +13,10 @@ namespace Netherlands3D.ProfileRendering
         [SerializeField] private Vector3ListEvent onReceiveCuttingLine;
         [Header("Output")]
         [SerializeField] private FloatEvent outputProgress;
+        [SerializeField] private StringEvent outputProfileMaterialName;
+        [SerializeField] private ColorEvent outputMaterialColor;
         [SerializeField] private Vector3ListEvent outputProfilePolyline;
+        [SerializeField] private TriggerEvent outputProfileDone;
 
         private List<Vector3> cuttingLine;
 
@@ -96,7 +99,7 @@ namespace Netherlands3D.ProfileRendering
         private IEnumerator CutLoop(MeshFilter[] meshFilters)
         {
             profileLines.Clear();
-            List<Vector3> meshProfile = new List<Vector3>();
+            List<Vector3> submeshProfile = new List<Vector3>();
 
             if (outputProgress) outputProgress.Invoke(0.001f);
             yield return new WaitForEndOfFrame();
@@ -112,70 +115,90 @@ namespace Netherlands3D.ProfileRendering
                     if (renderer != null && renderer.bounds.Intersects(lineBounds))
                     {
                         Debug.Log($"Generating profile for {meshFilter.gameObject.name}", meshFilter.gameObject);
-                        meshProfile.Clear();
-                        yield return GetMeshProfile(meshFilter, meshProfile);
-
-                        profileLines.AddRange(meshProfile);
+                        submeshProfile.Clear();
+                        yield return GetSubmeshProfiles(meshFilter, submeshProfile);
                     }
                 }
             }
 
             if (outputProgress) outputProgress.Invoke(0.001f);
-            outputProfilePolyline.Invoke(profileLines);
+            outputProfileDone.Invoke();
 
             yield return null;
         }
 
-        private IEnumerator GetMeshProfile(MeshFilter meshFilter, List<Vector3> meshProfile)
+        private IEnumerator GetSubmeshProfiles(MeshFilter meshFilter, List<Vector3> submeshProfile)
         {
             var targetMesh = meshFilter.sharedMesh;
-
+            var subMeshes = targetMesh.subMeshCount;
             var vertices = targetMesh.vertices;
-            var triangles = targetMesh.triangles;
+            var meshRenderer = meshFilter.GetComponent<MeshRenderer>();
+            var materials = (meshRenderer != null) ? meshRenderer.sharedMaterials : null;
+
             Matrix4x4 localToWorld = meshFilter.transform.localToWorldMatrix;
 
-            //For each triangle, add the intersection line to our list
-            for (int i = 0; i < triangles.Length; i += 3)
+            for (int i = 0; i < subMeshes; i++)
             {
-                //Render a frame sometimes
-                if ((i % maxTrianglesPerFrame) == 0) yield return new WaitForEndOfFrame();
+                submeshProfile.Clear();
 
-                triangleIntersectionLine.Clear();
-
-                //Get all vertex world positions ( so we support transformed objects )  
-                var pointAWorld = localToWorld.MultiplyPoint3x4(vertices[triangles[i]]);
-                var pointBWorld = localToWorld.MultiplyPoint3x4(vertices[triangles[i + 1]]);
-                var pointCWorld = localToWorld.MultiplyPoint3x4(vertices[triangles[i + 2]]);
-
-                Vector3 intersection;
-                if (LineCrossingCuttingPlane(pointAWorld, pointBWorld, out intersection))
-                {
-                    triangleIntersectionLine.Add(intersection);
+                //Get material color and name
+                var materialName = "Default";
+                if(materials != null && materials.Length > i) {
+                    var submeshMaterial = materials[i];
+                    materialName = submeshMaterial.name;
+                    if (outputMaterialColor)
+                        outputMaterialColor.Invoke(submeshMaterial.color);
                 }
-                if (LineCrossingCuttingPlane(pointBWorld, pointCWorld, out intersection))
+                if (outputProfileMaterialName)
+                    outputProfileMaterialName.Invoke(materialName);
+
+                Debug.Log($"Profile for submesh {materialName}");
+
+                var triangles = targetMesh.GetTriangles(i);
+                //For each triangle, add the intersection line to our list
+                for (int j = 0; j < triangles.Length; j += 3)
                 {
-                    triangleIntersectionLine.Add(intersection);
-                    if (triangleIntersectionLine.Count == 2)
+                    //Render a frame sometimes
+                    if ((j % maxTrianglesPerFrame) == 0) yield return new WaitForEndOfFrame();
+
+                    triangleIntersectionLine.Clear();
+
+                    //Get all vertex world positions ( so we support transformed objects )  
+                    var pointAWorld = localToWorld.MultiplyPoint3x4(vertices[triangles[j]]);
+                    var pointBWorld = localToWorld.MultiplyPoint3x4(vertices[triangles[j + 1]]);
+                    var pointCWorld = localToWorld.MultiplyPoint3x4(vertices[triangles[j + 2]]);
+
+                    Vector3 intersection;
+                    if (LineCrossingCuttingPlane(pointAWorld, pointBWorld, out intersection))
                     {
-                        if (GetBoundsFromLine(triangleIntersectionLine).Intersects(lineBounds))
+                        triangleIntersectionLine.Add(intersection);
+                    }
+                    if (LineCrossingCuttingPlane(pointBWorld, pointCWorld, out intersection))
+                    {
+                        triangleIntersectionLine.Add(intersection);
+                        if (triangleIntersectionLine.Count == 2)
                         {
-                            meshProfile.AddRange(triangleIntersectionLine);
+                            if (GetBoundsFromLine(triangleIntersectionLine).Intersects(lineBounds))
+                            {
+                                submeshProfile.AddRange(triangleIntersectionLine);
+                            }
+                            continue; //We have our line, next triangle!
                         }
-                        continue; //We have our line, next triangle!
+                    }
+                    if (LineCrossingCuttingPlane(pointCWorld, pointAWorld, out intersection))
+                    {
+                        triangleIntersectionLine.Add(intersection);
+                        if (triangleIntersectionLine.Count == 2)
+                        {
+                            if (GetBoundsFromLine(triangleIntersectionLine).Intersects(lineBounds))
+                            {
+                                submeshProfile.AddRange(triangleIntersectionLine);
+                            }
+                            continue; //We have our line, next triangle!
+                        }
                     }
                 }
-                if (LineCrossingCuttingPlane(pointCWorld, pointAWorld, out intersection))
-                {
-                    triangleIntersectionLine.Add(intersection);
-                    if (triangleIntersectionLine.Count == 2)
-                    {
-                        if (GetBoundsFromLine(triangleIntersectionLine).Intersects(lineBounds))
-                        {
-                            meshProfile.AddRange(triangleIntersectionLine);
-                        }
-                        continue; //We have our line, next triangle!
-                    }
-                }
+                outputProfilePolyline.Invoke(submeshProfile);
             }
         }
 
