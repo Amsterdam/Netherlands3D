@@ -8,6 +8,7 @@ using System.Xml;
 using UnityEditor;
 using UnityEngine;
 using System.Linq;
+using System;
 
 namespace Netherlands3D.ProfileRendering
 {
@@ -25,19 +26,95 @@ namespace Netherlands3D.ProfileRendering
 
         [Header("Settings")]
         [SerializeField] private string outputFileName = "Profile_Netherlands3D.svg";
-        [SerializeField] private int addLinesPerFrame = 1000;
         [SerializeField] private float strokeWidth = 0.1f;
 
+        [SerializeField] private float documentHeight = 300;
+
         private StringBuilder svgStringBuilder;
+        private string hexStrokeColor = "#FFFFFF";
+        private Transform coordinateSystem;
+
+        private float minX = float.MaxValue;
+        private float maxX = float.MinValue;
+        private float minY = float.MaxValue;
+        private float maxY = float.MinValue;
 
         void Awake()
         {
-            onReceiveLayerLines.started.AddListener(OutputAsSVG);
+            onReceiveLayerLines.started.AddListener(AddSVGLine);
+            onReceiveLayerColor.started.AddListener(SetStrokeColor);
+            onReadyForExport.started.AddListener(FinishSVGDocument);
         }
 
-        private void OutputAsSVG(List<Vector3> lines)
+        private void FinishSVGDocument()
         {
-            StartCoroutine(CreatSVGDocument(lines));
+           Destroy(coordinateSystem.gameObject);
+           StartCoroutine(CompleteAndSave());
+        }
+
+        private IEnumerator CompleteAndSave()
+        {
+            svgStringBuilder.Insert(0, $"<svg viewbox=\"{minX} {documentHeight/2} {maxX-minX} {documentHeight}\" xmlns=\"http://www.w3.org/2000/svg\">\n");
+            svgStringBuilder.AppendLine(" </svg>");
+
+            //Reset min and max for a next run
+            minX = float.MaxValue;
+            maxX = float.MinValue;
+            minY = float.MaxValue;
+            maxY = float.MinValue;
+
+            if (outputProgress) outputProgress.Invoke(1.0f);
+            yield return new WaitForEndOfFrame();
+            SaveFile();
+        }
+
+        private void AddSVGLine(List<Vector3> lines)
+        {
+            if (lines.Count < 2) return;
+
+            CreateBaseSVG();
+            CreateCoordinateSystem(lines);
+            AppendSVGLine(lines);
+        }
+
+        private void AppendSVGLine(List<Vector3> lines)
+        {
+            for (int i = 0; i < lines.Count; i += 2)
+            {
+                var lineStart = coordinateSystem.InverseTransformPoint(lines[i]);
+                var lineEnd = coordinateSystem.InverseTransformPoint(lines[i + 1]);
+                CheckMinMax(lineStart);
+                CheckMinMax(lineEnd);
+
+                svgStringBuilder.AppendLine($"<line x1=\"{lineStart.x}\" y1=\"{documentHeight-lineStart.y}\" x2=\"{lineEnd.x}\" y2=\"{documentHeight-lineEnd.y}\" stroke=\"{hexStrokeColor}\" stroke-width=\"{strokeWidth}\" />");
+            }
+        }
+
+        private void CheckMinMax(Vector3 linePoint)
+        {
+            if (linePoint.x < minX) minX = linePoint.x;
+            else if (linePoint.x >= maxX) maxX = linePoint.x;
+            if (linePoint.y < minY) minY = linePoint.y;
+            else if (linePoint.y >= maxY) maxY = linePoint.y;
+        }
+
+        private void SetStrokeColor(Color color)
+        {
+            hexStrokeColor = $"#{ColorUtility.ToHtmlStringRGB(color)}";
+        }
+
+        private void CreateCoordinateSystem(List<UnityEngine.Vector3> lines)
+        {
+            if (coordinateSystem) return;
+
+            var first = lines[0];
+            first.y = 0;
+            var last = lines[lines.Count - 1];
+            last.y = 0;
+            coordinateSystem = new GameObject().transform;
+            UnityEngine.Vector3 directionRight = (last - first).normalized;
+            coordinateSystem.position = first;
+            coordinateSystem.right = directionRight;
         }
 
         private void CreateBaseSVG()
@@ -48,57 +125,20 @@ namespace Netherlands3D.ProfileRendering
             }
         }
 
-        private IEnumerator CreatSVGDocument(List<Vector3> lines)
-        {
-            var minX = lines.Min(vector => vector.x);
-            var maxX = lines.Max(vector => vector.x);
-
-            var minY = lines.Min(vector => vector.y);
-            var maxY = lines.Max(vector => vector.y);
-
-            var width = (maxX - minX);
-            var height = (maxY - minY);
-
-            svgStringBuilder.AppendLine($"<svg viewBox=\"0 0 {width} {height}\" xmlns=\"http://www.w3.org/2000/svg\">");
-            for (int i = 0; i < lines.Count; i += 2)
-            {
-                if ((i % addLinesPerFrame) == 0)
-                {
-                    if (outputProgress && i > 0) outputProgress.Invoke((float)i / lines.Count);
-                    yield return new WaitForEndOfFrame();
-                }
-
-                var lineStart = lines[i];
-                var lineEnd = lines[i + 1];
-
-                lineStart.x = (lineStart.x - minX);
-                lineStart.y = (lineStart.y - minY);
-
-                lineEnd.x = (lineEnd.x - minX);
-                lineEnd.y = (lineEnd.y - minY);
-
-                svgStringBuilder.AppendLine($"<line x1=\"{lineStart.x}\" y1=\"{height - lineStart.y}\" x2=\"{lineEnd.x}\" y2=\"{height - lineEnd.y}\" stroke=\"black\" stroke-width=\"{strokeWidth}\" />");
-            }
-            svgStringBuilder.AppendLine(" </svg>");
-
-            if (outputProgress) outputProgress.Invoke(1.0f);
-            yield return new WaitForEndOfFrame();
-            SaveFile(svgStringBuilder);
-
-        }
-        public void SaveFile(StringBuilder stringBuilder)
+        public void SaveFile()
         {
 #if UNITY_EDITOR
             string path = EditorUtility.SaveFilePanel("Save profile SVG", "", outputFileName, "svg");
             if (path.Length != 0)
             {
                 Debug.Log($"Saving svg: {path}");
-                File.WriteAllText(path, stringBuilder.ToString());
+                File.WriteAllText(path, svgStringBuilder.ToString());
             }
 #elif !UNITY_EDITOR && UNITY_WEBGL
-        byte[] buffer = Encoding.ASCII.GetBytes(stringBuilder.ToString());
-        DownloadFile(buffer, buffer.Length, outputFileName);
+            byte[] buffer = Encoding.ASCII.GetBytes(svgStringBuilder.ToString());
+            DownloadFile(buffer, buffer.Length, outputFileName);
 #endif
+            svgStringBuilder.Clear();
         }
     }
 }

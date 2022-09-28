@@ -26,7 +26,6 @@ namespace Netherlands3D.ProfileRendering
 
         [Header("Settings")]
         [SerializeField] private bool binary = false;
-        [SerializeField] private int addLinesPerFrame = 1000;
         [SerializeField] private string outputFileName = "Profile_Netherlands3D.dxf";
 
         private DxfDocument dxfDocument;
@@ -36,9 +35,10 @@ namespace Netherlands3D.ProfileRendering
 
         void Awake()
         {
-            onReceiveLayerName.started.AddListener(AddLayer);
-            onReceiveLayerLines.started.AddListener(AddLayerLines);
-            onReadyForExport.started.AddListener(FinishDocument);
+            onReceiveLayerName.started.AddListener(AddDXFLayer);
+            onReceiveLayerLines.started.AddListener(AddDXFLayerLines);
+            onReceiveLayerColor.started.AddListener(SetDXFLayerColor);
+            onReadyForExport.started.AddListener(FinishDXFDocument);
         }
 
         private void ConfigBaseDocument()
@@ -50,21 +50,23 @@ namespace Netherlands3D.ProfileRendering
             }
         }
 
-        private void AddLayer(string layerName)
+        private void SetDXFLayerColor(Color color)
+        {
+            targetDxfLayer.Color = new AciColor(color.r,color.g,color.b);
+        }
+
+        private void AddDXFLayer(string layerName)
         {
             ConfigBaseDocument();
             targetDxfLayer = new netDxf.Tables.Layer(layerName);
             dxfDocument.Layers.Add(targetDxfLayer);
         }
 
-        private void AddLayerLines(List<UnityEngine.Vector3> lines)
+        private void AddDXFLayerLines(List<UnityEngine.Vector3> lines)
         {
             if (lines == null || lines.Count < 2) return;
 
-            if (!coordinateSystem)
-            {
-                CreateCoordinateSystem(lines);
-            }
+            CreateCoordinateSystem(lines);
 
             for (int i = 0; i < lines.Count; i += 2)
             {
@@ -82,6 +84,8 @@ namespace Netherlands3D.ProfileRendering
 
         private void CreateCoordinateSystem(List<UnityEngine.Vector3> lines)
         {
+            if (coordinateSystem) return;
+
             var first = lines[0];
             first.y = 0;
             var last = lines[lines.Count - 1];
@@ -92,10 +96,9 @@ namespace Netherlands3D.ProfileRendering
             coordinateSystem.right = directionRight;
         }
 
-        private void FinishDocument()
+        private void FinishDXFDocument()
         {
             Destroy(coordinateSystem.gameObject);
-
             StartCoroutine(FinishAndSave());
         }
 

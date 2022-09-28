@@ -71,43 +71,22 @@ namespace Netherlands3D.ProfileRendering
             StartCoroutine(CutLoop(allMeshFilters));
         }
 
-        private void OnDrawGizmosSelected()
-        {
-            if (!drawInEditorGizmos) return;
-
-            if (lineBounds != null)
-            {
-                Gizmos.color = new Color(1, 1, 0, 0.5f);
-                Gizmos.DrawCube(lineBounds.center, lineBounds.size);
-            }
-
-            Gizmos.color = Color.green;
-            if (profileLines.Count > 1)
-            {
-                for (int i = 0; i < profileLines.Count; i++)
-                {
-                    Gizmos.DrawSphere(profileLines[i], 0.5f);
-                }
-
-                for (int i = 0; i < profileLines.Count; i += 2)
-                {
-                    Gizmos.DrawLine(profileLines[i], profileLines[i + 1]);
-                }
-            }
-        }
-
         private IEnumerator CutLoop(MeshFilter[] meshFilters)
         {
             profileLines.Clear();
             List<Vector3> submeshProfile = new List<Vector3>();
 
-            if (outputProgress) outputProgress.Invoke(0.001f);
+            outputProgress.Invoke(1/ meshFilters.Length);
             yield return new WaitForEndOfFrame();
 
             for (int i = 0; i < meshFilters.Length; i++)
             {
                 var meshFilter = meshFilters[i];
-                if (outputProgress && i > 0) outputProgress.Invoke((float)i / meshFilters.Length);
+                if (outputProgress && i > 0)
+                {
+                    outputProgress.Invoke((float)i / meshFilters.Length);
+                    yield return new WaitForEndOfFrame();
+                }
 
                 if (meshFilter && IsInLayerMask(meshFilter.gameObject.layer))
                 {
@@ -121,7 +100,9 @@ namespace Netherlands3D.ProfileRendering
                 }
             }
 
-            if (outputProgress) outputProgress.Invoke(0.001f);
+            outputProgress.Invoke(0.99f);
+            yield return new WaitForEndOfFrame();
+
             outputProfileDone.Invoke();
 
             yield return null;
@@ -139,18 +120,25 @@ namespace Netherlands3D.ProfileRendering
 
             for (int i = 0; i < subMeshes; i++)
             {
+                if (!targetMesh) continue; //Might be destroyed
+
                 submeshProfile.Clear();
 
                 //Get material color and name
                 var materialName = "Default";
+                var materialColor = Color.black;
                 if(materials != null && materials.Length > i) {
                     var submeshMaterial = materials[i];
                     materialName = submeshMaterial.name;
-                    if (outputMaterialColor)
-                        outputMaterialColor.Invoke(submeshMaterial.color);
+                    materialColor = submeshMaterial.color;
                 }
+
+                //Invoke layer name and color
                 if (outputProfileMaterialName)
                     outputProfileMaterialName.Invoke(materialName);
+                if (outputMaterialColor)
+                    outputMaterialColor.Invoke(materialColor);
+
 
                 Debug.Log($"Profile for submesh {materialName}");
 
@@ -230,6 +218,31 @@ namespace Netherlands3D.ProfileRendering
         public bool IsInLayerMask(int layer)
         {
             return layerMask == (layerMask | (1 << layer));
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            if (!drawInEditorGizmos) return;
+
+            if (lineBounds != null)
+            {
+                Gizmos.color = new Color(1, 1, 0, 0.5f);
+                Gizmos.DrawCube(lineBounds.center, lineBounds.size);
+            }
+
+            Gizmos.color = Color.green;
+            if (profileLines.Count > 1)
+            {
+                for (int i = 0; i < profileLines.Count; i++)
+                {
+                    Gizmos.DrawSphere(profileLines[i], 0.5f);
+                }
+
+                for (int i = 0; i < profileLines.Count; i += 2)
+                {
+                    Gizmos.DrawLine(profileLines[i], profileLines[i + 1]);
+                }
+            }
         }
     }
 }
