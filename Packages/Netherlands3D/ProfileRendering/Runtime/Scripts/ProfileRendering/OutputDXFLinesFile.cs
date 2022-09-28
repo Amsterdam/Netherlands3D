@@ -62,8 +62,16 @@ namespace Netherlands3D.ProfileRendering
             Debug.Log($"Add dxf layer {dxfLayerName} (created from {layerName})");
 
             ConfigBaseDocument();
-            targetDxfLayer = new netDxf.Tables.Layer(ReturnDXFSafeLayerName(layerName));
-            dxfDocument.Layers.Add(targetDxfLayer);
+
+            if (dxfDocument.Layers.Contains(dxfLayerName))
+            {
+                targetDxfLayer = dxfDocument.Layers[dxfLayerName];
+            }
+            else
+            {
+                targetDxfLayer = new netDxf.Tables.Layer(dxfLayerName);
+                dxfDocument.Layers.Add(targetDxfLayer);
+            }
         }
 
         private string ReturnDXFSafeLayerName(string str)
@@ -127,6 +135,8 @@ namespace Netherlands3D.ProfileRendering
             if (outputProgress) outputProgress.Invoke(1.0f);
             yield return new WaitForEndOfFrame();
             SaveFile(dxfDocument);
+
+            dxfDocument = null;
         }
 
         public void SaveFile(DxfDocument dxfDocument)
