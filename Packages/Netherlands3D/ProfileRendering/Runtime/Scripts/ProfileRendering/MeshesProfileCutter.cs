@@ -25,6 +25,7 @@ namespace Netherlands3D.ProfileRendering
         private LayerMask layerMask;
         [SerializeField] private bool drawInEditorGizmos = true;
         [SerializeField] private int maxTrianglesPerFrame = 1000;
+        [SerializeField] private string materialColorShaderProperty = "_Color";
 
         private Plane cuttingPlane;
         private Bounds lineBounds;
@@ -130,7 +131,11 @@ namespace Netherlands3D.ProfileRendering
                 if(materials != null && materials.Length > i) {
                     var submeshMaterial = materials[i];
                     materialName = submeshMaterial.name;
-                    materialColor = submeshMaterial.color;
+
+                    if(materialColorShaderProperty != "" && submeshMaterial.HasColor(materialColorShaderProperty))
+                    {
+                        materialColor = submeshMaterial.GetColor(materialColorShaderProperty);
+                    }
                 }
 
                 //Invoke layer name and color
