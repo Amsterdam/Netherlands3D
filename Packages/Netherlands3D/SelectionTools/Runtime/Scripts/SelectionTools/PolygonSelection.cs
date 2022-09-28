@@ -19,6 +19,7 @@ using Netherlands3D.Events;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace Netherlands3D.SelectionTools
@@ -40,6 +41,7 @@ namespace Netherlands3D.SelectionTools
         [Header("Invoke")]
         [SerializeField] private BoolEvent blockCameraDrag;
         [SerializeField] private Vector3ListEvent selectedPolygonArea;
+        [SerializeField, Tooltip("Contains the list of points the line is made of")] private Vector3ListEvent lineHasChanged;
 
         [Header("Settings")]
         [SerializeField] Color lineColor = Color.red;
@@ -47,14 +49,19 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] private float lineWidthMultiplier = 10.0f;
         [SerializeField] private float maxSelectionDistanceFromCamera = 10000;
         [SerializeField] private bool useWorldSpace = false;
-        [SerializeField] private float closeLoopDistance = 10.0f;
-        [SerializeField] private int minPointsToCloseLoop = 1;
+        [SerializeField] private bool snapToStart = true;
+        [SerializeField, Tooltip("Closing a polygon shape is required. If set to false, you can output lines.")] private bool requireClosedPolygon = true;
+        [SerializeField, Tooltip("If you click close to the starting point the loop will finish")] private bool closeLoopAtStart = true;
+        [SerializeField] private int maxPoints = 1000;
+        [SerializeField] private int minPointsToCloseLoop = 3;
+        [SerializeField] private float minPointDistance = 0.1f;
         [SerializeField] private float minDistanceBetweenAutoPoints = 10.0f;
         [SerializeField] private float minDirectionThresholdForAutoPoints = 0.8f;
         [SerializeField] private WindingOrder windingOrder = WindingOrder.CLOCKWISE;
         [SerializeField] private bool doubleClickToCloseLoop = true;
         [SerializeField] private float doubleClickTimer = 0.5f;
         [SerializeField] private float doubleClickDistance = 10.0f;
+        [SerializeField] private bool displayLineUntilRedraw = true;
 
         private InputAction pointerAction;
         private InputAction tapAction;
@@ -64,7 +71,8 @@ namespace Netherlands3D.SelectionTools
         private InputAction clickAction;
         private InputAction modifierAction;
 
-        private LineRenderer lineRenderer;
+        [SerializeField] private LineRenderer polygonLineRenderer;
+        [SerializeField] private LineRenderer previewLineRenderer;
         [SerializeField] private List<Vector3> positions = new List<Vector3>();
         private Vector3 lastAddedPoint = default;
         private Vector3 selectionStartPosition = default;
@@ -75,7 +83,9 @@ namespace Netherlands3D.SelectionTools
         private Plane worldPlane;
 
         private bool closedLoop = false;
-        private bool lineCrossed = false;
+        private bool snappingToStartPoint = false;
+        private bool polygonFinished = false;
+        private bool previewLineCrossed = false;
         private bool autoDrawPolygon = false;
         private bool requireReleaseBeforeRedraw = false;
         private Camera mainCamera;
@@ -87,10 +97,10 @@ namespace Netherlands3D.SelectionTools
         void Awake()
         {
             mainCamera = Camera.main;
-            lineRenderer = this.GetComponent<LineRenderer>();
-            lineRenderer.startColor = lineRenderer.endColor = lineColor;
-            lineRenderer.widthMultiplier = lineWidthMultiplier;
-            lineRenderer.positionCount = 1;
+            polygonLineRenderer.startColor = polygonLineRenderer.endColor = lineColor;
+            polygonLineRenderer.widthMultiplier = lineWidthMultiplier;
+            polygonLineRenderer.positionCount = 1;
+            polygonLineRenderer.loop = false;
 
             polygonSelectionActionMap = inputActionAsset.FindActionMap("PolygonSelection");
             tapAction = polygonSelectionActionMap.FindAction("Tap");
@@ -104,8 +114,8 @@ namespace Netherlands3D.SelectionTools
             tapAction.performed += context => Tap();
             clickAction.performed += context => StartClick();
             clickAction.canceled += context => Release();
-            escapeAction.canceled += context => ClearPolygon();
-            finishAction.performed += context => CloseLoop(false);
+            escapeAction.canceled += context => ClearPolygon(true);
+            finishAction.performed += context => CloseLoop(true);
 
             worldPlane = (useWorldSpace) ? new Plane(Vector3.up, Vector3.zero) : new Plane(this.transform.up, this.transform.position);
         }
@@ -127,8 +137,7 @@ namespace Netherlands3D.SelectionTools
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
             currentWorldCoordinate = GetCoordinateInWorld(currentPointerPosition);
 
-            if(!closedLoop) SnapLastPositionToPointer();
-
+            UpdatePreviewLine();
             pointerRepresentation.position = currentWorldCoordinate;
 
             if (!autoDrawPolygon && clickAction.IsPressed() && modifierAction.IsPressed())
@@ -146,7 +155,7 @@ namespace Netherlands3D.SelectionTools
             {
                 AutoAddPoint();
             }
-            else if(requireReleaseBeforeRedraw && !clickAction.IsPressed())
+            else if (requireReleaseBeforeRedraw && !clickAction.IsPressed())
             {
                 requireReleaseBeforeRedraw = false;
             }
@@ -154,73 +163,80 @@ namespace Netherlands3D.SelectionTools
         }
 
         /// <summary>
-        /// Keep last line part attached to pointer, to preview next placement.
-        /// Turn red if the line crosses another line ( no cross sections allowed in our polygon! )
+        /// Draw the preview line between last placed point and current pointer position
         /// </summary>
-        private void SnapLastPositionToPointer()
+        private void UpdatePreviewLine()
         {
-            if(positions.Count > 0)
+            if (positions.Count == 0 || closedLoop) return;
+
+            snappingToStartPoint = false;
+            if(snapToStart && positions.Count > 2)
             {
-                lineRenderer.SetPosition(lineRenderer.positionCount - 1, currentWorldCoordinate);
-                if(positions.Count > 3)
+                if (Vector3.Distance(currentWorldCoordinate, positions[0]) < minPointDistance)
                 {
-                    lineCrossed = LastLineCrossesOtherLine();
-                    if (lineCrossed)
-                    {
-                        lineRenderer.endColor = Color.red;
-                    }
-                    else
-                    {
-                        lineRenderer.endColor = lineColor;
-                    }
-                }
-                else
-                {
-                    lineCrossed = false;
+                    currentWorldCoordinate = positions[0];
+                    snappingToStartPoint = true;
                 }
             }
+
+            var previewLineFirstPoint = positions[positions.Count - 1];
+            var previewLineLastPoint = currentWorldCoordinate;
+            previewLineRenderer.SetPosition(0, previewLineFirstPoint);
+            previewLineRenderer.SetPosition(1, previewLineLastPoint);
+            previewLineCrossed = false;
+
+            //Compare all lines in drawing if we do not cross (except last, we cant cross that one)
+            for (int i = 1; i < polygonLineRenderer.positionCount-1; i++)
+            {
+                if (snappingToStartPoint && i == 1) continue; //Skip first line check if we are snapping to it
+
+                var comparisonStart = polygonLineRenderer.GetPosition(i - 1);
+                var comparisonEnd = polygonLineRenderer.GetPosition(i);
+                if (LinesIntersectOnPlane(previewLineFirstPoint, previewLineLastPoint, comparisonStart, comparisonEnd))
+                {
+                    previewLineCrossed = true;
+                    previewLineRenderer.startColor = previewLineRenderer.endColor = Color.red;
+                    Debug.Log("Preview line crosses another line");
+                    return;
+                }
+            }
+
+            previewLineRenderer.startColor = previewLineRenderer.endColor = Color.green;
         }
 
-        private bool LastLineCrossesOtherLine(bool includeClosingLineCheck = false)
+        /// <summary>
+        /// Compare line with placed lines to check if they do not intersect.
+        /// </summary>
+        /// <param name="linePointA">Start point of the line we want to check</param>
+        /// <param name="linePointB">End point of the line we want to check</param>
+        /// <param name="skipFirst">Skip the first line in our chain</param>
+        /// <param name="skipLast">Skip the last line in our chain</param>
+        /// <returns>Returns true if an intersection was found</returns>
+        private bool LineCrossesOtherLine(Vector3 linePointA, Vector3 linePointB, bool skipFirst = false, bool skipLast = false)
         {
-            var lastPoint = lineRenderer.GetPosition(lineRenderer.positionCount-1);
-            var previousPoint = lineRenderer.GetPosition(lineRenderer.positionCount - 2);
-            for (int i = 1; i < lineRenderer.positionCount; i++)
+            int startIndex = (skipFirst) ? 2 : 1;
+            int endIndex = (skipLast) ? polygonLineRenderer.positionCount-1 : polygonLineRenderer.positionCount;
+            for (int i = startIndex; i < endIndex; i++)
             {
-                var comparisonStart = lineRenderer.GetPosition(i - 1);
-                var comparisonEnd = lineRenderer.GetPosition(i);
-                if (LinesIntersectOnPlane(lastPoint,previousPoint, comparisonStart,comparisonEnd))
+                var comparisonStart = polygonLineRenderer.GetPosition(i - 1);
+                var comparisonEnd = polygonLineRenderer.GetPosition(i);
+                if (LinesIntersectOnPlane(linePointA, linePointB, comparisonStart, comparisonEnd))
                 {
-                    Debug.Log("Line to be placed is crossing another line");
+                    Debug.Log("Line is crossing other line! This is not allowed.");
                     return true;
                 }
             }
-
-            if(includeClosingLineCheck)
-            {
-                var firstPoint = lineRenderer.GetPosition(0);
-                for (int i = 1; i < lineRenderer.positionCount-1; i++)
-                {
-                    var comparisonStart = lineRenderer.GetPosition(i - 1);
-                    var comparisonEnd = lineRenderer.GetPosition(i);
-                    if (LinesIntersectOnPlane(lastPoint, firstPoint, comparisonStart, comparisonEnd))
-                    {
-                        Debug.Log("Closing line crosses another line");
-                        return true;
-                    }
-                }
-            }
-            
             return false;
         }
 
 
-        public static bool LinesIntersectOnPlane(Vector3 lineOneA, Vector3 lineOneB, Vector3 lineTwoA, Vector3 lineTwoB) { 
-            return 
-                (((lineTwoB.z - lineOneA.z) * (lineTwoA.x - lineOneA.x) > (lineTwoA.z - lineOneA.z) * (lineTwoB.x - lineOneA.x)) != 
-                ((lineTwoB.z - lineOneB.z) * (lineTwoA.x - lineOneB.x) > (lineTwoA.z - lineOneB.z) * (lineTwoB.x - lineOneB.x)) && 
-                ((lineTwoA.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoA.x - lineOneA.x)) != 
-                ((lineTwoB.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoB.x - lineOneA.x))); 
+        public static bool LinesIntersectOnPlane(Vector3 lineOneA, Vector3 lineOneB, Vector3 lineTwoA, Vector3 lineTwoB)
+        {
+            return
+                (((lineTwoB.z - lineOneA.z) * (lineTwoA.x - lineOneA.x) > (lineTwoA.z - lineOneA.z) * (lineTwoB.x - lineOneA.x)) !=
+                ((lineTwoB.z - lineOneB.z) * (lineTwoA.x - lineOneB.x) > (lineTwoA.z - lineOneB.z) * (lineTwoB.x - lineOneB.x)) &&
+                ((lineTwoA.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoA.x - lineOneA.x)) !=
+                ((lineTwoB.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoB.x - lineOneA.x)));
         }
 
         /// <summary>
@@ -228,6 +244,9 @@ namespace Netherlands3D.SelectionTools
         /// </summary>
         private void AutoAddPoint()
         {
+            //Clear on fresh start
+            if(polygonFinished) ClearPolygon(true);
+
             //automatically add a new point if pointer is far enough from last point, or edge normal is different enough from last line
             if (positions.Count == 0)
             {
@@ -247,114 +266,135 @@ namespace Netherlands3D.SelectionTools
             }
         }
 
-        private void CloseLoop(bool snapLastPointToEnd)
+        private void CloseLoop(bool connectLastPointToStart, bool checkPreviewLine = true)
         {
-            if (positions.Count < 3)
+            if (requireClosedPolygon)
             {
-                Debug.Log("Not closing loop. Need more points.");
-                return;
+                if (positions.Count < minPointsToCloseLoop)
+                {
+                    Debug.Log("Not closing loop. Need more points.");
+                    return;
+                }
+
+                if (checkPreviewLine && previewLineCrossed)
+                {
+                    Debug.Log("Not closing loop. Preview line is crossing another line");
+                    return;
+                }
+
+                if (connectLastPointToStart)
+                {
+                    var lastPointOnTopOfFirst = (Vector3.Distance(positions[0], positions[positions.Count - 1]) < minPointDistance);
+                    if (lastPointOnTopOfFirst)
+                    {
+                        Debug.Log("Closing loop by placing last point on first");
+                        positions[positions.Count - 1] = positions[0];
+                    }
+                    else
+                    {
+                        Debug.Log("Try to add a finishing line.");
+                        var closingLineStart = positions[positions.Count - 1];
+                        var closingLineEnd = positions[0];
+                        if (LineCrossesOtherLine(closingLineStart, closingLineEnd, true, true))
+                        {
+                            Debug.Log("Cant close loop, closing line will cross another line.");
+                            return;
+                        }
+                        else
+                        {
+                            positions.Add(closingLineEnd);
+                        }
+                    }
+                }
             }
 
-            if(LastLineCrossesOtherLine(true))
-            {
-                Debug.Log("Not closing loop. There is an intersection.");
-                return;
-            }
-
-            //Connect loop to be closed by placing endpoint at same position as start ( or snap last point if close enough )
             closedLoop = true;
-            lineRenderer.startColor = lineRenderer.endColor = closedLoopLineColor;
+            polygonLineRenderer.startColor = polygonLineRenderer.endColor = closedLoopLineColor;
 
-            if (snapLastPointToEnd)
-            {
-                positions[positions.Count - 1] = positions[0];
-            }
-            else
-            {
-                positions.Add(positions[0]);
-            }
-            requireReleaseBeforeRedraw = false;
             UpdateLine();
             FinishPolygon();
         }
 
         private void Tap()
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+                return;
+
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
             currentWorldCoordinate = GetCoordinateInWorld(currentPointerPosition);
-            AddPoint(currentWorldCoordinate);
 
-            if (doubleClickToCloseLoop) { 
+            if (doubleClickToCloseLoop)
+            {
                 if ((Time.time - lastTapTime) < doubleClickTimer && Vector3.Distance(currentPointerPosition, previousFrameScreenCoordinate) < doubleClickDistance)
                 {
                     Debug.Log("Double click, closing loop.");
                     CloseLoop(true);
+                    return;
                 }
-                lastTapTime = Time.time;
-                previousFrameScreenCoordinate = currentPointerPosition;
+                else
+                {
+                    lastTapTime = Time.time;
+                    previousFrameScreenCoordinate = currentPointerPosition;
+                }
             }
+
+            AddPoint(currentWorldCoordinate);
         }
-        
-        private void ClearPolygon()
+
+        private void ClearPolygon(bool redraw = false)
         {
-            lineRenderer.startColor = lineRenderer.endColor = lineColor;
+            polygonFinished = false;
+
+            polygonLineRenderer.startColor = polygonLineRenderer.endColor = lineColor;
             closedLoop = false;
-            lineCrossed = false;
+            previewLineCrossed = false;
             positions.Clear();
-            requireReleaseBeforeRedraw = false;
             lastNormal = Vector3.zero;
-            UpdateLine();
+            previewLineRenderer.enabled = false;
+
+            if (redraw)
+                UpdateLine();
         }
 
         private void AddPoint(Vector3 pointPosition)
         {
-            if(lineCrossed)
+            //Clear on fresh start
+            if (polygonFinished) ClearPolygon(true);
+
+            //Added at start? finish and select
+            if (positions.Count == 0)
+            {
+                Debug.Log("Placing first point at " + pointPosition);
+                previewLineRenderer.enabled = true;
+                selectionStartPosition = pointPosition;
+                positions.Add(pointPosition);
+                lastAddedPoint = pointPosition;
+            }
+            else if (previewLineCrossed)
             {
                 Debug.Log("Cant place point. Crossing own line.");
                 return;
             }
-            Debug.Log("Add point at " + pointPosition);
-            //Added at start? finish and select
-            if(positions.Count == 0)
+            else if (Vector3.Distance(pointPosition, positions[positions.Count - 1]) < minPointDistance)
             {
-                selectionStartPosition = pointPosition;
-                positions.Add(pointPosition); 
-                lastAddedPoint = pointPosition;
-
-                //Add extra point that we snap to our pointer to preview the next line
-                positions.Add(pointPosition);
+                Debug.Log("Point at same location as previous, skipping this one.");
+                return;
             }
             else
             {
-                //Add point at our current preview position
-                positions[positions.Count-1] = pointPosition;
-
-                if (positions.Count > minPointsToCloseLoop)
+                Debug.Log("Adding new point.");
+                positions.Add(pointPosition);
+                lastAddedPoint = pointPosition;
+                if ((positions.Count >= maxPoints) || closeLoopAtStart && snappingToStartPoint)
                 {
-                    CheckLoopClose(pointPosition);
+                    CloseLoop(true);
                 }
             }
 
-            if(!closedLoop)
-            {
-                //Add new point for previewing
-                lastAddedPoint = pointPosition;
-                positions.Add(pointPosition);
+            
 
+            if (!closedLoop)
                 UpdateLine();
-            }
-        }
-
-        private void CheckLoopClose(Vector3 pointPosition)
-        {
-            if (positions.Count < 3) return;
-
-            var distanceToStartingPoint = Vector3.Distance(positions[0], pointPosition);
-            Debug.Log($"distanceBetweenLastTwoPoints {distanceToStartingPoint}");
-            if (distanceToStartingPoint < closeLoopDistance)
-            {
-                CloseLoop(true);
-            }
         }
 
         /// <summary>
@@ -362,10 +402,15 @@ namespace Netherlands3D.SelectionTools
         /// </summary>
         private void UpdateLine()
         {
-            lineRenderer.positionCount = positions.Count;
-            lineRenderer.SetPositions(positions.ToArray());
-        }
+            polygonLineRenderer.positionCount = positions.Count;
+            polygonLineRenderer.SetPositions(positions.ToArray());
+            polygonLineRenderer.enabled = true;
 
+            if (positions.Count > 1 && lineHasChanged)
+            {
+                lineHasChanged.started.Invoke(positions);
+            }
+        }
 
         private void StartClick()
         {
@@ -382,6 +427,14 @@ namespace Netherlands3D.SelectionTools
         private void FinishPolygon()
         {
             Debug.Log($"Make selection.");
+            requireReleaseBeforeRedraw = true;
+            polygonFinished = true;
+
+            previewLineRenderer.enabled = false;
+
+            if(!displayLineUntilRedraw)
+                polygonLineRenderer.enabled = false;
+
             var polygonIsClockwise = PolygonIsClockwise(positions);
             if ((windingOrder == WindingOrder.COUNTERCLOCKWISE && polygonIsClockwise) || (windingOrder == WindingOrder.CLOCKWISE && !polygonIsClockwise))
             {
@@ -389,8 +442,8 @@ namespace Netherlands3D.SelectionTools
                 positions.Reverse();
             }
 
-            selectedPolygonArea.started.Invoke(positions);
-            ClearPolygon();
+            if(positions.Count > 1)
+                selectedPolygonArea.started.Invoke(positions);
         }
 
         private bool PolygonIsClockwise(List<Vector3> points)

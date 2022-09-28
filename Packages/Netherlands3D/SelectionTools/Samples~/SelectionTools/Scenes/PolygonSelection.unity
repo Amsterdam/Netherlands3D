@@ -1533,6 +1533,7 @@ MonoBehaviour:
   relativeCenterRD:
     x: 121000
     y: 487000
+  setInvariantCultureInfo: 1
 --- !u!4 &1538779701
 Transform:
   m_ObjectHideFlags: 0
@@ -1747,7 +1748,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "<b>Left mouse</b> to place polygon points. Hold <b>Shift</b> to draw draw
-    freely. \nClose the loop to finish the polygon."
+    freely. \n<b>Double-click</b> or press <b>Enter</b> to close the loop."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

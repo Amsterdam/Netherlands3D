@@ -5,8 +5,11 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/Main.unity
-    guid: 788cf4e78eab98847b46a9cf1cb089cf
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: Packages/nl.netherlands3d/Modelparsing/ImportOBJ/Samples/Import obj-file/Scene/SampleScene.unity
+    guid: 960c0f67fe3cb244094d459395399d98
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: e05a5c0051926ad4184f7c25a38f14fe, type: 2}
