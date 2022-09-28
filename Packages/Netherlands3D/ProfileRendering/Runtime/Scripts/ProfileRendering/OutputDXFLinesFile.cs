@@ -17,61 +17,93 @@ namespace Netherlands3D.ProfileRendering
         [DllImport("__Internal")]
         private static extern void DownloadFile(byte[] array, int byteLength, string fileName);
         [Header("Input")]
-        [SerializeField] Vector3ListEvent onReceiveLines;
+        [SerializeField] StringEvent onReceiveLayerName;
+        [SerializeField] ColorEvent onReceiveLayerColor;
+        [SerializeField] Vector3ListEvent onReceiveLayerLines;
+        [SerializeField] TriggerEvent onReadyForExport;
         [Header("Output")]
         [SerializeField] FloatEvent outputProgress;
 
         [Header("Settings")]
         [SerializeField] private bool binary = false;
-        [SerializeField] private int addLinesPerFrame = 1000;
         [SerializeField] private string outputFileName = "Profile_Netherlands3D.dxf";
+
+        private DxfDocument dxfDocument;
+        private netDxf.Tables.Layer targetDxfLayer;
+        private Transform coordinateSystem;
 
 
         void Awake()
         {
-            onReceiveLines.started.AddListener(OutputAsDXF);
+            onReceiveLayerName.started.AddListener(AddDXFLayer);
+            onReceiveLayerLines.started.AddListener(AddDXFLayerLines);
+            onReceiveLayerColor.started.AddListener(SetDXFLayerColor);
+            onReadyForExport.started.AddListener(FinishDXFDocument);
         }
 
-        private void OutputAsDXF(List<UnityEngine.Vector3> lines)
+        private void ConfigBaseDocument()
         {
-            StartCoroutine(CreateDXFDocument(lines));
+            if (dxfDocument == null)
+            {
+                dxfDocument = new DxfDocument();
+                dxfDocument.DrawingVariables.InsUnits = netDxf.Units.DrawingUnits.Meters;
+            }
         }
 
-        private IEnumerator CreateDXFDocument(List<UnityEngine.Vector3> lines)
+        private void SetDXFLayerColor(Color color)
         {
-            DxfDocument dxfDocument = new DxfDocument();
-            dxfDocument.DrawingVariables.InsUnits = netDxf.Units.DrawingUnits.Meters;
+            targetDxfLayer.Color = new AciColor(color.r,color.g,color.b);
+        }
 
-            var first = lines[0];
-            first.y = 0;
-            var last = lines[lines.Count - 1];
-            last.y = 0;
+        private void AddDXFLayer(string layerName)
+        {
+            ConfigBaseDocument();
+            targetDxfLayer = new netDxf.Tables.Layer(layerName);
+            dxfDocument.Layers.Add(targetDxfLayer);
+        }
 
-            var coordinateSystem = new GameObject().transform;
-            UnityEngine.Vector3 directionRight = (last - first).normalized;
-            coordinateSystem.position = first;
-            coordinateSystem.right = directionRight;
+        private void AddDXFLayerLines(List<UnityEngine.Vector3> lines)
+        {
+            if (lines == null || lines.Count < 2) return;
+
+            CreateCoordinateSystem(lines);
 
             for (int i = 0; i < lines.Count; i += 2)
             {
-                if ((i % addLinesPerFrame) == 0)
-                {
-                    if (outputProgress && i > 0) outputProgress.Invoke((float)i / lines.Count);
-                    yield return new WaitForEndOfFrame();
-                }
-
                 var rdStart = coordinateSystem.InverseTransformPoint(lines[i]);
                 var rdEnd = coordinateSystem.InverseTransformPoint(lines[i + 1]);
 
                 netDxf.Vector2 lineStart = new netDxf.Vector2(rdStart.x, rdStart.y);
                 netDxf.Vector2 lineEnd = new netDxf.Vector2(rdEnd.x, rdEnd.y);
 
-                Line entity = new Line(lineStart, lineEnd);
-                dxfDocument.AddEntity(entity);
+                Line lineEntity = new Line(lineStart, lineEnd);
+                lineEntity.Layer = targetDxfLayer;
+                dxfDocument.AddEntity(lineEntity);
             }
+        }
 
+        private void CreateCoordinateSystem(List<UnityEngine.Vector3> lines)
+        {
+            if (coordinateSystem) return;
+
+            var first = lines[0];
+            first.y = 0;
+            var last = lines[lines.Count - 1];
+            last.y = 0;
+            coordinateSystem = new GameObject().transform;
+            UnityEngine.Vector3 directionRight = (last - first).normalized;
+            coordinateSystem.position = first;
+            coordinateSystem.right = directionRight;
+        }
+
+        private void FinishDXFDocument()
+        {
             Destroy(coordinateSystem.gameObject);
+            StartCoroutine(FinishAndSave());
+        }
 
+        private IEnumerator FinishAndSave()
+        {
             if (outputProgress) outputProgress.Invoke(1.0f);
             yield return new WaitForEndOfFrame();
             SaveFile(dxfDocument);

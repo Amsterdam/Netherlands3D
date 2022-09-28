@@ -3449,25 +3449,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4968407319315594453, guid: 090b07a52e090cc419ef05102073a251, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6781047678125791764, guid: 090b07a52e090cc419ef05102073a251, type: 3}
       propertyPath: m_Name
       value: SliceCamera
-      objectReference: {fileID: 0}
-    - target: {fileID: 6781047678125791767, guid: 090b07a52e090cc419ef05102073a251, type: 3}
-      propertyPath: m_BackGroundColor.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6781047678125791767, guid: 090b07a52e090cc419ef05102073a251, type: 3}
-      propertyPath: m_BackGroundColor.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6781047678125791767, guid: 090b07a52e090cc419ef05102073a251, type: 3}
-      propertyPath: m_BackGroundColor.r
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6781047678125791768, guid: 090b07a52e090cc419ef05102073a251, type: 3}
       propertyPath: m_RootOrder
