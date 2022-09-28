@@ -56,7 +56,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 192
   drawInEditorGizmos: 1
-  maxTrianglesPerFrame: 1000
+  maxTrianglesPerFrame: 10000
 --- !u!114 &6146440338853367613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75,5 +75,4 @@ MonoBehaviour:
   onReadyForExport: {fileID: 11400000, guid: fb6d5ba0c5d7abe4aaf4164062c3c785, type: 2}
   outputProgress: {fileID: 11400000, guid: 5ec0a9f132b109c4a829cd53685b5303, type: 2}
   binary: 1
-  addLinesPerFrame: 1000
   outputFileName: Profile.dxf
