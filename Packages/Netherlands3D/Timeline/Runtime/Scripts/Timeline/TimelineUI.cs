@@ -155,7 +155,11 @@ namespace Netherlands3D.Timeline
 
         private void OnEnable()
         {
-            timelineData.OnOrderTimePeriods.AddListener(LoadData);
+            if (timelineData!=null)
+            {
+                timelineData.OnOrderTimePeriods.AddListener(LoadData);
+            }
+           
         }
 
         private void OnDisable()
@@ -167,7 +171,7 @@ namespace Netherlands3D.Timeline
         void Start()
         {
             // Triggers LoadData
-            timelineData.OrderTimePeriods();
+            //timelineData.OrderTimePeriods();
             SetCurrentDate(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0));
             currentDateIsSet = true;
         }

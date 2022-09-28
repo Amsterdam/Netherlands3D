@@ -29,26 +29,31 @@ namespace Netherlands3D.BIMPlanning
 {
     public class BimPlanningImporter : MonoBehaviour
     {
-        [Header("Required input")]
-        [SerializeField] Material baseMaterial;
+
+        [Header("triggers")]
+        [SerializeField] private TriggerEvent startImportingCommand;
+
+        [Header("Required input Files")]
         [SerializeField] private StringEvent objFileSelected;
         [SerializeField] private StringEvent mtlFileSelected;
         [SerializeField] private StringEvent csvFileSelected;
 
+        [Header("Required input Materials")]
+        [SerializeField] Material baseMaterial;
         [SerializeField] private Material BuildMaterial;
         [SerializeField] private Material DestroyMaterial;
 
-        BimPlanningSetup csvImporter;
-        ObjImporter objImporter;
-
-        [Header("Optional output")]
+        [Header("Optional output Status")]
         [SerializeField] private BoolEvent onObjReady;
         [SerializeField] private BoolEvent onMtlReady;
         [SerializeField] private BoolEvent onCsvReady;
-
         [SerializeField] private BoolEvent onCsvVerified;
-
         [SerializeField] private BoolEvent onReadyForImports;
+
+
+        BimPlanningSetup csvImporter;
+        ObjImporter objImporter;
+        GameObject createdGameObject;
 
         private List<BIMPlanningData> BIMPlanningDataList = new List<BIMPlanningData>();
 
@@ -80,7 +85,8 @@ namespace Netherlands3D.BIMPlanning
 
             ObjReady = false;
             MtlReady = false;
-            onReadyForImports.started.Invoke(false);
+            if (onReadyForImports)
+                onReadyForImports .started.Invoke(false);
         }
 
         /// <summary>
@@ -88,19 +94,23 @@ namespace Netherlands3D.BIMPlanning
         /// </summary>
         private void OnOBJImported(GameObject returnedGameObject)
         {
-            returnedGameObject.transform.SetParent(this.transform);
+            createdGameObject = returnedGameObject;
+           
 
             FindPlanningGameObjects();
         }
 
         private void OnEnable()
         {
+
+            if (startImportingCommand) startImportingCommand.started.AddListener(StartImport);
             objFileSelected.started.AddListener(OnOBJFileSelected);
             mtlFileSelected.started.AddListener(OnOBJFileSelected);
             csvFileSelected.started.AddListener(OnCSVileSelected);
         }
         private void OnDisable()
         {
+            if (startImportingCommand) startImportingCommand.started.RemoveListener(StartImport);
             objFileSelected.started.RemoveListener(OnOBJFileSelected);
             mtlFileSelected.started.RemoveListener(OnOBJFileSelected);
             csvFileSelected.started.RemoveListener(OnCSVileSelected);
@@ -129,7 +139,7 @@ namespace Netherlands3D.BIMPlanning
                 }
             }
 
-            onReadyForImports.started.Invoke(ObjReady && CsvReady);
+            if(onReadyForImports)onReadyForImports.started.Invoke(ObjReady && CsvReady);
         }
 
         private void OnCSVileSelected(string value)
@@ -153,7 +163,7 @@ namespace Netherlands3D.BIMPlanning
                 }
             }
 
-            onReadyForImports.started.Invoke(ObjReady && CsvReady);
+            if(onReadyForImports) onReadyForImports.started.Invoke(ObjReady && CsvReady);
         }
 
         private void AddImporters()
@@ -181,7 +191,7 @@ namespace Netherlands3D.BIMPlanning
                 CsvReady = true;
             }
 
-            onCsvVerified.started.Invoke(csvReady);
+            if(onCsvVerified)onCsvVerified.started.Invoke(csvReady);
         }
 
         /// <summary>
@@ -198,11 +208,11 @@ namespace Netherlands3D.BIMPlanning
         private void SetPlanningObjects(BIMPlanningData planningData)
         {
             //All children that match ID get linked to planning data
-            var childcount = transform.childCount;
+            var childcount = createdGameObject.transform.childCount;
             int matchedObjects = 0;
             for (int i = 0; i < childcount; i++)
             {
-                var child = transform.GetChild(i);
+                var child = createdGameObject.transform.GetChild(i);
                 if (child.gameObject.name == planningData.displayID)
                 {
                     SetAsPlanningObject(child.gameObject, planningData.taskname, planningData.taskType, planningData.startDate, planningData.endDate);

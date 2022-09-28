@@ -114,7 +114,7 @@ namespace Netherlands3D.ModelParsing
 
                 submesheslist.Add(submesh);
                 GameObjectData childObject = new GameObjectData();
-                childObject.name = submesh.name;
+                childObject.name = submesh.label;
 
                 yield return StartCoroutine(CreateMeshData(submesheslist));
 
@@ -144,7 +144,7 @@ namespace Netherlands3D.ModelParsing
             meshIndices.SetupWriting(meshindicesname);
 
             createdMeshData = new MeshData();
-            createdMeshData.name = submeshes[0].name;
+            createdMeshData.name = submeshes[0].label;
             createdMeshData.vertexFileName = meshvertexname;
             createdMeshData.normalsFileName = meshnormalname;
             createdMeshData.indicesFileName = meshindicesname;

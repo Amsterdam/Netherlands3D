@@ -64,7 +64,7 @@ public class objImportManager : MonoBehaviour
         }
     }
 
-    objImporter importer;
+    ObjImporter importer;
     private void Awake()
     {
         startImporting.started.AddListener(OnStartImporting);
@@ -119,8 +119,8 @@ public class objImportManager : MonoBehaviour
     void OnStartImporting()
     {
         if (!importer) ConnectToImporter();
-        importer.objfilename = objfilename;
-        importer.mtlfilename = mtlfilename;
+        importer.objFilePath = objfilename;
+        importer.mtlFilePath = mtlfilename;
         importer.BaseMaterial = baseMaterial;
         importer.createSubMeshes = createSubMeshes;
         if(started)started.started.Invoke(true);
@@ -148,7 +148,7 @@ public class objImportManager : MonoBehaviour
     void ConnectToImporter()
     {
         if (importer!=null) return;
-        importer = gameObject.AddComponent<objImporter>();
+        importer = gameObject.AddComponent<ObjImporter>();
         // give the importer handles for progress- and errormessaging
         importer.currentActivity = BroadcastCurrentActivity;
         importer.currentAction = BroadcastCurrentAction;
