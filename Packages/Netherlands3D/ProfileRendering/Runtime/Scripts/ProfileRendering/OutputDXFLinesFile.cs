@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -57,9 +58,28 @@ namespace Netherlands3D.ProfileRendering
 
         private void AddDXFLayer(string layerName)
         {
+            var dxfLayerName = ReturnDXFSafeLayerName(layerName);
+            Debug.Log($"Add dxf layer {dxfLayerName} (created from {layerName})");
+
             ConfigBaseDocument();
-            targetDxfLayer = new netDxf.Tables.Layer(layerName);
+            targetDxfLayer = new netDxf.Tables.Layer(ReturnDXFSafeLayerName(layerName));
             dxfDocument.Layers.Add(targetDxfLayer);
+        }
+
+        private string ReturnDXFSafeLayerName(this string str)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in str)
+            {
+                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_')
+                {
+                    sb.Append(c);
+                }
+            }
+            if(sb.Length == 0)
+                return "DefaultLayer";
+
+            return sb.ToString();
         }
 
         private void AddDXFLayerLines(List<UnityEngine.Vector3> lines)
