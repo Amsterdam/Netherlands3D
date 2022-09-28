@@ -66,7 +66,7 @@ namespace Netherlands3D.ProfileRendering
             dxfDocument.Layers.Add(targetDxfLayer);
         }
 
-        private string ReturnDXFSafeLayerName(this string str)
+        private string ReturnDXFSafeLayerName(string str)
         {
             StringBuilder sb = new StringBuilder();
             foreach (char c in str)
