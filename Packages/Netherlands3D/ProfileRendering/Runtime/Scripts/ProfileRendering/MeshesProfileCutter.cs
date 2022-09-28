@@ -2,6 +2,7 @@ using Netherlands3D.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Netherlands3D.ProfileRendering
@@ -26,6 +27,8 @@ namespace Netherlands3D.ProfileRendering
         [SerializeField] private bool drawInEditorGizmos = true;
         [SerializeField] private int maxTrianglesPerFrame = 1000;
         [SerializeField] private string materialColorShaderProperty = "_Color";
+        [SerializeField] private string materialNameRegex = "";
+        [SerializeField] private string materialNameRegexReplacement = "";
 
         private Plane cuttingPlane;
         private Bounds lineBounds;
@@ -139,6 +142,7 @@ namespace Netherlands3D.ProfileRendering
                 }
 
                 //Invoke layer name and color
+                materialName = (materialNameRegex != "") ? Regex.Replace(materialName, materialNameRegex, materialNameRegexReplacement) : materialName;
                 if (outputProfileMaterialName)
                     outputProfileMaterialName.Invoke(materialName);
                 if (outputMaterialColor)
