@@ -54,7 +54,7 @@ namespace Netherlands3D.ProfileRendering
 
         private IEnumerator CompleteAndSave()
         {
-            svgStringBuilder.Insert(0, $"<svg viewbox=\"{minX} {documentHeight/2} {maxX-minX} {documentHeight}\" xmlns=\"http://www.w3.org/2000/svg\">\n");
+            svgStringBuilder.Insert(0, $"<svg viewBox=\"{minX} {documentHeight/2} {maxX-minX} {documentHeight}\" xmlns=\"http://www.w3.org/2000/svg\">\n");
             svgStringBuilder.AppendLine(" </svg>");
 
             //Reset min and max for a next run
