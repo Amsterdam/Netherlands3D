@@ -5,6 +5,6 @@ mergeInto(LibraryManager.library, {
     This way we can change the canvas pointer style from within Unity scripts.
      */
     SetCSSCursor: function (cursorName) {
-        document.getElementById("unity-canvas").style.cursor = Pointer_stringify(cursorName);
+        document.getElementById("unity-canvas").style.cursor = UTF8ToString(cursorName);
     }
 });
