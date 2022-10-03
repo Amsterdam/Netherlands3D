@@ -77,7 +77,7 @@ namespace Netherlands3D.TileSystem
 				MeshFilter mf = tile.gameObject.GetComponent<MeshFilter>();
 				if (mf != null)
 				{
-					DestroyImmediate(tile.gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+					Destroy(tile.gameObject.GetComponent<MeshFilter>().sharedMesh);
 				}
 				Destroy(tiles[tileKey].gameObject);
 			}
