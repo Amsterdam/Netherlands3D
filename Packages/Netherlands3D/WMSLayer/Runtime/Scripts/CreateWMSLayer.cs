@@ -43,7 +43,7 @@ namespace Netherlands3D.Geoservice
 
         [SerializeField]
         private int tileSize = 1500;
-
+        [SerializeField] private bool compressLoadedTextures = true;
         private bool OnlyOnTerrain_Memory = false;
         private bool DisplayState = true;
 
@@ -154,6 +154,7 @@ namespace Netherlands3D.Geoservice
                 layercontainer.transform.parent = transform;
             }
             layer = layercontainer.AddComponent<WMSImageLayer>();
+            layer.compressLoadedTextures = compressLoadedTextures;
             layer.tileSize = tileSize;
             if (OnlyOnTerrain_Memory)
             {

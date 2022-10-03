@@ -16,7 +16,7 @@ namespace Netherlands3D.Geoservice
         [SerializeField]
         private int activeStencilID = 0;
         private int activeStencilMask = 255;
-
+        public bool compressLoadedTextures = false;
         public GameObject TilePrefab;
         public override void HandleTile(TileChange tileChange, Action<TileChange> callback = null)
         {
@@ -88,9 +88,6 @@ namespace Netherlands3D.Geoservice
             Vector2Int origin = new Vector2Int(tileKey.x+(tileSize/2), tileKey.y + (tileSize / 2));
             tile.gameObject.transform.position = CoordConvert.RDtoUnity(origin);
             
-            
-            
-
             return tile;
         }
 
@@ -125,7 +122,8 @@ namespace Netherlands3D.Geoservice
                     Destroy(OldTexture);
                 }
 
-                Texture myTexture = ((DownloadHandlerTexture)webRequest.downloadHandler).texture; ;
+                Texture2D myTexture = ((DownloadHandlerTexture)webRequest.downloadHandler).texture;
+                if(compressLoadedTextures) myTexture.Compress(false);
                 myTexture.wrapMode = TextureWrapMode.Clamp;
                 Tile tile = tiles[tileKey];
 
