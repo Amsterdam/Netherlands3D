@@ -6,7 +6,7 @@ mergeInto(LibraryManager.library, {
     Canvas clicks caught by Unity are 'too late' for the browser to detect as a legitimate user action.
      */
     DisplayDOMObjectWithID: function (id, display, x, y, width, height, offsetX, offsetY) {
-        var idString = Pointer_stringify(id);
+        var idString = UTF8ToString(id);
         var targetDomObject = document.getElementById(idString);
 		var viewCanvas = document.getElementsByTagName("canvas")[0];
 		
@@ -17,7 +17,7 @@ mergeInto(LibraryManager.library, {
 		var roundedOffsetY = Math.round(offsetY);
 		
         if (targetDomObject) {
-            targetDomObject.style.display = Pointer_stringify(display);
+            targetDomObject.style.display = UTF8ToString(display);
             targetDomObject.style.margin = "0px 0px calc(" + ((y + height) * heightScreenPercentage) + "vh - " + roundedOffsetY + "px) calc(" + (x * widthScreenPercentage) + "vw + " + roundedOffsetX + "px)";
             targetDomObject.style.width = (width * widthScreenPercentage) + "vw";
             targetDomObject.style.height = (height * heightScreenPercentage) + "vh";

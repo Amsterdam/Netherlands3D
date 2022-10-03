@@ -1,6 +1,6 @@
 mergeInto(LibraryManager.library, {
     InitializeIndexedDB: function (str) {
-        window.databaseName = Pointer_stringify(str);
+        window.databaseName = UTF8ToString(str);
 
         console.log("Database name: " + window.databaseName);
 
@@ -120,8 +120,8 @@ mergeInto(LibraryManager.library, {
         };
     },
     UploadFromIndexedDB: function (filePath, targetURL) {
-        var fileName = Pointer_stringify(filePath);
-        var url = Pointer_stringify(targetURL);
+        var fileName = UTF8ToString(filePath);
+        var url = UTF8ToString(targetURL);
 
         var dbConnectionRequest = window.indexedDB.open("/idbfs", window.dbVersion);
         dbConnectionRequest.onsuccess = function () {
@@ -151,9 +151,9 @@ mergeInto(LibraryManager.library, {
         }
     },
 	DownloadFromIndexedDB: function (filePath, callbackObject, callbackMethod) {
-        var fileNameString = Pointer_stringify(filePath);	
-		var callbackObjectString = Pointer_stringify(callbackObject);	
-		var callbackMethodString = Pointer_stringify(callbackMethod);	
+        var fileNameString = UTF8ToString(filePath);	
+		var callbackObjectString = UTF8ToString(callbackObject);	
+		var callbackMethodString = UTF8ToString(callbackMethod);	
 		
 		console.log("Set callback object to " + callbackObjectString);
 		console.log("Set callback method to " + callbackMethodString);
@@ -194,8 +194,8 @@ mergeInto(LibraryManager.library, {
         }
     },
 	AddFileInput: function (inputName,fileExtentions,multiSelect) {
-		var inputNameID = Pointer_stringify(inputName);
-        var allowedFileExtentions = Pointer_stringify(fileExtentions);
+		var inputNameID = UTF8ToString(inputName);
+        var allowedFileExtentions = UTF8ToString(fileExtentions);
 		
 		if (typeof window.InjectHiddenFileInput !== "undefined") { 
 			window.InjectHiddenFileInput(inputNameID, allowedFileExtentions, multiSelect);

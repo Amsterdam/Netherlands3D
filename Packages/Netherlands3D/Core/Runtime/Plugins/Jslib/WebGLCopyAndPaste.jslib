@@ -69,9 +69,9 @@ mergeInto(LibraryManager.library, {
             window.becauseUnityIsBadWithJavascript_webglCopyAndPaste =
                 window.becauseUnityIsBadWithJavascript_webglCopyAndPaste || {
                 initialized: false,
-                objectName: Pointer_stringify(objectNamePtr),
-                cutCopyFuncName: Pointer_stringify(cutCopyFuncNamePtr),
-                pasteFuncName: Pointer_stringify(pasteFuncNamePtr),
+                objectName: UTF8ToString(objectNamePtr),
+                cutCopyFuncName: UTF8ToString(cutCopyFuncNamePtr),
+                pasteFuncName: UTF8ToString(pasteFuncNamePtr),
             };
             const g = window.becauseUnityIsBadWithJavascript_webglCopyAndPaste;
 
@@ -99,7 +99,7 @@ mergeInto(LibraryManager.library, {
     },
     passCopyToBrowser: function (stringPtr) {
         const g = window.becauseUnityIsBadWithJavascript_webglCopyAndPaste;
-        const str = Pointer_stringify(stringPtr);
+        const str = UTF8ToString(stringPtr);
         g.clipboardStr = str;
     },
 });
