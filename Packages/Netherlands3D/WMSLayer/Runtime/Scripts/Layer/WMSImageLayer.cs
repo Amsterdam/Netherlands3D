@@ -68,7 +68,7 @@ namespace Netherlands3D.Geoservice
                 //destroy the image
                 Texture tex= tile.gameObject.GetComponent<MeshRenderer>().material.GetTexture("_MainTex");
                 tile.gameObject.GetComponent<MeshRenderer>().material.SetTexture("_MainTex",null);
-                DestroyImmediate(tex,true);
+                Destroy(tex);
 
                 //destroy the gameobject
                 Destroy(tiles[tileKey].gameObject);
@@ -122,7 +122,7 @@ namespace Netherlands3D.Geoservice
                 Texture OldTexture = tiles[tileKey].gameObject.GetComponent<MeshRenderer>().material.GetTexture("_MainTex");
                 if (OldTexture!=null)
                 {
-                    DestroyImmediate(OldTexture,true);
+                    Destroy(OldTexture);
                 }
 
                 Texture myTexture = ((DownloadHandlerTexture)webRequest.downloadHandler).texture; ;

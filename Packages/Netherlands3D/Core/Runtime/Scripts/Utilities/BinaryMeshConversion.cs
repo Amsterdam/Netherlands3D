@@ -46,7 +46,7 @@ namespace Netherlands3D.Core
         private void LoadFromBinary()
         {
             var meshFilter = GetComponent<MeshFilter>();
-            DestroyImmediate(meshFilter);
+            Destroy(meshFilter);
 
             byte[] readBytes = File.ReadAllBytes(Application.persistentDataPath + "/mesh.bin");
             Profiler.BeginSample("readbinarymesh", this);
