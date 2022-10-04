@@ -199,8 +199,8 @@ public class objImportManager : MonoBehaviour
             
         }
 #endif
-        importer.objfilename = objfilename;
-        importer.mtlfilename = mtlfilename;
+        importer.objFilePath = objfilename;
+        importer.mtlFilePath = mtlfilename;
         importer.BaseMaterial = baseMaterial;
         importer.createSubMeshes = createSubMeshes;
         if(started)started.started.Invoke(true);

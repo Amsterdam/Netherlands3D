@@ -98,10 +98,7 @@ namespace Netherlands3D.BIMPlanning
                 ParseLine(lines[i]);
             }
 
-            foreach (var child in transform.GetComponentsInChildren<BimPlanningItem>())
-            {
-                child.Initialize(timeline);
-            }
+           
             timeline.timelineData.OrderTimePeriods();
 
             return BIMPlanningDataList;
@@ -125,7 +122,7 @@ namespace Netherlands3D.BIMPlanning
             string[] items = line.Split(',');
             if (items.Length < 6)
             {
-                Debug.Log("Could not parse Navisworks CSV. Not enough columns in CSV.", this.gameObject);
+               // Debug.Log("Could not parse Navisworks CSV. Not enough columns in CSV.", this.gameObject);
                 return;
             }
 

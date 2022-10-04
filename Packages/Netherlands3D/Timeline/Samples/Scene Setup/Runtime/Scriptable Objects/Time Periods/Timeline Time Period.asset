@@ -20,7 +20,6 @@ MonoBehaviour:
     endDate:
       dateTimeString: 2021/01/01
     layer: Example Layer
-    group: 
     eventPressed:
       m_PersistentCalls:
         m_Calls: []

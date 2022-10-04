@@ -50,11 +50,21 @@ namespace Netherlands3D.BIMPlanning
         [SerializeField] private BoolEvent onCsvVerified;
         [SerializeField] private BoolEvent onReadyForImports;
 
+        [Header("progress")]
+        [SerializeField] private BoolEvent busy;
+        [SerializeField] private StringEvent currentActivity;
+        [SerializeField] private StringEvent currentAction;
+        [SerializeField] private FloatEvent progressPercentage;
+
+        [Header("error")]
+        [SerializeField] private StringEvent alertmessage;
+        [SerializeField] private StringEvent errormessage;
 
         BimPlanningSetup csvImporter;
-        ObjImporter objImporter;
+        
+        objImporter objImporter;
         GameObject createdGameObject;
-
+        Timeline.TimelineUI timeline;
         private List<BIMPlanningData> BIMPlanningDataList = new List<BIMPlanningData>();
 
         //Requirements matched
@@ -79,8 +89,47 @@ namespace Netherlands3D.BIMPlanning
             set { mtlReady = value; if (onMtlReady) onMtlReady.started.Invoke(mtlReady); }
         }
 
+        void BroadcastCurrentActivity(string value)
+        {
+            if (currentActivity != null) currentActivity.started.Invoke(value);
+        }
+        void BroadcastCurrentAction(string value)
+        {
+            if (currentAction != null) currentAction.started.Invoke(value);
+        }
+
+        void BroadcastProgressPercentage(float value)
+        {
+            if (progressPercentage != null) progressPercentage.started.Invoke(value);
+        }
+
+        void BroadcastAlertmessage(string value)
+        {
+            if (alertmessage != null) alertmessage.started.Invoke(value);
+        }
+        void BroadcastErrormessage(string value)
+        {
+            if (errormessage != null) errormessage.started.Invoke(value);
+            if (busy != null) busy.started.Invoke(false);
+            
+        }
+
+
         public void StartImport()
         {
+            timeline = FindObjectOfType<Timeline.TimelineUI>();
+            if (timeline is null)
+            {
+                Debug.Log("timeline not found");
+                BroadcastErrormessage("cannot find a planning-visualiser");
+                return;
+            }
+
+            if (busy)
+            {
+                busy.started.Invoke(true);
+            }
+
             objImporter.StartImporting(OnOBJImported);
 
             ObjReady = false;
@@ -95,8 +144,6 @@ namespace Netherlands3D.BIMPlanning
         private void OnOBJImported(GameObject returnedGameObject)
         {
             createdGameObject = returnedGameObject;
-           
-
             FindPlanningGameObjects();
         }
 
@@ -171,9 +218,16 @@ namespace Netherlands3D.BIMPlanning
             if (!csvImporter) csvImporter = gameObject.AddComponent<BimPlanningSetup>();
             if (!objImporter)
             {
-                objImporter = gameObject.AddComponent<ObjImporter>();
+                objImporter = gameObject.AddComponent<objImporter>();
                 objImporter.BaseMaterial = baseMaterial;
                 objImporter.createSubMeshes = false;
+
+                objImporter.alertmessage = BroadcastAlertmessage;
+                objImporter.currentAction = BroadcastCurrentAction;
+                objImporter.currentActivity = BroadcastCurrentActivity;
+                objImporter.errormessage = BroadcastErrormessage;
+                objImporter.progressPercentage = BroadcastProgressPercentage;
+                objImporter.alertmessage = BroadcastAlertmessage;
             }
         }
 
@@ -190,6 +244,10 @@ namespace Netherlands3D.BIMPlanning
             {
                 CsvReady = true;
             }
+            else
+            {
+                BroadcastErrormessage("could not read the planning-file");
+            }
 
             if(onCsvVerified)onCsvVerified.started.Invoke(csvReady);
         }
@@ -202,6 +260,13 @@ namespace Netherlands3D.BIMPlanning
             foreach (var planningData in BIMPlanningDataList)
             {
                 SetPlanningObjects(planningData);
+            }
+            timeline.timelineData.OrderTimePeriods();
+            timeline.LoadData();
+            timeline.SetCurrentDate(DateTime.Now);
+            if (busy)
+            {
+                busy.started.Invoke(false);
             }
         }
 
@@ -219,8 +284,8 @@ namespace Netherlands3D.BIMPlanning
                     matchedObjects++;
                 }
             }
-
-            if (matchedObjects == 0) Debug.Log("");
+            
+           // if (matchedObjects == 0) Debug.Log("");
         }
 
         /// <summary>
@@ -228,6 +293,7 @@ namespace Netherlands3D.BIMPlanning
         /// </summary>
         private void SetAsPlanningObject(GameObject child, string taskname, string taskType, DateTime startDate, DateTime endDate)
         {
+
             BimPlanningItem bimPlanningItem = child.GetComponent<BimPlanningItem>();
             if (bimPlanningItem is null)
             {
@@ -239,6 +305,9 @@ namespace Netherlands3D.BIMPlanning
                     bimPlanningItem.HighlightMaterialDestroy = DestroyMaterial;
                     bimPlanningItem.DestroyStartDateTime = startDate;
                     bimPlanningItem.DestroyEndDateTime = endDate;
+                    Timeline.TimePeriod timePeriod = new Timeline.TimePeriod("", "", startDate, endDate, taskname);
+                    timeline.timelineData.AddTimePeriod(timePeriod, false);
+
                 }
                 else if (taskType == "N")
                 {
@@ -246,8 +315,13 @@ namespace Netherlands3D.BIMPlanning
                     bimPlanningItem.HighlightMaterialBuild = BuildMaterial;
                     bimPlanningItem.BuildStartDateTime = startDate;
                     bimPlanningItem.BuildEndDateTime = endDate;
+                    Timeline.TimePeriod timePeriod = new Timeline.TimePeriod("", "", startDate, endDate, taskname);
+                    timeline.timelineData.AddTimePeriod(timePeriod, false);
                 }
+                bimPlanningItem.Initialize();
+                timeline.onCurrentDateChange.AddListener(bimPlanningItem.OnDateChange);
             }
+           
         }
     }
 }

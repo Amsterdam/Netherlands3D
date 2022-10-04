@@ -19,7 +19,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using Netherlands3D.Timeline;
+
 
 namespace Netherlands3D.BIMPlanning
 {
@@ -49,7 +49,7 @@ namespace Netherlands3D.BIMPlanning
             NEW
         }
 
-        public void Initialize(TimelineUI timeline)
+        public void Initialize()
         {
             originalMaterials = this.gameObject.GetComponent<MeshRenderer>().materials;
             highlightMaterialsBuild = new Material[originalMaterials.Length];
@@ -60,10 +60,8 @@ namespace Netherlands3D.BIMPlanning
                 highlightMaterialsDestroy[i] = HighlightMaterialDestroy;
             }
             meshRenderer = this.gameObject.GetComponent<MeshRenderer>();
-            timeline.onCurrentDateChange.AddListener(this.OnDateChange);
-
-            TimePeriod timePeriod = new TimePeriod("", "", BuildStartDateTime, DestroyEndDateTime, TaskName);
-            timeline.timelineData.AddTimePeriod(timePeriod, false);
+            
+            
         }
 
         public void OnDateChange(DateTime date)
@@ -71,7 +69,7 @@ namespace Netherlands3D.BIMPlanning
             meshRenderer.enabled = true;
             meshRenderer.materials = originalMaterials;
 
-            if (BuildStartDateTime != null)
+            if (BuildStartDateTime != DateTime.MinValue)
             {
                 if (date <= BuildStartDateTime)
                 {
@@ -85,7 +83,7 @@ namespace Netherlands3D.BIMPlanning
                     return;
                 }
             }
-            if (DestroyStartDateTime != null)
+            if (DestroyStartDateTime != DateTime.MinValue)
             {
                 if (date > DestroyEndDateTime)
                 {
