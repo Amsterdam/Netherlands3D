@@ -82,7 +82,8 @@ namespace Netherlands3D.Traffic.VISSIM
 
             // Loading event
             int fileIndex = 1;
-            eventLoadingProgress.started.Invoke(0);
+            eventLoadingProgress.started.Invoke(0.001f);
+            yield return new WaitForEndOfFrame();
 
             // Check if there are multiple files
             string[] paths = filePaths.Split(',');
@@ -119,6 +120,7 @@ namespace Netherlands3D.Traffic.VISSIM
                 }
 
                 eventLoadingProgress.started.Invoke(fileIndex / paths.Length);
+                yield return new WaitForEndOfFrame();
                 fileIndex++;
             }
 
