@@ -29,22 +29,20 @@ namespace Netherlands3D.JavascriptConnection
         [Tooltip("Allowed selection multiple files")]
         [SerializeField]
         private bool multiSelect = false;
-        FileInputIndexedDB javaScriptFileInputHandler;
+        private FileInputIndexedDB javaScriptFileInputHandler;
         private Button button;
         [SerializeField] private StringEvent eventFileLoaderFileImported;
         void Start()
         {
-
             button = GetComponent<Button>();
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-            javaScriptFileInputHandler = FindObjectOfType<FileInputIndexedDB>();
+            javaScriptFileInputHandler = FindObjectOfType<FileInputIndexedDB>(true);
             if (javaScriptFileInputHandler == null)
             {
                 GameObject go = new GameObject("UserFileUploads");
-                go.AddComponent<FileInputIndexedDB>();
+                javaScriptFileInputHandler = go.AddComponent<FileInputIndexedDB>();
             }
-
             
             // Set file input name with generated id to avoid html conflictions
             fileInputName += "_" + gameObject.GetInstanceID();
@@ -131,7 +129,6 @@ namespace Netherlands3D.JavascriptConnection
         // WebGL
         public void SendResults(string filePaths)
         {
-
             Debug.Log("button received: " + filePaths);
             eventFileLoaderFileImported.Invoke(filePaths);
         }
