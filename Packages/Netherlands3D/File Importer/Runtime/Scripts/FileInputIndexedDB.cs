@@ -60,6 +60,7 @@ public class FileInputIndexedDB : MonoBehaviour
 
     public void SetCallbackAdress(Action<string> callback)
     {
+        Debug.Log("Callback set for FileInputIndexedDB");
         callbackAdress = callback;
     }
 
@@ -70,8 +71,7 @@ public class FileInputIndexedDB : MonoBehaviour
         fileCount = 0;
         filenames = new List<string>();
         Debug.Log("expecting " + count + " files");
-        //LoadingScreen.Instance.ShowMessage($"{numberOfFilesToLoad} {((numberOfFilesToLoad>1) ? "bestanden worden" : "bestand wordt")} ingeladen..");
-        //LoadingScreen.Instance.ProgressBar.SetMessage($"");
+
         StartCoroutine(WaitForFilesToBeLoaded());
     }
     
@@ -121,6 +121,7 @@ public class FileInputIndexedDB : MonoBehaviour
         var files = string.Join(",", filenames);
         if (callbackAdress == null)
         {
+            Debug.Log("FileInputIndexedDB: No callback set. Using default file import event.");
             if (filesImportedEvent) filesImportedEvent.started.Invoke(files);
         }
         else
