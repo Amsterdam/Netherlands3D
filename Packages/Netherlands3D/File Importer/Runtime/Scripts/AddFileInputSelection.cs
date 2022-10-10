@@ -129,8 +129,6 @@ namespace Netherlands3D.JavascriptConnection
 #endif
 
         // WebGL
-
-
         public void SendResults(string filePaths)
         {
 
