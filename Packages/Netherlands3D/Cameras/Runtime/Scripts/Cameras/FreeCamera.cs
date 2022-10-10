@@ -62,12 +62,15 @@ public class FreeCamera : MonoBehaviour
     [SerializeField] private Vector3Event lookInput;
     [SerializeField] private Vector3Event flyInput;
     [SerializeField] private Vector3Event rotateInput;
-    [SerializeField] public BoolEvent blockCameraDrag;
     [SerializeField] private FloatEvent zoomToPointerInput;
     [SerializeField] private Vector3Event pointerPosition;
     [SerializeField] private BoolEvent dragModifier;
     [SerializeField] private BoolEvent rotateModifier;
     [SerializeField] private BoolEvent firstPersonModifier;
+
+    [Header("Other setting events")]
+    [SerializeField] public BoolEvent blockCameraDrag;
+    [SerializeField] public BoolEvent ortographicEnabled;
 
     private Vector3 currentPointerPosition;
     private Vector3 zoomTarget;
@@ -107,7 +110,34 @@ public class FreeCamera : MonoBehaviour
         rotateModifier.started.AddListener(Rotate);
         firstPersonModifier.started.AddListener(RotateFirstPerson);
 
-        blockCameraDrag.started.AddListener(LockDragging);
+        if(blockCameraDrag) blockCameraDrag.started.AddListener(LockDragging);
+        if(ortographicEnabled) ortographicEnabled.started.AddListener(EnableOrtographic);
+    }
+
+    /// <summary>
+    /// Switch camera to ortographic mode and limit its controls
+    /// </summary>
+    /// <param name="enableOrtographic">Ortographic mode enabled</param>
+    public void EnableOrtographic(bool enableOrtographic)
+    {
+        if (enableOrtographic)
+        {
+            var cameraLookWorldPosition = GetWorldPoint(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0));
+            cameraLookWorldPosition.y = this.transform.position.y;
+            this.transform.position = cameraLookWorldPosition;
+
+            var flattenedForward = this.transform.forward;
+            flattenedForward.y = 0;
+            this.transform.rotation = Quaternion.LookRotation(Vector3.down, flattenedForward);
+        }
+
+        cameraComponent.orthographic = enableOrtographic;
+    }
+
+    private void OrtographicLimitations()
+    {
+        //Link size and camera height to support features depending on camera height
+        cameraComponent.orthographicSize = this.transform.position.y;
     }
 
     /// <summary>
@@ -156,9 +186,11 @@ public class FreeCamera : MonoBehaviour
 		StorePreviousTransform();
 
 		this.transform.Rotate(0, value.x * dragRotateSpeed, 0, Space.World);
-		this.transform.Rotate(value.y * dragRotateSpeed, 0, 0, Space.Self);
-
-		RevertIfOverAxis();
+        if (!cameraComponent.orthographic)
+        {
+            this.transform.Rotate(value.y * dragRotateSpeed, 0, 0, Space.Self);
+            RevertIfOverAxis();
+        }	
 	}
 
     /// <summary>
@@ -173,9 +205,11 @@ public class FreeCamera : MonoBehaviour
         StorePreviousTransform();
 
         this.transform.Rotate(0, value.x * gamepadRotateSpeed * Time.deltaTime, 0, Space.World);
-        this.transform.Rotate(value.y * gamepadRotateSpeed * Time.deltaTime, 0, 0, Space.Self);
-
-        RevertIfOverAxis();
+        if (!cameraComponent.orthographic)
+        {
+            this.transform.Rotate(value.y * gamepadRotateSpeed * Time.deltaTime, 0, 0, Space.Self);
+            RevertIfOverAxis();
+        }
     }
 
     /// <summary>
@@ -197,10 +231,12 @@ public class FreeCamera : MonoBehaviour
 
         StorePreviousTransform();
 
-        this.transform.RotateAround(dragStart, this.transform.right, -pointerDelta.y * rotateAroundPointSpeed);
-		this.transform.RotateAround(dragStart, Vector3.up, pointerDelta.x * rotateAroundPointSpeed);
-
-        RevertIfOverAxis();
+        this.transform.RotateAround(dragStart, Vector3.up, pointerDelta.x * rotateAroundPointSpeed);
+        if (!cameraComponent.orthographic)
+        {
+            this.transform.RotateAround(dragStart, this.transform.right, -pointerDelta.y * rotateAroundPointSpeed);
+            RevertIfOverAxis();
+        }
     }
 
     /// <summary>
@@ -252,12 +288,14 @@ public class FreeCamera : MonoBehaviour
 	{
         EaseDragTarget();
         Clamp();
-	}
+
+        if (cameraComponent.orthographic) OrtographicLimitations();
+    }
 
     /// <summary>
     /// Clamp camera to limits
     /// </summary>
-	private void Clamp()
+    private void Clamp()
 	{
 		if(this.transform.position.y > maxCameraHeight)
         {
@@ -314,9 +352,10 @@ public class FreeCamera : MonoBehaviour
             var screenMove = currentPointerDelta / Screen.height;
 
             StorePreviousTransform();
-            if (Vector3.Dot(Vector3.down, transform.forward) >= dragOnPlaneThreshold)
+            var lookingDown = Vector3.Dot(Vector3.down, transform.forward);
+            if (lookingDown >= dragOnPlaneThreshold)
             {
-                var flattenedForward = this.transform.forward;
+                var flattenedForward = this.transform.up;
                 flattenedForward.y = 0;
                 this.transform.Translate(flattenedForward.normalized * -screenMove.y * dynamicDragSpeed, Space.World);
                 screenMove.y = 0;
