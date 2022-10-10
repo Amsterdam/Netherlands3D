@@ -14,11 +14,19 @@ mergeInto(LibraryManager.library, {
         window.dbVersion = 21;
 
         //Inject our required html input fields
-        window.InjectHiddenFileInput = function InjectHiddenFileInput(inputFieldName, acceptedExtentions, multiFileSelect) {
-            var newInput = document.createElement("input");
+        window.InjectHiddenFileInput = function InjectHiddenFileInput(inputFieldName, acceptedExtentions, multiFileSelect) { 
+			
+			//Make sure file extentions start with a dot ([.jpg,.png] instead of [jpg,png] etc)
+			var acceptedExtentionsArray = acceptedExtentions.split(",");
+			for(var i = 0; i<acceptedExtentionsArray.length;i++)
+			{
+				acceptedExtentionsArray[i] = "." + acceptedExtentionsArray[i].replace(".","");
+			}
+			
+			var newInput = document.createElement("input");
             newInput.id = inputFieldName;
             newInput.type = 'file';
-            newInput.accept = acceptedExtentions;
+            newInput.accept = acceptedExtentionsArray.toString();
 			newInput.multiple = multiFileSelect;
 			newInput.onclick = function() {
 				unityInstance.SendMessage(inputFieldName, 'ClickNativeButton');
