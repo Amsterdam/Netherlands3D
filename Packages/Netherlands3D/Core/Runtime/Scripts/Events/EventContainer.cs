@@ -21,7 +21,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [System.Serializable]
-public class EventContainer<T> : ScriptableObject
+public class EventContainer<T> : ScriptableObject where T : UnityEventBase
 {
     public string eventName;
     public string description;
@@ -38,4 +38,5 @@ public class EventContainer<T> : ScriptableObject
 		if (eventName == "")
 			eventName = this.name;
 	}
+
 }
