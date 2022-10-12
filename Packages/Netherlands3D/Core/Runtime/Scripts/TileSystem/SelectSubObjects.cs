@@ -14,6 +14,7 @@ namespace Netherlands3D.TileSystem
         private string lastSelectedID = "";
 
         [Header("Sub object selection:")]
+        [SerializeField] private string removeFromID = "NL.IMBAG.Pand.";
 
         [SerializeField]
         private LayerMask clickCheckLayerMask;
@@ -153,7 +154,9 @@ namespace Netherlands3D.TileSystem
                 }
                 else
                 {
-                    singleIdList.Add(id);
+                    var filteredID = id.Replace(removeFromID, "");
+                    Debug.Log($"Select ID:{filteredID}");
+                    singleIdList.Add(filteredID);
                 }
                 HighlightObjectsWithIDs(singleIdList);
                 clickedOnObject.Invoke(true);
