@@ -68,7 +68,9 @@ namespace Netherlands3D.BAGInformation
 		{
 			if (bagIDs.Count > 0)
 			{
-				var ID = bagIDs[0].Replace(removeFromID, "");
+				var ID = bagIDs[0];
+				if(removeFromID.Length > 0) ID = ID.Replace(removeFromID, "");
+
 				if (downloadProcess != null)
 				{
 					StopCoroutine(downloadProcess);
