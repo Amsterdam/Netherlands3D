@@ -37,6 +37,7 @@ namespace Netherlands3D.BAGInformation
 		[Tooltip("Id replacement string will be replaced")]
 		[SerializeField]
 		private string geoJsonRequestURL = "https://service.pdok.nl/lv/bag/wfs/v2_0?SERVICE=WFS&VERSION=2.0.0&outputFormat=geojson&REQUEST=GetFeature&typeName=bag:pand&count=100&outputFormat=xml&srsName=EPSG:28992&filter=%3cFilter%3e%3cPropertyIsEqualTo%3e%3cPropertyName%3eidentificatie%3c/PropertyName%3e%3cLiteral%3e{BagID}%3c/Literal%3e%3c/PropertyIsEqualTo%3e%3c/Filter%3e";
+		[SerializeField] private string removeFromID = "NL.IMBAG.Pand.";
 
 		[Header("Listen to")]
 		[SerializeField]
@@ -67,7 +68,7 @@ namespace Netherlands3D.BAGInformation
 		{
 			if (bagIDs.Count > 0)
 			{
-				var ID = bagIDs[0];
+				var ID = bagIDs[0].Replace(removeFromID, "");
 				if (downloadProcess != null)
 				{
 					StopCoroutine(downloadProcess);
