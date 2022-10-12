@@ -154,7 +154,7 @@ namespace Netherlands3D.TileSystem
                 }
                 else
                 {
-                    var filteredID = id.Replace(removeFromID, "");
+                    var filteredID = id;
                     if (removeFromID.Length > 0) filteredID = filteredID.Replace(removeFromID, "");
 
                     Debug.Log($"Select ID:{filteredID}");
