@@ -3,7 +3,9 @@ guid: 41a92baa5d9b648de991e7ad4056f6ca
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - BagIDInput: {instanceID: 0}
+  - CityJsonBagReceived: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
