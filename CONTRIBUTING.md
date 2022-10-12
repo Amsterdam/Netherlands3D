@@ -40,8 +40,8 @@ private BoolEvent boolEvent;
 
 private void Start()
 {
-    boolEvent.started.AddListener(MyListener)
-    boolEvent.started.Invoke(true);
+	boolEvent.started.AddListener(MyListener)
+	boolEvent.started.Invoke(true);
 }
 
 private void MyListener(bool boolValue)
