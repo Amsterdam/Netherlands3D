@@ -34,9 +34,7 @@ Depending on the types the ScriptableObject contains a UnityEvent<type> as 'star
 This example uses a BoolEvent container and shows how to add a listener, and invoke it.
 
 ```C#
-[SerializeField]
-
-private BoolEvent boolEvent;
+[SerializeField] private BoolEvent boolEvent;
 
 private void Start()
 {
