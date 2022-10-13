@@ -203,7 +203,7 @@ namespace Netherlands3D.Traffic
                 Data.Coordinates item = data.coordinates[key];
 
                 // Check for a raycast with ground
-                if(Physics.Raycast(item.center + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
+                if(Physics.Raycast(item.center, Vector3.down, out Hit, Mathf.Infinity, layerMask))
                 {
                     item.center.y = Hit.point.y;
                 }
@@ -214,7 +214,7 @@ namespace Netherlands3D.Traffic
                     {
                         binaryMeshLayer.AddMeshColliders(Hit.point);
                         // Cast the raycast again for a y axis point
-                        if(Physics.Raycast(item.center + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
+                        if(Physics.Raycast(item.center, Vector3.down, out Hit, Mathf.Infinity, layerMask))
                         {
                             item.center.y = Hit.point.y;
                         }
