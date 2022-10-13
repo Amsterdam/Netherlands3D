@@ -280,7 +280,7 @@ namespace Netherlands3D.Traffic
             // Check for a raycast with ground
             if(Physics.Raycast(transform.position + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
             {
-                transform.position = new Vector3(transform.position.x, Hit.point.y + defaultCubeModel.localScale.y, transform.position.z);
+                transform.position = new Vector3(transform.position.x, Hit.point.y, transform.position.z);
             }
             else
             {
@@ -291,7 +291,7 @@ namespace Netherlands3D.Traffic
                     // Cast the raycast again for a y axis point
                     if(Physics.Raycast(transform.position + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
                     {
-                        transform.position = new Vector3(transform.position.x, Hit.point.y + defaultCubeModel.localScale.y, transform.position.z);
+                        transform.position = new Vector3(transform.position.x, Hit.point.y, transform.position.z);
                     }
                 }
             }
