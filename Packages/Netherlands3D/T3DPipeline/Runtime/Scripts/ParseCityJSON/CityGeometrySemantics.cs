@@ -27,19 +27,28 @@ namespace Netherlands3D.T3DPipeline
         {
             if (Depth == 0)
             {
+                if (jsonArray == null)
+                {
+                    Values = null;
+                    return;
+                }
+
                 foreach (var i in jsonArray)
                 {
-                    Debug.Log("in:" + i.Value);
-                    Debug.Log("null?: " + i.Value.IsNull);
                     if (i.Value.IsNull)
                         Values.Add(null);
                     else
                         Values.Add(i.Value);
-                    Debug.Log("saved: " + Values[Values.Count - 1]);
                 }
             }
             else
             {
+                if (jsonArray == null)
+                {
+                    Array = null;
+                    return;
+                }
+
                 foreach (var arr in jsonArray)
                 {
                     var newIndex = Array.Count;
@@ -52,13 +61,13 @@ namespace Netherlands3D.T3DPipeline
         public JSONArray GetValuesArray()
         {
             var jsonObject = new JSONArray();
+            if (Values == null && Array == null)
+                return null;
+
             if (Depth == 0)
             {
                 foreach (var i in Values)
-                {
-                    Debug.Log("out:" + i);
                     jsonObject.Add(i);
-                }
             }
             else
             {

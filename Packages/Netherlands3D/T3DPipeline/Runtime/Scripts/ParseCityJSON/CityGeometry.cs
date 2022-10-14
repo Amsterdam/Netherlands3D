@@ -155,7 +155,6 @@ namespace Netherlands3D.T3DPipeline
             var includeMaterials = materialsNode.Count > 0;
             var includeTextures = texturesNode.Count > 0;
 
-            Debug.Log(lod + "\t" + semanticsNode + "\t" + semanticsNode.Count);
             var geometry = new CityGeometry(type, lod, includeSemantics, includeMaterials, includeTextures);
             geometry.boundaryObject.FromJSONNode(geometryNode["boundaries"].AsArray, combinedVertices);
             if (includeSemantics)
