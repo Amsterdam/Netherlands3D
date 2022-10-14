@@ -117,26 +117,6 @@ namespace Netherlands3D.T3DPipeline
 
             values = new CitySemanticsValues(depth);
             values.FromJSONArray(valuesNode);
-            //if (boundaryObject is CityMultiOrCompositSolid)
-            //{
-            //    //array of arrays of arrays
-
-            //    values.Array;
-            //}
-            //else if (boundaryObject is CitySolid)
-            //{
-            //    //array of arrays
-            //    values = new CitySemanticsValues(1);
-            //    foreach (var shell in valuesNode)
-            //        values.Array.Add(new CitySemanticsValues(values.Depth - 1))
-            //        foreach (var i in shell.Value)
-            //        values.Values.Add(i.Value);
-            //}
-            //else
-            //{
-            //    //only use values.Values
-
-            //}
         }
 
         public JSONNode GetSemanticObject()
@@ -252,7 +232,7 @@ namespace Netherlands3D.T3DPipeline
 
             foreach (var customAttribute in customAttributes)
             {
-                node.Add(customAttribute.Key, customAttribute.Value); //todo: check if parsing different values works or if they all end up being strings
+                node.Add(customAttribute.Key, customAttribute.Value); //todo: currently correcttly exports invalid types such as JSON objects (valid JSON, invalid CityJSON)
             }
 
             return node;

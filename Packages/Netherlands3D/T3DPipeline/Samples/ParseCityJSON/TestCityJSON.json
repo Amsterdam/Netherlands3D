@@ -318,7 +318,11 @@
 					"semantics": {
 						"surfaces": [
 							{
-								"type": "RoofSurface"
+								"type": "RoofSurface",
+								"colour": "blue",
+								"hasChimneys": true,
+								"amountOfChimneys": 2,
+								"slope": 66.6
 							},
 							{
 								"type": "WallSurface"
