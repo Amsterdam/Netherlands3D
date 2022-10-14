@@ -27,6 +27,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -40,8 +41,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 5114557758095723130}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74218f964cda1b942beced738d6d144e, type: 3}
+  m_Script: {fileID: 11500000, guid: 2870e6887e286944e98342de1a18fde8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filesImportedEvent: {fileID: 11400000, guid: 84b363a7049a9a04db505bfc5d96eb13, type: 2}
-  clearDataBaseEvent: {fileID: 11400000, guid: 612b7d7f10053904594717c96bc8a3d2, type: 2}
+  filesImportedEvent: {fileID: 11400000, guid: 16c1fcee2ce5c8a4c99c88dcd1b08721, type: 2}
+  clearDataBaseEvent: {fileID: 11400000, guid: e7d5f75271375d94b995dd90536228bd, type: 2}
