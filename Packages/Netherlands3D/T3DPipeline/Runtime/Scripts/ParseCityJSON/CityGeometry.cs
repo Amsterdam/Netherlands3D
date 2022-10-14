@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
@@ -22,25 +23,12 @@ namespace Netherlands3D.T3DPipeline
 
     public class CityGeometry
     {
-        public static readonly Dictionary<GeometryType, int> GeometryDepth = new Dictionary<GeometryType, int>{
-            {GeometryType.MultiPoint, 0 }, //A "MultiPoint" has an array with the indices of the vertices; this array can be empty.
-            {GeometryType.MultiLineString, 1 }, //A "MultiLineString" has an array of arrays, each containing the indices of a LineString
-            {GeometryType.MultiSurface, 2 }, //A "MultiSurface", or a "CompositeSurface", has an array containing surfaces, each surface is modelled by an array of array, the first array being the exterior boundary of the surface, and the others the interior boundaries.
-            {GeometryType.CompositeSurface, 2 },
-            {GeometryType.Solid, 3 }, //A "Solid" has an array of shells, the first array being the exterior shell of the solid, and the others the interior shells. Each shell has an array of surfaces, modelled in the exact same way as a MultiSurface/CompositeSurface.
-            {GeometryType.MultiSolid, 4 }, //A "MultiSolid", or a "CompositeSolid", has an array containing solids, each solid is modelled as above.
-            {GeometryType.CompositeSolid, 4 },
-        };
-
         public GeometryType Type { get; private set; }
         public int Lod { get; private set; }
-        private List<CityBoundary> boundaries; // we use this variable for the boundaries regardless of the geometry depth in this class. When requesting the array it is returned by GetBoundaries() in the correct depth
+        private CityBoundary boundaryObject;
         public bool IncludeSemantics { get; set; }
         public bool IncludeMaterials { get; set; }
         public bool IncludeTextures { get; set; }
-        //var Semantics;
-        //var Materials;
-        //var Textures;
 
         public static bool IsValidType(CityObjectType cityObjectType, GeometryType geometryType)
         {
@@ -93,35 +81,79 @@ namespace Netherlands3D.T3DPipeline
             }
         }
 
-        public CityGeometry(CityObjectType cityObjectType, GeometryType geometryType, int lod, bool includeSemantics, bool includeMaterials, bool includeTextures)
+        public CityGeometry(GeometryType geometryType, int lod, bool includeSemantics, bool includeMaterials, bool includeTextures)
         {
-            Assert.IsTrue(IsValidType(cityObjectType, geometryType));
             Type = geometryType;
             Lod = lod;
-            boundaries = new List<CityBoundary>();
-            boundaries.Add(new CityBoundary());
+            boundaryObject = CreateBoundaryObject(geometryType);
             IncludeSemantics = includeSemantics;
             IncludeMaterials = includeMaterials;
             IncludeTextures = includeTextures;
         }
 
-        public virtual JSONObject GetGeometryNode()
+        private CityBoundary CreateBoundaryObject(GeometryType geometryType)
+        {
+            switch (geometryType)
+            {
+                case GeometryType.MultiPoint:
+                    return new CityMultiPoint();
+                case GeometryType.MultiLineString:
+                    return new CityMultiLineString();
+                case GeometryType.MultiSurface:
+                    return new CityMultiOrCompositeSurface();
+                case GeometryType.CompositeSurface:
+                    return new CityMultiOrCompositeSurface();
+                case GeometryType.Solid:
+                    return new CitySolid();
+                case GeometryType.MultiSolid:
+                    return new CityMultiOrCompositSolid();
+                case GeometryType.CompositeSolid:
+                    return new CityMultiOrCompositSolid();
+                default:
+                    return null;
+            }
+        }
+
+        public virtual JSONObject GetGeometryNode(int indexOffset, out int vertexCount)
         {
             var geometryNode = new JSONObject();
             geometryNode["type"] = Type.ToString();
             geometryNode["lod"] = Lod;
-            geometryNode["boundaries"] = GetBoundariesNode();
+            geometryNode["boundaries"] = boundaryObject.GetBoundaries(indexOffset);
+            vertexCount = boundaryObject.VertexCount;
 
             if (IncludeSemantics)
                 geometryNode["semantics"] = GetSemantics();
-            if(IncludeMaterials)
+            if (IncludeMaterials)
                 geometryNode["material"] = GetMaterials();
-            if(IncludeTextures)
+            if (IncludeTextures)
                 geometryNode["texture"] = GetTextures();
 
             return geometryNode;
         }
 
+        public List<Vector3Double> GetVertices()
+        {
+            return boundaryObject.GetVertices();
+        }
+
+        public static CityGeometry FromJSONNode(JSONNode geometryNode, List<Vector3Double> combinedVertices)
+        {
+            var type = (GeometryType)Enum.Parse(typeof(GeometryType), geometryNode["type"]);
+            var lod = geometryNode["lod"].AsInt;
+
+            //private CityBoundary boundaryObject;
+            var includeSemantics = geometryNode["semantics"];
+            var includeMaterials = geometryNode["materials"];
+            var includeTextures = geometryNode["texture"];
+
+            var geometry = new CityGeometry(type, lod, includeSemantics, includeMaterials, includeTextures);
+            geometry.boundaryObject.FromJSONNode(geometryNode["boundaries"].AsArray, combinedVertices);
+
+            return geometry;
+        }
+
+        /*
         private JSONArray GetBoundariesNode()
         {
             var boundariesNode = new JSONArray();
@@ -167,6 +199,7 @@ namespace Netherlands3D.T3DPipeline
             }
             return boundariesNode;
         }
+        */
 
         protected virtual JSONNode GetSemantics()
         {

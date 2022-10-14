@@ -9,15 +9,22 @@ namespace Netherlands3D.T3DPipeline
     public class CityPolygon
     {
         public int[] LocalBoundaries { get; set; }
-        public Vector3[] Vertices { get; set; } // used by the CityJSONFormatter to add to the total vertices object
+        public Vector3Double[] Vertices { get; set; } // used by the CityJSONFormatter to add to the total vertices object
+        public int Count => LocalBoundaries.Length;
         //public bool BoundaryConverterIsSet { get; set; }
 
-        public Dictionary<int, int> localToAbsoluteBoundaryConverter { get; set; }  //note: this is only valid when generating the json
+        //public Dictionary<int, int> localToAbsoluteBoundaryConverter { get; set; }  //note: this is only valid when generating the json
 
-        public CityPolygon(Vector3[] vertices, int[] localBoundaries)
+        public CityPolygon(Vector3Double[] vertices, int[] localBoundaries)
         {
             Vertices = vertices;
             LocalBoundaries = localBoundaries;
+        }
+
+        public CityPolygon()
+        {
+            Vertices = new Vector3Double[0];
+            LocalBoundaries = new int[0];
         }
 
         //public void UpdateVertices(Vector3[] vertices)
@@ -25,12 +32,12 @@ namespace Netherlands3D.T3DPipeline
         //    Vertices = vertices;
         //}
 
-        public JSONNode GetJSONPolygon(bool isHole/*, Dictionary<int, int> localToAbsoluteBoundaryConverter*/)
+        public JSONArray GetJSONPolygon(bool isHole, int indexOffset)
         {
             int[] absoluteBoundaries = new int[LocalBoundaries.Length];
             for (int i = 0; i < LocalBoundaries.Length; i++)
             {
-                absoluteBoundaries[i] = localToAbsoluteBoundaryConverter[i]; //this relies on the CityJSONFormatter to set the absolute boundaries of this object before calling this function. This is not possible locally, since all vetices are stored in 1 big array in the CityJsonObject
+                absoluteBoundaries[i] = LocalBoundaries[i] + indexOffset; 
             }
 
             if (isHole)
@@ -43,6 +50,21 @@ namespace Netherlands3D.T3DPipeline
             }
 
             return boundaryArray;
+        }
+
+        public static CityPolygon FomJsonNode(JSONArray polygonNode, List<Vector3Double> combinedVertices)
+        {
+            var localIndices = new int[polygonNode.Count];
+            var localVertices = new Vector3Double[polygonNode.Count];
+
+            for (int i = 0; i < polygonNode.Count; i++)
+            {
+                localIndices[i] = i;
+                var absoluteIndex = polygonNode[i].AsInt;
+                localVertices[i] = combinedVertices[absoluteIndex];
+            }
+            var polygon = new CityPolygon(localVertices, localIndices);
+            return polygon;
         }
     }
 }
