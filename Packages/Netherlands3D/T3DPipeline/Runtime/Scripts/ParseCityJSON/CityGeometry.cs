@@ -27,6 +27,7 @@ namespace Netherlands3D.T3DPipeline
         public int Lod { get; private set; }
         private CityBoundary boundaryObject;
         public bool IncludeSemantics { get; set; }
+        private CityGeometrySemantics semantics;
         public bool IncludeMaterials { get; set; }
         public bool IncludeTextures { get; set; }
 
@@ -89,6 +90,9 @@ namespace Netherlands3D.T3DPipeline
             IncludeSemantics = includeSemantics;
             IncludeMaterials = includeMaterials;
             IncludeTextures = includeTextures;
+
+            if (includeSemantics)
+                semantics = new CityGeometrySemantics();
         }
 
         private CityBoundary CreateBoundaryObject(GeometryType geometryType)
@@ -106,9 +110,9 @@ namespace Netherlands3D.T3DPipeline
                 case GeometryType.Solid:
                     return new CitySolid();
                 case GeometryType.MultiSolid:
-                    return new CityMultiOrCompositSolid();
+                    return new CityMultiOrCompositeSolid();
                 case GeometryType.CompositeSolid:
-                    return new CityMultiOrCompositSolid();
+                    return new CityMultiOrCompositeSolid();
                 default:
                     return null;
             }
@@ -123,7 +127,7 @@ namespace Netherlands3D.T3DPipeline
             vertexCount = boundaryObject.VertexCount;
 
             if (IncludeSemantics)
-                geometryNode["semantics"] = GetSemantics();
+                geometryNode["semantics"] = semantics.GetSemanticObject();
             if (IncludeMaterials)
                 geometryNode["material"] = GetMaterials();
             if (IncludeTextures)
@@ -143,82 +147,42 @@ namespace Netherlands3D.T3DPipeline
             var lod = geometryNode["lod"].AsInt;
 
             //private CityBoundary boundaryObject;
-            var includeSemantics = geometryNode["semantics"];
-            var includeMaterials = geometryNode["materials"];
-            var includeTextures = geometryNode["texture"];
+            var semanticsNode = geometryNode["semantics"];
+            var materialsNode = geometryNode["materials"];
+            var texturesNode = geometryNode["texture"];
 
+            var includeSemantics = semanticsNode.Count > 0;
+            var includeMaterials = materialsNode.Count > 0;
+            var includeTextures = texturesNode.Count > 0;
+
+            Debug.Log(lod + "\t" + semanticsNode + "\t" + semanticsNode.Count);
             var geometry = new CityGeometry(type, lod, includeSemantics, includeMaterials, includeTextures);
             geometry.boundaryObject.FromJSONNode(geometryNode["boundaries"].AsArray, combinedVertices);
+            if (includeSemantics)
+                geometry.semantics.FromJSONNode(semanticsNode, geometry.boundaryObject);
 
             return geometry;
         }
 
-        /*
-        private JSONArray GetBoundariesNode()
-        {
-            var boundariesNode = new JSONArray();
-            var geometryDepth = GeometryDepth[Type];
+        //protected virtual JSONNode GetSemantics()
+        //{
 
-            var activeBoundariesNode = boundariesNode;
-            for (int i = 0; i < geometryDepth; i++)
-            {
-                var node = new JSONArray();
-                activeBoundariesNode.Add(node);
-                activeBoundariesNode = node;
-            }
 
-            activeBoundariesNode = boundariesNode;
-            for (int solidIndex = 0; solidIndex < boundaries.Count; solidIndex++)
-            {
-                var solid = boundaries[solidIndex].Boundaries;
-                activeBoundariesNode = activeBoundariesNode[solidIndex].AsArray;
-                for (int shellIndex = 0; shellIndex < solid.Count; shellIndex++)
-                {
-                    var shells = solid[shellIndex].Boundaries;
-                    activeBoundariesNode = activeBoundariesNode[shellIndex].AsArray;
-                    for (int surfaceIndex = 0; surfaceIndex < shells.Count; surfaceIndex++)
-                    {
-                        var surfaces = shells[surfaceIndex].Boundaries;
-                        activeBoundariesNode = activeBoundariesNode[surfaceIndex].AsArray;
-                        for (int polygonIndex = 0; polygonIndex < surfaces.Count; polygonIndex++)
-                        {
-                            var polygons = surfaces[polygonIndex].Polygons;
-                            activeBoundariesNode = activeBoundariesNode[polygonIndex].AsArray;
-                            for (int surfaceBoundaryIndex = 0; surfaceBoundaryIndex < polygons.Count; surfaceBoundaryIndex++)
-                            {
-                                var surfaceBoundary = polygons[surfaceBoundaryIndex].LocalBoundaries;
-                                activeBoundariesNode = activeBoundariesNode[surfaceBoundaryIndex].AsArray;
-                                for (int pointIndex = 0; pointIndex < surfaceBoundary.Length; pointIndex++)
-                                {
-                                    activeBoundariesNode.Add(surfaceBoundary[pointIndex]);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return boundariesNode;
-        }
-        */
+        //    var node = new JSONObject();
+        //    var surfaceSemantics = new JSONArray();
+        //    var indices = new JSONArray();
+        //    //todo: fix this
+        //    //for (int i = 0; i < Surfaces[lod].Length; i++)
+        //    //{
+        //    //    surfaceSemantics.Add(Surfaces[lod][i].GetSemanticObject(Surfaces[lod]));
+        //    //    indices.Add(i);
+        //    //}
 
-        protected virtual JSONNode GetSemantics()
-        {
-            throw new System.NotImplementedException();
-            var node = new JSONObject();
-            var surfaceSemantics = new JSONArray();
-            var indices = new JSONArray();
-            //todo: fix this
-            //for (int i = 0; i < Surfaces[lod].Length; i++)
-            //{
-            //    surfaceSemantics.Add(Surfaces[lod][i].GetSemanticObject(Surfaces[lod]));
-            //    indices.Add(i);
-            //}
+        //    node["surfaces"] = surfaceSemantics;
+        //    node["values"] = indices;
 
-            node["surfaces"] = surfaceSemantics;
-            node["values"] = indices;
-
-            return node;
-        }
+        //    return node;
+        //}
 
         private JSONNode GetMaterials()
         {

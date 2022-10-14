@@ -55,7 +55,6 @@ namespace Netherlands3D.T3DPipeline
                     vertArray.Add(vert.z);
                     RDVertices.Add(vertArray);
                 }
-                Debug.Log(RDVertices.ToString());
                 cityObjects[obj.Id] = cityObjectNode;
 
                 foreach (var geometry in cityObjectNode["geometry"])

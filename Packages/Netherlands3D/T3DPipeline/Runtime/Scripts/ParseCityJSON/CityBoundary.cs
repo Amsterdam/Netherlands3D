@@ -10,10 +10,6 @@ namespace Netherlands3D.T3DPipeline
 {
     public abstract class CityBoundary
     {
-        //public List<CityBoundary> Boundaries { get; private set; } = new List<CityBoundary>(1); //depth is dependant on GeometryType
-        //public CityBoundary OuterBoundary => Boundaries[0];
-        //public CityBoundary[] InteriorBoundaries => Boundaries.Skip(1).ToArray();
-
         public static readonly Dictionary<GeometryType, int> GeometryDepth = new Dictionary<GeometryType, int>{
             {GeometryType.MultiPoint, 0 }, //A "MultiPoint" has an array with the indices of the vertices; this array can be empty.
             {GeometryType.MultiLineString, 1 }, //A "MultiLineString" has an array of arrays, each containing the indices of a LineString
@@ -97,34 +93,9 @@ namespace Netherlands3D.T3DPipeline
 
     public class CitySurface : CityBoundary
     {
-        public enum SurfaceSemanticType
-        {
-            Null = 0,
-
-            RoofSurface = 1000,
-            GroundSurface = 1001,
-            WallSurface = 1002,
-            ClosureSurface = 1003,
-            OuterCeilingSurface = 1004,
-            OuterFloorSurface = 1005,
-            Window = 1006,
-            Door = 1007,
-
-            WaterSurface = 1130,
-            WaterGroundSurface = 1131,
-            WaterClosureSurface = 1132,
-
-            TrafficArea = 1080,
-            AuxiliaryTrafficArea = 1081,
-        }
-
         public List<CityPolygon> Polygons = new List<CityPolygon>() { new CityPolygon() };
         public CityPolygon SolidSurfacePolygon => Polygons[0];
         public CityPolygon[] HolePolygons => Polygons.Skip(1).ToArray();
-
-        public SurfaceSemanticType SurfaceType { get; set; }
-        private List<CitySurface> semanticChildren = new List<CitySurface>();
-        private CitySurface semanticParent;
 
         public override int VertexCount
         {
@@ -183,30 +154,6 @@ namespace Netherlands3D.T3DPipeline
         //    Polygons.Add(solidSurfacePolygon);
         //}
 
-        public static bool IsValidSemanticType(CityObjectType parent, SurfaceSemanticType type)
-        {
-            if (type == SurfaceSemanticType.Null) //no semantic type is always allowed
-                return true;
-
-            var testInt = (int)type / 10;
-            var parentInt = (int)parent / 10;
-
-            if (testInt == parentInt) //default test
-            {
-                return true;
-            }
-            if (testInt == parentInt - 100) // child test
-            {
-                return true;
-            }
-
-            if (testInt == 108 && (parent == CityObjectType.Road || parent == CityObjectType.Railway || parent == CityObjectType.TransportSquare)) //custom test
-            {
-                return true;
-            }
-            return false;
-        }
-
         public void TryAddHole(CityPolygon hole)
         {
             if (!Polygons.Contains(hole))
@@ -217,65 +164,6 @@ namespace Netherlands3D.T3DPipeline
         {
             if (Polygons.Contains(hole))
                 Polygons.Remove(hole);
-        }
-
-        public JSONNode GetSemanticObject(CitySurface[] allGeometrySurfaces)
-        {
-            var node = new JSONObject();
-            node["type"] = SurfaceType.ToString();
-            //node["name"] = name;
-
-            if (semanticParent != null)
-                node["parent"] = GetParentIndex(allGeometrySurfaces);
-
-            if (semanticChildren.Count > 0)
-            {
-                var childrenNode = new JSONArray();
-                var childIndices = GetChildIndices(allGeometrySurfaces);
-                foreach (var c in childIndices)
-                {
-                    childrenNode.Add(c);
-                }
-                node["children"] = childrenNode;
-            }
-            return node;
-        }
-
-        public void SetParent(CitySurface newParent)
-        {
-            if (semanticParent != null)
-                semanticParent.RemoveChild(this);
-
-            semanticParent = newParent;
-
-            if (semanticParent != null)
-                newParent.AddChild(this);
-        }
-
-        private void AddChild(CitySurface child)
-        {
-            Assert.IsFalse(semanticChildren.Contains(child));
-            semanticChildren.Add(child);
-        }
-
-        private void RemoveChild(CitySurface child)
-        {
-            semanticChildren.Remove(child);
-        }
-
-        private int GetParentIndex(CitySurface[] surfaces)
-        {
-            return Array.IndexOf(surfaces, semanticParent);
-        }
-
-        private int[] GetChildIndices(CitySurface[] surfaces)
-        {
-            var array = new int[semanticChildren.Count];
-            for (int i = 0; i < semanticChildren.Count; i++)
-            {
-                array[i] = Array.IndexOf(surfaces, semanticChildren[i]);
-            }
-            return array;
         }
     }
 
@@ -328,26 +216,6 @@ namespace Netherlands3D.T3DPipeline
         }
     }
 
-    //public class CityCompositeSurface : CityBoundary
-    //{
-    //    public List<CitySurface> Surfaces;
-    //    public override JSONArray GetBoundaries()
-    //    {
-    //        var boundariesNode = new JSONArray();
-    //        foreach (var surface in Surfaces)
-    //        {
-    //            var surfaceNode = new JSONArray();
-    //            surfaceNode.Add(surface.SolidSurfacePolygon.GetJSONPolygon(false));
-    //            foreach (var hole in surface.HolePolygons)
-    //            {
-    //                surfaceNode.Add(hole.GetJSONPolygon(true));
-    //            }
-    //            boundariesNode.Add(surfaceNode);
-    //        }
-    //        return boundariesNode;
-    //    }
-    //}
-
     public class CitySolid : CityBoundary
     {
         public List<CityMultiOrCompositeSurface> Shells = new List<CityMultiOrCompositeSurface>() { new CityMultiOrCompositeSurface() };
@@ -395,7 +263,7 @@ namespace Netherlands3D.T3DPipeline
         }
     }
 
-    public class CityMultiOrCompositSolid : CityBoundary
+    public class CityMultiOrCompositeSolid : CityBoundary
     {
         public List<CitySolid> Solids = new List<CitySolid>() { new CitySolid() };
         public override int VertexCount
@@ -441,18 +309,4 @@ namespace Netherlands3D.T3DPipeline
             return vertices;
         }
     }
-
-    //public class CityCompositeSolid : CityBoundary
-    //{
-    //    public List<CitySolid> Solids;
-    //    public override JSONArray GetBoundaries()
-    //    {
-    //        var boundariesNode = new JSONArray();
-    //        foreach (var solid in Solids)
-    //        {
-    //            boundariesNode.Add(solid.GetBoundaries());
-    //        }
-    //        return boundariesNode;
-    //    }
-    //}
 }
