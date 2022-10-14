@@ -424,6 +424,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &999163245 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3393316098423962949, guid: 4b4129e5750091044a4d2d24bd9a1378, type: 3}
+  m_PrefabInstance: {fileID: 8947418528697072798}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1113907980
 GameObject:
   m_ObjectHideFlags: 0
@@ -594,6 +599,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7078713874569698858, guid: c4bc061828770d145bbe098641827bbf, type: 3}
+      propertyPath: trigger.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 999163245}
     - target: {fileID: 7078713874569698861, guid: c4bc061828770d145bbe098641827bbf, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -685,7 +694,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6942872572225724982, guid: 4b4129e5750091044a4d2d24bd9a1378, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 489.9
+      value: 489.90002
       objectReference: {fileID: 0}
     - target: {fileID: 6942872572225724982, guid: 4b4129e5750091044a4d2d24bd9a1378, type: 3}
       propertyPath: m_SizeDelta.y

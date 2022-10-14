@@ -8,13 +8,16 @@ public class ObjImportManager : MonoBehaviour
 {
     [Header("required input")]
     [SerializeField] Material baseMaterial;
-    [SerializeField] TriggerEvent expectOBJFile;
     bool expectingObjFile = false;
-    [SerializeField] TriggerEvent expectMTLFile;
     bool expectingMTLFile = false;
     [SerializeField] StringEvent receiveFileToLoad;
-    [SerializeField] TriggerEvent startImporting;
     [SerializeField] TriggerEvent cancelImporting;
+
+    [Header("optional triggers")]
+    [SerializeField] TriggerEvent expectOBJFile;
+    [SerializeField] TriggerEvent expectMTLFile;
+    [SerializeField] TriggerEvent startImporting;
+
 
     [Header("optional output")]
     [SerializeField] BoolEvent ReadyForImport;
