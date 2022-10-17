@@ -52,6 +52,7 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] private bool snapToStart = true;
         [SerializeField, Tooltip("Closing a polygon shape is required. If set to false, you can output lines.")] private bool requireClosedPolygon = true;
         [SerializeField, Tooltip("If you click close to the starting point the loop will finish")] private bool closeLoopAtStart = true;
+        [SerializeField, Tooltip("Handles allow you to transform the line.")] private bool createHandles = false;
         [SerializeField] private int maxPoints = 1000;
         [SerializeField] private int minPointsToCloseLoop = 3;
         [SerializeField] private float minPointDistance = 0.1f;
@@ -93,6 +94,8 @@ namespace Netherlands3D.SelectionTools
         private float lastTapTime = 0;
 
         [SerializeField] private Transform pointerRepresentation;
+        [SerializeField] private PolygonDragHandle handleTemplate;
+        private List<PolygonDragHandle> handles = new List<PolygonDragHandle>();
 
         void Awake()
         {
@@ -118,6 +121,9 @@ namespace Netherlands3D.SelectionTools
             finishAction.performed += context => CloseLoop(true);
 
             worldPlane = (useWorldSpace) ? new Plane(Vector3.up, Vector3.zero) : new Plane(this.transform.up, this.transform.position);
+
+            if (handleTemplate) 
+                handleTemplate.gameObject.SetActive(false);
         }
 
         private void OnEnable()
@@ -167,7 +173,8 @@ namespace Netherlands3D.SelectionTools
         /// </summary>
         private void UpdatePreviewLine()
         {
-            if (positions.Count == 0 || closedLoop) return;
+            if (positions.Count == 0 || closedLoop) 
+                return;
 
             snappingToStartPoint = false;
             if(snapToStart && positions.Count > 2)
@@ -229,7 +236,10 @@ namespace Netherlands3D.SelectionTools
             return false;
         }
 
-
+        /// <summary>
+        /// Returns if lines intersect on a flat plane
+        /// </summary>
+        /// <returns></returns>
         public static bool LinesIntersectOnPlane(Vector3 lineOneA, Vector3 lineOneB, Vector3 lineTwoA, Vector3 lineTwoB)
         {
             return
@@ -344,6 +354,7 @@ namespace Netherlands3D.SelectionTools
         private void ClearPolygon(bool redraw = false)
         {
             polygonFinished = false;
+            ClearHandles();
 
             polygonLineRenderer.startColor = polygonLineRenderer.endColor = lineColor;
             closedLoop = false;
@@ -354,6 +365,18 @@ namespace Netherlands3D.SelectionTools
 
             if (redraw)
                 UpdateLine();
+        }
+
+        /// <summary>
+        /// Destroys all handle objects
+        /// </summary>
+        private void ClearHandles()
+        {
+            foreach (var handle in handles)
+            {
+                if (handle) Destroy(handle.gameObject);
+            }
+            handles.Clear();
         }
 
         private void AddPoint(Vector3 pointPosition)
@@ -368,6 +391,9 @@ namespace Netherlands3D.SelectionTools
                 previewLineRenderer.enabled = true;
                 selectionStartPosition = pointPosition;
                 positions.Add(pointPosition);
+                if (createHandles)
+                    CreateHandle(positions.Count - 1);
+
                 lastAddedPoint = pointPosition;
             }
             else if (previewLineCrossed)
@@ -384,17 +410,58 @@ namespace Netherlands3D.SelectionTools
             {
                 Debug.Log("Adding new point.");
                 positions.Add(pointPosition);
+                if (createHandles)
+                    CreateHandle(positions.Count - 1);
+
                 lastAddedPoint = pointPosition;
                 if ((positions.Count >= maxPoints) || closeLoopAtStart && snappingToStartPoint)
                 {
                     CloseLoop(true);
                 }
             }
-
-            
+     
 
             if (!closedLoop)
                 UpdateLine();
+        }
+
+        /// <summary>
+        /// Create a drag handle for line vertex position with index for changing its position
+        /// </summary>
+        /// <param name="positionIndex">Line vertex position index</param>
+        private void CreateHandle(int positionIndex)
+        {
+            var newHandle = Instantiate(handleTemplate, this.transform);
+            newHandle.gameObject.SetActive(true);
+            newHandle.pointIndex = positionIndex;
+            newHandle.transform.position = positions[positionIndex];
+
+            newHandle.clicked.AddListener(() =>
+            {
+                if(!closedLoop && newHandle.pointIndex == 0)
+                    CloseLoop(true);
+            });
+            newHandle.dragged.AddListener(() =>
+            {
+                MoveHandle(newHandle);
+            });
+            newHandle.endDrag.AddListener(() =>
+            {
+                FinishPolygon();
+            });
+
+            handles.Add(newHandle);
+        }
+
+        private void MoveHandle(PolygonDragHandle handle)
+        {
+            handle.transform.position = currentWorldCoordinate;
+            positions[handle.pointIndex] = currentWorldCoordinate;
+
+            if (closedLoop && handle.pointIndex == 0)
+                positions[positions.Count - 1] = currentWorldCoordinate;
+
+            UpdateLine();
         }
 
         /// <summary>
