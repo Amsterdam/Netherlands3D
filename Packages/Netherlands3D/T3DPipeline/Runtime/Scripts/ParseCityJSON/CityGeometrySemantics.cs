@@ -27,11 +27,13 @@ namespace Netherlands3D.T3DPipeline
         {
             if (Depth == 0)
             {
-                if (jsonArray == null)
+                //--- CityJSON 1.0 allows for Null propagation of arrays. CityJSON 1.1 seems to have lost support for this so delete this if-block when upgrading
+                if (jsonArray == null) 
                 {
                     Values = null;
                     return;
                 }
+                //---
 
                 foreach (var i in jsonArray)
                 {
@@ -43,11 +45,13 @@ namespace Netherlands3D.T3DPipeline
             }
             else
             {
+                //--- CityJSON 1.0 allows for Null propagation of arrays. CityJSON 1.1 seems to have lost support for this so delete this if-block when upgrading
                 if (jsonArray == null)
                 {
                     Array = null;
                     return;
                 }
+                //---
 
                 foreach (var arr in jsonArray)
                 {
@@ -61,8 +65,10 @@ namespace Netherlands3D.T3DPipeline
         public JSONArray GetValuesArray()
         {
             var jsonObject = new JSONArray();
+            //--- CityJSON 1.0 allows for Null propagation of arrays. CityJSON 1.1 seems to have lost support for this so delete this if-block when upgrading
             if (Values == null && Array == null)
                 return null;
+            //---
 
             if (Depth == 0)
             {
