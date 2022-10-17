@@ -464,6 +464,14 @@ namespace Netherlands3D.SelectionTools
             UpdateLine();
         }
 
+        private void MoveAllHandlesToPoint()
+        {
+            foreach(var handle in handles)
+            {
+                handle.transform.position = positions[handle.pointIndex];
+            }
+        }
+
         /// <summary>
         /// Apply positions to LineRenderer positions
         /// </summary>
@@ -507,6 +515,7 @@ namespace Netherlands3D.SelectionTools
             {
                 Debug.Log($"Forcing to {windingOrder}");
                 positions.Reverse();
+                MoveAllHandlesToPoint();
             }
 
             if(positions.Count > 1)
