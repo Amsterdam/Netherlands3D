@@ -44,7 +44,7 @@ namespace Netherlands3D.T3DPipeline
             }
             string exportJson = CityJSONFormatter.GetCityJSON();
             print(exportJson);
-            HandleTextFile.WriteString("export.json", exportJson);
+            //HandleTextFile.WriteString("export.json", exportJson);
         }
 
         public void ParseCityJSON(string cityJson, bool useAsRelativeRDCenter)
