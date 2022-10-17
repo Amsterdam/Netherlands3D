@@ -275,8 +275,8 @@ namespace Netherlands3D.T3DPipeline
                 MinExtent = new Vector3Double(minX, minY, minZ);
                 MaxExtent = new Vector3Double(maxX, maxY, maxZ);
 
-                Debug.Log("min: " + minX + "\t" + minY + "\t" + minZ);
-                Debug.Log("max: " + maxX + "\t" + maxY + "\t" + maxZ);
+                //Debug.Log("min: " + minX + "\t" + minY + "\t" + minZ);
+                //Debug.Log("max: " + maxX + "\t" + maxY + "\t" + maxZ);
             }
 
             //Parents and Children cannot be added here because they might not be parsed yet. Setting parents/children happens in CityJSONParser after all objects have been created.

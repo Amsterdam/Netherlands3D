@@ -17,6 +17,7 @@ namespace Netherlands3D.T3DPipeline
         public JSONNode Transform; //todo
         public JSONNode Appearance;
         public JSONNode GeometryTemplates;
+
         public CityObject[] CityObjects { get; private set; }
         public Vector3Double MinExtent, MaxExtent;
         public CoordinateSystem CoordinateSystem;
@@ -60,12 +61,6 @@ namespace Netherlands3D.T3DPipeline
 
             AddExtensionNodesToExporter(node);
 
-            CoordinateSystem = CoordinateSystem.Unity;
-            if (!Metadata.IsNull)
-            {
-                var coordinateSystemNode = Metadata["referenceSystem"];
-                CoordinateSystem = ParseCoordinateSystem(coordinateSystemNode);
-            }
             //vertices
             List<Vector3Double> parsedVertices = new List<Vector3Double>();
             foreach (var vert in node["vertices"])
@@ -73,29 +68,36 @@ namespace Netherlands3D.T3DPipeline
                 parsedVertices.Add(new Vector3Double(vert.Value.AsArray));
             }
 
-            var geographicalExtent = Metadata["geographicalExtent"];
-            if (geographicalExtent.Count > 0)
+            if (!Metadata.IsNull)
             {
-                MinExtent = new Vector3Double(geographicalExtent[0].AsDouble, geographicalExtent[1].AsDouble, geographicalExtent[2].AsDouble);
-                MaxExtent = new Vector3Double(geographicalExtent[3].AsDouble, geographicalExtent[4].AsDouble, geographicalExtent[5].AsDouble);
-            }
-            else
-            {
-                var minX = parsedVertices.Min(v => v.x);
-                var minY = parsedVertices.Min(v => v.y);
-                var minZ = parsedVertices.Min(v => v.z);
-                var maxX = parsedVertices.Max(v => v.x);
-                var maxY = parsedVertices.Max(v => v.y);
-                var maxZ = parsedVertices.Max(v => v.z);
+                var coordinateSystemNode = Metadata["referenceSystem"];
+                CoordinateSystem = ParseCoordinateSystem(coordinateSystemNode);
 
-                MinExtent = new Vector3Double(minX, minY, minZ);
-                MaxExtent = new Vector3Double(maxX, maxY, maxZ);
+                var geographicalExtent = Metadata["geographicalExtent"];
+                if (geographicalExtent.Count > 0)
+                {
+                    MinExtent = new Vector3Double(geographicalExtent[0].AsDouble, geographicalExtent[1].AsDouble, geographicalExtent[2].AsDouble);
+                    MaxExtent = new Vector3Double(geographicalExtent[3].AsDouble, geographicalExtent[4].AsDouble, geographicalExtent[5].AsDouble);
+                }
+                else
+                {
+                    var minX = parsedVertices.Min(v => v.x);
+                    var minY = parsedVertices.Min(v => v.y);
+                    var minZ = parsedVertices.Min(v => v.z);
+                    var maxX = parsedVertices.Max(v => v.x);
+                    var maxY = parsedVertices.Max(v => v.y);
+                    var maxZ = parsedVertices.Max(v => v.z);
+
+                    MinExtent = new Vector3Double(minX, minY, minZ);
+                    MaxExtent = new Vector3Double(maxX, maxY, maxZ);
+                }
             }
 
             Dictionary<JSONNode, CityObject> cityObjects = new Dictionary<JSONNode, CityObject>();
             foreach (var cityObjectNode in node["CityObjects"])
             {
                 var go = Instantiate(cityObjectPrefab, transform);
+                go.name = cityObjectNode.Key;
                 var co = go.GetComponent<CityObject>();
                 co.FromJSONNode(cityObjectNode.Key, cityObjectNode.Value, CoordinateSystem, parsedVertices);
                 cityObjects.Add(cityObjectNode.Value, co);

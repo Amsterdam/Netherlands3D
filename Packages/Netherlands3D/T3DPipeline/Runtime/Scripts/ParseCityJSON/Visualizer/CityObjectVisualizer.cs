@@ -16,6 +16,7 @@ namespace Netherlands3D.T3DPipeline
 
         [SerializeField]
         private int activeLOD;
+        public int ActiveLod => activeLOD;
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -28,19 +29,13 @@ namespace Netherlands3D.T3DPipeline
         private void Start()
         {
             meshFilter = GetComponent<MeshFilter>();
-            //if (!meshFilter)
-            //    meshFilter = gameObject.AddComponent<MeshFilter>();
             var cityObject = GetComponent<CityObject>();
-            print("centerpoint: " + cityObject.RelativeCenter.x + "\t" + cityObject.RelativeCenter.y + "\t" + cityObject.RelativeCenter.z);
             meshes = CreateMeshes(cityObject);
 
             var highestLod = meshes.Keys.Max(g => g.Lod);
             SetLODActive(highestLod);
 
             transform.position = SetPosition(cityObject);
-
-            foreach (var v in meshFilter.mesh.vertices)
-                print(v);
         }
 
         private Vector3 SetPosition(CityObject cityObject)
