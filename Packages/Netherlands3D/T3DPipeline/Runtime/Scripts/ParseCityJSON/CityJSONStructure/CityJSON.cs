@@ -57,11 +57,11 @@ namespace Netherlands3D.T3DPipeline
             //optional data
             Extensions = node["extensions"];
             Metadata = node["metadata"];
-            Appearance = node["appearance"];
-            GeometryTemplates = node["geometry-templates"];
+            Appearance = node["appearance"]; //todo: not implemented yet
+            GeometryTemplates = node["geometry-templates"]; //todo: not implemented yet
             var transformNode = node["transform"];
 
-            if(transformNode.Count > 0)
+            if (transformNode.Count > 0)
             {
                 TransformScale = new Vector3Double(transformNode["scale"][0], transformNode["scale"][1], transformNode["scale"][2]);
                 TransformTranslate = new Vector3Double(transformNode["translate"][0], transformNode["translate"][1], transformNode["translate"][2]);
@@ -76,12 +76,11 @@ namespace Netherlands3D.T3DPipeline
                 var vert = new Vector3Double(vertArray.Value.AsArray);
                 vert *= TransformScale;
                 vert += TransformTranslate;
-                parsedVertices.Add(vert);                
+                parsedVertices.Add(vert);
             }
 
             if (Metadata.Count > 0)
             {
-                print("parsing metadata");
                 var coordinateSystemNode = Metadata["referenceSystem"];
                 CoordinateSystem = ParseCoordinateSystem(coordinateSystemNode);
 
@@ -173,7 +172,7 @@ namespace Netherlands3D.T3DPipeline
             if (CoordinateSystem == CoordinateSystem.RD)
             {
                 var relativeCenterRD = (MinExtent + MaxExtent) / 2;
-                Debug.Log("Setting Relative RD Center to: x:" + relativeCenterRD.x + "\ty:" + relativeCenterRD.y + "\th:" + relativeCenterRD.z);
+                Debug.Log("Setting Relative RD Center to: " + relativeCenterRD);
                 CoordConvert.zeroGroundLevelY = (float)relativeCenterRD.z;
                 CoordConvert.relativeCenterRD = new Vector2RD(relativeCenterRD.x, relativeCenterRD.y);
             }
