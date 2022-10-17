@@ -58,4 +58,14 @@ public struct Vector3Double
     {
         return new Vector3Double(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
     }
+
+    public static Vector3Double operator *(Vector3Double lhs, Vector3Double rhs)
+    {
+        return new Vector3Double(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z);
+    }
+
+    public override string ToString()
+    {
+        return "(" + x + ", " + y + "," + z + ")";
+    }
 }

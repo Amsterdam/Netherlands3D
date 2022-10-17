@@ -11,16 +11,18 @@ namespace Netherlands3D.T3DPipeline
     {
         private static string[] definedNodes = { "type", "version", "CityObjects", "vertices", "extensions", "metadata", "transform", "appearance", "geometry-templates" };
 
-        public string Version;
-        public JSONNode Extensions;
-        public JSONNode Metadata;
-        public JSONNode Transform; //todo
-        public JSONNode Appearance;
-        public JSONNode GeometryTemplates;
+        public string Version { get; private set; }
+        public JSONNode Extensions { get; private set; }
+        public JSONNode Metadata { get; private set; }
+        public Vector3Double TransformScale { get; private set; } = new Vector3Double(1d, 1d, 1d);
+        public Vector3Double TransformTranslate { get; private set; } = new Vector3Double(0d, 0d, 0d);
+        public JSONNode Appearance { get; private set; }
+        public JSONNode GeometryTemplates { get; private set; }
 
         public CityObject[] CityObjects { get; private set; }
-        public Vector3Double MinExtent, MaxExtent;
-        public CoordinateSystem CoordinateSystem;
+        public Vector3Double MinExtent { get; private set; }
+        public Vector3Double MaxExtent { get; private set; }
+        public CoordinateSystem CoordinateSystem { get; private set; }
 
         [SerializeField]
         private TextAsset testJson;
@@ -38,7 +40,7 @@ namespace Netherlands3D.T3DPipeline
 
             foreach (var co in CityObjects)
             {
-                co.gameObject.AddComponent<CityObjectVisualizer>();
+                co.gameObject.GetComponent<CityObjectVisualizer>();
             }
             string exportJson = CityJSONFormatter.GetCityJSON();
             print(exportJson);
@@ -55,21 +57,31 @@ namespace Netherlands3D.T3DPipeline
             //optional data
             Extensions = node["extensions"];
             Metadata = node["metadata"];
-            Transform = node["transform"];
             Appearance = node["appearance"];
             GeometryTemplates = node["geometry-templates"];
+            var transformNode = node["transform"];
+
+            if(transformNode.Count > 0)
+            {
+                TransformScale = new Vector3Double(transformNode["scale"][0], transformNode["scale"][1], transformNode["scale"][2]);
+                TransformTranslate = new Vector3Double(transformNode["translate"][0], transformNode["translate"][1], transformNode["translate"][2]);
+            }
 
             AddExtensionNodesToExporter(node);
 
             //vertices
             List<Vector3Double> parsedVertices = new List<Vector3Double>();
-            foreach (var vert in node["vertices"])
+            foreach (var vertArray in node["vertices"])
             {
-                parsedVertices.Add(new Vector3Double(vert.Value.AsArray));
+                var vert = new Vector3Double(vertArray.Value.AsArray);
+                vert *= TransformScale;
+                vert += TransformTranslate;
+                parsedVertices.Add(vert);                
             }
 
-            if (!Metadata.IsNull)
+            if (Metadata.Count > 0)
             {
+                print("parsing metadata");
                 var coordinateSystemNode = Metadata["referenceSystem"];
                 CoordinateSystem = ParseCoordinateSystem(coordinateSystemNode);
 
