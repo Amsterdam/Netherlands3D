@@ -25,13 +25,15 @@ namespace Netherlands3D.T3DPipeline
         private TextAsset testJson;
         [SerializeField]
         private GameObject cityObjectPrefab;
+        [SerializeField]
+        private bool useAsRelativeRDCenter;
 
         protected void Start()
         {
             print(testJson.text);
             //var cityObjects = CityJSONParser.ParseCityJSON(testJson.text);
             //var parsedJson = new CityJSON(testJson.text, true);
-            ParseCityJSON(testJson.text, true);
+            ParseCityJSON(testJson.text, useAsRelativeRDCenter);
 
             foreach (var co in CityObjects)
             {
