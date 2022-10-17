@@ -7,7 +7,7 @@ using UnityEngine.Assertions;
 
 namespace Netherlands3D.T3DPipeline
 {
-    public class CityJSON
+    public class CityJSON : MonoBehaviour
     {
         private static string[] definedNodes = { "type", "version", "CityObjects", "vertices", "extensions", "metadata", "transform", "appearance", "geometry-templates" };
 
@@ -21,7 +21,28 @@ namespace Netherlands3D.T3DPipeline
         public Vector3Double MinExtent, MaxExtent;
         public CoordinateSystem CoordinateSystem;
 
-        public CityJSON(string cityJson)
+        [SerializeField]
+        private TextAsset testJson;
+        [SerializeField]
+        private GameObject cityObjectPrefab;
+
+        protected void Start()
+        {
+            print(testJson.text);
+            //var cityObjects = CityJSONParser.ParseCityJSON(testJson.text);
+            //var parsedJson = new CityJSON(testJson.text, true);
+            ParseCityJSON(testJson.text, true);
+
+            foreach (var co in CityObjects)
+            {
+                co.gameObject.AddComponent<CityObjectVisualizer>();
+            }
+            string exportJson = CityJSONFormatter.GetCityJSON();
+            print(exportJson);
+            HandleTextFile.WriteString("export.json", exportJson);
+        }
+
+        public void ParseCityJSON(string cityJson, bool useAsRelativeRDCenter)
         {
             var node = JSONNode.Parse(cityJson);
             var type = node["type"];
@@ -72,8 +93,8 @@ namespace Netherlands3D.T3DPipeline
             Dictionary<JSONNode, CityObject> cityObjects = new Dictionary<JSONNode, CityObject>();
             foreach (var cityObjectNode in node["CityObjects"])
             {
-                var go = new GameObject(cityObjectNode.Key);
-                var co = go.AddComponent<CityObject>();
+                var go = Instantiate(cityObjectPrefab, transform);
+                var co = go.GetComponent<CityObject>();
                 co.FromJSONNode(cityObjectNode.Key, cityObjectNode.Value, CoordinateSystem, parsedVertices);
                 cityObjects.Add(cityObjectNode.Value, co);
             }
@@ -92,6 +113,9 @@ namespace Netherlands3D.T3DPipeline
             }
 
             CityObjects = cityObjects.Values.ToArray();
+
+            if (useAsRelativeRDCenter)
+                SetRelativeCenter();
         }
 
         private static CoordinateSystem ParseCoordinateSystem(JSONNode coordinateSystemNode)
@@ -127,19 +151,16 @@ namespace Netherlands3D.T3DPipeline
                 CityJSONFormatter.RemoveExtensionNode(node.Key);
             }
         }
+
+        private void SetRelativeCenter()
+        {
+            if (CoordinateSystem == CoordinateSystem.RD)
+            {
+                var relativeCenterRD = (MinExtent + MaxExtent) / 2;
+                Debug.Log("Setting Relative RD Center to: x:" + relativeCenterRD.x + "\ty:" + relativeCenterRD.y + "\th:" + relativeCenterRD.z);
+                CoordConvert.zeroGroundLevelY = (float)relativeCenterRD.z;
+                CoordConvert.relativeCenterRD = new Vector2RD(relativeCenterRD.x, relativeCenterRD.y);
+            }
+        }
     }
-
-    //public static class CityJSONParser
-    //{
-
-    //    public static string version;
-    //    public static JSONNode extensions;
-    //    public static JSONNode metadata;
-    //    public static JSONNode transform;
-    //    public static JSONNode appearance;
-    //    public static JSONNode geometryTemplates;
-
-
-
-    //}
 }

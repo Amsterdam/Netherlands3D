@@ -331,27 +331,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1495255564}
-  - component: {fileID: 1495255563}
+  - component: {fileID: 1495255565}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: CityJSONParser
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1495255563
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1495255562}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e4c44787a1e745c493929eddfe01fb0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  testJson: {fileID: 4900000, guid: 0e932e6ec1a2c437e88c066aa54faf4e, type: 3}
 --- !u!4 &1495255564
 Transform:
   m_ObjectHideFlags: 0
@@ -367,3 +354,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1495255565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1495255562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36187846006a245e39b1c2c56fb7a686, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Version: 
+  MinExtent:
+    x: 0
+    y: 0
+    z: 0
+  MaxExtent:
+    x: 0
+    y: 0
+    z: 0
+  CoordinateSystem: 0
+  testJson: {fileID: 4900000, guid: 0e932e6ec1a2c437e88c066aa54faf4e, type: 3}
+  cityObjectPrefab: {fileID: 1807838613596807431, guid: 5db4ea97f9b3f4daa97b8121c433dd2c, type: 3}
