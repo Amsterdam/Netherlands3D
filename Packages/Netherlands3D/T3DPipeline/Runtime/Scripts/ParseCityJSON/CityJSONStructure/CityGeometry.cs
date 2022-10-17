@@ -25,11 +25,11 @@ namespace Netherlands3D.T3DPipeline
     {
         public GeometryType Type { get; private set; }
         public int Lod { get; private set; }
-        private CityBoundary boundaryObject;
+        public CityBoundary BoundaryObject { get; private set; }
         public bool IncludeSemantics { get; set; }
         private CityGeometrySemantics semantics;
-        public bool IncludeMaterials { get; set; }
-        public bool IncludeTextures { get; set; }
+        public bool IncludeMaterials { get; set; } //todo: Materials currently not implemented yet
+        public bool IncludeTextures { get; set; } //todo: Textures currently not implemented yet
 
         public static bool IsValidType(CityObjectType cityObjectType, GeometryType geometryType)
         {
@@ -86,7 +86,7 @@ namespace Netherlands3D.T3DPipeline
         {
             Type = geometryType;
             Lod = lod;
-            boundaryObject = CreateBoundaryObject(geometryType);
+            BoundaryObject = CreateBoundaryObject(geometryType);
             IncludeSemantics = includeSemantics;
             IncludeMaterials = includeMaterials;
             IncludeTextures = includeTextures;
@@ -123,8 +123,8 @@ namespace Netherlands3D.T3DPipeline
             var geometryNode = new JSONObject();
             geometryNode["type"] = Type.ToString();
             geometryNode["lod"] = Lod;
-            geometryNode["boundaries"] = boundaryObject.GetBoundaries(indexOffset);
-            vertexCount = boundaryObject.VertexCount;
+            geometryNode["boundaries"] = BoundaryObject.GetBoundaries(indexOffset);
+            vertexCount = BoundaryObject.VertexCount;
 
             if (IncludeSemantics)
                 geometryNode["semantics"] = semantics.GetSemanticObject();
@@ -138,7 +138,7 @@ namespace Netherlands3D.T3DPipeline
 
         public List<Vector3Double> GetVertices()
         {
-            return boundaryObject.GetVertices();
+            return BoundaryObject.GetVertices();
         }
 
         public static CityGeometry FromJSONNode(JSONNode geometryNode, List<Vector3Double> combinedVertices)
@@ -156,32 +156,12 @@ namespace Netherlands3D.T3DPipeline
             var includeTextures = texturesNode.Count > 0;
 
             var geometry = new CityGeometry(type, lod, includeSemantics, includeMaterials, includeTextures);
-            geometry.boundaryObject.FromJSONNode(geometryNode["boundaries"].AsArray, combinedVertices);
+            geometry.BoundaryObject.FromJSONNode(geometryNode["boundaries"].AsArray, combinedVertices);
             if (includeSemantics)
-                geometry.semantics.FromJSONNode(semanticsNode, geometry.boundaryObject);
+                geometry.semantics.FromJSONNode(semanticsNode, geometry.BoundaryObject);
 
             return geometry;
         }
-
-        //protected virtual JSONNode GetSemantics()
-        //{
-
-
-        //    var node = new JSONObject();
-        //    var surfaceSemantics = new JSONArray();
-        //    var indices = new JSONArray();
-        //    //todo: fix this
-        //    //for (int i = 0; i < Surfaces[lod].Length; i++)
-        //    //{
-        //    //    surfaceSemantics.Add(Surfaces[lod][i].GetSemanticObject(Surfaces[lod]));
-        //    //    indices.Add(i);
-        //    //}
-
-        //    node["surfaces"] = surfaceSemantics;
-        //    node["values"] = indices;
-
-        //    return node;
-        //}
 
         private JSONNode GetMaterials()
         {

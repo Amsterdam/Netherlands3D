@@ -39,4 +39,23 @@ public struct Vector3Double
         return array;
     }
 
+    public static Vector3Double operator +(Vector3Double lhs, Vector3Double rhs)
+    {
+        return new Vector3Double(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
+    }
+
+    public static Vector3Double operator -(Vector3Double lhs, Vector3Double rhs)
+    {
+        return new Vector3Double(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
+    }
+
+    public static Vector3Double operator *(Vector3Double lhs, double rhs)
+    {
+        return new Vector3Double(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs);
+    }
+
+    public static Vector3Double operator /(Vector3Double lhs, double rhs)
+    {
+        return new Vector3Double(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
+    }
 }

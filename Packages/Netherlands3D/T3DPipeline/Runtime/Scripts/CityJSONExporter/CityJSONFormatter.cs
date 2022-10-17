@@ -45,7 +45,7 @@ namespace Netherlands3D.T3DPipeline
             foreach (var obj in CityObjects)
             {
                 var cityObjectNode = obj.GetJsonObject(indexOffset);
-                var verts = obj.GetGeometryVertices(); //todo: getting vertices like this is inefficient but readable
+                var verts = obj.GetGeometryVertices(); // getting vertices like this is inefficient but readable.
                 indexOffset += verts.Count;
                 foreach (var vert in verts) //todo: remove duplicate vertices, and make indices point to the same one, HashSet<T> is probably fastest for this
                 {
