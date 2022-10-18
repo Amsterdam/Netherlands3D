@@ -11,9 +11,6 @@ namespace Netherlands3D.T3DPipeline
         public int[] LocalBoundaries { get; set; }
         public Vector3Double[] Vertices { get; set; } // used by the CityJSONFormatter to add to the total vertices object
         public int Count => LocalBoundaries.Length;
-        //public bool BoundaryConverterIsSet { get; set; }
-
-        //public Dictionary<int, int> localToAbsoluteBoundaryConverter { get; set; }  //note: this is only valid when generating the json
 
         public CityPolygon(Vector3Double[] vertices, int[] localBoundaries)
         {
@@ -27,17 +24,24 @@ namespace Netherlands3D.T3DPipeline
             LocalBoundaries = new int[0];
         }
 
-        //public void UpdateVertices(Vector3[] vertices)
-        //{
-        //    Vertices = vertices;
-        //}
-
-        public JSONArray GetJSONPolygon(bool isHole, int indexOffset)
+        public JSONArray GetJSONPolygonAndAddNewVertices(bool isHole, Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
             int[] absoluteBoundaries = new int[LocalBoundaries.Length];
+            var indexOffset = currentCityJSONVertices.Count;
             for (int i = 0; i < LocalBoundaries.Length; i++)
             {
-                absoluteBoundaries[i] = LocalBoundaries[i] + indexOffset; 
+                var localIndex = LocalBoundaries[i];
+                var vert = Vertices[localIndex];
+                if (currentCityJSONVertices.ContainsKey(vert))
+                {
+                    var absoluteIndex = currentCityJSONVertices[vert];
+                    absoluteBoundaries[i] = absoluteIndex;
+                }
+                else
+                {
+                    absoluteBoundaries[i] = LocalBoundaries[i] + indexOffset;
+                    currentCityJSONVertices.Add(vert, absoluteBoundaries[i]); //add new vertex 
+                }
             }
 
             if (isHole)

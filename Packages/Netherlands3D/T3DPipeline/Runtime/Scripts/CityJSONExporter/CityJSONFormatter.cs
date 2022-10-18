@@ -41,20 +41,11 @@ namespace Netherlands3D.T3DPipeline
             RootObject["metadata"] = Metadata;
             RootObject["CityObjects"] = cityObjects;
 
-            var indexOffset = RDVertices.Count;
+            //var indexOffset = RDVertices.Count;
+            Dictionary<Vector3Double, int> currentCityJSONVertices = new Dictionary<Vector3Double, int>();
             foreach (var obj in CityObjects)
             {
-                var cityObjectNode = obj.GetJsonObject(indexOffset);
-                var verts = obj.GetGeometryVertices(); // getting vertices like this is inefficient but readable.
-                indexOffset += verts.Count;
-                foreach (var vert in verts) //todo: remove duplicate vertices, and make indices point to the same one, HashSet<T> is probably fastest for this
-                {
-                    var vertArray = new JSONArray();
-                    vertArray.Add(vert.x);
-                    vertArray.Add(vert.y);
-                    vertArray.Add(vert.z);
-                    RDVertices.Add(vertArray);
-                }
+                var cityObjectNode = obj.GetJsonObjectAndAddVertices(currentCityJSONVertices); // currentCityJSONVertices gets updated in CityPolygon.cs
                 cityObjects[obj.Id] = cityObjectNode;
 
                 foreach (var geometry in cityObjectNode["geometry"])
@@ -64,6 +55,14 @@ namespace Netherlands3D.T3DPipeline
                     presentLoDs[lodKey] = lodCount + 1;
                 }
 
+            }
+            foreach (var vert in currentCityJSONVertices.Keys)
+            {
+                var vertArray = new JSONArray();
+                vertArray.Add(vert.x);
+                vertArray.Add(vert.y);
+                vertArray.Add(vert.z);
+                RDVertices.Add(vertArray);
             }
             RootObject["vertices"] = RDVertices;
             Metadata.Add("presentLoDs", presentLoDs);

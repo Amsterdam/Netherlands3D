@@ -75,35 +75,6 @@ namespace Netherlands3D.T3DPipeline
         public CityObject[] CityChildren => cityChildren.ToArray();
         public CityObject[] CityParents { get; private set; } = new CityObject[0];
 
-
-
-        //protected int activeLod = 3;
-        //public int ActiveLod => activeLod;
-
-        //public Dictionary<int, List<CitySurface[]>> Solids { get; protected set; }
-        //public Dictionary<int, CitySurface[]> Surfaces //todo: don't recaluclate every time
-        //{
-        //    get
-        //    {
-        //        var surfaces = new Dictionary<int, CitySurface[]>();
-        //        foreach (var solid in Solids)
-        //        {
-        //            surfaces.Add(solid.Key, solid.Value[0]);
-        //        }
-        //        return surfaces;
-        //    }
-        //}
-        //public CitySurface[] Surfaces => Solids[activeLod][0];
-
-
-        //public abstract CitySurface[] GetSurfaces();
-
-        //[SerializeField]
-        //protected bool includeSemantics;
-        //[SerializeField]
-        //protected bool isMainBuilding;
-        //protected MeshFilter meshFilter;
-
         private void OnEnable()
         {
             CityJSONFormatter.AddCityObejct(this);
@@ -112,34 +83,6 @@ namespace Netherlands3D.T3DPipeline
         {
             CityJSONFormatter.RemoveCityObject(this);
         }
-
-        //protected virtual void Start()
-        //{
-        //    meshFilter = GetComponent<MeshFilter>();
-        //    UpdateSurfaces();
-        //    var bagId = ServiceLocator.GetService<T3DInit>().HTMLData.BagId;
-        //    SetID(bagId);
-        //}
-
-        //public void SetID(string bagId)
-        //{
-        //    if (isMainBuilding)
-        //    {
-        //        Id = IdPrefix + bagId;
-        //        return;
-        //    }
-
-        //    Id = IdPrefix + bagId + "-" + IdCounter;
-        //    IdCounter++;
-        //}
-
-        //public virtual void UpdateSurfaces()
-        //{
-        //    Solids = new Dictionary<int, List<CitySurface[]>>();
-        //    var outerShell = new List<CitySurface[]>() { GetSurfaces() };
-        //    Solids.Add(activeLod, outerShell); //todo: fix this for different geometry types, currently this is based on a multisurface
-        //    //Surfaces = GetSurfaces();
-        //}
 
         public void SetParents(CityObject[] newParents)
         {
@@ -172,7 +115,7 @@ namespace Netherlands3D.T3DPipeline
             return false;
         }
 
-        public JSONObject GetJsonObject(int indexOffset)
+        public JSONObject GetJsonObjectAndAddVertices(Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
             var obj = new JSONObject();
             obj["type"] = Type.ToString();
@@ -197,12 +140,10 @@ namespace Netherlands3D.T3DPipeline
             }
 
 
-            //obj["geometry"] = new JSONArray();
             var geometryArray = new JSONArray();
             foreach (var g in Geometries)
             {
-                geometryArray.Add(g.GetGeometryNode(indexOffset, out int vertexCount));
-                indexOffset += vertexCount;
+                geometryArray.Add(g.GetGeometryNodeAndAddVertices(currentCityJSONVertices));
             }
             obj["geometry"] = geometryArray;
 
@@ -210,17 +151,15 @@ namespace Netherlands3D.T3DPipeline
             if (attributes.Count > 0)
                 obj["attributes"] = attributes;
 
-            //if (geographicalExtentIsSet)
-            //{
-                var extentArray = new JSONArray();
-                extentArray.Add(MinExtent.x);
-                extentArray.Add(MinExtent.y);
-                extentArray.Add(MinExtent.z);
-                extentArray.Add(MaxExtent.x);
-                extentArray.Add(MaxExtent.y);
-                extentArray.Add(MaxExtent.z);
-                obj["geographicalExtent"] = extentArray;
-            //}
+            var extentArray = new JSONArray();
+            extentArray.Add(MinExtent.x);
+            extentArray.Add(MinExtent.y);
+            extentArray.Add(MinExtent.z);
+            extentArray.Add(MaxExtent.x);
+            extentArray.Add(MaxExtent.y);
+            extentArray.Add(MaxExtent.z);
+            obj["geographicalExtent"] = extentArray;
+
             return obj;
         }
 
@@ -274,9 +213,6 @@ namespace Netherlands3D.T3DPipeline
 
                 MinExtent = new Vector3Double(minX, minY, minZ);
                 MaxExtent = new Vector3Double(maxX, maxY, maxZ);
-
-                //Debug.Log("min: " + minX + "\t" + minY + "\t" + minZ);
-                //Debug.Log("max: " + maxX + "\t" + maxY + "\t" + maxZ);
             }
 
             //Parents and Children cannot be added here because they might not be parsed yet. Setting parents/children happens in CityJSONParser after all objects have been created.

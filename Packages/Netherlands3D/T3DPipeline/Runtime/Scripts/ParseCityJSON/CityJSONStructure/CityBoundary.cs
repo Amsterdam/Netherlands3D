@@ -22,7 +22,7 @@ namespace Netherlands3D.T3DPipeline
 
         public abstract int VertexCount { get; }
         public abstract void FromJSONNode(JSONArray boundariesNode, List<Vector3Double> combinedVertices);
-        public abstract JSONArray GetBoundaries(int indexOffset);
+        public abstract JSONArray GetBoundariesAndAddNewVertices(Dictionary<Vector3Double, int> currentCityJSONVertices);
         public abstract List<Vector3Double> GetVertices();
     }
 
@@ -35,9 +35,9 @@ namespace Netherlands3D.T3DPipeline
         {
             Polygon = CityPolygon.FomJsonNode(boundariesNode, combinedVertices);
         }
-        public override JSONArray GetBoundaries(int indexOffset)
+        public override JSONArray GetBoundariesAndAddNewVertices(Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
-            return Polygon.GetJSONPolygon(false, indexOffset);
+            return Polygon.GetJSONPolygonAndAddNewVertices(false, currentCityJSONVertices);
         }
         public override List<Vector3Double> GetVertices()
         {
@@ -69,14 +69,13 @@ namespace Netherlands3D.T3DPipeline
             }
         }
 
-        public override JSONArray GetBoundaries(int indexOffset)
+        public override JSONArray GetBoundariesAndAddNewVertices(Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
             var node = new JSONArray();
             foreach (var polygon in Polygons)
             {
-                var polygonNode = polygon.GetJSONPolygon(false, indexOffset);
+                var polygonNode = polygon.GetJSONPolygonAndAddNewVertices(false, currentCityJSONVertices);
                 node.Add(polygonNode);
-                indexOffset += polygon.Count;
             }
             return node;
         }
@@ -119,21 +118,19 @@ namespace Netherlands3D.T3DPipeline
             }
         }
 
-        public override JSONArray GetBoundaries(int indexOffset)
+        public override JSONArray GetBoundariesAndAddNewVertices(Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
             var surfaceArray = new JSONArray(); //defines the entire surface with holes
 
             // the following line and loop could be replaced by 1 loop through all the polygons of the surface, but separating them makes it clearer how the structure of the array works
 
             // add surface
-            surfaceArray.Add(SolidSurfacePolygon.GetJSONPolygon(false, indexOffset));
-            indexOffset += SolidSurfacePolygon.Count;
+            surfaceArray.Add(SolidSurfacePolygon.GetJSONPolygonAndAddNewVertices(false, currentCityJSONVertices));
             // add holes
             var holes = HolePolygons;
             for (int i = 0; i < holes.Length; i++)
             {
-                surfaceArray.Add(holes[i].GetJSONPolygon(true, indexOffset));
-                indexOffset += holes[i].Count;
+                surfaceArray.Add(holes[i].GetJSONPolygonAndAddNewVertices(true, currentCityJSONVertices));
             }
             return surfaceArray;
         }
@@ -147,12 +144,6 @@ namespace Netherlands3D.T3DPipeline
             }
             return vertices;
         }
-
-        //public CitySurface(CityPolygon solidSurfacePolygon, SurfaceSemanticType type = SurfaceSemanticType.Null)
-        //{
-        //    SurfaceType = type;
-        //    Polygons.Add(solidSurfacePolygon);
-        //}
 
         public void TryAddHole(CityPolygon hole)
         {
@@ -193,13 +184,12 @@ namespace Netherlands3D.T3DPipeline
             }
         }
 
-        public override JSONArray GetBoundaries(int indexOffset)
+        public override JSONArray GetBoundariesAndAddNewVertices(Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
             var boundariesNode = new JSONArray();
             foreach (var surface in Surfaces)
             {
-                var surfaceNode = surface.GetBoundaries(indexOffset);
-                indexOffset += surface.VertexCount;
+                var surfaceNode = surface.GetBoundariesAndAddNewVertices(currentCityJSONVertices);
                 boundariesNode.Add(surfaceNode);
             }
             return boundariesNode;
@@ -241,13 +231,12 @@ namespace Netherlands3D.T3DPipeline
             }
         }
 
-        public override JSONArray GetBoundaries(int indexOffset)
+        public override JSONArray GetBoundariesAndAddNewVertices(Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
             var boundariesNode = new JSONArray();
             foreach (var shell in Shells)
             {
-                boundariesNode.Add(shell.GetBoundaries(indexOffset));
-                indexOffset += shell.VertexCount;
+                boundariesNode.Add(shell.GetBoundariesAndAddNewVertices(currentCityJSONVertices));
             }
             return boundariesNode;
         }
@@ -288,13 +277,12 @@ namespace Netherlands3D.T3DPipeline
             }
         }
 
-        public override JSONArray GetBoundaries(int indexOffset)
+        public override JSONArray GetBoundariesAndAddNewVertices(Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
             var boundariesNode = new JSONArray();
             foreach (var solid in Solids)
             {
-                boundariesNode.Add(solid.GetBoundaries(indexOffset));
-                indexOffset += solid.VertexCount;
+                boundariesNode.Add(solid.GetBoundariesAndAddNewVertices(currentCityJSONVertices));
             }
             return boundariesNode;
         }

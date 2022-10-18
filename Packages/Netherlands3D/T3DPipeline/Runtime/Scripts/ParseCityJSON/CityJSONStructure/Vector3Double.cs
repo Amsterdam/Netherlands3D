@@ -64,6 +64,18 @@ public struct Vector3Double
         return new Vector3Double(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z);
     }
 
+    public override bool Equals(object other)
+    {
+        if (!(other is Vector3Double)) return false;
+
+        return Equals((Vector3Double)other);
+    }
+
+    public bool Equals(Vector3Double other)
+    {
+        return x == other.x && y == other.y && z == other.z;
+    }
+
     public override string ToString()
     {
         return "(" + x + ", " + y + ", " + z + ")";

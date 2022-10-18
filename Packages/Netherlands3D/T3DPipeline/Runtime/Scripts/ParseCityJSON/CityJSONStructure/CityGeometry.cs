@@ -118,13 +118,12 @@ namespace Netherlands3D.T3DPipeline
             }
         }
 
-        public virtual JSONObject GetGeometryNode(int indexOffset, out int vertexCount)
+        public virtual JSONObject GetGeometryNodeAndAddVertices(Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
             var geometryNode = new JSONObject();
             geometryNode["type"] = Type.ToString();
             geometryNode["lod"] = Lod;
-            geometryNode["boundaries"] = BoundaryObject.GetBoundaries(indexOffset);
-            vertexCount = BoundaryObject.VertexCount;
+            geometryNode["boundaries"] = BoundaryObject.GetBoundariesAndAddNewVertices(currentCityJSONVertices);
 
             if (IncludeSemantics)
                 geometryNode["semantics"] = semantics.GetSemanticObject();
