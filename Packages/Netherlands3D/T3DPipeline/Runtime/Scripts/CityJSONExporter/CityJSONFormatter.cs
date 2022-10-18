@@ -56,29 +56,48 @@ namespace Netherlands3D.T3DPipeline
                 }
 
             }
-            foreach (var vert in currentCityJSONVertices.Keys)
+            foreach (var vertPair in currentCityJSONVertices)
             {
+                var vert = vertPair.Key;
+                var index = vertPair.Value;
+
                 var vertArray = new JSONArray();
                 vertArray.Add(vert.x);
                 vertArray.Add(vert.y);
                 vertArray.Add(vert.z);
-                RDVertices.Add(vertArray);
+                RDVertices[index] = vertArray;
             }
             RootObject["vertices"] = RDVertices;
             Metadata.Add("presentLoDs", presentLoDs);
+            Metadata.Add("geographicalExtent", GetGeographicalExtents(currentCityJSONVertices));
 
             foreach (var node in extensionNodes)
             {
                 RootObject[node.Key] = node.Value;
             }
 
-            //todo geographical extents
-            //if (convertToRD)
-            //    RecalculateGeographicalExtents(RDVertices);
-            //else
-            //    RecalculateGeographicalExtents(Vertices);
-
             return RootObject.ToString();
+        }
+
+        private static JSONArray GetGeographicalExtents(Dictionary<Vector3Double, int> vertices)
+        {
+            var extentArray = new JSONArray();
+            var minX = vertices.Keys.MinBy(v => v.x).x;
+            var minY = vertices.Keys.MinBy(v => v.y).y;
+            var minZ = vertices.Keys.MinBy(v => v.z).z;
+
+            var maxX = vertices.Keys.MinBy(v => -v.x).x; //there is only a MinBy extension function, so multiply by -1 to be able to use this
+            var maxY = vertices.Keys.MinBy(v => -v.y).y;
+            var maxZ = vertices.Keys.MinBy(v => -v.z).z;
+
+            extentArray.Add(minX);
+            extentArray.Add(minY);
+            extentArray.Add(minZ);
+            extentArray.Add(maxX);
+            extentArray.Add(maxY);
+            extentArray.Add(maxZ);
+
+            return extentArray;
         }
 
         //register city object to be added to the JSON when requested

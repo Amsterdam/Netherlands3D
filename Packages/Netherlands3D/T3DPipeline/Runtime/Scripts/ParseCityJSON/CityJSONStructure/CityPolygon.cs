@@ -24,6 +24,7 @@ namespace Netherlands3D.T3DPipeline
             LocalBoundaries = new int[0];
         }
 
+        //public JSONArray GetJSONPolygonAndAddNewVertices(bool isHole, Dictionary<Vector3Double, int> currentCityJSONVertices)
         public JSONArray GetJSONPolygonAndAddNewVertices(bool isHole, Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
             int[] absoluteBoundaries = new int[LocalBoundaries.Length];
@@ -36,11 +37,12 @@ namespace Netherlands3D.T3DPipeline
                 {
                     var absoluteIndex = currentCityJSONVertices[vert];
                     absoluteBoundaries[i] = absoluteIndex;
+                    indexOffset--; // reusing a vertex means that when adding a new vertex, the local index needs to be offset by one less to retain an increment of 1
                 }
                 else
                 {
-                    absoluteBoundaries[i] = LocalBoundaries[i] + indexOffset;
-                    currentCityJSONVertices.Add(vert, absoluteBoundaries[i]); //add new vertex 
+                    absoluteBoundaries[i] = localIndex + indexOffset;
+                    currentCityJSONVertices.Add(vert, absoluteBoundaries[i]); //add new vertex
                 }
             }
 
@@ -66,6 +68,7 @@ namespace Netherlands3D.T3DPipeline
                 localIndices[i] = i;
                 var absoluteIndex = polygonNode[i].AsInt;
                 localVertices[i] = combinedVertices[absoluteIndex];
+                Debug.Log("in: l: " + i + "\ta: " + absoluteIndex + "\tv: " + localVertices[i]);
             }
             var polygon = new CityPolygon(localVertices, localIndices);
             return polygon;
