@@ -13,8 +13,11 @@ GameObject:
   - component: {fileID: 165216703415087138}
   - component: {fileID: 1510941251509425647}
   - component: {fileID: 5302617482703819505}
+  - component: {fileID: 6016695265935519022}
+  - component: {fileID: 1880993783759293472}
+  - component: {fileID: 7680355768597619144}
   m_Layer: 0
-  m_Name: CityObject
+  m_Name: CityObjectVisualizedWithInteractionAndAnnotations
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,3 +113,45 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeLOD: 0
+  onJsonParsed: {fileID: 11400000, guid: a3d7bc3176844447aaf8b67070d5d2cc, type: 2}
+  onJsonVisualized: {fileID: 11400000, guid: 82c0829d4d060494eb79fd98defb2536, type: 2}
+--- !u!64 &6016695265935519022
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1807838613596807431}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
+--- !u!114 &1880993783759293472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1807838613596807431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77c30377b6f41431f85057f3d593799f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onObjectClicked: {fileID: 11400000, guid: d41a1136219eb4e079fb8fc73ebce96d, type: 2}
+--- !u!114 &7680355768597619144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1807838613596807431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 273f0ada0dcc04608b934773bafbb09d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onObjectClicked: {fileID: 11400000, guid: d41a1136219eb4e079fb8fc73ebce96d, type: 2}

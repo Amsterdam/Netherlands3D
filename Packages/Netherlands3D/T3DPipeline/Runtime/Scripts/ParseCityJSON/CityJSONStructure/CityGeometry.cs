@@ -135,9 +135,9 @@ namespace Netherlands3D.T3DPipeline
             return geometryNode;
         }
 
-        public List<Vector3Double> GetVertices()
+        public List<Vector3Double> GetUncombinedVertices()
         {
-            return BoundaryObject.GetVertices();
+            return BoundaryObject.GetUncombinedVertices();
         }
 
         public static CityGeometry FromJSONNode(JSONNode geometryNode, List<Vector3Double> combinedVertices)

@@ -4,6 +4,7 @@ using System.Linq;
 using SimpleJSON;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Netherlands3D.Events;
 
 namespace Netherlands3D.T3DPipeline
 {
@@ -30,18 +31,17 @@ namespace Netherlands3D.T3DPipeline
         private GameObject cityObjectPrefab;
         [SerializeField]
         private bool useAsRelativeRDCenter;
+        [SerializeField]
+        private TriggerEvent onJsonParsed;
 
-        protected void Start()
+        protected void Start() //todo: change entry point
         {
             print(testJson.text);
-            //var cityObjects = CityJSONParser.ParseCityJSON(testJson.text);
-            //var parsedJson = new CityJSON(testJson.text, true);
             ParseCityJSON(testJson.text, useAsRelativeRDCenter);
+        }
 
-            foreach (var co in CityObjects)
-            {
-                co.gameObject.GetComponent<CityObjectVisualizer>();
-            }
+        public void ExportCityJSON() //todo: change export point
+        {
             string exportJson = CityJSONFormatter.GetCityJSON();
             print(exportJson);
             //HandleTextFile.WriteString("export.json", exportJson);
@@ -107,9 +107,20 @@ namespace Netherlands3D.T3DPipeline
             Dictionary<JSONNode, CityObject> cityObjects = new Dictionary<JSONNode, CityObject>();
             foreach (var cityObjectNode in node["CityObjects"])
             {
-                var go = Instantiate(cityObjectPrefab, transform);
-                go.name = cityObjectNode.Key;
-                var co = go.GetComponent<CityObject>();
+                GameObject go;
+                CityObject co;
+                if (cityObjectPrefab == null)
+                {
+                    go = new GameObject(cityObjectNode.Key);
+                    go.transform.SetParent(transform);
+                    co = go.AddComponent<CityObject>();
+                }
+                else
+                {
+                    go = Instantiate(cityObjectPrefab, transform);
+                    go.name = cityObjectNode.Key;
+                    co = go.GetComponent<CityObject>();
+                }
                 co.FromJSONNode(cityObjectNode.Key, cityObjectNode.Value, CoordinateSystem, parsedVertices);
                 cityObjects.Add(cityObjectNode.Value, co);
             }
@@ -131,6 +142,8 @@ namespace Netherlands3D.T3DPipeline
 
             if (useAsRelativeRDCenter)
                 SetRelativeCenter();
+
+            onJsonParsed.Invoke();
         }
 
         private static CoordinateSystem ParseCoordinateSystem(JSONNode coordinateSystemNode)

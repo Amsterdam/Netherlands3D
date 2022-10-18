@@ -69,7 +69,7 @@ namespace Netherlands3D.T3DPipeline
         public Vector3Double AbsoluteCenter { get { return MinExtent + RelativeCenter; } }
 
         public List<CityGeometry> Geometries { get; private set; }
-        protected JSONNode attributes;
+        protected List<CityObjectAttribute> attributes = new List<CityObjectAttribute>();
 
         protected List<CityObject> cityChildren = new List<CityObject>();
         public CityObject[] CityChildren => cityChildren.ToArray();
@@ -163,21 +163,29 @@ namespace Netherlands3D.T3DPipeline
             return obj;
         }
 
-        public List<Vector3Double> GetGeometryVertices()
+        public List<Vector3Double> GetUncombinedGeometryVertices()
         {
             List<Vector3Double> geometryVertices = new List<Vector3Double>();
             foreach (var g in Geometries)
             {
-                geometryVertices = geometryVertices.Concat(g.GetVertices()).ToList();
+                geometryVertices = geometryVertices.Concat(g.GetUncombinedVertices()).ToList();
             }
             return geometryVertices;
         }
 
         protected virtual JSONObject GetAttributes()
         {
-            var obj = attributes;
-            //obj.Add("annotations", GetAnnotationNode());
-            return obj.AsObject;
+            var obj = new JSONObject();
+            foreach(var attribute in attributes)
+            {
+                obj.Add(attribute.Key, attribute.GetJSONValue());
+            }
+            return obj;
+        }
+
+        public void AddAttribute(CityObjectAttribute attribute)
+        {
+            attributes.Add(attribute);
         }
 
         public void FromJSONNode(string id, JSONNode cityObjectNode, CoordinateSystem coordinateSystem, List<Vector3Double> combinedVertices)
@@ -193,7 +201,7 @@ namespace Netherlands3D.T3DPipeline
                 Assert.IsTrue(CityGeometry.IsValidType(Type, geometry.Type));
                 Geometries.Add(geometry);
             }
-            attributes = cityObjectNode["attributes"];
+            attributes = CityObjectAttribute.ParseAttributesNode(cityObjectNode["attributes"]);
 
             var geographicalExtent = cityObjectNode["geographicalExtent"];
             if (geographicalExtent.Count > 0)
@@ -203,16 +211,19 @@ namespace Netherlands3D.T3DPipeline
             }
             else
             {
-                var verts = GetGeometryVertices();
-                var minX = verts.Min(v => v.x);
-                var minY = verts.Min(v => v.y);
-                var minZ = verts.Min(v => v.z);
-                var maxX = verts.Max(v => v.x);
-                var maxY = verts.Max(v => v.y);
-                var maxZ = verts.Max(v => v.z);
+                var verts = GetUncombinedGeometryVertices();
+                if (verts.Count > 0)
+                {
+                    var minX = verts.Min(v => v.x);
+                    var minY = verts.Min(v => v.y);
+                    var minZ = verts.Min(v => v.z);
+                    var maxX = verts.Max(v => v.x);
+                    var maxY = verts.Max(v => v.y);
+                    var maxZ = verts.Max(v => v.z);
 
-                MinExtent = new Vector3Double(minX, minY, minZ);
-                MaxExtent = new Vector3Double(maxX, maxY, maxZ);
+                    MinExtent = new Vector3Double(minX, minY, minZ);
+                    MaxExtent = new Vector3Double(maxX, maxY, maxZ);
+                }
             }
 
             //Parents and Children cannot be added here because they might not be parsed yet. Setting parents/children happens in CityJSONParser after all objects have been created.

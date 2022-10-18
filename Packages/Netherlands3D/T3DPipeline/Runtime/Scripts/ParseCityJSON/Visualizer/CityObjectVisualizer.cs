@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Netherlands3D.Core;
+using Netherlands3D.Events;
 using SimpleJSON;
 using UnityEngine;
 
@@ -11,12 +12,19 @@ namespace Netherlands3D.T3DPipeline
     [RequireComponent(typeof(MeshRenderer))]
     public class CityObjectVisualizer : MonoBehaviour
     {
+        private CityObject cityObject;
         private Dictionary<CityGeometry, Mesh> meshes;
         private MeshFilter meshFilter;
+        private MeshCollider meshCollider;
 
         [SerializeField]
         private int activeLOD;
         public int ActiveLod => activeLOD;
+
+        [SerializeField]
+        private TriggerEvent onJsonParsed;
+        [SerializeField]
+        private TriggerEvent onJsonVisualized;
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -25,16 +33,28 @@ namespace Netherlands3D.T3DPipeline
                 SetLODActive(activeLOD);
         }
 #endif
-
-        private void Start()
+        private void Awake()
         {
             meshFilter = GetComponent<MeshFilter>();
-            var cityObject = GetComponent<CityObject>();
-            meshes = CreateMeshes(cityObject);
+            cityObject = GetComponent<CityObject>();
+            meshCollider = GetComponent<MeshCollider>();
+        }
 
+        private void OnEnable()
+        {
+            onJsonParsed.started.AddListener(Initialize);
+        }
+
+        private void OnDisable()
+        {
+            onJsonParsed.started.RemoveAllListeners();
+        }
+
+        private void Initialize()
+        {
+            meshes = CreateMeshes(cityObject);
             var highestLod = meshes.Keys.Max(g => g.Lod);
             SetLODActive(highestLod);
-
             transform.position = SetPosition(cityObject);
         }
 
@@ -59,6 +79,9 @@ namespace Netherlands3D.T3DPipeline
             var activeMesh = meshes[geometry];
             meshFilter.mesh = activeMesh;
             activeLOD = lod;
+
+            if (meshCollider)
+                meshCollider.sharedMesh = activeMesh;
         }
 
         private Dictionary<CityGeometry, Mesh> CreateMeshes(CityObject cityObject)
@@ -154,6 +177,8 @@ namespace Netherlands3D.T3DPipeline
 
         private static Mesh CitySurfaceToMesh(CitySurface surface, CoordinateSystem coordinateSystem)
         {
+            if (surface.VertexCount == 0)
+                return null;
 
             List<Vector3> solidSurfacePolygon = GetConvertedPolygonVertices(surface.SolidSurfacePolygon, coordinateSystem);
             List<List<Vector3>> holePolygons = new List<List<Vector3>>();

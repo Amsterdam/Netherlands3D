@@ -23,7 +23,7 @@ namespace Netherlands3D.T3DPipeline
         public abstract int VertexCount { get; }
         public abstract void FromJSONNode(JSONArray boundariesNode, List<Vector3Double> combinedVertices);
         public abstract JSONArray GetBoundariesAndAddNewVertices(Dictionary<Vector3Double, int> currentCityJSONVertices);
-        public abstract List<Vector3Double> GetVertices();
+        public abstract List<Vector3Double> GetUncombinedVertices();
     }
 
     public class CityMultiPoint : CityBoundary
@@ -39,7 +39,7 @@ namespace Netherlands3D.T3DPipeline
         {
             return Polygon.GetJSONPolygonAndAddNewVertices(false, currentCityJSONVertices);
         }
-        public override List<Vector3Double> GetVertices()
+        public override List<Vector3Double> GetUncombinedVertices()
         {
             return Polygon.Vertices.ToList();
         }
@@ -79,7 +79,7 @@ namespace Netherlands3D.T3DPipeline
             }
             return node;
         }
-        public override List<Vector3Double> GetVertices()
+        public override List<Vector3Double> GetUncombinedVertices()
         {
             var vertices = new List<Vector3Double>();
             foreach (var polygon in Polygons)
@@ -135,7 +135,7 @@ namespace Netherlands3D.T3DPipeline
             return surfaceArray;
         }
 
-        public override List<Vector3Double> GetVertices()
+        public override List<Vector3Double> GetUncombinedVertices()
         {
             var vertices = new List<Vector3Double>();
             foreach (var polygon in Polygons)
@@ -195,12 +195,12 @@ namespace Netherlands3D.T3DPipeline
             return boundariesNode;
         }
 
-        public override List<Vector3Double> GetVertices()
+        public override List<Vector3Double> GetUncombinedVertices()
         {
             var vertices = new List<Vector3Double>();
             foreach (var surface in Surfaces)
             {
-                vertices = vertices.Concat(surface.GetVertices()).ToList();
+                vertices = vertices.Concat(surface.GetUncombinedVertices()).ToList();
             }
             return vertices;
         }
@@ -241,12 +241,12 @@ namespace Netherlands3D.T3DPipeline
             return boundariesNode;
         }
 
-        public override List<Vector3Double> GetVertices()
+        public override List<Vector3Double> GetUncombinedVertices()
         {
             var vertices = new List<Vector3Double>();
             foreach (var shell in Shells)
             {
-                vertices = vertices.Concat(shell.GetVertices()).ToList();
+                vertices = vertices.Concat(shell.GetUncombinedVertices()).ToList();
             }
             return vertices;
         }
@@ -287,12 +287,12 @@ namespace Netherlands3D.T3DPipeline
             return boundariesNode;
         }
 
-        public override List<Vector3Double> GetVertices()
+        public override List<Vector3Double> GetUncombinedVertices()
         {
             var vertices = new List<Vector3Double>();
             foreach (var solid in Solids)
             {
-                vertices = vertices.Concat(solid.GetVertices()).ToList();
+                vertices = vertices.Concat(solid.GetUncombinedVertices()).ToList();
             }
             return vertices;
         }

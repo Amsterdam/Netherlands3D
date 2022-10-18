@@ -68,7 +68,6 @@ namespace Netherlands3D.T3DPipeline
                 localIndices[i] = i;
                 var absoluteIndex = polygonNode[i].AsInt;
                 localVertices[i] = combinedVertices[absoluteIndex];
-                Debug.Log("in: l: " + i + "\ta: " + absoluteIndex + "\tv: " + localVertices[i]);
             }
             var polygon = new CityPolygon(localVertices, localIndices);
             return polygon;
