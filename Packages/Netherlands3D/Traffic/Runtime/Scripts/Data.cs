@@ -71,7 +71,7 @@ namespace Netherlands3D.Traffic
             {
                 this.coordinatesFront = coordinatesFront;
                 this.coordinatesRear = coordinatesRear;
-                center = (coordinatesFront + coordinatesRear) / 2;
+                center = Vector3.Lerp(coordinatesFront,coordinatesRear,0.5f);
                 //direction = (coordinatesFront - coordinatesRear).normalized; Calculated in Entity.UpdateNavigation()
             }
         }        
