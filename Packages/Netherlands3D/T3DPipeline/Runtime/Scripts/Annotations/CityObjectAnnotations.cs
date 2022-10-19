@@ -48,6 +48,8 @@ namespace Netherlands3D.T3DPipeline
         private StringEvent onAnnotationTextChanged;
         [SerializeField]
         private TriggerEvent onAnnotationSumbmitted;
+        [SerializeField]
+        private bool countAnnotationsGlobally;
 
 
         private void Awake()
@@ -73,7 +75,8 @@ namespace Netherlands3D.T3DPipeline
         public void AddNewAnnotation(Vector3 position)
         {
             var doublePos = new Vector3Double(position.x, position.y, position.z);
-            var annotation = new Annotation(globalId, "", doublePos);
+            var id = countAnnotationsGlobally ? globalId : localId;
+            var annotation = new Annotation(id, "", doublePos);
             annotationsAttribute.AddAnnotation(annotation);
             globalId++;
 
