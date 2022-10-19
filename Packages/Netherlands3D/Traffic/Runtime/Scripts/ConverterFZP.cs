@@ -163,6 +163,11 @@ namespace Netherlands3D.Traffic
                 Debug.Log("Detected VISSIM RD coordinates");
                 coordinateInterpretation = CoordinateInterpretation.RD;
             }
+            else
+            {
+                Debug.Log("Detected VISSIM Unity coordinates");
+                coordinateInterpretation = CoordinateInterpretation.UNITY;
+            }
         }
     }
 }
