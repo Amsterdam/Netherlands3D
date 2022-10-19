@@ -101,7 +101,7 @@ namespace Netherlands3D.T3DPipeline
         }
 
         //register city object to be added to the JSON when requested
-        public static void AddCityObejct(CityObject obj)
+        public static void AddCityObject(CityObject obj)
         {
             CityObjects.Add(obj);
         }

@@ -77,7 +77,7 @@ namespace Netherlands3D.T3DPipeline
 
         private void OnEnable()
         {
-            CityJSONFormatter.AddCityObejct(this);
+            CityJSONFormatter.AddCityObject(this);
         }
         private void OnDisable()
         {

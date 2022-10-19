@@ -1,14 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Netherlands3D.Events;
 using SimpleJSON;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Netherlands3D.T3DPipeline
 {
     public class AnnotationsAttribute : CityObjectAttribute
     {
-        private List<Annotation> annotations = new List<Annotation>();
+        public List<Annotation> annotations { get; private set; } = new List<Annotation>();
         public AnnotationsAttribute(string key) : base(key)
         {
         }
@@ -30,15 +32,23 @@ namespace Netherlands3D.T3DPipeline
     }
 
     [RequireComponent(typeof(CityObject))]
-    public class CityObjectAnnotations : MonoBehaviour
+    public class CityObjectAnnotations : ObjectClickHandler
     {
-        private static int id = 0;
+        private static int globalId = 0;
+        private int localId = 0;
 
         private CityObject parentObject;
         private AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute("annotations");
 
         [SerializeField]
-        private Vector3Event onObjectClicked;
+        private bool annotationStateActive = true;
+        public bool AnnotationStateActive { get => annotationStateActive; set => annotationStateActive = value; }
+
+        [SerializeField]
+        private StringEvent onAnnotationTextChanged;
+        [SerializeField]
+        private TriggerEvent onAnnotationSumbmitted;
+
 
         private void Awake()
         {
@@ -50,22 +60,37 @@ namespace Netherlands3D.T3DPipeline
             parentObject.AddAttribute(annotationsAttribute);
         }
 
-        private void OnEnable()
+        public override void OnPointerClick(PointerEventData eventData)
         {
-            onObjectClicked.started.AddListener(AddAnnotation);
+            base.OnPointerClick(eventData);
+            if (AnnotationStateActive)
+            {
+                var pos = eventData.pointerCurrentRaycast.worldPosition;
+                AddNewAnnotation(pos);
+            }
         }
 
-        private void OnDisable()
-        {
-            onObjectClicked.started.RemoveAllListeners();
-        }
-
-        public void AddAnnotation(Vector3 position) //todo: type text
+        public void AddNewAnnotation(Vector3 position)
         {
             var doublePos = new Vector3Double(position.x, position.y, position.z);
-            var annotation = new Annotation(id, id.ToString(), doublePos);
+            var annotation = new Annotation(globalId, "", doublePos);
             annotationsAttribute.AddAnnotation(annotation);
-            id++;
+            globalId++;
+
+            onAnnotationTextChanged.started.AddListener(OnActiveAnnotationTextChanged);
+            onAnnotationSumbmitted.started.AddListener(OnAnnotationSubmitted);
+        }
+
+        private void OnAnnotationSubmitted()
+        {
+            onAnnotationTextChanged.started.RemoveListener(OnActiveAnnotationTextChanged);
+            onAnnotationSumbmitted.started.RemoveListener(OnAnnotationSubmitted);
+            localId++;
+        }
+
+        private void OnActiveAnnotationTextChanged(string newText)
+        {
+            annotationsAttribute.annotations[localId].Text = newText;
         }
     }
 }

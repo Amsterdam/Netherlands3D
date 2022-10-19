@@ -8,9 +8,9 @@ using UnityEngine.EventSystems;
 public class ObjectClickHandler : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
-    private Vector3Event onObjectClicked;
+    protected Vector3Event onObjectClicked;
 
-    public void OnPointerClick(PointerEventData eventData)
+    public virtual void OnPointerClick(PointerEventData eventData)
     {
         var pos = eventData.pointerCurrentRaycast.worldPosition;
         onObjectClicked.Invoke(pos);

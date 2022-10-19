@@ -8,7 +8,7 @@ namespace Netherlands3D.T3DPipeline
     public class Annotation
     {
         public int Id;
-        public string Text { get; private set; }
+        public string Text { get; set; }
         public Vector3Double Position { get; private set; }
 
         public Annotation(int id, string text, Vector3Double position)
