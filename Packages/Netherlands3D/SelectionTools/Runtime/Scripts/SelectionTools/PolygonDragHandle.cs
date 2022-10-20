@@ -29,7 +29,7 @@ namespace Netherlands3D.SelectionTools
 
         public int pointIndex = 0;
 
-        [SerializeField] private float scale = 0.001f;
+        [SerializeField] private float scale = 0.02f;
         [SerializeField] private float minScale = 2f;
         [SerializeField] private bool autoScale = true;
         private Camera camera;
