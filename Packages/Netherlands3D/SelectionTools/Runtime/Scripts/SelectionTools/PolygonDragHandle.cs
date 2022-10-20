@@ -29,6 +29,15 @@ namespace Netherlands3D.SelectionTools
 
         public int pointIndex = 0;
 
+        [SerializeField] private float scale = 0.001f;
+        [SerializeField] private float minScale = 2f;
+        [SerializeField] private bool autoScale = true;
+        private Camera camera;
+        private void OnEnable()
+        {
+            camera = Camera.main;
+        }
+
         public void OnPointerClick(PointerEventData eventData)
         {
             clicked.Invoke();
@@ -42,6 +51,12 @@ namespace Netherlands3D.SelectionTools
         public void OnEndDrag(PointerEventData eventData)
         {
             endDrag.Invoke();
+        }
+
+        private void Update()
+        {
+            var handleScale = Mathf.Max(minScale,scale * Vector3.Distance(camera.transform.position, transform.position));
+            this.transform.localScale = Vector3.one * handleScale;
         }
 
         private void OnDestroy()
