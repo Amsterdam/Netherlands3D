@@ -46,18 +46,6 @@ namespace Netherlands3D.T3DPipeline
         /// Each CityObject has to have a unique id. This class also supports a prefix
         /// </summary>
         public string Id { get; private set; }
-        //private static string idPrefix = "NL.IMBAG.Pand.";
-        //public static string IdPrefix
-        //{
-        //    get => idPrefix;
-        //    set
-        //    {
-        //        idPrefix = value;
-        //        print("set id prefix value to: " + value);
-        //    }
-        //}
-        //private static int IdCounter = 0;
-
         /// <summary>
         /// Each CityObject must have a Type. Each type has a different depth of arrays in arrays for the geometry boundaries
         /// </summary>
@@ -66,7 +54,7 @@ namespace Netherlands3D.T3DPipeline
         public Vector3Double MinExtent { get; private set; }
         public Vector3Double MaxExtent { get; private set; }
         public Vector3Double RelativeCenter { get { return (MaxExtent - MinExtent) / 2; } }
-        public Vector3Double AbsoluteCenter { get { return MinExtent + RelativeCenter; } }
+        public Vector3Double AbsoluteCenter { get { return (MaxExtent + MinExtent) / 2; } }
 
         public List<CityGeometry> Geometries { get; private set; }
         protected List<CityObjectAttribute> attributes = new List<CityObjectAttribute>();
@@ -176,7 +164,7 @@ namespace Netherlands3D.T3DPipeline
         protected virtual JSONObject GetAttributes()
         {
             var obj = new JSONObject();
-            foreach(var attribute in attributes)
+            foreach (var attribute in attributes)
             {
                 obj.Add(attribute.Key, attribute.GetJSONValue());
             }
