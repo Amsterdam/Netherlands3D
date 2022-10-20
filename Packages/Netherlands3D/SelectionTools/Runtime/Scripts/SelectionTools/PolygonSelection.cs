@@ -122,8 +122,24 @@ namespace Netherlands3D.SelectionTools
 
             worldPlane = (useWorldSpace) ? new Plane(Vector3.up, Vector3.zero) : new Plane(this.transform.up, this.transform.position);
 
-            if (handleTemplate) 
+            if (handleTemplate)
+            {
                 handleTemplate.gameObject.SetActive(false);
+            }
+            else
+            {
+                if (createHandles) Debug.Log("Please set a handleTemplate reference to create handles.", this.gameObject);
+            }
+        }
+
+        private void OnValidate()
+        {
+            if (createHandles && doubleClickToCloseLoop)
+            {
+                //Second clicks would select the handle, so auto disable double click
+                Debug.Log("Disabled double click to close loop. This is not allowed in combination with handles.");
+                doubleClickToCloseLoop = false;
+            }
         }
 
         private void OnEnable()
@@ -405,7 +421,7 @@ namespace Netherlands3D.SelectionTools
                 previewLineRenderer.enabled = true;
                 selectionStartPosition = pointPosition;
                 positions.Add(pointPosition);
-                if (createHandles)
+                if (createHandles && handleTemplate)
                     CreateHandle(positions.Count - 1);
 
                 lastAddedPoint = pointPosition;
