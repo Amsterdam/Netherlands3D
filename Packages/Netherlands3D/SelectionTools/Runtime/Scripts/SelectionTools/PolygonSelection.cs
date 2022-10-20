@@ -31,7 +31,8 @@ namespace Netherlands3D.SelectionTools
         public enum WindingOrder
         {
             CLOCKWISE,
-            COUNTERCLOCKWISE
+            COUNTERCLOCKWISE,
+            IGNORE
         }
 
         [Header("Input")]
@@ -48,7 +49,6 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] Color closedLoopLineColor = Color.red;
         [SerializeField] private float lineWidthMultiplier = 10.0f;
         [SerializeField] private float maxSelectionDistanceFromCamera = 10000;
-        [SerializeField] private bool useWorldSpace = false;
         [SerializeField] private bool snapToStart = true;
         [SerializeField, Tooltip("Closing a polygon shape is required. If set to false, you can output lines.")] private bool requireClosedPolygon = true;
         [SerializeField, Tooltip("If you click close to the starting point the loop will finish")] private bool closeLoopAtStart = true;
@@ -74,7 +74,7 @@ namespace Netherlands3D.SelectionTools
 
         [SerializeField] private LineRenderer polygonLineRenderer;
         [SerializeField] private LineRenderer previewLineRenderer;
-        [SerializeField] private List<Vector3> positions = new List<Vector3>();
+        private List<Vector3> positions = new List<Vector3>();
         private Vector3 lastAddedPoint = default;
         private Vector3 selectionStartPosition = default;
         private Vector3 currentWorldCoordinate = default;
@@ -120,7 +120,7 @@ namespace Netherlands3D.SelectionTools
             escapeAction.canceled += context => ClearPolygon(true);
             finishAction.performed += context => CloseLoop(true);
 
-            worldPlane = (useWorldSpace) ? new Plane(Vector3.up, Vector3.zero) : new Plane(this.transform.up, this.transform.position);
+            worldPlane = new Plane(this.transform.up, this.transform.position);
 
             if (handleTemplate)
             {
