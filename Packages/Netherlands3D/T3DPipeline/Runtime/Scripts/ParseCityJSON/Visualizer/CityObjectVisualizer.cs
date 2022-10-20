@@ -24,7 +24,7 @@ namespace Netherlands3D.T3DPipeline
         [SerializeField]
         private TriggerEvent onJsonParsed;
         [SerializeField]
-        private TriggerEvent onJsonVisualized;
+        private TriggerEvent jsonVisualized;
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -42,7 +42,7 @@ namespace Netherlands3D.T3DPipeline
 
         private void OnEnable()
         {
-            onJsonParsed.started.AddListener(Initialize);
+            onJsonParsed.started.AddListener(Visualize);
         }
 
         private void OnDisable()
@@ -50,12 +50,13 @@ namespace Netherlands3D.T3DPipeline
             onJsonParsed.started.RemoveAllListeners();
         }
 
-        private void Initialize()
+        private void Visualize()
         {
             meshes = CreateMeshes(cityObject);
             var highestLod = meshes.Keys.Max(g => g.Lod);
             SetLODActive(highestLod);
             transform.position = SetPosition(cityObject);
+            jsonVisualized.Invoke();
         }
 
         private Vector3 SetPosition(CityObject cityObject)

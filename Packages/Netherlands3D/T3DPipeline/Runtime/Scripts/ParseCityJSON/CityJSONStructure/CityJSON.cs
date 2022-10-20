@@ -26,7 +26,7 @@ namespace Netherlands3D.T3DPipeline
         public CoordinateSystem CoordinateSystem { get; private set; }
 
         [SerializeField]
-        private TextAsset testJson;
+        private StringEvent onCityJSONReceived;
         [SerializeField]
         private GameObject cityObjectPrefab;
         [SerializeField]
@@ -34,20 +34,17 @@ namespace Netherlands3D.T3DPipeline
         [SerializeField]
         private TriggerEvent onJsonParsed;
 
-        protected void Start() //todo: change entry point
+        private void OnEnable()
         {
-            print(testJson.text);
-            ParseCityJSON(testJson.text, useAsRelativeRDCenter);
+            onCityJSONReceived.started.AddListener(ParseCityJSON);
         }
 
-        public void ExportCityJSON() //todo: change export point
+        private void OnDisable()
         {
-            string exportJson = CityJSONFormatter.GetCityJSON();
-            print(exportJson);
-            //HandleTextFile.WriteString("export.json", exportJson);
+            onCityJSONReceived.started.RemoveAllListeners();
         }
 
-        public void ParseCityJSON(string cityJson, bool useAsRelativeRDCenter)
+        public void ParseCityJSON(string cityJson)
         {
             var node = JSONNode.Parse(cityJson);
             var type = node["type"];

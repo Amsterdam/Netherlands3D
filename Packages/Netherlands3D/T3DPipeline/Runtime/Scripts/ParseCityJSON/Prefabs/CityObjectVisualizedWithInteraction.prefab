@@ -113,7 +113,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeLOD: 0
   onJsonParsed: {fileID: 11400000, guid: a3d7bc3176844447aaf8b67070d5d2cc, type: 2}
-  onJsonVisualized: {fileID: 11400000, guid: 82c0829d4d060494eb79fd98defb2536, type: 2}
+  jsonVisualized: {fileID: 11400000, guid: 82c0829d4d060494eb79fd98defb2536, type: 2}
 --- !u!64 &6016695265935519022
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -140,4 +140,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77c30377b6f41431f85057f3d593799f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onObjectClicked: {fileID: 11400000, guid: d41a1136219eb4e079fb8fc73ebce96d, type: 2}
+  objectClicked: {fileID: 0}

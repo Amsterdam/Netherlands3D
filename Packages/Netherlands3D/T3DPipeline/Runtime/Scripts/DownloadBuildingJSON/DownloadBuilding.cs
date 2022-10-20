@@ -15,6 +15,8 @@ namespace Netherlands3D.T3DPipeline
         private StringEvent BagIDInput;
         [SerializeField]
         private StringEvent CityJsonBagReceived;
+        [SerializeField]
+        private string url = @"https://tomcat.totaal3d.nl/happyflow-wfs/wfs?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=bldg:Building&RESOURCEID=NL.IMBAG.Pand.{0}&OUTPUTFORMAT=application%2Fjson";
         private Coroutine requestCoroutine;
 
         private void OnEnable()
@@ -51,7 +53,7 @@ namespace Netherlands3D.T3DPipeline
         /// </summary>
         private IEnumerator GetCityJsonBag(string bagId, Action<string> callback = null)
         {
-            var url = $"https://tomcat.totaal3d.nl/happyflow-wfs/wfs?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=bldg:Building&RESOURCEID=NL.IMBAG.Pand.{bagId}&OUTPUTFORMAT=application%2Fjson";
+            var url = string.Format(this.url, bagId);
             var uwr = UnityWebRequest.Get(url);
 
             using (uwr)
@@ -64,6 +66,7 @@ namespace Netherlands3D.T3DPipeline
                 else
                 {
                     var cityJsonBag = uwr.downloadHandler.text;
+                    print(cityJsonBag);
                     CityJsonBagReceived.started.Invoke(cityJsonBag);
                     callback?.Invoke(cityJsonBag);
                 }

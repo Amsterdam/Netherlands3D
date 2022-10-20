@@ -452,37 +452,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 723279700}
   m_CullTransparentMesh: 1
---- !u!1 &757649977
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 757649978}
-  m_Layer: 0
-  m_Name: AnnotationHandler
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &757649978
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 757649977}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &789478406
 GameObject:
   m_ObjectHideFlags: 0
@@ -1538,6 +1507,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1495255564}
   - component: {fileID: 1495255565}
+  - component: {fileID: 1495255566}
   m_Layer: 0
   m_Name: CityJSONParser
   m_TagString: Untagged
@@ -1572,10 +1542,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36187846006a245e39b1c2c56fb7a686, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testJson: {fileID: 4900000, guid: 0e932e6ec1a2c437e88c066aa54faf4e, type: 3}
+  onCityJSONReceived: {fileID: 11400000, guid: adde3c60afd4a4a488250d6acaaf23f9, type: 2}
   cityObjectPrefab: {fileID: 1807838613596807431, guid: 4e6516634cba34d2cb6da34b692c3247, type: 3}
   useAsRelativeRDCenter: 1
   onJsonParsed: {fileID: 11400000, guid: a3d7bc3176844447aaf8b67070d5d2cc, type: 2}
+--- !u!114 &1495255566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1495255562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9003274042bce47d4b929c1517e112ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  testJson: {fileID: 4900000, guid: 035356d6a02ba4879b0cc3b33a5ad35d, type: 3}
+  cityJSONReceived: {fileID: 11400000, guid: adde3c60afd4a4a488250d6acaaf23f9, type: 2}
 --- !u!1 &1573854839
 GameObject:
   m_ObjectHideFlags: 0
