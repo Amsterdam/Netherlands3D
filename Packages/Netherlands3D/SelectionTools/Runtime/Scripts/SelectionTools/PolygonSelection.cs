@@ -219,7 +219,7 @@ namespace Netherlands3D.SelectionTools
         /// <param name="skipFirst">Skip the first line in our chain</param>
         /// <param name="skipLast">Skip the last line in our chain</param>
         /// <returns>Returns true if an intersection was found</returns>
-        private bool LineCrossesOtherLine(Vector3 linePointA, Vector3 linePointB, bool skipFirst = false, bool skipLast = false)
+        private bool LineCrossesOtherLine(Vector3 linePointA, Vector3 linePointB, bool skipFirst = false, bool skipLast = false, bool ignoreConnected = false)
         {
             int startIndex = (skipFirst) ? 2 : 1;
             int endIndex = (skipLast) ? polygonLineRenderer.positionCount-1 : polygonLineRenderer.positionCount;
@@ -229,8 +229,22 @@ namespace Netherlands3D.SelectionTools
                 var comparisonEnd = polygonLineRenderer.GetPosition(i);
                 if (LinesIntersectOnPlane(linePointA, linePointB, comparisonStart, comparisonEnd))
                 {
-                    Debug.Log("Line is crossing other line! This is not allowed.");
-                    return true;
+                    if (ignoreConnected)
+                    {
+                        if(linePointA.Equals(comparisonStart) || linePointA.Equals(comparisonEnd) || linePointB.Equals(comparisonStart) || linePointB.Equals(comparisonEnd))
+                        {
+                            Debug.Log("Line is overlapping connected line! This is allowed.");
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("Line is crossing other line! This is not allowed.");
+                        return true;
+                    }
                 }
             }
             return false;
@@ -431,35 +445,70 @@ namespace Netherlands3D.SelectionTools
         /// <param name="positionIndex">Line vertex position index</param>
         private void CreateHandle(int positionIndex)
         {
-            var newHandle = Instantiate(handleTemplate, this.transform);
-            newHandle.gameObject.SetActive(true);
-            newHandle.pointIndex = positionIndex;
-            newHandle.transform.position = positions[positionIndex];
+            var lineHandle = Instantiate(handleTemplate, this.transform);
+            lineHandle.gameObject.SetActive(true);
+            lineHandle.pointIndex = positionIndex;
+            lineHandle.transform.position = positions[positionIndex];
 
-            newHandle.clicked.AddListener(() =>
+            lineHandle.clicked.AddListener(() =>
             {
-                if(!closedLoop && newHandle.pointIndex == 0)
+                if(!closedLoop && lineHandle.pointIndex == 0)
                     CloseLoop(true);
             });
-            newHandle.dragged.AddListener(() =>
+            lineHandle.dragged.AddListener(() =>
             {
-                MoveHandle(newHandle);
+                polygonLineRenderer.startColor = polygonLineRenderer.endColor = closedLoopLineColor;
+                var handlePositionBeforeCross = lineHandle.transform.position;
+                MoveHandle(lineHandle, currentWorldCoordinate);
+                if (HandleAttachedLinesCross(lineHandle))
+                {
+                    polygonLineRenderer.startColor = polygonLineRenderer.endColor = lineColor;
+                    MoveHandle(lineHandle, handlePositionBeforeCross);
+                }
             });
-            newHandle.endDrag.AddListener(() =>
+            lineHandle.endDrag.AddListener(() =>
             {
                 FinishPolygon();
             });
 
-            handles.Add(newHandle);
+            handles.Add(lineHandle);
         }
 
-        private void MoveHandle(PolygonDragHandle handle)
+        private bool HandleAttachedLinesCross(PolygonDragHandle dragHandle)
         {
-            handle.transform.position = currentWorldCoordinate;
-            positions[handle.pointIndex] = currentWorldCoordinate;
+            Vector3 lineOneA = Vector3.zero;
+            Vector3 lineOneB = Vector3.zero;
+            Vector3 lineTwoA = Vector3.zero;
+            Vector3 lineTwoB = Vector3.zero;
+
+            if (dragHandle.pointIndex == 0)
+            {
+                lineOneA = positions[0];
+                lineOneB = positions[positions.Count - 1];
+                lineTwoA = positions[0];
+                lineTwoB = positions[1];
+            }
+            else if (dragHandle.pointIndex < positions.Count-1)
+            {
+                lineOneA = positions[dragHandle.pointIndex];
+                lineOneB = positions[dragHandle.pointIndex+1];
+                lineTwoA = positions[dragHandle.pointIndex];
+                lineTwoB = positions[dragHandle.pointIndex-1];
+            }
+
+            if (LineCrossesOtherLine(lineOneA, lineOneB, false,false, true)) return true;
+            if (LineCrossesOtherLine(lineTwoA, lineTwoB, false, false, true)) return true;
+
+            return false;
+        }
+
+        private void MoveHandle(PolygonDragHandle handle, Vector3 targetPosition)
+        {
+            handle.transform.position = targetPosition;
+            positions[handle.pointIndex] = targetPosition;
 
             if (closedLoop && handle.pointIndex == 0)
-                positions[positions.Count - 1] = currentWorldCoordinate;
+                positions[positions.Count - 1] = targetPosition;
 
             UpdateLine();
         }
