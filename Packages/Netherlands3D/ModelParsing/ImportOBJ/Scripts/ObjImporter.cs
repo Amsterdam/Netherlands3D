@@ -22,6 +22,9 @@ namespace Netherlands3D.ModelParsing
         [HideInInspector]
         public string mtlFilePath = "";
 
+        [HideInInspector]
+        public string imgFilePath = "";
+
         bool isbusy = false;
         [HideInInspector]
         public bool createSubMeshes = false;
@@ -97,8 +100,9 @@ namespace Netherlands3D.ModelParsing
             if (!succes) //something went wrong
             {
                 isbusy = false;
-                objFilePath = "";
-                mtlFilePath = "";
+                objFilePath = string.Empty;
+                mtlFilePath = string.Empty;
+                imgFilePath = string.Empty;
                 returnObjectTo(null);
                 return;
             }
@@ -113,6 +117,13 @@ namespace Netherlands3D.ModelParsing
                     mtlreader.broadcastProgressPercentage = BroadcastProgressPercentage;
                 }
                 BroadcastCurrentActivity("mtl-file lezen");
+
+                // Do we have an image to use?
+                if (imgFilePath.Length != 0)
+                {
+                    mtlreader.AddTexture(System.IO.Path.GetFileName(imgFilePath), imgFilePath);
+                }
+
                 mtlreader.StartMTLParse(System.IO.File.ReadAllText(mtlFilePath),onMTLRead,mtlFilePath);
             }
             else
@@ -154,6 +165,7 @@ namespace Netherlands3D.ModelParsing
             }
             objectDataCreator.vertices = objreader.vertices;
             objectDataCreator.normals = objreader.normals;
+            objectDataCreator.uvs = objreader.uvs;
             objectDataCreator.broadcastProgressPercentage = progressPercentage;
             
             List<Submesh> submeshes = new List<Submesh>();

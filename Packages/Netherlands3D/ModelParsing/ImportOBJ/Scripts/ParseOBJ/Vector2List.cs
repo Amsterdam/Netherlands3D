@@ -4,15 +4,15 @@ using UnityEngine;
 using System.IO;
 namespace Netherlands3D.ModelParsing
 {
-    public class Vector3List
+    public class Vector2List
 {
        BinaryWriter writer;
        FileStream reader;
         int baseindex;
-        float[] vectorFloatArray = new float[3];
-        byte[] vectorBinaryArray = new byte[12];
+        float[] vectorFloatArray = new float[2];
+        byte[] vectorBinaryArray = new byte[8];
         string basepath="";
-        byte[] readBytes = new byte[12 * 1024];
+        byte[] readBytes = new byte[8 * 1024];
         private int vectorCount = 0;
         string filepath;
 
@@ -26,13 +26,14 @@ namespace Netherlands3D.ModelParsing
             {
 
            
-            return  (int)reader.Length / 12;
+            return  (int)reader.Length / 8;
             }
         }
 
         public void SetupWriting(string name)
         {
-         
+           
+
             if (basepath=="")
             {
                 basepath = Application.persistentDataPath;
@@ -44,13 +45,12 @@ namespace Netherlands3D.ModelParsing
 
         }
        
-        public void Add(float v1, float v2, float v3)
+        public void Add(float v1, float v2)
         {
             
             vectorFloatArray[0] = v1;
             vectorFloatArray[1] = v2;
-            vectorFloatArray[2] = v3;
-            System.Buffer.BlockCopy(vectorFloatArray, 0, vectorBinaryArray, 0, 12);
+            System.Buffer.BlockCopy(vectorFloatArray, 0, vectorBinaryArray, 0, 8);
             writer.Write(vectorBinaryArray);
             vectorCount += 1;
         }
@@ -62,18 +62,17 @@ namespace Netherlands3D.ModelParsing
         }
         public void SetupReading(string name = "")
         {
-   
-            
+
             if (name !="")
             {
                 filepath = Application.persistentDataPath + "/" + name + ".dat";
             }
-            reader = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.None, 12);
+            reader = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.None, 8);
             //reader = File.OpenRead(filepath);
             baseindex = -1;
 
         }
-        public Vector3 ReadItem(int index)
+        public Vector2 ReadItem(int index)
         {
             bool readNewBatch = false;
             if (baseindex == -1)
@@ -91,20 +90,20 @@ namespace Netherlands3D.ModelParsing
 
             if (readNewBatch)
             {
-                reader.Position = index * 12;
+                reader.Position = index * 8;
                 baseindex = index;
-                int count = reader.Read(readBytes, 0, 1024 * 12);
+                int count = reader.Read(readBytes, 0, 1024 * 8);
                 //System.Buffer.BlockCopy(readBytes, 0, BiglistVectorFloatArray, 0, 1024*12);
             }
             //reader.Position = index * 12;
-            Vector3 ReturnItem = new Vector3();
+            Vector2 ReturnItem = new Vector2();
             //reader.Read(readBytes, 0, 12);
             int startindex = index - baseindex;
-            System.Buffer.BlockCopy(readBytes, startindex*12, vectorFloatArray, 0, 12);
+            System.Buffer.BlockCopy(readBytes, startindex*8, vectorFloatArray, 0, 8);
             
             ReturnItem.x = vectorFloatArray[0];
             ReturnItem.y = vectorFloatArray[1];
-            ReturnItem.z = vectorFloatArray[2];
+           // ReturnItem.z = vectorFloatArray[2];
 
 
             return ReturnItem;
