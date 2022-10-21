@@ -1,15 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using SimpleJSON;
-using UnityEngine;
 
 namespace Netherlands3D.T3DPipeline
 {
+    /// <summary>
+    /// Class to hold an annotation that can be added to a building.
+    /// </summary>
     public class Annotation
     {
-        public int Id;
-        public string Text { get; set; }
-        public Vector3Double Position { get; private set; }
+        public int Id; // An annotation has to have an id that is unique per CityObject. It may be unique globally for all CityObjects but this is not required.
+        public string Text { get; set; } // The text of the annotation
+        public Vector3Double Position { get; private set; } //the position of the Annotation on the building
 
         public Annotation(int id, string text, Vector3Double position)
         {

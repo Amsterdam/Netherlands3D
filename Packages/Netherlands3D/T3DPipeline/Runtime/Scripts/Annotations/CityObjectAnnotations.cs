@@ -8,9 +8,12 @@ using UnityEngine.EventSystems;
 
 namespace Netherlands3D.T3DPipeline
 {
+    /// <summary>
+    /// Annotations are added to a CityObject's attribute node. All annotations of a CityObject are grouped under a single Attribute.
+    /// </summary>
     public class AnnotationsAttribute : CityObjectAttribute
     {
-        public List<Annotation> annotations { get; private set; } = new List<Annotation>();
+        public List<Annotation> annotations { get; private set; } = new List<Annotation>(); // Annotations for this Attribute (belonging to a CityObject)
         public AnnotationsAttribute(string key) : base(key)
         {
         }
@@ -31,14 +34,17 @@ namespace Netherlands3D.T3DPipeline
         }
     }
 
+    /// <summary>
+    /// Add this script to a CityObject to allow for the interaction to add an annotation.
+    /// </summary>
     [RequireComponent(typeof(CityObject))]
     public class CityObjectAnnotations : ObjectClickHandler
     {
-        private static int globalId = 0;
-        private int localId = 0;
+        private static int globalId = 0; //counts all annotations with unique ID regardless of to which CityObject it belongs (so adding a annotation to CityObject1 will start at 0, adding a second annotation to CityObject2 will be 1)
+        private int localId = 0; // counts annotations with unique ids per CityObject (so adding a annotation to CityObject1 will start at 0, adding a second annotation to CityObject2 will be 0 as well)
 
-        private CityObject parentObject;
-        private AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute("annotations");
+        private CityObject parentObject; //CityObject to add annotations to
+        private AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute("annotations"); // All Annotations are added as a single JSONObject to the CityObject's attributes
         private static Annotation currentActiveAnnotation; //static so only 1 annotation can be active at any given time regardless of to which object it belongs
         private GameObject activeAnnotationMarker;
 
@@ -81,13 +87,14 @@ namespace Netherlands3D.T3DPipeline
         public override void OnPointerClick(PointerEventData eventData)
         {
             base.OnPointerClick(eventData);
-            if (AnnotationStateActive && currentActiveAnnotation == null)
+            if (AnnotationStateActive && currentActiveAnnotation == null) //create new annotation if none is currently pending
             {
                 var pos = eventData.pointerCurrentRaycast.worldPosition;
                 StartAddNewAnnotation(pos);
             }
         }
 
+        // Start adding a new annotation. It is not added to the attributes yet until it is completed.
         public void StartAddNewAnnotation(Vector3 position)
         {
             var doublePos = new Vector3Double(position.x, position.y, position.z);
@@ -123,6 +130,7 @@ namespace Netherlands3D.T3DPipeline
             Destroy(activeAnnotationMarker);
         }
 
+        // Complete the annotation, add it to the attributes
         private void OnAnnotationSubmitted()
         {
             onAnnotationTextChanged.started.RemoveListener(OnActiveAnnotationTextChanged);

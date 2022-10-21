@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Netherlands3D.Core;
 using Netherlands3D.Events;
-using SimpleJSON;
 using UnityEngine;
 
 namespace Netherlands3D.T3DPipeline

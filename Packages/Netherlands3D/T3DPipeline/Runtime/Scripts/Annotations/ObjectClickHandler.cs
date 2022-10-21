@@ -4,6 +4,9 @@ using Netherlands3D.Events;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Generic class to process a pointer click and fires the event with the 3D click position. Requires a PhysicsRaycaster to work
+/// </summary>
 [RequireComponent(typeof(Collider))]
 public class ObjectClickHandler : MonoBehaviour, IPointerClickHandler
 {

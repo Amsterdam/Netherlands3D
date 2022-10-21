@@ -7,13 +7,15 @@ using UnityEngine;
 
 namespace Netherlands3D.T3DPipeline
 {
+    /// <summary>
+    /// Class to Format a CityJSON and export all the CityObjects.
+    /// </summary>
     public static class CityJSONFormatter
     {
-        private static JSONObject RootObject;
-        private static JSONObject Metadata;
+        private static JSONObject rootObject;
+        private static JSONObject metadata;
         private static JSONObject cityObjects;
-        private static JSONArray Vertices;
-        private static JSONArray RDVertices;
+        private static JSONArray vertices;
         private static JSONObject presentLoDs;
         private static Dictionary<string, JSONNode> extensionNodes = new Dictionary<string, JSONNode>();
 
@@ -25,21 +27,21 @@ namespace Netherlands3D.T3DPipeline
             extensionNodes = new Dictionary<string, JSONNode>();
         }
 
+        // Main function to format the CityJSON
         public static string GetCityJSON()
         {
-            RootObject = new JSONObject();
+            rootObject = new JSONObject();
             cityObjects = new JSONObject();
-            Vertices = new JSONArray();
-            RDVertices = new JSONArray();
-            Metadata = new JSONObject();
+            vertices = new JSONArray();
+            metadata = new JSONObject();
             presentLoDs = new JSONObject();
 
-            Metadata.Add("referenceSystem", "urn:ogc:def:crs:EPSG::28992");
+            metadata.Add("referenceSystem", "urn:ogc:def:crs:EPSG::28992");
 
-            RootObject["type"] = "CityJSON";
-            RootObject["version"] = "1.0";
-            RootObject["metadata"] = Metadata;
-            RootObject["CityObjects"] = cityObjects;
+            rootObject["type"] = "CityJSON";
+            rootObject["version"] = "1.0";
+            rootObject["metadata"] = metadata;
+            rootObject["CityObjects"] = cityObjects;
 
             //var indexOffset = RDVertices.Count;
             Dictionary<Vector3Double, int> currentCityJSONVertices = new Dictionary<Vector3Double, int>();
@@ -65,18 +67,18 @@ namespace Netherlands3D.T3DPipeline
                 vertArray.Add(vert.x);
                 vertArray.Add(vert.y);
                 vertArray.Add(vert.z);
-                RDVertices[index] = vertArray;
+                vertices[index] = vertArray;
             }
-            RootObject["vertices"] = RDVertices;
-            Metadata.Add("presentLoDs", presentLoDs);
-            Metadata.Add("geographicalExtent", GetGeographicalExtents(currentCityJSONVertices));
+            rootObject["vertices"] = vertices;
+            metadata.Add("presentLoDs", presentLoDs);
+            metadata.Add("geographicalExtent", GetGeographicalExtents(currentCityJSONVertices));
 
             foreach (var node in extensionNodes)
             {
-                RootObject[node.Key] = node.Value;
+                rootObject[node.Key] = node.Value;
             }
 
-            return RootObject.ToString();
+            return rootObject.ToString();
         }
 
         private static JSONArray GetGeographicalExtents(Dictionary<Vector3Double, int> vertices)
@@ -111,6 +113,7 @@ namespace Netherlands3D.T3DPipeline
             CityObjects.Remove(obj);
         }
 
+        // Add extra nodes that are not part of the main specs to the CityJSON
         public static void AddExtensionNode(string key, JSONNode node)
         {
             if (extensionNodes.ContainsKey(key))

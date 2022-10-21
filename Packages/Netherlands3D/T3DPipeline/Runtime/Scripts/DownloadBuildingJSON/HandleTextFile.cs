@@ -9,9 +9,9 @@ namespace Netherlands3D.T3DPipeline
 {
     public static class HandleTextFile
     {
+        //Write some text to a file
         public static void WriteString(string fileName, string content)
         {
-            //Write some text to the test.txt file
             StreamWriter writer = new StreamWriter(fileName, false);
             writer.WriteLine(content);
             writer.Close();

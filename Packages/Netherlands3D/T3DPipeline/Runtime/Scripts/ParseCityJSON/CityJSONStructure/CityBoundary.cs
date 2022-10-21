@@ -1,13 +1,16 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using SimpleJSON;
-using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Netherlands3D.T3DPipeline
 {
+    /// <summary>
+    /// from https://www.cityjson.org/specs/1.0.3/#geometry-objects:
+    /// A geometry object must have one member with the name "boundaries", whose value is a hierarchy of arrays (the depth depends on the Geometry object) with integers. An integer refers to the index in the "vertices" array of the CityJSON object, and it is 0-based (ie the first element in the array has the index "0", the second one "1", etc.).
+    /// The abstract class CityBoundray is used to represent the boundaries object, and its derivatives are used to represent the boundary objects of the different types.
+    /// 
+    /// To make editing the geometry easier in the application, the vertices are stored per polygon in Unity. They are separated from the single Vertices list when creating a boundary object from a JSONNode and they are recombined when exporting the CityJSON
+    /// </summary>
     public abstract class CityBoundary
     {
         public static readonly Dictionary<GeometryType, int> GeometryDepth = new Dictionary<GeometryType, int>{
@@ -21,58 +24,58 @@ namespace Netherlands3D.T3DPipeline
         };
 
         public abstract int VertexCount { get; }
-        public abstract void FromJSONNode(JSONArray boundariesNode, List<Vector3Double> combinedVertices);
-        public abstract JSONArray GetBoundariesAndAddNewVertices(Dictionary<Vector3Double, int> currentCityJSONVertices);
-        public abstract List<Vector3Double> GetUncombinedVertices();
+        public abstract void FromJSONNode(JSONArray boundariesNode, List<Vector3Double> combinedVertices); //pass the complete list of vertices, the needed vertices will be saved per boundary object.
+        public abstract JSONArray GetBoundariesAndAddNewVertices(Dictionary<Vector3Double, int> currentCityJSONVertices); // pass a dictionary of the already processed vertices for the CityJSON to recombine them into a single List without duplicates
+        public abstract List<Vector3Double> GetUncombinedVertices(); // returns a list of all vertices used by the boundary object without filtering for duplicates
     }
 
     public class CityMultiPoint : CityBoundary
     {
-        public CityPolygon Polygon = new CityPolygon();
+        public CityPolygon Points = new CityPolygon(); // Use a Polygon to represent the boundary array, because it behaves the same, even though it is not technically a polygon.
 
-        public override int VertexCount => Polygon.Count;
+        public override int VertexCount => Points.Count;
         public override void FromJSONNode(JSONArray boundariesNode, List<Vector3Double> combinedVertices)
         {
-            Polygon = CityPolygon.FomJsonNode(boundariesNode, combinedVertices);
+            Points = CityPolygon.FomJsonNode(boundariesNode, combinedVertices);
         }
         public override JSONArray GetBoundariesAndAddNewVertices(Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
-            return Polygon.GetJSONPolygonAndAddNewVertices(false, currentCityJSONVertices);
+            return Points.GetJSONPolygonAndAddNewVertices(false, currentCityJSONVertices);
         }
         public override List<Vector3Double> GetUncombinedVertices()
         {
-            return Polygon.Vertices.ToList();
+            return Points.Vertices.ToList();
         }
     }
 
     public class CityMultiLineString : CityBoundary
     {
-        public List<CityPolygon> Polygons = new List<CityPolygon>() { new CityPolygon() };
+        public List<CityPolygon> LineStrings = new List<CityPolygon>() { new CityPolygon() };// Use a List of Polygon to represent the boundary array, because it behaves the same, even though it is not technically a List of polygon.
         public override int VertexCount
         {
             get
             {
                 int count = 0;
-                foreach (var polygon in Polygons)
-                    count += polygon.Count;
+                foreach (var lineString in LineStrings)
+                    count += lineString.Count;
                 return count;
             }
         }
 
         public override void FromJSONNode(JSONArray boundariesNode, List<Vector3Double> combinedVertices)
         {
-            Polygons = new List<CityPolygon>();
+            LineStrings = new List<CityPolygon>();
             foreach (var lineStringNode in boundariesNode)
             {
                 var polygon = CityPolygon.FomJsonNode(lineStringNode.Value.AsArray, combinedVertices);
-                Polygons.Add(polygon);
+                LineStrings.Add(polygon);
             }
         }
 
         public override JSONArray GetBoundariesAndAddNewVertices(Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
             var node = new JSONArray();
-            foreach (var polygon in Polygons)
+            foreach (var polygon in LineStrings)
             {
                 var polygonNode = polygon.GetJSONPolygonAndAddNewVertices(false, currentCityJSONVertices);
                 node.Add(polygonNode);
@@ -82,7 +85,7 @@ namespace Netherlands3D.T3DPipeline
         public override List<Vector3Double> GetUncombinedVertices()
         {
             var vertices = new List<Vector3Double>();
-            foreach (var polygon in Polygons)
+            foreach (var polygon in LineStrings)
             {
                 vertices = vertices.Concat(polygon.Vertices).ToList();
             }
@@ -93,7 +96,7 @@ namespace Netherlands3D.T3DPipeline
     public class CitySurface : CityBoundary
     {
         public List<CityPolygon> Polygons = new List<CityPolygon>() { new CityPolygon() };
-        public CityPolygon SolidSurfacePolygon => Polygons[0];
+        public CityPolygon SolidSurfacePolygon => Polygons[0]; //the first polygon is solid, with all other polygons being holes in the first polygon
         public CityPolygon[] HolePolygons => Polygons.Skip(1).ToArray();
 
         public override int VertexCount
@@ -160,7 +163,7 @@ namespace Netherlands3D.T3DPipeline
 
     public class CityMultiOrCompositeSurface : CityBoundary
     {
-        public List<CitySurface> Surfaces = new List<CitySurface>() { new CitySurface() };
+        public List<CitySurface> Surfaces = new List<CitySurface>() { new CitySurface() }; // from the specs: A "MultiSurface", or a "CompositeSurface", has an array containing surfaces, each surface is modelled by an array of array, the first array being the exterior boundary of the surface, and the others the interior boundaries.
         public override int VertexCount
         {
             get
@@ -208,7 +211,7 @@ namespace Netherlands3D.T3DPipeline
 
     public class CitySolid : CityBoundary
     {
-        public List<CityMultiOrCompositeSurface> Shells = new List<CityMultiOrCompositeSurface>() { new CityMultiOrCompositeSurface() };
+        public List<CityMultiOrCompositeSurface> Shells = new List<CityMultiOrCompositeSurface>() { new CityMultiOrCompositeSurface() }; //from the specs: A "Solid" has an array of shells, the first array being the exterior shell of the solid, and the others the interior shells. Each shell has an array of surfaces, modelled in the exact same way as a MultiSurface/CompositeSurface.
         public override int VertexCount
         {
             get
@@ -254,7 +257,7 @@ namespace Netherlands3D.T3DPipeline
 
     public class CityMultiOrCompositeSolid : CityBoundary
     {
-        public List<CitySolid> Solids = new List<CitySolid>() { new CitySolid() };
+        public List<CitySolid> Solids = new List<CitySolid>() { new CitySolid() }; // from the specs: A "MultiSolid", or a "CompositeSolid", has an array containing solids, each solid is modelled as above.
         public override int VertexCount
         {
             get

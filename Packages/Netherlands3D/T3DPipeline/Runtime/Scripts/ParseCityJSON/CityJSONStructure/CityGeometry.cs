@@ -8,7 +8,7 @@ using UnityEngine.Assertions;
 namespace Netherlands3D.T3DPipeline
 {
     /// <summary>
-    /// 
+    /// 3. A Geometry object is a JSON object for which the type member’s value is one of the following
     /// </summary>
     public enum GeometryType
     {
@@ -21,6 +21,9 @@ namespace Netherlands3D.T3DPipeline
         CompositeSolid = 41,
     }
 
+    /// <summary>
+    /// A CityGeometry Object has the same structure as described in the specs: https://www.cityjson.org/specs/1.0.3/#geometry-objects
+    /// </summary>
     public class CityGeometry
     {
         public GeometryType Type { get; private set; }
@@ -31,6 +34,7 @@ namespace Netherlands3D.T3DPipeline
         public bool IncludeMaterials { get; set; } //todo: Materials currently not implemented yet
         public bool IncludeTextures { get; set; } //todo: Textures currently not implemented yet
 
+        //Certain CityObjectTypes can only have certain types of geometry. This is described in the specs
         public static bool IsValidType(CityObjectType cityObjectType, GeometryType geometryType)
         {
             switch (cityObjectType)
@@ -84,9 +88,12 @@ namespace Netherlands3D.T3DPipeline
 
         public CityGeometry(GeometryType geometryType, int lod, bool includeSemantics, bool includeMaterials, bool includeTextures)
         {
+            //mandatory
             Type = geometryType;
             Lod = lod;
             BoundaryObject = CreateBoundaryObject(geometryType);
+
+            //optional
             IncludeSemantics = includeSemantics;
             IncludeMaterials = includeMaterials;
             IncludeTextures = includeTextures;
@@ -95,6 +102,7 @@ namespace Netherlands3D.T3DPipeline
                 semantics = new CityGeometrySemantics();
         }
 
+        //create a Boundary object based on the geometry type.
         private CityBoundary CreateBoundaryObject(GeometryType geometryType)
         {
             switch (geometryType)
@@ -118,6 +126,7 @@ namespace Netherlands3D.T3DPipeline
             }
         }
 
+        //Exports the Geometry as a JSONObject, and renumbers the boundaries to fit the the vertices provided in currentCityJSONVertices. Missing vertices will be added to currentCityJSONVertices
         public virtual JSONObject GetGeometryNodeAndAddVertices(Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
             var geometryNode = new JSONObject();
@@ -140,6 +149,7 @@ namespace Netherlands3D.T3DPipeline
             return BoundaryObject.GetUncombinedVertices();
         }
 
+        //parse a Geometry JSON into a CityGeometry object
         public static CityGeometry FromJSONNode(JSONNode geometryNode, List<Vector3Double> combinedVertices)
         {
             var type = (GeometryType)Enum.Parse(typeof(GeometryType), geometryNode["type"]);
