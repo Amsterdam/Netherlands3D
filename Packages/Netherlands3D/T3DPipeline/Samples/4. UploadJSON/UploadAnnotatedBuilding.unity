@@ -1151,6 +1151,57 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &539938010
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 539938012}
+  - component: {fileID: 539938011}
+  m_Layer: 0
+  m_Name: UploadCityJSON
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &539938011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 539938010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 759172e0249b14246a80b74457565bd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  url: https://voorportaal.azurewebsites.net/api/uploadcityjson
+  userName: 
+  bagId: 
+  submitToken: 
+  uploadToEndpointSucceded: {fileID: 11400000, guid: 725d26d929d2244469bc8f0ae0c6b385, type: 2}
+  onUserNameChanged: {fileID: 11400000, guid: 2618aca177119407abfde72350816421, type: 2}
+  onBagIdChanged: {fileID: 11400000, guid: 77434177421774bf49bf1e922dfc1b4e, type: 2}
+--- !u!4 &539938012
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 539938010}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &569472051
 GameObject:
   m_ObjectHideFlags: 0
@@ -2727,7 +2778,6 @@ GameObject:
   - component: {fileID: 1396168132}
   - component: {fileID: 1396168131}
   - component: {fileID: 1396168130}
-  - component: {fileID: 1396168129}
   m_Layer: 5
   m_Name: ExportCityJSON
   m_TagString: Untagged
@@ -2756,25 +2806,6 @@ RectTransform:
   m_AnchoredPosition: {x: 120, y: -95}
   m_SizeDelta: {x: 240, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1396168129
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1396168127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 759172e0249b14246a80b74457565bd5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  url: https://voorportaal.azurewebsites.net/api/uploadcityjson
-  userName: 
-  bagId: 
-  submitToken: 
-  uploadToEndpointSucceded: {fileID: 11400000, guid: 725d26d929d2244469bc8f0ae0c6b385, type: 2}
-  onUserNameChanged: {fileID: 11400000, guid: 2618aca177119407abfde72350816421, type: 2}
-  onBagIdChanged: {fileID: 11400000, guid: 77434177421774bf49bf1e922dfc1b4e, type: 2}
 --- !u!114 &1396168130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2819,7 +2850,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1396168129}
+      - m_Target: {fileID: 539938011}
         m_TargetAssemblyTypeName: Netherlands3D.T3DPipeline.UploadBuilding, Netherlands3D.T3DPipeline.Runtime
         m_MethodName: UploadCityJSONFileToEndpoint
         m_Mode: 1
