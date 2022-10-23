@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace Netherlands3D.T3DPipeline
 {
+    /// <summary>
+    /// A representation of a polygon, with vertices and indices.
+    /// </summary>
     public class CityPolygon
     {
         public int[] LocalBoundaries { get; set; }
@@ -24,7 +27,7 @@ namespace Netherlands3D.T3DPipeline
             LocalBoundaries = new int[0];
         }
 
-        //public JSONArray GetJSONPolygonAndAddNewVertices(bool isHole, Dictionary<Vector3Double, int> currentCityJSONVertices)
+        // Return a JSONArray of the polygon, and combine the vertices of this polygon with the provided dictionary of existing vertices.
         public JSONArray GetJSONPolygonAndAddNewVertices(bool isHole, Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
             int[] absoluteBoundaries = new int[LocalBoundaries.Length];
@@ -33,7 +36,7 @@ namespace Netherlands3D.T3DPipeline
             {
                 var localIndex = LocalBoundaries[i];
                 var vert = Vertices[localIndex];
-                if (currentCityJSONVertices.ContainsKey(vert))
+                if (currentCityJSONVertices.ContainsKey(vert)) //renumber the boundary and use the existing vertex
                 {
                     var absoluteIndex = currentCityJSONVertices[vert];
                     absoluteBoundaries[i] = absoluteIndex;

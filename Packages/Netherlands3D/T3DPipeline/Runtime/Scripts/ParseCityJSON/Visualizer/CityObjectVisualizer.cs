@@ -7,6 +7,10 @@ using UnityEngine;
 
 namespace Netherlands3D.T3DPipeline
 {
+    /// <summary>
+    /// This class visualizes a CityObject by creating a mesh for each LOD geometry.
+    /// </summary>
+    [RequireComponent(typeof(CityObject))]
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
     public class CityObjectVisualizer : MonoBehaviour
@@ -26,6 +30,7 @@ namespace Netherlands3D.T3DPipeline
         private TriggerEvent jsonVisualized;
 
 #if UNITY_EDITOR
+        // allow to change the visible LOD from the inspector during runtime
         private void OnValidate()
         {
             if (meshes != null)
@@ -49,6 +54,7 @@ namespace Netherlands3D.T3DPipeline
             onJsonParsed.started.RemoveAllListeners();
         }
 
+        //create the meshes
         private void Visualize()
         {
             meshes = CreateMeshes(cityObject);
@@ -73,6 +79,7 @@ namespace Netherlands3D.T3DPipeline
             return new Vector3((float)center.x, (float)center.y, (float)center.z);
         }
 
+        //enable the mesh of a certain LOD
         public void SetLODActive(int lod)
         {
             var geometry = meshes.Keys.FirstOrDefault(g => g.Lod == lod);
@@ -84,6 +91,7 @@ namespace Netherlands3D.T3DPipeline
                 meshCollider.sharedMesh = activeMesh;
         }
 
+        //create the meshes for the object geometries
         private Dictionary<CityGeometry, Mesh> CreateMeshes(CityObject cityObject)
         {
             meshes = new Dictionary<CityGeometry, Mesh>();
@@ -118,6 +126,7 @@ namespace Netherlands3D.T3DPipeline
             return mesh;
         }
 
+        //Different boundary objects need to be parsed into meshes in different ways because of the different depths of the boundary arrays. We need to go as deep as needed to create meshes from surfaces.
         private static List<Mesh> BoundariesToMeshes(CityBoundary boundary, CoordinateSystem coordinateSystem)
         {
             if (boundary is CityMultiPoint || boundary is CityMultiLineString) //these boundary types are not supported as meshes
@@ -175,6 +184,7 @@ namespace Netherlands3D.T3DPipeline
             return meshes;
         }
 
+        //create a mesh of a surface.
         private static Mesh CitySurfaceToMesh(CitySurface surface, CoordinateSystem coordinateSystem)
         {
             if (surface.VertexCount == 0)
@@ -194,6 +204,7 @@ namespace Netherlands3D.T3DPipeline
             return Poly2Mesh.CreateMesh(polygon);
         }
 
+        // convert the list of Vector3Doubles to a list of Vector3s and convert the coordinates to unity in the process.
         private static List<Vector3> GetConvertedPolygonVertices(CityPolygon polygon, CoordinateSystem coordinateSystem)
         {
             List<Vector3> convertedPolygon = new List<Vector3>();

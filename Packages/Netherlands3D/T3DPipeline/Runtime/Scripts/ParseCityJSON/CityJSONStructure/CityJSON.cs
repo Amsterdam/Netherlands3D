@@ -8,8 +8,13 @@ using Netherlands3D.Events;
 
 namespace Netherlands3D.T3DPipeline
 {
+    /// <summary>
+    /// Class to represent and parse a CityJSON. Currently based on CityJSON v1.0.3
+    /// https://www.cityjson.org/specs/1.0.3/
+    /// </summary>
     public class CityJSON : MonoBehaviour
     {
+        //nodes defined in a CityJSON and therefore reserved node keys.
         private static string[] definedNodes = { "type", "version", "CityObjects", "vertices", "extensions", "metadata", "transform", "appearance", "geometry-templates" };
 
         public string Version { get; private set; }
@@ -25,12 +30,16 @@ namespace Netherlands3D.T3DPipeline
         public Vector3Double MaxExtent { get; private set; }
         public CoordinateSystem CoordinateSystem { get; private set; }
 
+        [Tooltip("event that provides a CityJSON to this class.")]
         [SerializeField]
         private StringEvent onCityJSONReceived;
+        [Tooltip("A cityObject will be created as a GameObject with a CityObject script. This field can hold a prefab with multiple extra scripts (such as CityObjectVisualizer) to be created instead. This prefab must have a CityObject script attached.")]
         [SerializeField]
-        private GameObject cityObjectPrefab;
+        private GameObject cityObjectPrefab; 
         [SerializeField]
+        [Tooltip("If checked the CityJSON parsed by this script will set the relative center of the RD coordinate system to the center of this CityJSON")]
         private bool useAsRelativeRDCenter;
+        [Tooltip("event that is called when the CityJSON is parsed")]
         [SerializeField]
         private TriggerEvent onJsonParsed;
 
@@ -64,6 +73,7 @@ namespace Netherlands3D.T3DPipeline
                 TransformTranslate = new Vector3Double(transformNode["translate"][0], transformNode["translate"][1], transformNode["translate"][2]);
             }
 
+            //custom nodes must be added as is to the exporter to ensure they are preserved.
             AddExtensionNodesToExporter(node);
 
             //vertices
@@ -76,6 +86,7 @@ namespace Netherlands3D.T3DPipeline
                 parsedVertices.Add(vert);
             }
 
+            //metadata
             if (Metadata.Count > 0)
             {
                 var coordinateSystemNode = Metadata["referenceSystem"];
@@ -101,6 +112,7 @@ namespace Netherlands3D.T3DPipeline
                 }
             }
 
+            //CityObjects
             Dictionary<JSONNode, CityObject> cityObjects = new Dictionary<JSONNode, CityObject>();
             foreach (var cityObjectNode in node["CityObjects"])
             {
@@ -143,6 +155,7 @@ namespace Netherlands3D.T3DPipeline
             onJsonParsed.Invoke();
         }
 
+        //currently only RD and WGS84 are supported as coordinate systems.
         private static CoordinateSystem ParseCoordinateSystem(JSONNode coordinateSystemNode)
         {
             Debug.Log("Parsing coordinate system: " + coordinateSystemNode.Value);
@@ -155,6 +168,7 @@ namespace Netherlands3D.T3DPipeline
             return CoordinateSystem.Unity;
         }
 
+        //custom nodes must be added as is to the exporter to ensure they are preserved.
         public static void AddExtensionNodesToExporter(JSONNode cityJsonNode)
         {
             foreach (var node in cityJsonNode)
@@ -166,6 +180,7 @@ namespace Netherlands3D.T3DPipeline
             }
         }
 
+        // function to remove Extension nodes for use in future scripts that may need to do so
         public static void RemoveExtensionNodes(JSONNode cityJsonNode)
         {
             foreach (var node in cityJsonNode)
@@ -177,6 +192,7 @@ namespace Netherlands3D.T3DPipeline
             }
         }
 
+        // set the relative RD center to avoid floating point issues of GameObject far from the Unity origin
         private void SetRelativeCenter()
         {
             if (CoordinateSystem == CoordinateSystem.RD)

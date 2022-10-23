@@ -2,6 +2,9 @@ using SimpleJSON;
 using System;
 using UnityEngine;
 
+/// <summary>
+/// Vertices in a CityJSON require more precision than floats. This class mimics the basic functionality of Unity's Vector3 but with doubles instead of floats.
+/// </summary>
 [System.Serializable]
 public struct Vector3Double
 {
@@ -59,7 +62,7 @@ public struct Vector3Double
         return new Vector3Double(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
     }
 
-    public static Vector3Double operator *(Vector3Double lhs, Vector3Double rhs)
+    public static Vector3Double operator *(Vector3Double lhs, Vector3Double rhs) // returns an element wise multiplication, not matrix multiplication
     {
         return new Vector3Double(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z);
     }
@@ -79,5 +82,10 @@ public struct Vector3Double
     public override string ToString()
     {
         return "(" + x + ", " + y + ", " + z + ")";
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(x, y, z);
     }
 }

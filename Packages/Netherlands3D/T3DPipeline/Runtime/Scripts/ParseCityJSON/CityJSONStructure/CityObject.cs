@@ -42,13 +42,9 @@ namespace Netherlands3D.T3DPipeline
 
     public class CityObject : MonoBehaviour
     {
-        /// <summary>
-        /// Each CityObject has to have a unique id. This class also supports a prefix
-        /// </summary>
+        // Each CityObject has to have a unique id. This class also supports a prefix
         public string Id { get; private set; }
-        /// <summary>
-        /// Each CityObject must have a Type. Each type has a different depth of arrays in arrays for the geometry boundaries
-        /// </summary>
+        // Each CityObject must have a Type. Each type has a different depth of arrays in arrays for the geometry boundaries
         public CityObjectType Type { get; set; }
         public CoordinateSystem CoordinateSystem { get; private set; }
         public Vector3Double MinExtent { get; private set; }
@@ -63,6 +59,7 @@ namespace Netherlands3D.T3DPipeline
         public CityObject[] CityChildren => cityChildren.ToArray();
         public CityObject[] CityParents { get; private set; } = new CityObject[0];
 
+        //add/remove the CityObject to the exporter when it is enabled/disabled
         private void OnEnable()
         {
             CityJSONFormatter.AddCityObject(this);
@@ -90,6 +87,7 @@ namespace Netherlands3D.T3DPipeline
             CityParents = newParents;
         }
 
+        // A CityObject of a certain type may only be a child of an object of a certain type. this function tests that validity. See specs for details
         public static bool IsValidParent(CityObject child, CityObject parent)
         {
             if (parent == null && ((int)child.Type < 2000))
@@ -103,6 +101,7 @@ namespace Netherlands3D.T3DPipeline
             return false;
         }
 
+        //Get the CityObject as a JSONObject, append the missing vertices, and renumber this CityObject's boundaries to the combined vertex list
         public JSONObject GetJsonObjectAndAddVertices(Dictionary<Vector3Double, int> currentCityJSONVertices)
         {
             var obj = new JSONObject();
@@ -151,6 +150,7 @@ namespace Netherlands3D.T3DPipeline
             return obj;
         }
 
+        //returns a list of vertices, without removing duplicates
         public List<Vector3Double> GetUncombinedGeometryVertices()
         {
             List<Vector3Double> geometryVertices = new List<Vector3Double>();
@@ -216,26 +216,5 @@ namespace Netherlands3D.T3DPipeline
 
             //Parents and Children cannot be added here because they might not be parsed yet. Setting parents/children happens in CityJSONParser after all objects have been created.
         }
-
-        //protected JSONObject GetAnnotationNode()
-        //{
-        //    var annotationNode = new JSONObject();
-        //    foreach (var ann in AnnotationState.AnnotationUIs)
-        //    {
-        //        if (Id == ann.ParentCityObject)
-        //        {
-        //            var annotation = new JSONObject();
-        //            var point = new JSONArray();
-        //            point.Add("x", ann.ConnectionPointRD.x);
-        //            point.Add("y", ann.ConnectionPointRD.y);
-        //            point.Add("z", ann.ConnectionPointRD.z);
-        //            annotation.Add("location", point);
-        //            annotation.Add("text", ann.Text);
-        //            annotationNode.Add("Annotation " + (ann.Id + 1), annotation);
-        //        }
-        //    }
-        //    return annotationNode;
-        //}
-
     }
 }
