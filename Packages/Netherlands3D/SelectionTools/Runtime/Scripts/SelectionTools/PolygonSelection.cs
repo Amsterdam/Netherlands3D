@@ -473,10 +473,12 @@ namespace Netherlands3D.SelectionTools
             });
             lineHandle.dragged.AddListener(() =>
             {
-                polygonLineRenderer.startColor = polygonLineRenderer.endColor = closedLoopLineColor;
+                if (closedLoop) 
+                    polygonLineRenderer.startColor = polygonLineRenderer.endColor = closedLoopLineColor;
+
                 var handlePositionBeforeCross = lineHandle.transform.position;
                 MoveHandle(lineHandle, currentWorldCoordinate);
-                if (HandleAttachedLinesCross(lineHandle))
+                if (positions.Count>2 && HandleAttachedLinesCross(lineHandle))
                 {
                     polygonLineRenderer.startColor = polygonLineRenderer.endColor = lineColor;
                     MoveHandle(lineHandle, handlePositionBeforeCross);
@@ -484,6 +486,8 @@ namespace Netherlands3D.SelectionTools
             });
             lineHandle.endDrag.AddListener(() =>
             {
+                if (!closedLoop) return;
+
                 FinishPolygon();
             });
 
