@@ -82,6 +82,9 @@ MonoBehaviour:
   firstPersonModifier: {fileID: 11400000, guid: 78ca7e79ff1e06c4db8fffc011f68a8b, type: 2}
   blockCameraDrag: {fileID: 11400000, guid: 1707987050c84b04da3c7fd1ada404a4, type: 2}
   ortographicEnabled: {fileID: 11400000, guid: 07574db4489e63d47af1d60423fcc4f3, type: 2}
+  focusOnObject: {fileID: 11400000, guid: 4351723b7888e6643aa75ca4bb0fda60, type: 2}
+  focusAngle: 45
+  focusDistanceMultiplier: 2
 --- !u!20 &1107191816428015816
 Camera:
   m_ObjectHideFlags: 0
