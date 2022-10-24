@@ -497,10 +497,10 @@ namespace Netherlands3D.SelectionTools
             Vector3 lineTwoA = Vector3.zero;
             Vector3 lineTwoB = Vector3.zero;
 
-            if (dragHandle.pointIndex == 0)
+            if (dragHandle.pointIndex == 0 || dragHandle.pointIndex == positions.Count - 1)
             {
                 lineOneA = positions[0];
-                lineOneB = positions[positions.Count - 1];
+                lineOneB = positions[positions.Count - 2];
                 lineTwoA = positions[0];
                 lineTwoB = positions[1];
             }
