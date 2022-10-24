@@ -61,11 +61,11 @@ namespace Netherlands3D.T3DPipeline
 
         public void UploadCityJSONFileToEndpoint()
         {
-            if (string.IsNullOrEmpty(submitToken))
-                throw new Exception("no submission authentication token provided");
-
             string data = CityJSONFormatter.GetCityJSON();
             print("uploading" + data);
+
+            if (string.IsNullOrEmpty(submitToken))
+                throw new Exception("no submission authentication token provided");
 
             if (requestCoroutine == null)
             {
