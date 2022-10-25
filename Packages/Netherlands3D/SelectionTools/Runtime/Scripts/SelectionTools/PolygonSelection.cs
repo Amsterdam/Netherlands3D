@@ -31,7 +31,8 @@ namespace Netherlands3D.SelectionTools
         public enum WindingOrder
         {
             CLOCKWISE,
-            COUNTERCLOCKWISE
+            COUNTERCLOCKWISE,
+            IGNORE
         }
 
         [Header("Input")]
@@ -48,10 +49,10 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] Color closedLoopLineColor = Color.red;
         [SerializeField] private float lineWidthMultiplier = 10.0f;
         [SerializeField] private float maxSelectionDistanceFromCamera = 10000;
-        [SerializeField] private bool useWorldSpace = false;
         [SerializeField] private bool snapToStart = true;
         [SerializeField, Tooltip("Closing a polygon shape is required. If set to false, you can output lines.")] private bool requireClosedPolygon = true;
         [SerializeField, Tooltip("If you click close to the starting point the loop will finish")] private bool closeLoopAtStart = true;
+        [SerializeField, Tooltip("Handles allow you to transform the line.")] private bool createHandles = false;
         [SerializeField] private int maxPoints = 1000;
         [SerializeField] private int minPointsToCloseLoop = 3;
         [SerializeField] private float minPointDistance = 0.1f;
@@ -73,7 +74,7 @@ namespace Netherlands3D.SelectionTools
 
         [SerializeField] private LineRenderer polygonLineRenderer;
         [SerializeField] private LineRenderer previewLineRenderer;
-        [SerializeField] private List<Vector3> positions = new List<Vector3>();
+        private List<Vector3> positions = new List<Vector3>();
         private Vector3 lastAddedPoint = default;
         private Vector3 selectionStartPosition = default;
         private Vector3 currentWorldCoordinate = default;
@@ -93,6 +94,8 @@ namespace Netherlands3D.SelectionTools
         private float lastTapTime = 0;
 
         [SerializeField] private Transform pointerRepresentation;
+        [SerializeField] private PolygonDragHandle handleTemplate;
+        private List<PolygonDragHandle> handles = new List<PolygonDragHandle>();
 
         void Awake()
         {
@@ -117,7 +120,26 @@ namespace Netherlands3D.SelectionTools
             escapeAction.canceled += context => ClearPolygon(true);
             finishAction.performed += context => CloseLoop(true);
 
-            worldPlane = (useWorldSpace) ? new Plane(Vector3.up, Vector3.zero) : new Plane(this.transform.up, this.transform.position);
+            worldPlane = new Plane(this.transform.up, this.transform.position);
+
+            if (handleTemplate)
+            {
+                handleTemplate.gameObject.SetActive(false);
+            }
+            else
+            {
+                if (createHandles) Debug.Log("Please set a handleTemplate reference to create handles.", this.gameObject);
+            }
+        }
+
+        private void OnValidate()
+        {
+            if (createHandles && doubleClickToCloseLoop)
+            {
+                //Second clicks would select the handle, so auto disable double click
+                Debug.Log("Disabled double click to close loop. This is not allowed in combination with handles.");
+                doubleClickToCloseLoop = false;
+            }
         }
 
         private void OnEnable()
@@ -167,7 +189,8 @@ namespace Netherlands3D.SelectionTools
         /// </summary>
         private void UpdatePreviewLine()
         {
-            if (positions.Count == 0 || closedLoop) return;
+            if (positions.Count == 0 || closedLoop) 
+                return;
 
             snappingToStartPoint = false;
             if(snapToStart && positions.Count > 2)
@@ -212,7 +235,7 @@ namespace Netherlands3D.SelectionTools
         /// <param name="skipFirst">Skip the first line in our chain</param>
         /// <param name="skipLast">Skip the last line in our chain</param>
         /// <returns>Returns true if an intersection was found</returns>
-        private bool LineCrossesOtherLine(Vector3 linePointA, Vector3 linePointB, bool skipFirst = false, bool skipLast = false)
+        private bool LineCrossesOtherLine(Vector3 linePointA, Vector3 linePointB, bool skipFirst = false, bool skipLast = false, bool ignoreConnected = false)
         {
             int startIndex = (skipFirst) ? 2 : 1;
             int endIndex = (skipLast) ? polygonLineRenderer.positionCount-1 : polygonLineRenderer.positionCount;
@@ -222,14 +245,31 @@ namespace Netherlands3D.SelectionTools
                 var comparisonEnd = polygonLineRenderer.GetPosition(i);
                 if (LinesIntersectOnPlane(linePointA, linePointB, comparisonStart, comparisonEnd))
                 {
-                    Debug.Log("Line is crossing other line! This is not allowed.");
-                    return true;
+                    if (ignoreConnected)
+                    {
+                        if(linePointA.Equals(comparisonStart) || linePointA.Equals(comparisonEnd) || linePointB.Equals(comparisonStart) || linePointB.Equals(comparisonEnd))
+                        {
+                            Debug.Log("Line is overlapping connected line! This is allowed.");
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("Line is crossing other line! This is not allowed.");
+                        return true;
+                    }
                 }
             }
             return false;
         }
 
-
+        /// <summary>
+        /// Returns if lines intersect on a flat plane
+        /// </summary>
+        /// <returns></returns>
         public static bool LinesIntersectOnPlane(Vector3 lineOneA, Vector3 lineOneB, Vector3 lineTwoA, Vector3 lineTwoB)
         {
             return
@@ -344,6 +384,7 @@ namespace Netherlands3D.SelectionTools
         private void ClearPolygon(bool redraw = false)
         {
             polygonFinished = false;
+            ClearHandles();
 
             polygonLineRenderer.startColor = polygonLineRenderer.endColor = lineColor;
             closedLoop = false;
@@ -354,6 +395,18 @@ namespace Netherlands3D.SelectionTools
 
             if (redraw)
                 UpdateLine();
+        }
+
+        /// <summary>
+        /// Destroys all handle objects
+        /// </summary>
+        private void ClearHandles()
+        {
+            foreach (var handle in handles)
+            {
+                if (handle) Destroy(handle.gameObject);
+            }
+            handles.Clear();
         }
 
         private void AddPoint(Vector3 pointPosition)
@@ -368,6 +421,9 @@ namespace Netherlands3D.SelectionTools
                 previewLineRenderer.enabled = true;
                 selectionStartPosition = pointPosition;
                 positions.Add(pointPosition);
+                if (createHandles && handleTemplate)
+                    CreateHandle(positions.Count - 1);
+
                 lastAddedPoint = pointPosition;
             }
             else if (previewLineCrossed)
@@ -384,17 +440,105 @@ namespace Netherlands3D.SelectionTools
             {
                 Debug.Log("Adding new point.");
                 positions.Add(pointPosition);
+                if (createHandles)
+                    CreateHandle(positions.Count - 1);
+
                 lastAddedPoint = pointPosition;
                 if ((positions.Count >= maxPoints) || closeLoopAtStart && snappingToStartPoint)
                 {
                     CloseLoop(true);
                 }
             }
-
-            
+     
 
             if (!closedLoop)
                 UpdateLine();
+        }
+
+        /// <summary>
+        /// Create a drag handle for line vertex position with index for changing its position
+        /// </summary>
+        /// <param name="positionIndex">Line vertex position index</param>
+        private void CreateHandle(int positionIndex)
+        {
+            var lineHandle = Instantiate(handleTemplate, this.transform);
+            lineHandle.gameObject.SetActive(true);
+            lineHandle.pointIndex = positionIndex;
+            lineHandle.transform.position = positions[positionIndex];
+
+            lineHandle.clicked.AddListener(() =>
+            {
+                if(!closedLoop && lineHandle.pointIndex == 0)
+                    CloseLoop(true);
+            });
+            lineHandle.dragged.AddListener(() =>
+            {
+                if (closedLoop) 
+                    polygonLineRenderer.startColor = polygonLineRenderer.endColor = closedLoopLineColor;
+
+                var handlePositionBeforeCross = lineHandle.transform.position;
+                MoveHandle(lineHandle, currentWorldCoordinate);
+                if (positions.Count>2 && HandleAttachedLinesCross(lineHandle))
+                {
+                    polygonLineRenderer.startColor = polygonLineRenderer.endColor = lineColor;
+                    MoveHandle(lineHandle, handlePositionBeforeCross);
+                }
+            });
+            lineHandle.endDrag.AddListener(() =>
+            {
+                if (!closedLoop) return;
+
+                FinishPolygon();
+            });
+
+            handles.Add(lineHandle);
+        }
+
+        private bool HandleAttachedLinesCross(PolygonDragHandle dragHandle)
+        {
+            Vector3 lineOneA = Vector3.zero;
+            Vector3 lineOneB = Vector3.zero;
+            Vector3 lineTwoA = Vector3.zero;
+            Vector3 lineTwoB = Vector3.zero;
+
+            if (dragHandle.pointIndex == 0 || dragHandle.pointIndex == positions.Count - 1)
+            {
+                lineOneA = positions[0];
+                lineOneB = positions[positions.Count - 2];
+                lineTwoA = positions[0];
+                lineTwoB = positions[1];
+            }
+            else if (dragHandle.pointIndex < positions.Count-1)
+            {
+                lineOneA = positions[dragHandle.pointIndex];
+                lineOneB = positions[dragHandle.pointIndex+1];
+                lineTwoA = positions[dragHandle.pointIndex];
+                lineTwoB = positions[dragHandle.pointIndex-1];
+            }
+
+            if (LineCrossesOtherLine(lineOneA, lineOneB, false,false, true)) return true;
+            if (LineCrossesOtherLine(lineTwoA, lineTwoB, false, false, true)) return true;
+
+            return false;
+        }
+
+        private void MoveHandle(PolygonDragHandle handle, Vector3 targetPosition)
+        {
+            handle.transform.position = targetPosition;
+            positions[handle.pointIndex] = targetPosition;
+
+            if (closedLoop && handle.pointIndex == 0)
+                positions[positions.Count - 1] = targetPosition;
+
+            UpdateLine();
+        }
+
+        private void MoveAllHandlesToPoint()
+        {
+            foreach(var handle in handles)
+            {
+                handle.transform.position = positions[handle.pointIndex];
+            }
         }
 
         /// <summary>
@@ -440,6 +584,7 @@ namespace Netherlands3D.SelectionTools
             {
                 Debug.Log($"Forcing to {windingOrder}");
                 positions.Reverse();
+                MoveAllHandlesToPoint();
             }
 
             if(positions.Count > 1)
