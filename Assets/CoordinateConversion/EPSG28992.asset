@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ed145293b93ddd4f88124a5ae6deaee, type: 3}
+  m_Name: EPSG28992
+  m_EditorClassIdentifier: 
+  epsgcode: 28992
+  name: RD-New
+  lattitudeOfNaturalOrigin: 52.1561605555556
+  longitudeOfNaturalOrigin: 5.38763888888889
+  scaleFactorAtNaturalOrigin: 0.9999079
+  falseEasting: 155000
+  falseNorthing: 463000
+  ellipsoid: {fileID: 11400000, guid: 883caafd798413140a38601a389c1fc0, type: 2}
+  conversionMethod: 1
+  abridgedTransformation: 3
