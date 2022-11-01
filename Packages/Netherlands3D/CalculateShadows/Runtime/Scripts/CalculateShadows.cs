@@ -2,12 +2,16 @@ using System.Collections;
 using UnityEngine;
 using Netherlands3D.Events;
 
-public class CalculateShadows: MonoBehaviour
+public class CalculateShadows : MonoBehaviour
 {
     [SerializeField]
-    private GameObject targetObject;
+    private GameObject resultTextureObject;
     [SerializeField]
-    private Material targetMaterial;
+    private Material resultMaterial;
+    [SerializeField]
+    private GameObject resultProjectorObject;
+    [SerializeField]
+    private bool moveWithCamera;
 
     [SerializeField]
     private string[] textureRefs;
@@ -24,14 +28,15 @@ public class CalculateShadows: MonoBehaviour
     [SerializeField]
     private DateTimeEvent getCurrentTime;
 
-    private Camera mainCam;
-    private Camera currentCam;
+    [Space(20)]
     [SerializeField]
     private GameObject areaFrame;
     [SerializeField]
     private RenderTexture camTexture;
 
     private bool resultShown = false;
+    private Camera mainCam;
+    private Camera currentCam;
 
     void Start()
     {
@@ -42,7 +47,7 @@ public class CalculateShadows: MonoBehaviour
 
     void Update()
     {
-        if (!resultShown)
+        if (!resultShown && moveWithCamera)
         {
             transform.position = new Vector3(mainCam.transform.position.x, 200, mainCam.transform.position.z);
 
@@ -65,8 +70,9 @@ public class CalculateShadows: MonoBehaviour
 
     IEnumerator PopulateTextures()
     {
-        targetObject.SetActive(false);
-        targetMaterial.SetTexture("_MainTex", null);
+        resultTextureObject.SetActive(false);
+        resultProjectorObject.SetActive(true);
+        resultMaterial.SetTexture("_MainTex", null);
 
         for (int i = 0; i <= textureRefs.Length; i++)
         {
@@ -78,7 +84,7 @@ public class CalculateShadows: MonoBehaviour
         }
 
         // Take resulting screenshot
-        targetObject.SetActive(true);
+        resultTextureObject.SetActive(true);
         StartCoroutine(SetResultTexture(currentCam));
 
         resultShown = true;
@@ -99,7 +105,7 @@ public class CalculateShadows: MonoBehaviour
 
         if (textureIndex < textureRefs.Length)
         {
-            targetObject.GetComponent<MeshRenderer>().material.SetTexture(textureRefs[textureIndex], myTexture);
+            resultTextureObject.GetComponent<MeshRenderer>().material.SetTexture(textureRefs[textureIndex], myTexture);
         }
 
         textureIndex++;
@@ -116,13 +122,12 @@ public class CalculateShadows: MonoBehaviour
 
         yield return new WaitForEndOfFrame();
 
-        targetMaterial.SetTexture("_MainTex", myTexture);
+        resultMaterial.SetTexture("_MainTex", myTexture);
 
         // Reset things
         setSunHour.Invoke(originalHour);
         textureIndex = 0;
-        // resetShadows.started.Invoke(true);
-        targetObject.SetActive(false);
+        resultTextureObject.SetActive(false);
     }
 
     Texture2D ToTexture2D(RenderTexture rTex) // Helper
@@ -136,19 +141,19 @@ public class CalculateShadows: MonoBehaviour
 
     public void ResetShadows()
     {
-        targetMaterial.SetTexture("_MainTex", null);
+        resultProjectorObject.SetActive(false);
+        resultMaterial.SetTexture("_MainTex", null);
         for (int i = 0; i < textureRefs.Length; i++)
         {
-            targetObject.GetComponent<MeshRenderer>().material.SetTexture(textureRefs[textureIndex], null);
+            resultTextureObject.GetComponent<MeshRenderer>().material.SetTexture(textureRefs[textureIndex], null);
         }
         resultShown = false;
-        // resetShadows.started.Invoke(false);
+        resetShadows.started.Invoke(false);
     }
 
     void GetCurrentTIme(System.DateTime dateTime)
     {
         originalHour = dateTime.Hour;
-        Debug.Log(originalHour);
         // Only get once, so remove listener
         getCurrentTime.started.RemoveAllListeners();
     }
