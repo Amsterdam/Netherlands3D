@@ -3749,7 +3749,6 @@ GameObject:
   - component: {fileID: 2017367977}
   - component: {fileID: 2017367982}
   - component: {fileID: 2017367981}
-  - component: {fileID: 2017367980}
   - component: {fileID: 2017367979}
   - component: {fileID: 2017367978}
   m_Layer: 5
@@ -3795,7 +3794,7 @@ MonoBehaviour:
   trigger:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2017367980}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: AnnotationHeaderText, Netherlands3D.T3DPipeline.Runtime
         m_MethodName: ResetText
         m_Mode: 1
@@ -3823,7 +3822,7 @@ MonoBehaviour:
   trigger:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2017367980}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: AnnotationHeaderText, Netherlands3D.T3DPipeline.Runtime
         m_MethodName: SetText
         m_Mode: 0
@@ -3835,18 +3834,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &2017367980
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2017367976}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a81db4110f8f423cb21ce8b0e4bf5e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2017367981
 MonoBehaviour:
   m_ObjectHideFlags: 0

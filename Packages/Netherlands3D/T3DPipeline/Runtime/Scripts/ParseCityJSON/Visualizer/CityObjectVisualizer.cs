@@ -129,7 +129,7 @@ namespace Netherlands3D.T3DPipeline
         //Different boundary objects need to be parsed into meshes in different ways because of the different depths of the boundary arrays. We need to go as deep as needed to create meshes from surfaces.
         private static List<Mesh> BoundariesToMeshes(CityBoundary boundary, CoordinateSystem coordinateSystem)
         {
-            if (boundary is CityMultiPoint || boundary is CityMultiLineString) //these boundary types are not supported as meshes
+            if (boundary is CityMultiPoint || boundary is CityMultiLineString) //todo these boundary types are not supported as meshes
                 return new List<Mesh>();
             if (boundary is CitySurface)
                 return BoundariesToMeshes(boundary as CitySurface, coordinateSystem);

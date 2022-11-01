@@ -85,6 +85,10 @@ namespace Netherlands3D.T3DPipeline
                 vert += TransformTranslate;
                 parsedVertices.Add(vert);
             }
+            if(parsedVertices.Count == 0)
+            {
+                Debug.LogWarning("Vertex list is empty, nothing can be visualized because empty meshes will be created!");
+            }
 
             //metadata
             if (Metadata.Count > 0)
@@ -98,7 +102,7 @@ namespace Netherlands3D.T3DPipeline
                     MinExtent = new Vector3Double(geographicalExtent[0].AsDouble, geographicalExtent[1].AsDouble, geographicalExtent[2].AsDouble);
                     MaxExtent = new Vector3Double(geographicalExtent[3].AsDouble, geographicalExtent[4].AsDouble, geographicalExtent[5].AsDouble);
                 }
-                else
+                else if (parsedVertices.Count > 0)
                 {
                     var minX = parsedVertices.Min(v => v.x);
                     var minY = parsedVertices.Min(v => v.y);
