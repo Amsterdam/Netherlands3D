@@ -37,7 +37,7 @@
 	{
       "displayName": "Import OBJ",
       "description": "For importing OBJ-files.",
-      "path": "Modelparsing/ImportOBJ/Samples~/Import obj-file"
+      "path": "Modelparsing/ImportOBJ/Samples~/Import OBJ-File"
     },
     {
       "displayName": "Minimap Template",
