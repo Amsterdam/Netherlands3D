@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18377209, g: 0.22830978, b: 0.2996402, a: 1}
+  m_IndirectSpecularColor: {r: 0.18310624, g: 0.22660261, b: 0.2939904, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2495,7 +2495,6 @@ GameObject:
   - component: {fileID: 363229001}
   - component: {fileID: 363229000}
   - component: {fileID: 363228999}
-  - component: {fileID: 363228998}
   m_Layer: 5
   m_Name: SunHUD
   m_TagString: Untagged
@@ -2524,22 +2523,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 50, y: 50}
-  m_SizeDelta: {x: 410, y: 0}
+  m_SizeDelta: {x: 410, y: 150}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &363228998
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 363228996}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 0
-  m_VerticalFit: 2
 --- !u!114 &363228999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5283,19 +5268,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.06049976
+      value: -0.20125642
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.014126219
+      value: -0.039802264
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.97192585
+      value: 0.9601331
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.22693704
+      value: -0.18988447
       objectReference: {fileID: 0}
     - target: {fileID: 8864515628194110769, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: sendDateTime
