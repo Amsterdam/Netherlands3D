@@ -71,6 +71,9 @@ public class FreeCamera : MonoBehaviour
     [Header("Other setting events")]
     [SerializeField] public BoolEvent blockCameraDrag;
     [SerializeField] public BoolEvent ortographicEnabled;
+    [SerializeField] public GameObjectEvent focusOnObject;
+    [SerializeField] private float focusAngle = 45.0f;
+    [SerializeField] private float focusDistanceMultiplier = 2.0f;
 
     private Vector3 currentPointerPosition;
     private Vector3 zoomTarget;
@@ -112,6 +115,7 @@ public class FreeCamera : MonoBehaviour
 
         if(blockCameraDrag) blockCameraDrag.started.AddListener(LockDragging);
         if(ortographicEnabled) ortographicEnabled.started.AddListener(EnableOrtographic);
+        if(focusOnObject) focusOnObject.started.AddListener(FocusOnObject);
     }
 
     /// <summary>
@@ -132,6 +136,28 @@ public class FreeCamera : MonoBehaviour
         }
 
         cameraComponent.orthographic = enableOrtographic;
+    }
+
+    /// <summary>
+    /// Focus camera on gameobject using origin.
+    /// Move camera backwards to contain renderer bounds.
+    /// </summary>
+    /// <param name="focusObject"></param>
+    public void FocusOnObject(GameObject focusObject)
+    {
+        this.transform.position = focusObject.transform.position;
+        this.transform.eulerAngles = new Vector3((cameraComponent.orthographic) ? 90 : focusAngle, 0, 0);
+
+        var meshRenderer = focusObject.GetComponentInChildren<MeshRenderer>();
+        if(meshRenderer)
+        {
+            this.transform.Translate(Vector3.back * meshRenderer.bounds.size.magnitude * focusDistanceMultiplier, Space.Self);
+        }
+        else
+        {
+            this.transform.Translate(Vector3.back * focusDistanceMultiplier, Space.Self);
+        }
+
     }
 
     private void OrtographicLimitations()

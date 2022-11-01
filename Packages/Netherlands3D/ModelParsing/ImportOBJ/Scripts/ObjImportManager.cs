@@ -6,33 +6,35 @@ using Netherlands3D.ModelParsing;
 
 public class ObjImportManager : MonoBehaviour
 {
-    [Header("required input")]
+    [Header("Required input")]
     [SerializeField] Material baseMaterial;
-    [SerializeField] TriggerEvent expectOBJFile;
     bool expectingObjFile = false;
-    [SerializeField] TriggerEvent expectMTLFile;
     bool expectingMTLFile = false;
     [SerializeField] StringEvent receiveFileToLoad;
-    [SerializeField] TriggerEvent startImporting;
     [SerializeField] TriggerEvent cancelImporting;
 
-    [Header("optional output")]
+    [Header("Optional triggers")]
+    [SerializeField] TriggerEvent expectOBJFile;
+    [SerializeField] TriggerEvent expectMTLFile;
+    [SerializeField, Tooltip("Use this trigger in combination with expectOBJFile and expectMTLFile to import OBJ and MTL files in specific steps")] TriggerEvent startImporting;
+
+    [Header("Optional output")]
     [SerializeField] BoolEvent ReadyForImport;
     [SerializeField] StringEvent ReceivedOBJFilename;
     [SerializeField] StringEvent ReceivedMTLFilename;
     [SerializeField] GameObjectEvent CreatedMoveableGameObject;
     [SerializeField] GameObjectEvent CreatedImmoveableGameObject;
 
-    [Header("settings")]
+    [Header("Settings")]
     [SerializeField] bool createSubMeshes = false;
 
-    [Header("progress")]
+    [Header("Progress")]
     [SerializeField] BoolEvent started;
     [SerializeField] StringEvent currentActivity;
     [SerializeField] StringEvent currentAction;
     [SerializeField] FloatEvent progressPercentage;
 
-    [Header("error")]
+    [Header("Alerts and errors")]
     [SerializeField] StringEvent alertmessage;
     [SerializeField] StringEvent errormessage;
 

@@ -55,7 +55,7 @@ MonoBehaviour:
   ReceivedOBJFilename: {fileID: 11400000, guid: 001c4f79866741743bc34ed92c6903fb, type: 2}
   ReceivedMTLFilename: {fileID: 11400000, guid: 7c6703f65e9bdee41a670bc24447027c, type: 2}
   CreatedMoveableGameObject: {fileID: 11400000, guid: 267bfc4199b835e41b4164135eccda16, type: 2}
-  CreatedImmoveableGameObject: {fileID: 0}
+  CreatedImmoveableGameObject: {fileID: 11400000, guid: 267bfc4199b835e41b4164135eccda16, type: 2}
   createSubMeshes: 1
   started: {fileID: 11400000, guid: d90f39cd2e17b594c93c324c1cc14ae9, type: 2}
   currentActivity: {fileID: 11400000, guid: 92549c24aca860a4cb218844a186b17f, type: 2}
@@ -79,10 +79,10 @@ MonoBehaviour:
   trigger:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4093302162744430799, guid: c37f1603c25a94c4592ada611dba3cf6, type: 3}
-        m_TargetAssemblyTypeName: Netherlands3D.Interface.PlaceCustomObject, Assembly-CSharp
-        m_MethodName: ObjectPlaced
-        m_Mode: 0
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

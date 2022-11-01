@@ -15,5 +15,7 @@ namespace Netherlands3D.Core.Colors
     {
         public string name = "";
         public Color color;
+
+        public int count = 1; //occurances of this color (for weight tables)
     }
 }

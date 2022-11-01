@@ -203,7 +203,7 @@ namespace Netherlands3D.Traffic
                 Data.Coordinates item = data.coordinates[key];
 
                 // Check for a raycast with ground
-                if(Physics.Raycast(item.center + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
+                if(Physics.Raycast(item.center + (Vector3.up * 50.0f), Vector3.down, out Hit, Mathf.Infinity, layerMask))
                 {
                     item.center.y = Hit.point.y;
                 }
@@ -214,7 +214,7 @@ namespace Netherlands3D.Traffic
                     {
                         binaryMeshLayer.AddMeshColliders(Hit.point);
                         // Cast the raycast again for a y axis point
-                        if(Physics.Raycast(item.center + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
+                        if(Physics.Raycast(item.center + (Vector3.up * 50.0f), Vector3.down, out Hit, Mathf.Infinity, layerMask))
                         {
                             item.center.y = Hit.point.y;
                         }
@@ -223,10 +223,9 @@ namespace Netherlands3D.Traffic
 
                 // Add animation keyframe to clip
                 // Position animation
-                Vector3 position = new Vector3(item.center.x, item.center.y, item.center.z);
-                animationCurvePositionX.AddKey(key, position.x);
-                if(!updateRealtime) animationCurvePositionY.AddKey(key, position.y);
-                animationCurvePositionZ.AddKey(key, position.z);
+                animationCurvePositionX.AddKey(key, item.center.x);
+                if(!updateRealtime) animationCurvePositionY.AddKey(key, item.center.y);
+                animationCurvePositionZ.AddKey(key, item.center.z);
 
                 // Rotation animation
                 // Check if distance between next point is smaller than 1 meter (in case of center points not being correct/too close which causes visual rotation bugs)
@@ -281,7 +280,7 @@ namespace Netherlands3D.Traffic
             // Check for a raycast with ground
             if(Physics.Raycast(transform.position + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
             {
-                transform.position = new Vector3(transform.position.x, Hit.point.y + defaultCubeModel.localScale.y, transform.position.z);
+                transform.position = new Vector3(transform.position.x, Hit.point.y, transform.position.z);
             }
             else
             {
@@ -292,7 +291,7 @@ namespace Netherlands3D.Traffic
                     // Cast the raycast again for a y axis point
                     if(Physics.Raycast(transform.position + new Vector3(0, 50, 0), Vector3.down, out Hit, Mathf.Infinity, layerMask))
                     {
-                        transform.position = new Vector3(transform.position.x, Hit.point.y + defaultCubeModel.localScale.y, transform.position.z);
+                        transform.position = new Vector3(transform.position.x, Hit.point.y, transform.position.z);
                     }
                 }
             }
