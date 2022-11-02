@@ -148,7 +148,7 @@ public class CalculateShadows : MonoBehaviour
             resultTextureObject.GetComponent<MeshRenderer>().material.SetTexture(textureRefs[textureIndex], null);
         }
         resultShown = false;
-        resetShadows.started.Invoke(false);
+        resetShadows?.started.Invoke(false);
     }
 
     void GetCurrentTIme(System.DateTime dateTime)
