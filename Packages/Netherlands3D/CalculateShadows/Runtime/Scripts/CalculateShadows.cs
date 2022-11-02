@@ -24,9 +24,11 @@ public class CalculateShadows : MonoBehaviour
     private IntEvent setSunHour;
     [SerializeField]
     private BoolEvent resetShadows;
+    [SerializeField]
+    private TriggerEvent getSunTime;
     [Header("Listen to events")]
     [SerializeField]
-    private DateTimeEvent getCurrentTime;
+    private DateTimeEvent receiveSunTime;
 
     [Space(20)]
     [SerializeField]
@@ -42,26 +44,21 @@ public class CalculateShadows : MonoBehaviour
     {
         mainCam = Camera.main;
         currentCam = this.gameObject.GetComponent<Camera>();
-        if (getCurrentTime) getCurrentTime.started.AddListener(GetCurrentTIme);
+        currentCam.enabled = false;
+        if(receiveSunTime) receiveSunTime.AddListener(ReceiveSunTime);
     }
 
     void Update()
     {
-        if (!resultShown && moveWithCamera)
-        {
-            transform.position = new Vector3(mainCam.transform.position.x, 200, mainCam.transform.position.z);
 
-            transform.localRotation = mainCam.transform.localRotation;
-            transform.localRotation = Quaternion.Euler(new Vector3(90, transform.localRotation.eulerAngles.y, transform.localRotation.eulerAngles.z));
-
-            transform.position = transform.position + transform.up * 800;
-
-            areaFrame.transform.position = new Vector3(areaFrame.transform.position.x, 120, areaFrame.transform.position.z);
-        }
     }
 
     public void StartCalc()
     {
+        currentCam.enabled = true;
+        // Get original hours
+        getSunTime?.started.Invoke();
+
         currentHour = 8; // Start at 8 in the morning
         setSunHour.Invoke(currentHour);
 
@@ -128,6 +125,7 @@ public class CalculateShadows : MonoBehaviour
         setSunHour.Invoke(originalHour);
         textureIndex = 0;
         resultTextureObject.SetActive(false);
+        currentCam.enabled = false;
     }
 
     Texture2D ToTexture2D(RenderTexture rTex) // Helper
@@ -151,10 +149,8 @@ public class CalculateShadows : MonoBehaviour
         resetShadows?.started.Invoke(false);
     }
 
-    void GetCurrentTIme(System.DateTime dateTime)
+    void ReceiveSunTime(System.DateTime dateTime)
     {
         originalHour = dateTime.Hour;
-        // Only get once, so remove listener
-        getCurrentTime.started.RemoveAllListeners();
     }
 }
