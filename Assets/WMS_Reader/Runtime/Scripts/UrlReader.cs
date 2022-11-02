@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Net.Http;
 using System.Xml;
+using System.Threading.Tasks;
 
 public class UrlReader : MonoBehaviour
 {
     public enum ServiceType { UNDEFINED, WMS, WFS };
 
+    private string namespacePrefix = "";
     private ServiceType serviceType;
-    private static readonly HttpClient client = new();
+
     private XmlReader reader;
+    private static readonly HttpClient client = new();
 
 
 
@@ -34,20 +37,33 @@ public class UrlReader : MonoBehaviour
         // These if-Contains need to be refactored as they're too inaccurate and not reliable enough.
         // Will evaluate the Service/ServiceType within the XML at a later time.
 
-        reader = XmlReader.Create(url);
+        //reader = XmlReader.Create(url);
 
-        switch (serviceType)
-        {
-            case ServiceType.WMS:
-                ShowWMSXml();
-                WMSFormatter.DeserializeToWMS(ref reader);
-                break;
-            case ServiceType.WFS:
-                ShowWFSXml();
-                break;
-        }
-        reader.Close();
-        reader.Dispose();
+        string xmlData = GetDataFromURL(url);
+
+        XmlDocument xml = new XmlDocument();
+        xml.LoadXml(xmlData);
+
+
+        //XmlNode serviceNode = GetChildNode(xml.DocumentElement, "Service");
+        //XmlNode sNode = xml.GetElementById("Service");
+
+        //print(serviceNode.Name);
+        print(xml);
+        print(xmlData);
+
+        //switch (serviceType)
+        //{
+        //    case ServiceType.WMS:
+        //        ShowWMSXml();
+        //        WMSFormatter.DeserializeToWMS(xml);
+        //        break;
+        //    case ServiceType.WFS:
+        //        ShowWFSXml();
+        //        break;
+        //}
+        //reader.Close();
+        //reader.Dispose();
     }
 
     private void ShowWMSXml()
@@ -95,5 +111,15 @@ public class UrlReader : MonoBehaviour
         }
         reader.Close();
         reader.Dispose();
+    }
+
+    private string GetDataFromURL(string url)
+    {
+        return client.GetStringAsync(url).Result;
+    }
+
+    private XmlNode GetChildNode(XmlNode parentNode, string childName)
+    {
+        return parentNode.SelectSingleNode($"{namespacePrefix}{childName}");
     }
 }

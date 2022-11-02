@@ -8,9 +8,9 @@ using System.Data;
 public static class WMSFormatter 
 {
 
-    public static void DeserializeToWMS(ref XmlReader reader)
-    {
-        XmlSerializer serializer = new XmlSerializer(typeof(WMSStyle));
+    private static XmlDocument wmsXml;
+    public static void DeserializeToWMS(XmlDocument wmsXml)
+    {        
 
         //try
         //{
