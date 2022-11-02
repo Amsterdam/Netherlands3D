@@ -2064,6 +2064,7 @@ GameObject:
   - component: {fileID: 1881454742}
   - component: {fileID: 1881454741}
   - component: {fileID: 1881454740}
+  - component: {fileID: 1881454743}
   m_Layer: 5
   m_Name: ExportCityJSON
   m_TagString: Untagged
@@ -2136,9 +2137,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1495255565}
-        m_TargetAssemblyTypeName: Netherlands3D.T3DPipeline.CityJSON, Netherlands3D.T3DPipeline.Runtime
-        m_MethodName: ExportCityJSON
+      - m_Target: {fileID: 1881454743}
+        m_TargetAssemblyTypeName: Netherlands3D.T3DPipeline.CityJSONExportButton,
+          Assembly-CSharp
+        m_MethodName: PrintCityJSON
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2186,3 +2188,15 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1881454738}
   m_CullTransparentMesh: 1
+--- !u!114 &1881454743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881454738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 864a3b5d8209b4146b84d61a935b0daa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
