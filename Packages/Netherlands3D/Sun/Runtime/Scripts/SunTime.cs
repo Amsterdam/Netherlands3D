@@ -151,7 +151,7 @@ namespace Netherlands3D.Sun
 
         public void SetTimeSpeed(float multiplicationFactor) {
             timeSpeed = Math.Clamp(timeSpeed * multiplicationFactor, 1, 10000);
-            sendAnimationSpeed.Invoke(timeSpeed);
+            sendAnimationSpeed?.Invoke(timeSpeed);
         }
 
         private void Start()
@@ -194,7 +194,7 @@ namespace Netherlands3D.Sun
 
             time = time.AddSeconds(timeSpeed * Time.deltaTime);
             if (frameStep==0) {
-                sendDateTime.Invoke(time);
+                sendDateTime?.Invoke(time);
                 SetPosition();
             }
             frameStep = (frameStep + 1) % frameSteps;
