@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3806bf4ed8508374aa40d46634c7a461, type: 3}
-  m_Name: SendDateTime
+  m_Name: OnDateTimeLoaded
   m_EditorClassIdentifier: 
-  eventName: SendDateTime
-  description: This event is used to update the DateTime every frame
+  eventName: OnDateTimeLoaded
+  description: 
   started:
     m_PersistentCalls:
       m_Calls: []
