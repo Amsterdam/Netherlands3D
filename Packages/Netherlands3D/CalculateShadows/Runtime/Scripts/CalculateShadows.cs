@@ -16,7 +16,7 @@ public class CalculateShadows : MonoBehaviour
     [SerializeField]
     private string[] textureRefs;
     private int textureIndex = 0;
-    private int originalHour;
+    private int originalHour = 14;
     private int currentHour;
 
     [Header("Invoke events")]
@@ -45,7 +45,7 @@ public class CalculateShadows : MonoBehaviour
         mainCam = Camera.main;
         currentCam = this.gameObject.GetComponent<Camera>();
         currentCam.enabled = false;
-        if(receiveSunTime) receiveSunTime.AddListener(ReceiveSunTime);
+        receiveSunTime?.started.AddListener(ReceiveSunTime);
     }
 
     void Update()
