@@ -10,17 +10,10 @@ public class WMSStyle
     // The style's title is a name formatted to create readability for people.
     public string Title;
 
-    [XmlAttribute("width")]
-    public int Width;
-    [XmlAttribute("height")]
-    public int Height;
+    public string LegendURL;
 
-    public string Format;
-    [XmlAttribute("xmlns:xlink")]
-    public string XmlLink;
-    [XmlAttribute("xlink:type")]
-    public string XLinkType;
-    [XmlAttribute("xlink:href")]
-    public string XLinkHRef;
-
+    public override string ToString()
+    {
+        return $"WMS Style :{Name}, with title: {Title} and LegendURL: {LegendURL}";
+    }
 }
