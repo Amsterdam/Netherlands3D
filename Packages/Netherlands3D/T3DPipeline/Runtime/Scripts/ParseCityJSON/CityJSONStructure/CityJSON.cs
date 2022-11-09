@@ -55,6 +55,11 @@ namespace Netherlands3D.T3DPipeline
 
         public void ParseCityJSON(string cityJson)
         {
+            foreach (var co in CityObjects)
+            {
+                Destroy(co.gameObject);
+            }
+
             var node = JSONNode.Parse(cityJson);
             var type = node["type"];
             Assert.IsTrue(type == "CityJSON");
@@ -203,7 +208,7 @@ namespace Netherlands3D.T3DPipeline
             {
                 var relativeCenterRD = (MinExtent + MaxExtent) / 2;
                 Debug.Log("Setting Relative RD Center to: " + relativeCenterRD);
-                CoordConvert.zeroGroundLevelY = (float)relativeCenterRD.z;
+                CoordConvert.zeroGroundLevelY = 0;// (float)relativeCenterRD.z;
                 CoordConvert.relativeCenterRD = new Vector2RD(relativeCenterRD.x, relativeCenterRD.y);
             }
         }
