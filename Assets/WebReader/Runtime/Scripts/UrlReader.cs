@@ -30,7 +30,7 @@ public class UrlReader : MonoBehaviour
         try
         {
             XmlElement service = xml.DocumentElement["Service"]["Name"];
-            if (service != null && service.InnerText.Equals("WMS"))
+            if (service != null && service.InnerText.Contains("WMS"))
             {
                 print(service.InnerText);
                 //serviceType = ServiceType.WMS;
@@ -46,7 +46,7 @@ public class UrlReader : MonoBehaviour
         try
         {
             XmlElement serviceID = xml.DocumentElement["ows:ServiceIdentification"]["ows:ServiceType"];
-            if (serviceID != null && serviceID.InnerText.Equals("WFS"))
+            if (serviceID != null && serviceID.InnerText.Contains("WFS"))
             {
                 print(serviceID.InnerText);
                 //serviceType = ServiceType.WFS;

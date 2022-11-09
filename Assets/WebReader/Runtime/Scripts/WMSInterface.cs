@@ -9,7 +9,19 @@ public class WMSInterface : MonoBehaviour
 
     [SerializeField] private Transform layerContentParent;
     [SerializeField] private Transform styleContentParent;
+    [SerializeField] private Transform activeLayerParent;
+
+    [SerializeField] private DualTextComponent dtcPrefab;
     [SerializeField] private Button layerButtonPrefab;
+
+    private WMSSettings wmsSettings;
+    private Dictionary<System.Tuple<string, string>, DualTextComponent> dtcs = new();
+
+
+    private void Awake()
+    {
+        wmsSettings = new WMSSettings();
+    }
 
     public void ResetInterface()
     {
@@ -41,7 +53,7 @@ public class WMSInterface : MonoBehaviour
             newLayerButton.GetComponentInChildren<Text>().text = stylePair.Value.Title;
             // Implementation for style selection needs to be done here!
 
-            //newLayerButton.onClick.AddListener(() => DisplayStyles(layer));
+            newLayerButton.onClick.AddListener(() => ApplyStyle(styledLayer, stylePair.Value));
         }
 
 
@@ -56,6 +68,33 @@ public class WMSInterface : MonoBehaviour
             b.onClick.RemoveAllListeners();
             Destroy(child);
         }
+    }
+
+    private void ApplyStyle(WMSLayer layerToStyle, WMSStyle styleToApply)
+    {
+        System.Tuple<string, string> layerStyleKey = new System.Tuple<string, string>(layerToStyle.Name, styleToApply.Name);
+        if (dtcs.ContainsKey(layerStyleKey))
+        {
+            Debug.Log("This layer has already been added with this particular style!");
+            return;
+        }
+        layerToStyle.SelectStyle(styleToApply);
+        ActivateLayer(layerToStyle);
+        DualTextComponent dualText = Instantiate(dtcPrefab, activeLayerParent);
+        dualText.SetMainText(layerToStyle.Title);
+        dualText.SetSubText(styleToApply.Title);
+        dtcs.Add(layerStyleKey, dualText);
+    }
+
+    private void ActivateLayer(WMSLayer layerToActivate)
+    {
+        wmsSettings.ActivateLayer(layerToActivate);
+        wmsSettings.BuildWMSRequest();
+    }
+
+    private void DeactivateLayer(WMSLayer layerToDeactivate)
+    {
+        wmsSettings.DeactivateLayer(layerToDeactivate);
     }
 
 }

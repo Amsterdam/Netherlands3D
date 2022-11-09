@@ -15,6 +15,8 @@ public class WMSLayer
 
     public Dictionary<string, WMSStyle> styles { get; private set; } = new();
 
+    public WMSStyle activeStyle { get; private set; }
+
     public WMSStyle RetrieveStyleFromDictionary(string styleName)
     {
         return styles.ContainsKey(styleName) ? styles[styleName] : null;
@@ -28,6 +30,16 @@ public class WMSLayer
             return;
         }
         styles.Add(styleName, styleToAdd);
+    }
+
+    public void SelectStyle(WMSStyle styleToSelect)
+    {
+        if (styles.ContainsKey(styleToSelect.Name))
+        {
+            activeStyle = styleToSelect;
+            return;
+        }
+        Debug.LogError("Selected style is not available in this layer!");
     }
 
     public override string ToString()
