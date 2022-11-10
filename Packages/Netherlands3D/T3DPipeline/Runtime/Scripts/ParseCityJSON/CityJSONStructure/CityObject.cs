@@ -1,10 +1,12 @@
-using Netherlands3D.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Netherlands3D.Core;
+using Netherlands3D.Events;
 using SimpleJSON;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Events;
 
 namespace Netherlands3D.T3DPipeline
 {
@@ -58,6 +60,8 @@ namespace Netherlands3D.T3DPipeline
         protected List<CityObject> cityChildren = new List<CityObject>();
         public CityObject[] CityChildren => cityChildren.ToArray();
         public CityObject[] CityParents { get; private set; } = new CityObject[0];
+
+        public UnityEvent CityObjectParsed { get; private set; } = new UnityEvent();
 
         //add/remove the CityObject to the exporter when it is enabled/disabled
         private void OnEnable()
@@ -215,6 +219,12 @@ namespace Netherlands3D.T3DPipeline
             }
 
             //Parents and Children cannot be added here because they might not be parsed yet. Setting parents/children happens in CityJSONParser after all objects have been created.
+        }
+
+        //called by CityJSON.cs when CityObject is fully parsed and ready for further processing (such as visualization)
+        public void OnCityObjectParseCompleted()
+        {
+            CityObjectParsed.Invoke();
         }
     }
 }
