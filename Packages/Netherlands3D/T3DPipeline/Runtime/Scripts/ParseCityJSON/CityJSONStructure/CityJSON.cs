@@ -25,7 +25,7 @@ namespace Netherlands3D.T3DPipeline
         public JSONNode Appearance { get; private set; }
         public JSONNode GeometryTemplates { get; private set; }
 
-        public CityObject[] CityObjects { get; private set; }
+        public CityObject[] CityObjects { get; private set; } = new CityObject[0];
         public Vector3Double MinExtent { get; private set; }
         public Vector3Double MaxExtent { get; private set; }
         public CoordinateSystem CoordinateSystem { get; private set; }
@@ -41,7 +41,7 @@ namespace Netherlands3D.T3DPipeline
         private bool useAsRelativeRDCenter;
         [Tooltip("event that is called when the CityJSON is parsed")]
         [SerializeField]
-        private TriggerEvent onJsonParsed;
+        private TriggerEvent onAllCityObjectsProcessed;
 
         private void OnEnable()
         {
@@ -161,7 +161,12 @@ namespace Netherlands3D.T3DPipeline
             if (useAsRelativeRDCenter)
                 SetRelativeCenter();
 
-            onJsonParsed.Invoke();
+            foreach(var co in CityObjects)
+            {
+                co.OnCityObjectParseCompleted();
+            }
+
+            onAllCityObjectsProcessed.Invoke();
         }
 
         //currently only RD and WGS84 are supported as coordinate systems.

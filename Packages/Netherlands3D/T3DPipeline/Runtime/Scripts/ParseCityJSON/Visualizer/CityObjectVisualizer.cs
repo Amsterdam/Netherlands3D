@@ -4,6 +4,7 @@ using System.Linq;
 using Netherlands3D.Core;
 using Netherlands3D.Events;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Netherlands3D.T3DPipeline
 {
@@ -25,9 +26,7 @@ namespace Netherlands3D.T3DPipeline
         public int ActiveLod => activeLOD;
 
         [SerializeField]
-        private TriggerEvent onJsonParsed;
-        [SerializeField]
-        private TriggerEvent jsonVisualized;
+        private GameObjectEvent jsonVisualized;
 
 #if UNITY_EDITOR
         // allow to change the visible LOD from the inspector during runtime
@@ -39,19 +38,19 @@ namespace Netherlands3D.T3DPipeline
 #endif
         private void Awake()
         {
-            meshFilter = GetComponent<MeshFilter>();
             cityObject = GetComponent<CityObject>();
+            meshFilter = GetComponent<MeshFilter>();
             meshCollider = GetComponent<MeshCollider>();
         }
 
         private void OnEnable()
         {
-            onJsonParsed.started.AddListener(Visualize);
+            cityObject.CityObjectParsed.AddListener(Visualize);
         }
 
         private void OnDisable()
         {
-            onJsonParsed.started.RemoveAllListeners();
+            cityObject.CityObjectParsed.RemoveAllListeners();
         }
 
         //create the meshes
@@ -61,7 +60,7 @@ namespace Netherlands3D.T3DPipeline
             var highestLod = meshes.Keys.Max(g => g.Lod);
             SetLODActive(highestLod);
             transform.position = SetPosition(cityObject);
-            jsonVisualized.Invoke();
+            jsonVisualized.Invoke(gameObject);
         }
 
         private Vector3 SetPosition(CityObject cityObject)
@@ -83,12 +82,15 @@ namespace Netherlands3D.T3DPipeline
         public void SetLODActive(int lod)
         {
             var geometry = meshes.Keys.FirstOrDefault(g => g.Lod == lod);
-            var activeMesh = meshes[geometry];
-            meshFilter.mesh = activeMesh;
-            activeLOD = lod;
+            if (geometry != null)
+            {
+                var activeMesh = meshes[geometry];
+                meshFilter.mesh = activeMesh;
+                activeLOD = lod;
 
-            if (meshCollider)
-                meshCollider.sharedMesh = activeMesh;
+                if (meshCollider)
+                    meshCollider.sharedMesh = activeMesh;
+            }
         }
 
         //create the meshes for the object geometries
