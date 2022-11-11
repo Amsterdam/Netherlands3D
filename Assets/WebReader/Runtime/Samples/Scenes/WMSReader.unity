@@ -906,7 +906,7 @@ MonoBehaviour:
   layerContentParent: {fileID: 321911985}
   styleContentParent: {fileID: 703617296}
   activeLayerParent: {fileID: 1290032548}
-  dtcPrefab: {fileID: 9141462508557272673, guid: 7c47c2f862a3b4e4096a69365eb7639a, type: 3}
+  dtcPrefab: {fileID: 8215911685052303735, guid: f551be057a3aa2d469b015aaafe08b80, type: 3}
   layerButtonPrefab: {fileID: 894064302172811730, guid: c24770f65988e9c4ea7266beb57e23e2, type: 3}
   previewRawImage: {fileID: 1101405008}
   styleApplication: {fileID: 11400000, guid: bb07ac828acf5c84dba9dda3647450f5, type: 2}

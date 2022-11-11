@@ -84,7 +84,14 @@ public class WMSInterface : MonoBehaviour
         }
         layerToStyle.SelectStyle(styleToApply);
         ActivateLayer(layerToStyle);
+
         DualTextComponent dualText = Instantiate(dtcPrefab, activeLayerParent);
+        Button btn = dualText.GetComponent<Button>();
+
+        btn.onClick.AddListener(() => DeactivateLayer(layerToStyle));
+        btn.onClick.AddListener(() => dtcs.Remove(new System.Tuple<string, string>(layerToStyle.Name, styleToApply.Name)));
+        btn.onClick.AddListener(() => Destroy(btn.gameObject));
+
         dualText.SetMainText(layerToStyle.Title);
         dualText.SetSubText(styleToApply.Title);
         dtcs.Add(layerStyleKey, dualText);
