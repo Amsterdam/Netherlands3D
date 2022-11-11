@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using Netherlands3D.Events;
 
 public class WMSInterface : MonoBehaviour
 {
@@ -14,15 +14,19 @@ public class WMSInterface : MonoBehaviour
     [SerializeField] private DualTextComponent dtcPrefab;
     [SerializeField] private Button layerButtonPrefab;
 
-    private WMSSettings wmsSettings;
+    [SerializeField] private RawImage previewRawImage;
+
+    [Header("Invoke Events")]
+    [SerializeField] private ObjectEvent styleApplication;
+    [SerializeField] private ObjectEvent layerDeactivation;
+
     private Dictionary<System.Tuple<string, string>, DualTextComponent> dtcs = new();
-
-
-    private void Awake()
+    
+    
+    public void DisplayPreviewImage(object textureFromRequest)
     {
-        wmsSettings = new WMSSettings();
+        previewRawImage.texture = (Texture)textureFromRequest;
     }
-
     public void ResetInterface()
     {
         for(int i = layerContentParent.childCount - 1; i >= 0; i--)
@@ -88,13 +92,21 @@ public class WMSInterface : MonoBehaviour
 
     private void ActivateLayer(WMSLayer layerToActivate)
     {
-        wmsSettings.ActivateLayer(layerToActivate);
-        wmsSettings.BuildWMSRequest();
+        if(styleApplication != null)
+        {
+            styleApplication.Invoke(layerToActivate);
+        }
+        //wmsSettings.GetWMSRequest();
     }
 
     private void DeactivateLayer(WMSLayer layerToDeactivate)
     {
-        wmsSettings.DeactivateLayer(layerToDeactivate);
+        if (layerDeactivation != null)
+        {
+            layerDeactivation.Invoke(layerToDeactivate);
+        }
     }
+
+
 
 }

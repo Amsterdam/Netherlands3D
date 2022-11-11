@@ -1,51 +1,48 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
+using Netherlands3D.Events;
 
-public class WMSSettings
+public class WMSSettings : MonoBehaviour
 {
     private List<WMSLayer> activatedLayers = new();
 
-    public void ActivateLayer(WMSLayer layerToActivate)
+    [SerializeField] private ObjectEvent imageEvent;
+
+    public void ActivateLayer(object layerToActivate)
     {
-        activatedLayers.Add(layerToActivate);
+        activatedLayers.Add((WMSLayer)layerToActivate);
     }
 
-    public void DeactivateLayer(WMSLayer layerToDeactivate)
+    public void DeactivateLayer(object layerToDeactivate)
     {
-        if (activatedLayers.Contains(layerToDeactivate))
+        if (activatedLayers.Contains((WMSLayer)layerToDeactivate))
         {
-            activatedLayers.Remove(layerToDeactivate);
+            activatedLayers.Remove((WMSLayer)layerToDeactivate);
         }
     }
 
-    public string BuildWMSRequest()
+    public void SendRequest()
     {
-        StringBuilder layerBuilder = new StringBuilder();
-        layerBuilder.Append("LAYERS=");
-
-        StringBuilder styleBuilder = new StringBuilder();
-        styleBuilder.Append("STYLES=");
-
-        for(int i = 0; i < activatedLayers.Count; i++)
-        {
-            WMSLayer current = activatedLayers[i];
-            if(current.activeStyle == null)
-            {
-                throw new System.NullReferenceException($"Layer: {current.Title} has no active style selected and cannot have the request finished!");
-            }
-            layerBuilder.Append(current.Name);
-            styleBuilder.Append(current.activeStyle.Name);
-            if(i != activatedLayers.Count - 1)
-            {
-                layerBuilder.Append(",");
-                styleBuilder.Append(",");
-            }
-        }
-        string request = layerBuilder + "&" + styleBuilder;
-        Debug.Log(request);
-        return request;
+        WMSRequest.ActivatedLayers = activatedLayers;
+        StartCoroutine(DownloadImage(WMSRequest.GetMapRequest(WMSFormatter.Instance.CurrentWMS, "https://service.pdok.nl/rvo/indgebfunderingsproblematiek/wms/v1_0")));
     }
 
+    IEnumerator DownloadImage(string mediaURL)
+    {
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(mediaURL);
+        yield return request.SendWebRequest();
+        if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+        {
+            Debug.Log(request.error);
+        }
+        else
+        {
+            if (imageEvent != null)
+            {
+                imageEvent.Invoke(((DownloadHandlerTexture)request.downloadHandler).texture);
+            }
+        }
+    }
 }

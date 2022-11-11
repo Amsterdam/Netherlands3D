@@ -9,9 +9,13 @@ public class UrlDebugReaderEditor : Editor
     {
         DrawDefaultInspector();
         DebugReader myReader = (DebugReader)target;
-        if(GUILayout.Button("Get URL"))
+        if (GUILayout.Button("Get URL"))
         {
             myReader.ReadURLInEditor();
+        }
+        if (GUILayout.Button("Request Image"))
+        {
+            myReader.GetPreview();
         }
 
     }

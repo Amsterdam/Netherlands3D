@@ -10,8 +10,6 @@ public class UrlReader : MonoBehaviour
     [SerializeField] private WMSFormatter wmsFormatter;
     [SerializeField] private WFSFormatter wfsFormatter;
 
-    private XmlReader reader;
-
     private static readonly HttpClient client = new();
 
 
@@ -22,7 +20,8 @@ public class UrlReader : MonoBehaviour
             throw new System.InvalidOperationException("You must input a valid URL to read");
         }
 
-        string xmlData = GetDataFromURL(url);
+        WMSRequest.BaseURL = url;
+        string xmlData = GetDataFromURL(WMSRequest.GetCapabilitiesRequest());
 
         XmlDocument xml = new XmlDocument();
         xml.LoadXml(xmlData);

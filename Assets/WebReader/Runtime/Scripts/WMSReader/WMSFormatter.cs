@@ -6,6 +6,9 @@ using Netherlands3D.Events;
 
 public class WMSFormatter : MonoBehaviour
 {
+    public WMS CurrentWMS { get; private set; }
+    public static WMSFormatter Instance { get; private set; }
+
     [Header("Events")]
     [SerializeField] private TriggerEvent resetReaderEvent;
     [SerializeField] private ObjectEvent wmsLayerEvent;
@@ -14,7 +17,15 @@ public class WMSFormatter : MonoBehaviour
     private string namespacePrefix = "";
     private XmlDocument xml;
 
-
+    private void Awake()
+    {
+        if(Instance != null)
+        {
+            Debug.LogWarning("An instance of WMS Formatter already exists!");
+            return;
+        }
+        Instance = this;
+    }
     public void ReadLayersFromWMS(XmlDocument wmsXml)
     {
         if (resetReaderEvent == null || wmsLayerEvent == null)
@@ -23,18 +34,19 @@ public class WMSFormatter : MonoBehaviour
         }
         xml = wmsXml;
         FindNamespaces();
-        //XmlNodeList layersList = wmsXml.SelectNodes("/WMS_Capabilities/Layer/Layer");
 
         XmlNode capabilityNode = GetChildNode(xml.DocumentElement, "Capability");
+        string version = xml.DocumentElement.Attributes.GetNamedItem("version").InnerText;
+
+        CurrentWMS = new WMS(version);
+        // We create a new WMS if one is being submitted from the Input Field, we also give it the version as a parameter in the constructor (this won't change anymore).
+
         XmlNode topLayer = GetChildNode(capabilityNode, "Layer");
         XmlNodeList subLayers = GetChildNodes(topLayer, "Layer");
-
-        List<WMSLayer> wmsLayers = new();
 
         foreach(XmlNode subLayer in subLayers)
         {
             string name = GetChildNodeValue(subLayer, "Name");
-            Debug.Log(name);
             if (string.IsNullOrEmpty(name))
             {
                 // The layer has no name and can't be requested;
@@ -48,7 +60,6 @@ public class WMSFormatter : MonoBehaviour
             XmlNodeList crsElements = GetChildNodes(subLayer, "CRS");
             foreach(XmlNode crs in crsElements)
             {
-                Debug.Log("Found a CRS element!");
                 extractLayer.CRS.Add(crs.InnerText);
             }
             XmlNodeList styles = GetChildNodes(subLayer, "Style");
@@ -65,13 +76,39 @@ public class WMSFormatter : MonoBehaviour
                 }
                 extractLayer.AddStyleToDictionary(extractStyle.Name, extractStyle);
             }
-            wmsLayers.Add(extractLayer);
-            Debug.Log(extractLayer);
+            CurrentWMS.layers.Add(extractLayer);
         }
 
         resetReaderEvent.Invoke();
-        wmsLayerEvent.Invoke(wmsLayers);
+        wmsLayerEvent.Invoke(CurrentWMS.layers);
 
+    }
+
+    public void SetMapDimensions(Vector2Int dimensions)
+    {
+        CurrentWMS.Dimensions = dimensions;
+    }
+    public void SetResolution(string resolution)
+    {
+        int res = int.Parse(resolution);
+        CurrentWMS.Dimensions = new Vector2Int(res, res);
+    }
+
+    public void SetBoundingBoxMinX(string value)
+    {
+        CurrentWMS.BBox.MinX = int.Parse(value);
+    }
+    public void SetBoundingBoxMaxX(string value)
+    {
+        CurrentWMS.BBox.MaxX = int.Parse(value);
+    }
+    public void SetBoundingBoxMinY(string value)
+    {
+        CurrentWMS.BBox.MinY = int.Parse(value);
+    }
+    public void SetBoundingBoxMaxY(string value)
+    {
+        CurrentWMS.BBox.MaxY = int.Parse(value);
     }
 
     private void FindNamespaces()
