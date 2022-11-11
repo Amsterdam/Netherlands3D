@@ -79,7 +79,7 @@ namespace Netherlands3D.T3DPipeline
         }
 
         //enable the mesh of a certain LOD
-        public void SetLODActive(int lod)
+        public bool SetLODActive(int lod)
         {
             var geometry = meshes.Keys.FirstOrDefault(g => g.Lod == lod);
             if (geometry != null)
@@ -90,7 +90,10 @@ namespace Netherlands3D.T3DPipeline
 
                 if (meshCollider)
                     meshCollider.sharedMesh = activeMesh;
+
+                return true;
             }
+            return false;
         }
 
         //create the meshes for the object geometries
