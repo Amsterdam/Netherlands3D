@@ -63,14 +63,32 @@ namespace Netherlands3D.T3DPipeline
 
         public UnityEvent CityObjectParsed { get; private set; } = new UnityEvent();
 
+        private bool includeInExport;
+        public bool IncludeInExport
+        {
+            get
+            {
+                return includeInExport;
+            }
+            set
+            {
+                if (value)
+                    CityJSONFormatter.AddCityObject(this);
+                else
+                    CityJSONFormatter.RemoveCityObject(this);
+
+                includeInExport = value;
+            }
+        }
+
         //add/remove the CityObject to the exporter when it is enabled/disabled
         private void OnEnable()
         {
-            CityJSONFormatter.AddCityObject(this);
+            IncludeInExport = true;
         }
         private void OnDisable()
         {
-            CityJSONFormatter.RemoveCityObject(this);
+            IncludeInExport = false;
         }
 
         public void SetParents(CityObject[] newParents)
