@@ -16,6 +16,14 @@ namespace Netherlands3D.Minimap
 		/// Center the pointer of the minimap in the view
 		/// </summary>
 		public bool CenterPointerInView { get => centerPointerInView; set => centerPointerInView = value; }
+		/// <summary>
+		/// Top right coordinates (RD)
+		/// </summary>
+		public Vector2RD TopRight { get => topRight; set { topRight = value; ChangedBounds(); } }
+		/// <summary>
+		/// Bottom left coordinates (RD)
+		/// </summary>
+		public Vector2RD BottomLeft { get => bottomLeft; set { bottomLeft = value; ChangedBounds(); } }
 
 		[Header("Values")]
 		[Tooltip("Should the pointer be centerd in the view?")]
@@ -108,14 +116,14 @@ namespace Netherlands3D.Minimap
 		/// </summary>
 		private Dictionary<int, Dictionary<Vector2, Tile>> tileLayers = new Dictionary<int, Dictionary<Vector2, Tile>>();
 
-        private void Awake()
-        {
-			minimapUI = GetComponentInParent<MinimapUI>();
-			rectTransform = GetComponent<RectTransform>();
-			rectTransformMinimapUI = (RectTransform)minimapUI.transform;
-        }
-
-        private void Start()
+		private void Awake()
+		{
+				minimapUI = GetComponentInParent<MinimapUI>();
+				rectTransform = GetComponent<RectTransform>();
+				rectTransformMinimapUI = (RectTransform)minimapUI.transform;
+		}
+		
+		private void Start()
 		{
 			layerIndex = layerStartIndex;
 
@@ -124,6 +132,23 @@ namespace Netherlands3D.Minimap
 			pixelInMeters = minimapConfig.TileMatrixSet.PixelInMeters;
 			scaleDenominator = minimapConfig.TileMatrixSet.ScaleDenominator;
 
+			ChangedBounds();
+		}
+
+		private void Update()
+		{
+			Clamp();
+
+			//Continiously check if tiles of the active layer identifier should be loaded
+			UpdateLayerTiles(tileLayers[layerIndex]);
+			MovePointer();
+		}
+
+		/// <summary>
+        	/// Update all necessary parameters in case of a change in bounds. Called when the BottomLeft or TopRight coordinate is changed.
+        	/// </summary>
+		private void ChangedBounds()
+        	{
 			// Coverage of our application bounds
 			boundsInMeters.x = (float)topRight.x - (float)bottomLeft.x;
 			boundsInMeters.y = (float)topRight.y - (float)bottomLeft.y;
@@ -142,16 +167,7 @@ namespace Netherlands3D.Minimap
 
 			pointer.gameObject.SetActive(true);
 		}
-
-		private void Update()
-		{
-			Clamp();
-
-			//Continiously check if tiles of the active layer identifier should be loaded
-			UpdateLayerTiles(tileLayers[layerIndex]);
-			MovePointer();
-		}
-
+		
 		/// <summary>
 		/// Clamp the minimap
 		/// </summary>
