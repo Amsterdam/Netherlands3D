@@ -107,6 +107,7 @@ namespace Netherlands3D.T3DPipeline
         {
             if (CityObjects.Contains(obj))
                 return false;
+
             CityObjects.Add(obj);
             return true;
 
@@ -116,6 +117,7 @@ namespace Netherlands3D.T3DPipeline
         {
             if (!CityObjects.Contains(obj))
                 return false;
+
             CityObjects.Remove(obj);
             return true;
         }
