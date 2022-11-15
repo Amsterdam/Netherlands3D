@@ -13,20 +13,20 @@ namespace Netherlands3D.T3DPipeline
     /// </summary>
     public class AnnotationsAttribute : CityObjectAttribute
     {
-        public List<Annotation> annotations { get; private set; } = new List<Annotation>(); // Annotations for this Attribute (belonging to a CityObject)
+        public List<Annotation> Annotations { get; private set; } = new List<Annotation>(); // Annotations for this Attribute (belonging to a CityObject)
         public AnnotationsAttribute(string key) : base(key)
         {
         }
 
         public void AddAnnotation(Annotation annotation)
         {
-            annotations.Add(annotation);
+            Annotations.Add(annotation);
         }
 
         public override JSONNode GetJSONValue()
         {
             Value = new JSONObject();
-            foreach (var annotation in annotations)
+            foreach (var annotation in Annotations)
             {
                 Value.Add(annotation.Id.ToString(), annotation.GetJSONNode());
             }
@@ -47,7 +47,7 @@ namespace Netherlands3D.T3DPipeline
         private AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute("annotations"); // All Annotations are added as a single JSONObject to the CityObject's attributes
         private static Annotation currentActiveAnnotation; //static so only 1 annotation can be active at any given time regardless of to which object it belongs
         private GameObject activeAnnotationMarker;
-
+        public List<GameObject> AnnotationMarkers = new List<GameObject>();
         [Tooltip("Global enable/disable of whether to create annotation when clicking on the mesh. Use the associated property to set this in code if needed")]
         [SerializeField]
         private bool annotationStateActive = true;
@@ -63,16 +63,20 @@ namespace Netherlands3D.T3DPipeline
         [SerializeField]
         private bool countAnnotationsGlobally;
 
-        [Header("Optional")]
-        [Tooltip("Optional GameObject to be instantiated on the annotation creation point")]
+        [Tooltip("GameObject to be instantiated on the annotation creation point")]
         [SerializeField]
         private GameObject activeAnnotationMarkerPrefab;
-        [SerializeField]
-        private GameObject completedAnnotationMarkerPrefab;
+
+        [Header("Optional")]
         [Tooltip("Optional events that are called when the creation of a new annotation has started.")]
         [SerializeField]
-        private IntEvent newAnnotationStarted, newAnnotationWithLocalIDStarted, newAnnotationWithGlobalIDStarted;
-
+        private IntEvent newAnnotationStarted;
+        [SerializeField]
+        private IntEvent newAnnotationWithLocalIDStarted;
+        [SerializeField]
+        private IntEvent newAnnotationWithGlobalIDStarted;
+        [SerializeField]
+        private GameObjectEvent annotationMarkerSelected, annotationMarkerDeselected;
 
         private void Awake()
         {
@@ -121,13 +125,33 @@ namespace Netherlands3D.T3DPipeline
             if (activeAnnotationMarkerPrefab)
             {
                 activeAnnotationMarker = Instantiate(activeAnnotationMarkerPrefab, position, Quaternion.identity);
+                AnnotationMarkers.Add(activeAnnotationMarker);
             }
         }
 
-        protected virtual void ConvertToAnnotationCompletedMarker(GameObject activeAnnotationMarker)
+        protected virtual void ReselectAnnotation(int globalId)
         {
-            Instantiate(completedAnnotationMarkerPrefab, activeAnnotationMarker.transform.position, Quaternion.identity);
-            Destroy(activeAnnotationMarker);
+            DeselectCurrentAnnotation();
+            onAnnotationTextChanged.started.AddListener(OnActiveAnnotationTextChanged);
+            currentActiveAnnotation = annotationsAttribute.Annotations[globalId];
+            if (AnnotationMarkers.Count > globalId)
+            {
+                activeAnnotationMarker = AnnotationMarkers[globalId];
+                if (annotationMarkerSelected != null)
+                    annotationMarkerSelected.Invoke(activeAnnotationMarker);
+            }
+        }
+
+        protected virtual void DeselectCurrentAnnotation()
+        {
+            if (currentActiveAnnotation != null)
+            {
+                onAnnotationTextChanged.started.RemoveListener(OnActiveAnnotationTextChanged);
+                if (activeAnnotationMarker && annotationMarkerDeselected != null)
+                    annotationMarkerDeselected.Invoke(activeAnnotationMarker);
+                currentActiveAnnotation = null;
+                activeAnnotationMarker = null;
+            }
         }
 
         // Complete the annotation, add it to the attributes
@@ -137,15 +161,40 @@ namespace Netherlands3D.T3DPipeline
             onNewAnnotationSumbmitted.started.RemoveListener(OnAnnotationSubmitted);
 
             annotationsAttribute.AddAnnotation(currentActiveAnnotation);
-            if (activeAnnotationMarker)
-                ConvertToAnnotationCompletedMarker(activeAnnotationMarker);
+            //ConvertToAnnotationCompletedMarker(activeAnnotationMarker);
             currentActiveAnnotation = null;
+            activeAnnotationMarker = null;
             localId++;
         }
 
         private void OnActiveAnnotationTextChanged(string newText)
         {
             currentActiveAnnotation.Text = newText;
+        }
+
+        public void SelectAnnotation(int globalId, bool submitCurrentActiveAnnotation = true)
+        {
+            if (currentActiveAnnotation != null)
+            {
+                if (submitCurrentActiveAnnotation)
+                {
+                    OnAnnotationSubmitted();
+                }
+                else
+                {
+                    onAnnotationTextChanged.started.RemoveListener(OnActiveAnnotationTextChanged);
+                    onNewAnnotationSumbmitted.started.RemoveListener(OnAnnotationSubmitted);
+
+                    if (activeAnnotationMarker)
+                        Destroy(activeAnnotationMarker);
+
+                    currentActiveAnnotation = null;
+                }
+            }
+
+            var annotation = annotationsAttribute.Annotations[globalId];
+            currentActiveAnnotation = annotation;
+            onAnnotationTextChanged.started.AddListener(OnActiveAnnotationTextChanged);
         }
     }
 }
