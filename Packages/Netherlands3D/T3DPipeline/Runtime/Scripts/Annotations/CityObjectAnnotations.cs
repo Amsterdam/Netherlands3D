@@ -161,7 +161,6 @@ namespace Netherlands3D.T3DPipeline
             onNewAnnotationSumbmitted.started.RemoveListener(OnAnnotationSubmitted);
 
             annotationsAttribute.AddAnnotation(currentActiveAnnotation);
-            //ConvertToAnnotationCompletedMarker(activeAnnotationMarker);
             currentActiveAnnotation = null;
             activeAnnotationMarker = null;
             localId++;
