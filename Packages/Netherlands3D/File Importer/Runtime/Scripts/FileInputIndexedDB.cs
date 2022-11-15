@@ -111,6 +111,7 @@ public class FileInputIndexedDB : MonoBehaviour
 
     public void IndexedDBUpdated() // called from SyncFilesFromIndexedDB
     {
+        ClearFileInputFields();
         ProcessAllFiles();
     }
 
