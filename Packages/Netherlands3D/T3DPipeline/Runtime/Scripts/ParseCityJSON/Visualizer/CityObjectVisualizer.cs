@@ -56,10 +56,10 @@ namespace Netherlands3D.T3DPipeline
         //create the meshes
         private void Visualize()
         {
+            transform.position = SetPosition(cityObject); //set position first so the CityObject's transformationMatrix can be used to position the mesh.
             meshes = CreateMeshes(cityObject);
             var highestLod = meshes.Keys.Max(g => g.Lod);
             SetLODActive(highestLod);
-            transform.position = SetPosition(cityObject);
             jsonVisualized.Invoke(gameObject);
         }
 
@@ -79,7 +79,7 @@ namespace Netherlands3D.T3DPipeline
         }
 
         //enable the mesh of a certain LOD
-        public void SetLODActive(int lod)
+        public bool SetLODActive(int lod)
         {
             var geometry = meshes.Keys.FirstOrDefault(g => g.Lod == lod);
             if (geometry != null)
@@ -90,7 +90,10 @@ namespace Netherlands3D.T3DPipeline
 
                 if (meshCollider)
                     meshCollider.sharedMesh = activeMesh;
+
+                return true;
             }
+            return false;
         }
 
         //create the meshes for the object geometries
@@ -99,26 +102,26 @@ namespace Netherlands3D.T3DPipeline
             meshes = new Dictionary<CityGeometry, Mesh>();
             foreach (var geometry in cityObject.Geometries)
             {
-                var mesh = CreateMeshFromGeometry(geometry, cityObject.CoordinateSystem, transform.localToWorldMatrix);
+                var mesh = CreateMeshFromGeometry(geometry, cityObject.CoordinateSystem, cityObject.transform.worldToLocalMatrix);
                 meshes.Add(geometry, mesh);
             }
             return meshes;
         }
 
-        public static Mesh CreateMeshFromGeometry(CityGeometry geometry, CoordinateSystem coordinateSystem, Matrix4x4 localToWorldMatrix)
+        public static Mesh CreateMeshFromGeometry(CityGeometry geometry, CoordinateSystem coordinateSystem, Matrix4x4 transformationMatrix)
         {
             var boundaryMeshes = BoundariesToMeshes(geometry.BoundaryObject, coordinateSystem);
-            return CombineMeshes(boundaryMeshes, localToWorldMatrix);
+            return CombineMeshes(boundaryMeshes, transformationMatrix);
         }
 
-        public static Mesh CombineMeshes(List<Mesh> meshes, Matrix4x4 localToWorldMatrix)
+        public static Mesh CombineMeshes(List<Mesh> meshes, Matrix4x4 transformationMatrix)
         {
             CombineInstance[] combine = new CombineInstance[meshes.Count];
 
             for (int i = 0; i < meshes.Count; i++)
             {
                 combine[i].mesh = meshes[i];
-                combine[i].transform = localToWorldMatrix;
+                combine[i].transform = transformationMatrix;
             }
 
             var mesh = new Mesh();

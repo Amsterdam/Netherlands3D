@@ -35,7 +35,7 @@ namespace Netherlands3D.T3DPipeline
         private StringEvent onCityJSONReceived;
         [Tooltip("A cityObject will be created as a GameObject with a CityObject script. This field can hold a prefab with multiple extra scripts (such as CityObjectVisualizer) to be created instead. This prefab must have a CityObject script attached.")]
         [SerializeField]
-        private GameObject cityObjectPrefab; 
+        private GameObject cityObjectPrefab;
         [SerializeField]
         [Tooltip("If checked the CityJSON parsed by this script will set the relative center of the RD coordinate system to the center of this CityJSON")]
         private bool useAsRelativeRDCenter;
@@ -90,7 +90,7 @@ namespace Netherlands3D.T3DPipeline
                 vert += TransformTranslate;
                 parsedVertices.Add(vert);
             }
-            if(parsedVertices.Count == 0)
+            if (parsedVertices.Count == 0)
             {
                 Debug.LogWarning("Vertex list is empty, nothing can be visualized because empty meshes will be created!");
             }
@@ -161,12 +161,13 @@ namespace Netherlands3D.T3DPipeline
             if (useAsRelativeRDCenter)
                 SetRelativeCenter();
 
-            foreach(var co in CityObjects)
+            foreach (var co in CityObjects)
             {
                 co.OnCityObjectParseCompleted();
             }
 
-            onAllCityObjectsProcessed.Invoke();
+            if (onAllCityObjectsProcessed)
+                onAllCityObjectsProcessed.Invoke();
         }
 
         //currently only RD and WGS84 are supported as coordinate systems.

@@ -102,15 +102,24 @@ namespace Netherlands3D.T3DPipeline
             return extentArray;
         }
 
-        //register city object to be added to the JSON when requested
-        public static void AddCityObject(CityObject obj)
+        //register city object to be added to the JSON when requested. Returns whether successful or not
+        public static bool AddCityObject(CityObject obj)
         {
+            if (CityObjects.Contains(obj))
+                return false;
+
             CityObjects.Add(obj);
+            return true;
+
         }
 
-        public static void RemoveCityObject(CityObject obj)
+        public static bool RemoveCityObject(CityObject obj)
         {
+            if (!CityObjects.Contains(obj))
+                return false;
+
             CityObjects.Remove(obj);
+            return true;
         }
 
         // Add extra nodes that are not part of the main specs to the CityJSON
