@@ -88,12 +88,20 @@ namespace Netherlands3D.T3DPipeline
             parentObject.AddAttribute(annotationsAttribute);
         }
 
-        public override void OnPointerClick(PointerEventData eventData)
+        private void OnEnable()
         {
-            base.OnPointerClick(eventData);
+            objectClicked.started.AddListener(OnObjectClicked);
+        }
+
+        private void OnDisable()
+        {
+            objectClicked.started.RemoveListener(OnObjectClicked);
+        }
+
+        private void OnObjectClicked(Vector3 pos)
+        {
             if (AnnotationStateActive && currentActiveAnnotation == null) //create new annotation if none is currently pending
             {
-                var pos = eventData.pointerCurrentRaycast.worldPosition;
                 StartAddNewAnnotation(pos);
             }
         }
