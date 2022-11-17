@@ -14,8 +14,9 @@ namespace Netherlands3D.T3DPipeline
         public string Key { get; protected set; }
         public JSONNode Value { get; protected set; }
 
-        public CityObjectAttribute(string key)
+        public CityObjectAttribute(CityObject parentCityObject, string key)
         {
+            ParentCityObject = parentCityObject;
             Key = key;
         }
 

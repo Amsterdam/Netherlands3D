@@ -15,7 +15,7 @@ namespace Netherlands3D.T3DPipeline
     public class AnnotationsAttribute : CityObjectAttribute
     {
         public List<Annotation> Annotations { get; private set; } = new List<Annotation>(); // Annotations for this Attribute (belonging to a CityObject)
-        public AnnotationsAttribute(string key) : base(key)
+        public AnnotationsAttribute(CityObject parentCityObject, string key) : base(parentCityObject ,key)
         {
         }
 
@@ -60,7 +60,7 @@ namespace Netherlands3D.T3DPipeline
         private static List<Annotation> allCompletedAnnotations = new List<Annotation>();
         private static List<GameObject> annotationMarkers = new List<GameObject>();
         private CityObject parentObject; //CityObject to add annotations to
-        private AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute("annotations"); // All Annotations are added as a single JSONObject to the CityObject's attributes
+        private AnnotationsAttribute annotationsAttribute; // All Annotations are added as a single JSONObject to the CityObject's attributes
         private Annotation currentActiveAnnotation; //static so only 1 annotation can be active at any given time regardless of to which object it belongs
         private GameObject activeAnnotationMarker;
         [Tooltip("Global enable/disable of whether to create annotation when clicking on the mesh. Use the associated property to set this in code if needed")]
@@ -96,6 +96,7 @@ namespace Netherlands3D.T3DPipeline
         private void Awake()
         {
             parentObject = GetComponent<CityObject>();
+            annotationsAttribute = new AnnotationsAttribute(parentObject, "annotations");
         }
 
         private void Start()
