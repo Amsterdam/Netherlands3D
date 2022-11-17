@@ -88,4 +88,6 @@ public struct Vector3Double
     {
         return HashCode.Combine(x, y, z);
     }
+
+    public static explicit operator Vector3(Vector3Double v) => new Vector3((float)v.x, (float)v.y, (float)v.z);
 }
