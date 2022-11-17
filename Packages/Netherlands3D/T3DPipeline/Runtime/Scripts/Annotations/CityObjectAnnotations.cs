@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Netherlands3D.Events;
 using SimpleJSON;
 using UnityEngine;
@@ -23,12 +24,26 @@ namespace Netherlands3D.T3DPipeline
             Annotations.Add(annotation);
         }
 
+        public void RemoveAnnotation(int localId)
+        {
+            Annotations.RemoveAt(localId);
+            RecalculateLocalIds();
+        }
+
+        private void RecalculateLocalIds()
+        {
+            for (int i = 0; i < Annotations.Count; i++)
+            {
+                Annotations[i].LocalId = i;
+            }
+        }
+
         public override JSONNode GetJSONValue()
         {
             Value = new JSONObject();
             foreach (var annotation in Annotations)
             {
-                Value.Add(annotation.Id.ToString(), annotation.GetJSONNode());
+                Value.Add(annotation.LocalId.ToString(), annotation.GetJSONNode());
             }
             return Value;
         }
@@ -42,12 +57,12 @@ namespace Netherlands3D.T3DPipeline
     {
         private static int globalId = 0; //counts all annotations with unique ID regardless of to which CityObject it belongs (so adding a annotation to CityObject1 will start at 0, adding a second annotation to CityObject2 will be 1)
         private int localId = 0; // counts annotations with unique ids per CityObject (so adding a annotation to CityObject1 will start at 0, adding a second annotation to CityObject2 will be 0 as well)
-
+        private static List<Annotation> allCompletedAnnotations = new List<Annotation>();
+        private static List<GameObject> annotationMarkers = new List<GameObject>();
         private CityObject parentObject; //CityObject to add annotations to
         private AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute("annotations"); // All Annotations are added as a single JSONObject to the CityObject's attributes
-        private static Annotation currentActiveAnnotation; //static so only 1 annotation can be active at any given time regardless of to which object it belongs
+        private Annotation currentActiveAnnotation; //static so only 1 annotation can be active at any given time regardless of to which object it belongs
         private GameObject activeAnnotationMarker;
-        public List<GameObject> AnnotationMarkers = new List<GameObject>();
         [Tooltip("Global enable/disable of whether to create annotation when clicking on the mesh. Use the associated property to set this in code if needed")]
         [SerializeField]
         private bool annotationStateActive = true;
@@ -70,13 +85,13 @@ namespace Netherlands3D.T3DPipeline
         [Header("Optional")]
         [Tooltip("Optional events that are called when the creation of a new annotation has started.")]
         [SerializeField]
-        private IntEvent newAnnotationStarted;
-        [SerializeField]
         private IntEvent newAnnotationWithLocalIDStarted;
         [SerializeField]
         private IntEvent newAnnotationWithGlobalIDStarted;
         [SerializeField]
         private GameObjectEvent annotationMarkerSelected, annotationMarkerDeselected;
+        [SerializeField]
+        private IntEvent reselectAnnotationEvent;
 
         private void Awake()
         {
@@ -110,16 +125,14 @@ namespace Netherlands3D.T3DPipeline
         public void StartAddNewAnnotation(Vector3 position)
         {
             var doublePos = new Vector3Double(position.x, position.y, position.z);
-            var id = countAnnotationsGlobally ? globalId : localId;
-            currentActiveAnnotation = new Annotation(id, "", doublePos);
-
             CreateActiveAnnotationMarker(position);
+            currentActiveAnnotation = new Annotation(localId, globalId, "", doublePos, annotationsAttribute, activeAnnotationMarker);
+
 
             onAnnotationTextChanged.started.AddListener(OnActiveAnnotationTextChanged);
             onNewAnnotationSumbmitted.started.AddListener(OnAnnotationSubmitted);
 
-            if (newAnnotationStarted)
-                newAnnotationStarted.Invoke(id);
+            var id = countAnnotationsGlobally ? globalId : localId;
             if (newAnnotationWithLocalIDStarted)
                 newAnnotationWithLocalIDStarted.Invoke(localId);
             if (newAnnotationWithGlobalIDStarted)
@@ -133,20 +146,7 @@ namespace Netherlands3D.T3DPipeline
             if (activeAnnotationMarkerPrefab)
             {
                 activeAnnotationMarker = Instantiate(activeAnnotationMarkerPrefab, position, Quaternion.identity);
-                AnnotationMarkers.Add(activeAnnotationMarker);
-            }
-        }
-
-        protected virtual void ReselectAnnotation(int globalId)
-        {
-            DeselectCurrentAnnotation();
-            onAnnotationTextChanged.started.AddListener(OnActiveAnnotationTextChanged);
-            currentActiveAnnotation = annotationsAttribute.Annotations[globalId];
-            if (AnnotationMarkers.Count > globalId)
-            {
-                activeAnnotationMarker = AnnotationMarkers[globalId];
-                if (annotationMarkerSelected != null)
-                    annotationMarkerSelected.Invoke(activeAnnotationMarker);
+                annotationMarkers.Add(activeAnnotationMarker);
             }
         }
 
@@ -169,6 +169,7 @@ namespace Netherlands3D.T3DPipeline
             onNewAnnotationSumbmitted.started.RemoveListener(OnAnnotationSubmitted);
 
             annotationsAttribute.AddAnnotation(currentActiveAnnotation);
+            allCompletedAnnotations.Add(currentActiveAnnotation);
             currentActiveAnnotation = null;
             activeAnnotationMarker = null;
             localId++;
@@ -179,29 +180,64 @@ namespace Netherlands3D.T3DPipeline
             currentActiveAnnotation.Text = newText;
         }
 
-        public void SelectAnnotation(int globalId, bool submitCurrentActiveAnnotation = true)
+        public static Annotation GetAnnotation(int globalId)
         {
-            if (currentActiveAnnotation != null)
+            var annotation = allCompletedAnnotations.FirstOrDefault(ann => ann.GlobalId == globalId);
+            return annotation;
+        }
+
+        public bool SelectAnnotation(int globalId, bool submitCurrentActiveAnnotation = true)
+        {
+            if (currentActiveAnnotation != null && submitCurrentActiveAnnotation)
             {
-                if (submitCurrentActiveAnnotation)
-                {
-                    OnAnnotationSubmitted();
-                }
-                else
-                {
-                    onAnnotationTextChanged.started.RemoveListener(OnActiveAnnotationTextChanged);
-                    onNewAnnotationSumbmitted.started.RemoveListener(OnAnnotationSubmitted);
-
-                    if (activeAnnotationMarker)
-                        Destroy(activeAnnotationMarker);
-
-                    currentActiveAnnotation = null;
-                }
+                OnAnnotationSubmitted();
             }
+            DeselectCurrentAnnotation();
 
-            var annotation = annotationsAttribute.Annotations[globalId];
-            currentActiveAnnotation = annotation;
-            onAnnotationTextChanged.started.AddListener(OnActiveAnnotationTextChanged);
+            var annotation = GetAnnotation(globalId);
+            if (annotationsAttribute.Annotations.Contains(annotation))
+            {
+                currentActiveAnnotation = annotation;
+                onAnnotationTextChanged.started.AddListener(OnActiveAnnotationTextChanged);
+                return true;
+            }
+            return false;
+        }
+
+        public int GetLocalId(int globalId)
+        {
+            var ann = GetAnnotation(globalId);
+
+            if (ann != null)
+                return ann.LocalId;
+
+            return -1;
+        }
+
+        private static void RecalculateGlobalIds()
+        {
+            for (int i = 0; i < allCompletedAnnotations.Count; i++)
+            {
+                allCompletedAnnotations[i].GlobalId = i;
+            }
+        }
+
+        public void DeleteAnnotation(int localId)
+        {
+            var ann = annotationsAttribute.Annotations[localId];
+            DeleteAnnotationWithGlobalId(ann.GlobalId);
+        }
+
+        public static void DeleteAnnotationWithGlobalId(int globalId)
+        {
+            var ann = GetAnnotation(globalId);
+            if (ann.AnnotationMarker)
+            {
+                annotationMarkers.Remove(ann.AnnotationMarker);
+                Destroy(ann.AnnotationMarker);
+            }
+            ann.ParentAttribute.RemoveAnnotation(ann.LocalId);
+            RecalculateGlobalIds();
         }
     }
 }

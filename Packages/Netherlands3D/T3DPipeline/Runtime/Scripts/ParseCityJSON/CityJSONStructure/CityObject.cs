@@ -211,7 +211,7 @@ namespace Netherlands3D.T3DPipeline
                 Assert.IsTrue(CityGeometry.IsValidType(Type, geometry.Type));
                 Geometries.Add(geometry);
             }
-            attributes = CityObjectAttribute.ParseAttributesNode(cityObjectNode["attributes"]);
+            attributes = CityObjectAttribute.ParseAttributesNode(this, cityObjectNode["attributes"]);
 
             var geographicalExtent = cityObjectNode["geographicalExtent"];
             if (geographicalExtent.Count > 0)

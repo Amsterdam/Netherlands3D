@@ -1,4 +1,5 @@
 using SimpleJSON;
+using UnityEngine;
 
 namespace Netherlands3D.T3DPipeline
 {
@@ -7,15 +8,21 @@ namespace Netherlands3D.T3DPipeline
     /// </summary>
     public class Annotation
     {
-        public int Id; // An annotation has to have an id that is unique per CityObject. It may be unique globally for all CityObjects but this is not required.
+        public int LocalId; // local ID specific to the cityObject it belongs to
+        public int GlobalId; // global ID among all annotations
         public string Text { get; set; } // The text of the annotation
         public Vector3Double Position { get; private set; } //the position of the Annotation on the building
+        public AnnotationsAttribute ParentAttribute { get; private set; }
+        public GameObject AnnotationMarker { get; private set; }
 
-        public Annotation(int id, string text, Vector3Double position)
+        public Annotation(int localId, int globalId, string text, Vector3Double position, AnnotationsAttribute parentAttribute, GameObject annotationMarker = null)
         {
-            Id = id;
+            LocalId = localId;
+            GlobalId = globalId;
             Text = text;
             Position = position;
+            ParentAttribute = parentAttribute;
+            AnnotationMarker = annotationMarker;
         }
 
         public JSONNode GetJSONNode()
