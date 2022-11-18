@@ -61,6 +61,7 @@ namespace Netherlands3D.T3DPipeline
         private static List<Annotation> allCompletedAnnotations = new List<Annotation>();
         private static List<GameObject> annotationMarkers = new List<GameObject>();
         private CityObject parentObject; //CityObject to add annotations to
+        public CityObject CityObject => parentObject;
         private AnnotationsAttribute annotationsAttribute; // All Annotations are added as a single JSONObject to the CityObject's attributes
         private Annotation currentActiveAnnotation; //static so only 1 annotation can be active at any given time regardless of to which object it belongs
         private GameObject activeAnnotationMarker;
