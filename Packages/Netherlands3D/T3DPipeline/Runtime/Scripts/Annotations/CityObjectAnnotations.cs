@@ -15,7 +15,7 @@ namespace Netherlands3D.T3DPipeline
     public class AnnotationsAttribute : CityObjectAttribute
     {
         public List<Annotation> Annotations { get; private set; } = new List<Annotation>(); // Annotations for this Attribute (belonging to a CityObject)
-        public AnnotationsAttribute(CityObject parentCityObject, string key) : base(parentCityObject ,key)
+        public AnnotationsAttribute(CityObject parentCityObject, string key) : base(parentCityObject, key)
         {
         }
 
@@ -56,7 +56,8 @@ namespace Netherlands3D.T3DPipeline
     public class CityObjectAnnotations : ObjectClickHandler
     {
         private static int globalId = 0; //counts all annotations with unique ID regardless of to which CityObject it belongs (so adding a annotation to CityObject1 will start at 0, adding a second annotation to CityObject2 will be 1)
-        private int localId = 0; // counts annotations with unique ids per CityObject (so adding a annotation to CityObject1 will start at 0, adding a second annotation to CityObject2 will be 0 as well)
+        //private int localId = 0; // counts annotations with unique ids per CityObject (so adding a annotation to CityObject1 will start at 0, adding a second annotation to CityObject2 will be 0 as well)
+        private static List<CityObjectAnnotations> allCityObjectAnnotations = new List<CityObjectAnnotations>();
         private static List<Annotation> allCompletedAnnotations = new List<Annotation>();
         private static List<GameObject> annotationMarkers = new List<GameObject>();
         private CityObject parentObject; //CityObject to add annotations to
@@ -67,6 +68,8 @@ namespace Netherlands3D.T3DPipeline
         [SerializeField]
         private bool annotationStateActive = true;
         public bool AnnotationStateActive { get => annotationStateActive; set => annotationStateActive = value; }
+        [SerializeField]
+        private bool waitForAnnotationCompletedEvent;
 
         [Tooltip("Listening for the event when annotation text is changed")]
         [SerializeField]
@@ -99,6 +102,18 @@ namespace Netherlands3D.T3DPipeline
             annotationsAttribute = new AnnotationsAttribute(parentObject, "annotations");
         }
 
+        private void OnEnable()
+        {
+            allCityObjectAnnotations.Add(this);
+            reselectAnnotationEvent.started.AddListener(OnReselectAnnotation);
+        }
+
+        private void OnDisable()
+        {
+            allCityObjectAnnotations.Remove(this);
+            reselectAnnotationEvent.started.RemoveListener(OnReselectAnnotation);
+        }
+
         private void Start()
         {
             parentObject.AddAttribute(annotationsAttribute);
@@ -107,9 +122,12 @@ namespace Netherlands3D.T3DPipeline
         public override void OnPointerClick(PointerEventData eventData)
         {
             base.OnPointerClick(eventData);
+            if (waitForAnnotationCompletedEvent && currentActiveAnnotation != null)
+                return;
 
-            if (AnnotationStateActive && currentActiveAnnotation == null) //create new annotation if none is currently pending
+            if (AnnotationStateActive) //create new annotation if none is currently pending
             {
+                OnAnnotationSubmitted();
                 var pos = eventData.pointerCurrentRaycast.worldPosition;
                 StartAddNewAnnotation(pos);
             }
@@ -120,8 +138,9 @@ namespace Netherlands3D.T3DPipeline
         {
             var doublePos = new Vector3Double(position.x, position.y, position.z);
             CreateActiveAnnotationMarker(position);
+            var localId = annotationsAttribute.Annotations.Count;
             currentActiveAnnotation = new Annotation(localId, globalId, "", doublePos, annotationsAttribute, activeAnnotationMarker);
-
+            print(globalId);
 
             onAnnotationTextChanged.started.AddListener(OnActiveAnnotationTextChanged);
             onNewAnnotationSumbmitted.started.AddListener(OnAnnotationSubmitted);
@@ -159,14 +178,13 @@ namespace Netherlands3D.T3DPipeline
         // Complete the annotation, add it to the attributes
         private void OnAnnotationSubmitted()
         {
-            onAnnotationTextChanged.started.RemoveListener(OnActiveAnnotationTextChanged);
-            onNewAnnotationSumbmitted.started.RemoveListener(OnAnnotationSubmitted);
+            if (currentActiveAnnotation != null && !annotationsAttribute.Annotations.Contains(currentActiveAnnotation))
+            {
+                annotationsAttribute.AddAnnotation(currentActiveAnnotation);
+                allCompletedAnnotations.Add(currentActiveAnnotation);
+            }
 
-            annotationsAttribute.AddAnnotation(currentActiveAnnotation);
-            allCompletedAnnotations.Add(currentActiveAnnotation);
-            currentActiveAnnotation = null;
-            activeAnnotationMarker = null;
-            localId++;
+            DeselectCurrentAnnotation();
         }
 
         private void OnActiveAnnotationTextChanged(string newText)
@@ -180,15 +198,35 @@ namespace Netherlands3D.T3DPipeline
             return annotation;
         }
 
-        public bool SelectAnnotation(int globalId, bool submitCurrentActiveAnnotation = true)
+        public void OnReselectAnnotation(int globalId)
         {
-            if (currentActiveAnnotation != null && submitCurrentActiveAnnotation)
-            {
-                OnAnnotationSubmitted();
-            }
-            DeselectCurrentAnnotation();
+            SelectAnnotation(globalId);
+        }
 
+        public static bool SelectAnnotation(int globalId, bool submitCurrentActiveAnnotation = true)
+        {
             var annotation = GetAnnotation(globalId);
+            foreach (var coa in allCityObjectAnnotations)
+            {
+                if (coa.currentActiveAnnotation != null && submitCurrentActiveAnnotation)
+                {
+                    coa.OnAnnotationSubmitted();
+                }
+                coa.DeselectCurrentAnnotation();
+            }
+
+            //separate loop because all coas need to deselect
+            foreach (var coa in allCityObjectAnnotations)
+            {
+                if (coa.TrySelectAnnotation(annotation))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private bool TrySelectAnnotation(Annotation annotation)
+        {
             if (annotationsAttribute.Annotations.Contains(annotation))
             {
                 currentActiveAnnotation = annotation;
