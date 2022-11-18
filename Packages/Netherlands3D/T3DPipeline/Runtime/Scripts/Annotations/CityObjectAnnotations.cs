@@ -55,7 +55,7 @@ namespace Netherlands3D.T3DPipeline
     [RequireComponent(typeof(CityObject))]
     public class CityObjectAnnotations : ObjectClickHandler
     {
-        private static int globalId = 0; //counts all annotations with unique ID regardless of to which CityObject it belongs (so adding a annotation to CityObject1 will start at 0, adding a second annotation to CityObject2 will be 1)
+        //private static int globalId = 0; //counts all annotations with unique ID regardless of to which CityObject it belongs (so adding a annotation to CityObject1 will start at 0, adding a second annotation to CityObject2 will be 1)
         //private int localId = 0; // counts annotations with unique ids per CityObject (so adding a annotation to CityObject1 will start at 0, adding a second annotation to CityObject2 will be 0 as well)
         private static List<CityObjectAnnotations> allCityObjectAnnotations = new List<CityObjectAnnotations>();
         private static List<Annotation> allCompletedAnnotations = new List<Annotation>();
@@ -139,8 +139,8 @@ namespace Netherlands3D.T3DPipeline
             var doublePos = new Vector3Double(position.x, position.y, position.z);
             CreateActiveAnnotationMarker(position);
             var localId = annotationsAttribute.Annotations.Count;
+            var globalId = allCompletedAnnotations.Count;
             currentActiveAnnotation = new Annotation(localId, globalId, "", doublePos, annotationsAttribute, activeAnnotationMarker);
-            print(globalId);
 
             onAnnotationTextChanged.started.AddListener(OnActiveAnnotationTextChanged);
             onNewAnnotationSumbmitted.started.AddListener(OnAnnotationSubmitted);
@@ -150,8 +150,6 @@ namespace Netherlands3D.T3DPipeline
                 newAnnotationWithLocalIDStarted.Invoke(localId);
             if (newAnnotationWithGlobalIDStarted)
                 newAnnotationWithGlobalIDStarted.Invoke(globalId);
-
-            globalId++;
         }
 
         protected virtual void CreateActiveAnnotationMarker(Vector3 position)
@@ -254,22 +252,39 @@ namespace Netherlands3D.T3DPipeline
             }
         }
 
-        public void DeleteAnnotation(int localId)
+        private void RecalculateLocallIds()
         {
-            var ann = annotationsAttribute.Annotations[localId];
-            DeleteAnnotationWithGlobalId(ann.GlobalId);
+            for (int i = 0; i < annotationsAttribute.Annotations.Count; i++)
+            {
+                annotationsAttribute.Annotations[i].LocalId = i;
+            }
         }
 
-        public static void DeleteAnnotationWithGlobalId(int globalId)
+        private void DeleteAnnotation(int localId)
         {
-            var ann = GetAnnotation(globalId);
+            var ann = annotationsAttribute.Annotations[localId];
             if (ann.AnnotationMarker)
             {
                 annotationMarkers.Remove(ann.AnnotationMarker);
                 Destroy(ann.AnnotationMarker);
             }
-            ann.ParentAttribute.RemoveAnnotation(ann.LocalId);
+            ann.ParentAttribute.RemoveAnnotation(localId);
+            allCompletedAnnotations.Remove(ann);
+            RecalculateLocallIds();
             RecalculateGlobalIds();
+        }
+
+
+        public static void DeleteAnnotationWithGlobalId(int globalId)
+        {
+            var ann = GetAnnotation(globalId);
+            foreach (var coa in allCityObjectAnnotations)
+            {
+                if (ann.ParentAttribute == coa.annotationsAttribute)
+                {
+                    coa.DeleteAnnotation(ann.LocalId);
+                }
+            }
         }
     }
 }
