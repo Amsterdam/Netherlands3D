@@ -6,22 +6,26 @@ using Netherlands3D.Events;
 
 public class WMSInterface : MonoBehaviour
 {
+    public static List<WMSLayer> ActivatedLayers { get; private set; } = new();
 
+    [Header("Options Parents")]
     [SerializeField] private Transform layerContentParent;
     [SerializeField] private Transform styleContentParent;
+    [SerializeField] private Transform crsContentParent;
     [SerializeField] private Transform activeLayerParent;
 
+    [Header("Prefabs")]
     [SerializeField] private DualTextComponent dtcPrefab;
     [SerializeField] private Button layerButtonPrefab;
-
+    
     [SerializeField] private RawImage previewRawImage;
 
-    [Header("Invoke Events")]
-    [SerializeField] private ObjectEvent styleApplication;
-    [SerializeField] private ObjectEvent layerDeactivation;
+    //[Header("Invoke Events")]
+    //[SerializeField] private ObjectEvent styleApplication;
+    //[SerializeField] private ObjectEvent layerDeactivation;
 
     private Dictionary<System.Tuple<string, string>, DualTextComponent> dtcs = new();
-    
+    private List<string> activeCRSOptions = new();
     
     public void DisplayPreviewImage(object textureFromRequest)
     {
@@ -82,14 +86,17 @@ public class WMSInterface : MonoBehaviour
             Debug.Log("This layer has already been added with this particular style!");
             return;
         }
+        if (!ActivateLayer(layerToStyle))
+        {
+            return;
+        }
         layerToStyle.SelectStyle(styleToApply);
-        ActivateLayer(layerToStyle);
 
         DualTextComponent dualText = Instantiate(dtcPrefab, activeLayerParent);
         Button btn = dualText.GetComponent<Button>();
 
         btn.onClick.AddListener(() => DeactivateLayer(layerToStyle));
-        btn.onClick.AddListener(() => dtcs.Remove(new System.Tuple<string, string>(layerToStyle.Name, styleToApply.Name)));
+        btn.onClick.AddListener(() => dtcs.Remove(layerStyleKey));
         btn.onClick.AddListener(() => Destroy(btn.gameObject));
 
         dualText.SetMainText(layerToStyle.Title);
@@ -97,23 +104,53 @@ public class WMSInterface : MonoBehaviour
         dtcs.Add(layerStyleKey, dualText);
     }
 
-    private void ActivateLayer(WMSLayer layerToActivate)
+    private bool ActivateLayer(WMSLayer layerToActivate)
     {
-        if(styleApplication != null)
+        if(ActivatedLayers.Count is 0)
         {
-            styleApplication.Invoke(layerToActivate);
+            activeCRSOptions = layerToActivate.CRS;
         }
-        //wmsSettings.GetWMSRequest();
+        else
+        {
+            List<string> newCRSOptions = new List<string>();
+            for(int i = 0; i < activeCRSOptions.Count; i++)
+            {
+                string currentCRS = activeCRSOptions[i];
+                if (layerToActivate.CRS.Contains(currentCRS))
+                {
+                    newCRSOptions.Add(currentCRS);
+                }
+            }
+            if(newCRSOptions.Count is 0)
+            {
+                Debug.Log("Adding this new layer means no matching CRS's are available anymore! Cannot add it to the list!");
+                return false;
+            }
+            activeCRSOptions = newCRSOptions;
+        }
+        ActivatedLayers.Add(layerToActivate);
+        ShowCRSOptions();
+        return true;
     }
 
     private void DeactivateLayer(WMSLayer layerToDeactivate)
     {
-        if (layerDeactivation != null)
+        if (ActivatedLayers.Contains(layerToDeactivate))
         {
-            layerDeactivation.Invoke(layerToDeactivate);
+            ActivatedLayers.Remove(layerToDeactivate);
         }
     }
-
-
-
+    private void ShowCRSOptions()
+    {
+        for (int i = crsContentParent.childCount - 1; i >= 0; i--)
+        {
+            Destroy(crsContentParent.GetChild(i).gameObject);
+        }
+        foreach(string crs in activeCRSOptions)
+        {
+            Button b = Instantiate(layerButtonPrefab, crsContentParent);
+            b.GetComponentInChildren<Text>().text = crs;
+            b.onClick.AddListener(() => UrlReader.Instance.ActiveWMS.CRS = crs);
+        }
+    }
 }

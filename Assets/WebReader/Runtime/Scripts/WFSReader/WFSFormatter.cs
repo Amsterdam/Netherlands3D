@@ -15,7 +15,7 @@ public class WFSFormatter : MonoBehaviour
     private XmlDocument xml;
 
 
-    public void ReadFromWFS(XmlDocument wmsXml)
+    public WFS ReadFromWFS(XmlDocument wmsXml)
     {
         throw new System.NotImplementedException("WFS Layers can't be processed at the moment, implementation follows!");
 
@@ -31,7 +31,9 @@ public class WFSFormatter : MonoBehaviour
         XmlNode topLayer = GetChildNode(capabilityNode, "Layer");
         XmlNodeList subLayers = GetChildNodes(topLayer, "Layer");
 
-        List<WMSLayer> wfsLayers = new();
+        return new WFS();
+
+        //List<WFSLayer> wfsLayers = new();
 
         //foreach (XmlNode subLayer in subLayers)
         //{
@@ -71,8 +73,8 @@ public class WFSFormatter : MonoBehaviour
         //    Debug.Log(extractLayer);
         //}
 
-        resetReaderEvent.Invoke();
-        wfsEvent.Invoke(wfsLayers);
+        //resetReaderEvent.Invoke();
+        //wfsEvent.Invoke(wfsLayers);
 
     }
 

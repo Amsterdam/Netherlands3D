@@ -6,27 +6,11 @@ using Netherlands3D.Events;
 
 public class WMSSettings : MonoBehaviour
 {
-    private List<WMSLayer> activatedLayers = new();
-
     [SerializeField] private ObjectEvent imageEvent;
-
-    public void ActivateLayer(object layerToActivate)
-    {
-        activatedLayers.Add((WMSLayer)layerToActivate);
-    }
-
-    public void DeactivateLayer(object layerToDeactivate)
-    {
-        if (activatedLayers.Contains((WMSLayer)layerToDeactivate))
-        {
-            activatedLayers.Remove((WMSLayer)layerToDeactivate);
-        }
-    }
-
     public void SendRequest()
     {
-        WMSRequest.ActivatedLayers = activatedLayers;
-        StartCoroutine(DownloadImage(WMSRequest.GetMapRequest(WMSFormatter.Instance.CurrentWMS, "https://service.pdok.nl/rvo/indgebfunderingsproblematiek/wms/v1_0")));
+        WMSRequest.ActivatedLayers = WMSInterface.ActivatedLayers;
+        StartCoroutine(DownloadImage(WMSRequest.GetMapRequest(UrlReader.Instance.ActiveWMS)));
     }
 
     IEnumerator DownloadImage(string mediaURL)

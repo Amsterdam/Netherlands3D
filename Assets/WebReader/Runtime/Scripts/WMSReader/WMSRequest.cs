@@ -6,12 +6,13 @@ using UnityEngine;
 public static class WMSRequest
 {
     public static string BaseURL = "";
-    public static string Version = "1.3.0";
-    public static string CRS;
-    public static Vector2Int Dimensions = new(200, 200);
-    public static BoundingBox BBox = new BoundingBox(140000, 400000, 145000, 405000);
-
     public static List<WMSLayer> ActivatedLayers = new();
+
+    private static string version = "1.3.0";
+    private static string crs;
+    private static Vector2Int dimensions = new(200, 200);
+    private static BoundingBox bbox = new BoundingBox(140000, 400000, 145000, 405000);
+
 
 
     public static string GetCapabilitiesRequest()
@@ -31,10 +32,10 @@ public static class WMSRequest
     }
     private static void GetValuesFromWMS(WMS wms)
     {
-        Version = wms.Version;
-        Dimensions = wms.Dimensions;
-        BBox = wms.BBox;
-        CRS = wms.CRS;
+        version = wms.Version;
+        dimensions = wms.Dimensions;
+        bbox = wms.BBox;
+        crs = wms.CRS;
     }
 
     private static string StandardRequest()
@@ -96,10 +97,10 @@ public static class WMSRequest
     }
 
     private static string MapRequest() => "request=getmap";
-    private static string VersionRequest() => $"version={Version}";
-    private static string CRSRequest() => $"crs={CRS}";
-    private static string DimensionRequest() => $"width={Dimensions.x}&height={Dimensions.y}";
-    private static string BoundingBoxRequest() => $"bbox={BBox.MinX},{BBox.MinY},{BBox.MaxX},{BBox.MaxY}";
+    private static string VersionRequest() => $"version={version}";
+    private static string CRSRequest() => $"crs={crs}";
+    private static string DimensionRequest() => $"width={dimensions.x}&height={dimensions.y}";
+    private static string BoundingBoxRequest() => $"bbox={bbox.MinX},{bbox.MinY},{bbox.MaxX},{bbox.MaxY}";
     private static string FormatRequest() => "format=image/png";
     private static string TransparencyRequest() => "transparent=true";
     private static string ServiceRequest() => "service=wms";

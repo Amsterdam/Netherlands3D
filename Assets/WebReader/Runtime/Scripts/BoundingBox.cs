@@ -5,14 +5,14 @@ using UnityEngine;
 [System.Serializable]
 public struct BoundingBox
 {
-    public int MinX;
-    public int MinY;
-    public int MaxX;
-    public int MaxY;
+    public float MinX;
+    public float MinY;
+    public float MaxX;
+    public float MaxY;
 
     public static readonly BoundingBox Zero = new BoundingBox(0, 0, 0, 0);
 
-    public BoundingBox(int minX, int minY, int maxX, int maxY)
+    public BoundingBox(float minX, float minY, float maxX, float maxY)
     {
         MinX = minX;
         MinY = minY;

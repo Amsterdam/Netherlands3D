@@ -4,45 +4,29 @@ using UnityEngine;
 using System.Xml;
 using Netherlands3D.Events;
 
-public class WMSFormatter : MonoBehaviour
+public class WMSFormatter
 {
-    public WMS CurrentWMS { get; private set; }
-    public static WMSFormatter Instance { get; private set; }
-
-    [Header("Events")]
-    [SerializeField] private TriggerEvent resetReaderEvent;
-    [SerializeField] private ObjectEvent wmsLayerEvent;
-
     private XmlNamespaceManager namespaceManager;
     private string namespacePrefix = "";
     private XmlDocument xml;
 
-    private void Awake()
+    public WMS ReadWMSFromXML(XmlDocument wmsXml)
     {
-        if(Instance != null)
-        {
-            Debug.LogWarning("An instance of WMS Formatter already exists!");
-            return;
-        }
-        Instance = this;
-    }
-    public void ReadLayersFromWMS(XmlDocument wmsXml)
-    {
-        if (resetReaderEvent == null || wmsLayerEvent == null)
-        {
-            Debug.LogError("Events aren't properly set up! Please resolve this!");
-        }
+
         xml = wmsXml;
         FindNamespaces();
 
         XmlNode capabilityNode = GetChildNode(xml.DocumentElement, "Capability");
         string version = xml.DocumentElement.Attributes.GetNamedItem("version").InnerText;
 
-        CurrentWMS = new WMS(version);
-        // We create a new WMS if one is being submitted from the Input Field, we also give it the version as a parameter in the constructor (this won't change anymore).
+        WMS constructedWMS = new WMS(version);
+        // We create a new WMS if one is being submitted from the Input Field, we also give it the version as a parameter in the constructor as this won't change anymore.
 
         XmlNode topLayer = GetChildNode(capabilityNode, "Layer");
+        // We assume there is a top-level layer without styles, which contains layers that do have styles and get this layer.
+
         XmlNodeList subLayers = GetChildNodes(topLayer, "Layer");
+        // We then get all of the sublayers within the top-level layer, so we can start evaluating them.
 
         foreach(XmlNode subLayer in subLayers)
         {
@@ -65,8 +49,14 @@ public class WMSFormatter : MonoBehaviour
             XmlNodeList styles = GetChildNodes(subLayer, "Style");
             foreach (XmlNode style in styles)
             {
+                string styleName = GetChildNodeValue(style, "Name");
+                if (string.IsNullOrWhiteSpace(styleName))
+                {
+                    Debug.Log("Found a style without a name and skipping it!");
+                    continue;
+                }
                 WMSStyle extractStyle = new WMSStyle();
-                extractStyle.Name = GetChildNodeValue(style, "Name");
+                extractStyle.Name = styleName;
                 extractStyle.Title = GetChildNodeValue(style, "Title");
                 XmlNode legendNode = GetChildNode(style, "LegendURL");
                 if(legendNode != null)
@@ -76,39 +66,16 @@ public class WMSFormatter : MonoBehaviour
                 }
                 extractLayer.AddStyleToDictionary(extractStyle.Name, extractStyle);
             }
-            CurrentWMS.layers.Add(extractLayer);
+            if(extractLayer.styles.Count > 0)
+            {
+                constructedWMS.layers.Add(extractLayer);
+            }
+            else
+            {
+                Debug.Log("Found a layer without applicable styles! It won't be added to the possible layers for this WMS!");
+            }
         }
-
-        resetReaderEvent.Invoke();
-        wmsLayerEvent.Invoke(CurrentWMS.layers);
-
-    }
-
-    public void SetMapDimensions(Vector2Int dimensions)
-    {
-        CurrentWMS.Dimensions = dimensions;
-    }
-    public void SetResolution(string resolution)
-    {
-        int res = int.Parse(resolution);
-        CurrentWMS.Dimensions = new Vector2Int(res, res);
-    }
-
-    public void SetBoundingBoxMinX(string value)
-    {
-        CurrentWMS.BBox.MinX = int.Parse(value);
-    }
-    public void SetBoundingBoxMaxX(string value)
-    {
-        CurrentWMS.BBox.MaxX = int.Parse(value);
-    }
-    public void SetBoundingBoxMinY(string value)
-    {
-        CurrentWMS.BBox.MinY = int.Parse(value);
-    }
-    public void SetBoundingBoxMaxY(string value)
-    {
-        CurrentWMS.BBox.MaxY = int.Parse(value);
+        return constructedWMS;
     }
 
     private void FindNamespaces()
