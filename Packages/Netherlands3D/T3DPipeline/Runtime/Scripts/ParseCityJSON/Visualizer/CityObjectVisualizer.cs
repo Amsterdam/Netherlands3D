@@ -24,6 +24,7 @@ namespace Netherlands3D.T3DPipeline
         [SerializeField]
         private int activeLOD;
         public int ActiveLod => activeLOD;
+        public Mesh ActiveMesh { get; private set; }
 
         [SerializeField]
         private GameObjectEvent jsonVisualized;
@@ -84,12 +85,12 @@ namespace Netherlands3D.T3DPipeline
             var geometry = meshes.Keys.FirstOrDefault(g => g.Lod == lod);
             if (geometry != null)
             {
-                var activeMesh = meshes[geometry];
-                meshFilter.mesh = activeMesh;
+                ActiveMesh = meshes[geometry];
+                meshFilter.mesh = ActiveMesh;
                 activeLOD = lod;
 
                 if (meshCollider)
-                    meshCollider.sharedMesh = activeMesh;
+                    meshCollider.sharedMesh = ActiveMesh;
 
                 return true;
             }
