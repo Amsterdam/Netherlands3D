@@ -2,16 +2,19 @@ using UnityEngine;
 using System.Net.Http;
 using System.Xml;
 using Netherlands3D.Events;
+using UnityEngine.UI;
 
 public class UrlReader : MonoBehaviour
 {
     public static UrlReader Instance { get; private set; }
 
     public WMS ActiveWMS { get; private set; }
-    //public WFS ActiveWFS { get; private set; }
+    public WFS ActiveWFS { get; private set; }
 
     private WMSFormatter wmsFormatter;
     private WFSFormatter wfsFormatter;
+
+    [SerializeField] private InputField urlField;
 
     [Header("Events")]
     [SerializeField] private TriggerEvent resetReaderEvent;
@@ -29,19 +32,21 @@ public class UrlReader : MonoBehaviour
         }
         Instance = this;
     }
-    public void GetFromURL(string url)
+    public void GetFromURL()
     {
-
         if (resetReaderEvent == null || wmsLayerEvent == null)
         {
             Debug.LogError("Events aren't properly set up! Please resolve this!");
         }
+        
+        string url = urlField.text.ToLower();
         if (string.IsNullOrWhiteSpace(url))
         {
             throw new System.InvalidOperationException("You must input a valid URL to read");
+
         }
 
-        string validatedURL = "";
+        string validatedURL = string.Empty;
         foreach(char c in url)
         {
             if(c == char.Parse("?"))
@@ -50,19 +55,19 @@ public class UrlReader : MonoBehaviour
             }
             validatedURL += c;
         }
-        WMSRequest.BaseURL = validatedURL;
-        string xmlData = GetDataFromURL(WMSRequest.GetCapabilitiesRequest());
 
         XmlDocument xml = new XmlDocument();
-        xml.LoadXml(xmlData);
-
-        try
+        if (url.Contains("wms"))
         {
+            WMSRequest.BaseURL = validatedURL;
+            string xmlData = GetDataFromURL(WMSRequest.GetCapabilitiesRequest());
+            xml.LoadXml(xmlData);
+
             XmlElement service = xml.DocumentElement["Service"]["Name"];
             if (service != null && service.InnerText.Contains("WMS"))
             {
 
-                if(wmsFormatter is null)
+                if (wmsFormatter is null)
                 {
                     wmsFormatter = new WMSFormatter();
                 }
@@ -73,8 +78,12 @@ public class UrlReader : MonoBehaviour
                 return;
             }
 
-            // First, we attempt to read the obtained xml, if it exists and we try to read it as a WMS.
-
+        }
+        else if (url.Contains("wfs"))
+        {
+            WFSRequest.BaseURL = validatedURL;
+            string xmlData = GetDataFromURL(WFSRequest.GetCapabilitiesRequest());
+            xml.LoadXml(xmlData);
 
             XmlElement serviceID = xml.DocumentElement["ows:ServiceIdentification"]["ows:ServiceType"];
             if (serviceID != null && serviceID.InnerText.Contains("WFS"))
@@ -84,16 +93,11 @@ public class UrlReader : MonoBehaviour
                 {
                     wfsFormatter = new WFSFormatter();
                 }
-                wfsFormatter.ReadFromWFS(xml);
+                ActiveWFS = wfsFormatter.ReadFromWFS(xml);
+                Debug.Log(ActiveWFS.Version);
                 // We're going to send this over to the WFSFormatter and then return [NOT IMPLEMENTED].
                 return;
             }
-
-            // If the xml is not a WMS, we attempt to read the obtained xml as a WFS.
-
-        }
-        catch (System.NullReferenceException)
-        {
 
         }
     }

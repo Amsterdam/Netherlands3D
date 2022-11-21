@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class WFS
 {
-
-    public WFS()
+    public string Version { get; private set; }
+    public WFS(string version)
     {
-
+        Version = version;
     }
 
 

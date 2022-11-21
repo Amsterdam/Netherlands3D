@@ -11,7 +11,7 @@ public static class WMSRequest
     private static string version = "1.3.0";
     private static string crs;
     private static Vector2Int dimensions = new(200, 200);
-    private static BoundingBox bbox = new BoundingBox(140000, 400000, 145000, 405000);
+    private static BoundingBox bbox = BoundingBox.Zero;
 
 
 
@@ -92,8 +92,7 @@ public static class WMSRequest
                 styleBuilder.Append(",");
             }
         }
-        string request = layerBuilder + "&" + styleBuilder;
-        return request;
+        return $"{layerBuilder}&{styleBuilder}";
     }
 
     private static string MapRequest() => "request=getmap";

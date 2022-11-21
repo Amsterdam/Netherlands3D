@@ -1,38 +1,37 @@
-using Netherlands3D.Events;
-using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
 
-public class WFSFormatter : MonoBehaviour
+public class WFSFormatter
 {
-    [Header("Events")]
-    [SerializeField] private TriggerEvent resetReaderEvent;
-    [SerializeField] private ObjectEvent wfsEvent;
-
     private XmlNamespaceManager namespaceManager;
     private string namespacePrefix = "";
     private XmlDocument xml;
 
-
+    private Dictionary<string, string> wfsXmlNamespaces;
     public WFS ReadFromWFS(XmlDocument wmsXml)
     {
-        throw new System.NotImplementedException("WFS Layers can't be processed at the moment, implementation follows!");
 
-        if (resetReaderEvent == null || wfsEvent == null)
-        {
-            Debug.LogError("Events aren't properly set up! Please resolve this!");
-        }
         xml = wmsXml;
         FindNamespaces();
+
+        string fes = "http://www.opengis.net/fes/2.0";
+
+        //XmlNode filterCapabilities = GetChildNode(xml.DocumentElement, $"{fes}:Filter_Capabilities");
+        //Debug.Log(filterCapabilities.InnerText);
+
+        //XmlNode featureList = GetChildNode(xml.DocumentElement, "FeatureTypeList");
+        //Debug.Log(featureList.InnerText);
+
+        string version = xml.DocumentElement.Attributes.GetNamedItem("version").InnerText;
+
+        WFS wfs = new WFS(version);
+
+        //XmlNode topLayer = GetChildNode(filterCapabilities, "Layer");
+        //XmlNodeList subLayers = GetChildNodes(topLayer, "Layer");
+
+
         //XmlNodeList layersList = wmsXml.SelectNodes("/WMS_Capabilities/Layer/Layer");
-
-        XmlNode capabilityNode = GetChildNode(xml.DocumentElement, "Capability");
-        XmlNode topLayer = GetChildNode(capabilityNode, "Layer");
-        XmlNodeList subLayers = GetChildNodes(topLayer, "Layer");
-
-        return new WFS();
-
         //List<WFSLayer> wfsLayers = new();
 
         //foreach (XmlNode subLayer in subLayers)
@@ -76,22 +75,38 @@ public class WFSFormatter : MonoBehaviour
         //resetReaderEvent.Invoke();
         //wfsEvent.Invoke(wfsLayers);
 
+        return wfs;
+
     }
 
     private void FindNamespaces()
     {
-        namespacePrefix = "";
+        wfsXmlNamespaces = new();
         namespaceManager = new XmlNamespaceManager(xml.NameTable);
+
+        if (xml.DocumentElement.Attributes.GetNamedItem("xmlns:fes") != null)
+        {
+            string ns = xml.DocumentElement.Attributes.GetNamedItem("xmlns:fes").InnerText;
+            namespaceManager.AddNamespace("fes", ns);
+            wfsXmlNamespaces.Add("fes", ns);
+        }
+        if (xml.DocumentElement.Attributes.GetNamedItem("xmlns:ows") != null)
+        {
+            string ns = xml.DocumentElement.Attributes.GetNamedItem("xmlns:ows").InnerText;
+            namespaceManager.AddNamespace("wfs", ns);
+            wfsXmlNamespaces.Add("ows", ns);
+        }
         if (xml.DocumentElement.Attributes.GetNamedItem("xmlns") != null)
         {
+            string ns = xml.DocumentElement.Attributes.GetNamedItem("xmlns").InnerText;
             namespaceManager.AddNamespace("wfs", xml.DocumentElement.Attributes.GetNamedItem("xmlns").InnerText);
-            namespacePrefix = "wfs:";
+            wfsXmlNamespaces.Add("wfs", ns);
         }
     }
 
-    private string GetChildNodeValue(XmlNode parentNode, string childNodeName)
+    private string GetChildNodeValue(XmlNode parentNode, string childNodeName, string nameSpace)
     {
-        XmlNode selected = parentNode.SelectSingleNode($"{namespacePrefix}{childNodeName}", namespaceManager);
+        XmlNode selected = parentNode.SelectSingleNode($"{wfsXmlNamespaces[nameSpace]}{childNodeName}", namespaceManager);
         if (selected != null)
         {
             return selected.InnerText;
@@ -99,13 +114,13 @@ public class WFSFormatter : MonoBehaviour
         return "";
     }
 
-    private XmlNode GetChildNode(XmlNode parentNode, string childNodeName)
+    private XmlNode GetChildNode(XmlNode parentNode, string childNodeName, string nameSpace)
     {
-        return parentNode.SelectSingleNode($"{namespacePrefix}{childNodeName}", namespaceManager);
+        return parentNode.SelectSingleNode($"{wfsXmlNamespaces[nameSpace]}{childNodeName}", namespaceManager);
     }
-    private XmlNodeList GetChildNodes(XmlNode parentNode, string childNodeName)
+    private XmlNodeList GetChildNodes(XmlNode parentNode, string childNodeName, string nameSpace)
     {
-        return parentNode.SelectNodes($"{namespacePrefix}{childNodeName}", namespaceManager);
+        return parentNode.SelectNodes($"{wfsXmlNamespaces[nameSpace]}{childNodeName}", namespaceManager);
     }
 
 }
