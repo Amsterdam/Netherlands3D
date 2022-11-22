@@ -10,8 +10,6 @@ public class CalculateShadows : MonoBehaviour
     private Material resultMaterial;
     [SerializeField]
     private GameObject resultProjectorObject;
-    [SerializeField]
-    private bool moveWithCamera;
 
     [SerializeField]
     private string[] textureRefs;
@@ -21,11 +19,11 @@ public class CalculateShadows : MonoBehaviour
 
     [Header("Invoke events")]
     [SerializeField]
+    private TriggerEvent getSunTime;
+    [SerializeField]
     private IntEvent setSunHour;
     [SerializeField]
     private BoolEvent resetShadows;
-    [SerializeField]
-    private TriggerEvent getSunTime;
     [Header("Listen to events")]
     [SerializeField]
     private DateTimeEvent receiveSunTime;
@@ -48,24 +46,32 @@ public class CalculateShadows : MonoBehaviour
         receiveSunTime?.started.AddListener(ReceiveSunTime);
     }
 
-    void Update()
-    {
-
-    }
-
     public void StartCalc()
     {
         currentCam.enabled = true;
         // Get original hours
         getSunTime?.started.Invoke();
-
-        currentHour = 8; // Start at 8 in the morning
+        // Start at 8 in the morning
+        currentHour = 8;
         setSunHour.Invoke(currentHour);
 
         StartCoroutine(PopulateTextures());
     }
 
-    IEnumerator PopulateTextures()
+    public void ResetShadows()
+    {
+        resultProjectorObject.SetActive(false);
+        resultMaterial.SetTexture("_MainTex", null);
+        for (int i = 0; i < textureRefs.Length; i++)
+        {
+            resultTextureObject.GetComponent<MeshRenderer>().material.SetTexture(textureRefs[textureIndex], null);
+        }
+        resultShown = false;
+        // Cast reset (to disable UI for instance)
+        resetShadows?.started.Invoke(false);
+    }
+
+    private IEnumerator PopulateTextures()
     {
         resultTextureObject.SetActive(false);
         resultProjectorObject.SetActive(true);
@@ -89,7 +95,7 @@ public class CalculateShadows : MonoBehaviour
         yield break;
     }
 
-    IEnumerator GetScreenshot(Camera camera)
+    private IEnumerator GetScreenshot(Camera camera)
     {
         camera.Render();
 
@@ -108,7 +114,7 @@ public class CalculateShadows : MonoBehaviour
         textureIndex++;
     }
 
-    IEnumerator SetResultTexture(Camera camera)
+    private IEnumerator SetResultTexture(Camera camera)
     {
         camera.Render();
 
@@ -128,7 +134,7 @@ public class CalculateShadows : MonoBehaviour
         currentCam.enabled = false;
     }
 
-    Texture2D ToTexture2D(RenderTexture rTex) // Helper
+    private Texture2D ToTexture2D(RenderTexture rTex)
     {
         Texture2D tex = new Texture2D(1024, 1024, TextureFormat.RGB24, false);
         RenderTexture.active = rTex;
@@ -137,19 +143,7 @@ public class CalculateShadows : MonoBehaviour
         return tex;
     }
 
-    public void ResetShadows()
-    {
-        resultProjectorObject.SetActive(false);
-        resultMaterial.SetTexture("_MainTex", null);
-        for (int i = 0; i < textureRefs.Length; i++)
-        {
-            resultTextureObject.GetComponent<MeshRenderer>().material.SetTexture(textureRefs[textureIndex], null);
-        }
-        resultShown = false;
-        resetShadows?.started.Invoke(false);
-    }
-
-    void ReceiveSunTime(System.DateTime dateTime)
+    private void ReceiveSunTime(System.DateTime dateTime)
     {
         originalHour = dateTime.Hour;
     }

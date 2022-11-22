@@ -98,6 +98,11 @@
       "displayName": "WebGL template example",
       "description": "A WebGL template example to use for Netherlands3D WebGL projects with unityInstance reference and responsive full browser window behaviour.",
       "path": "WebGL/Samples~/WebGL"
+    },
+    {
+      "displayName": "Calculate Shadows",
+      "description": "Example to simulate shadows on buildings using the sun.",
+      "path": "CalculateShadows/Samples~/CalculateShadows"
     }
   ],
   "hideInEditor": false,
