@@ -25,7 +25,7 @@ namespace Netherlands3D.T3DPipeline
         public JSONNode Appearance { get; private set; }
         public JSONNode GeometryTemplates { get; private set; }
 
-        public CityObject[] CityObjects { get; private set; }
+        public CityObject[] CityObjects { get; private set; } = new CityObject[0];
         public Vector3Double MinExtent { get; private set; }
         public Vector3Double MaxExtent { get; private set; }
         public CoordinateSystem CoordinateSystem { get; private set; }
@@ -35,13 +35,13 @@ namespace Netherlands3D.T3DPipeline
         private StringEvent onCityJSONReceived;
         [Tooltip("A cityObject will be created as a GameObject with a CityObject script. This field can hold a prefab with multiple extra scripts (such as CityObjectVisualizer) to be created instead. This prefab must have a CityObject script attached.")]
         [SerializeField]
-        private GameObject cityObjectPrefab; 
+        private GameObject cityObjectPrefab;
         [SerializeField]
         [Tooltip("If checked the CityJSON parsed by this script will set the relative center of the RD coordinate system to the center of this CityJSON")]
         private bool useAsRelativeRDCenter;
         [Tooltip("event that is called when the CityJSON is parsed")]
         [SerializeField]
-        private TriggerEvent onJsonParsed;
+        private TriggerEvent onAllCityObjectsProcessed;
 
         private void OnEnable()
         {
@@ -55,6 +55,11 @@ namespace Netherlands3D.T3DPipeline
 
         public void ParseCityJSON(string cityJson)
         {
+            foreach (var co in CityObjects)
+            {
+                Destroy(co.gameObject);
+            }
+
             var node = JSONNode.Parse(cityJson);
             var type = node["type"];
             Assert.IsTrue(type == "CityJSON");
@@ -85,7 +90,7 @@ namespace Netherlands3D.T3DPipeline
                 vert += TransformTranslate;
                 parsedVertices.Add(vert);
             }
-            if(parsedVertices.Count == 0)
+            if (parsedVertices.Count == 0)
             {
                 Debug.LogWarning("Vertex list is empty, nothing can be visualized because empty meshes will be created!");
             }
@@ -156,7 +161,13 @@ namespace Netherlands3D.T3DPipeline
             if (useAsRelativeRDCenter)
                 SetRelativeCenter();
 
-            onJsonParsed.Invoke();
+            foreach (var co in CityObjects)
+            {
+                co.OnCityObjectParseCompleted();
+            }
+
+            if (onAllCityObjectsProcessed)
+                onAllCityObjectsProcessed.Invoke();
         }
 
         //currently only RD and WGS84 are supported as coordinate systems.
@@ -203,7 +214,7 @@ namespace Netherlands3D.T3DPipeline
             {
                 var relativeCenterRD = (MinExtent + MaxExtent) / 2;
                 Debug.Log("Setting Relative RD Center to: " + relativeCenterRD);
-                CoordConvert.zeroGroundLevelY = (float)relativeCenterRD.z;
+                CoordConvert.zeroGroundLevelY = 0;// (float)relativeCenterRD.z;
                 CoordConvert.relativeCenterRD = new Vector2RD(relativeCenterRD.x, relativeCenterRD.y);
             }
         }

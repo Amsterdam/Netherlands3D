@@ -112,8 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeLOD: 0
-  onJsonParsed: {fileID: 11400000, guid: a3d7bc3176844447aaf8b67070d5d2cc, type: 2}
-  jsonVisualized: {fileID: 11400000, guid: 82c0829d4d060494eb79fd98defb2536, type: 2}
+  jsonVisualized: {fileID: 11400000, guid: 75872d7a7b4094523810f7573daf726c, type: 2}
 --- !u!64 &6016695265935519022
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -141,12 +140,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectClicked: {fileID: 11400000, guid: d41a1136219eb4e079fb8fc73ebce96d, type: 2}
+  AnnotationMarkers: []
   annotationStateActive: 1
   onAnnotationTextChanged: {fileID: 11400000, guid: 2b59df1d8f4924b0790c335290680615, type: 2}
   onNewAnnotationSumbmitted: {fileID: 11400000, guid: 7fd36cf0d83864e40a0a63eb518e8844, type: 2}
   countAnnotationsGlobally: 0
   activeAnnotationMarkerPrefab: {fileID: 7166177898245782564, guid: b30c5b7dbfd68425aad0208a46009dc2, type: 3}
-  completedAnnotationMarkerPrefab: {fileID: 7166177898245782564, guid: 478ca39449cf24939b818e4fef1cc166, type: 3}
   newAnnotationStarted: {fileID: 11400000, guid: 3dc2cfc20655545cb99c62cfc38ace6d, type: 2}
   newAnnotationWithLocalIDStarted: {fileID: 0}
   newAnnotationWithGlobalIDStarted: {fileID: 11400000, guid: ddad522099ad84250b4f4ecde722bcf0, type: 2}
+  annotationMarkerSelected: {fileID: 11400000, guid: ea761022b6ecd45538a11f261bbf6c51, type: 2}
+  annotationMarkerDeselected: {fileID: 11400000, guid: a131c4058d7e848118faf2a4a4cb0cea, type: 2}

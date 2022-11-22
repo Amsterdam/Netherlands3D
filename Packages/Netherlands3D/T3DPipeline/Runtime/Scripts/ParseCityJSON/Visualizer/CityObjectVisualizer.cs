@@ -4,6 +4,7 @@ using System.Linq;
 using Netherlands3D.Core;
 using Netherlands3D.Events;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Netherlands3D.T3DPipeline
 {
@@ -25,9 +26,7 @@ namespace Netherlands3D.T3DPipeline
         public int ActiveLod => activeLOD;
 
         [SerializeField]
-        private TriggerEvent onJsonParsed;
-        [SerializeField]
-        private TriggerEvent jsonVisualized;
+        private GameObjectEvent jsonVisualized;
 
 #if UNITY_EDITOR
         // allow to change the visible LOD from the inspector during runtime
@@ -39,29 +38,29 @@ namespace Netherlands3D.T3DPipeline
 #endif
         private void Awake()
         {
-            meshFilter = GetComponent<MeshFilter>();
             cityObject = GetComponent<CityObject>();
+            meshFilter = GetComponent<MeshFilter>();
             meshCollider = GetComponent<MeshCollider>();
         }
 
         private void OnEnable()
         {
-            onJsonParsed.started.AddListener(Visualize);
+            cityObject.CityObjectParsed.AddListener(Visualize);
         }
 
         private void OnDisable()
         {
-            onJsonParsed.started.RemoveAllListeners();
+            cityObject.CityObjectParsed.RemoveAllListeners();
         }
 
         //create the meshes
         private void Visualize()
         {
+            transform.position = SetPosition(cityObject); //set position first so the CityObject's transformationMatrix can be used to position the mesh.
             meshes = CreateMeshes(cityObject);
             var highestLod = meshes.Keys.Max(g => g.Lod);
             SetLODActive(highestLod);
-            transform.position = SetPosition(cityObject);
-            jsonVisualized.Invoke();
+            jsonVisualized.Invoke(gameObject);
         }
 
         private Vector3 SetPosition(CityObject cityObject)
@@ -80,15 +79,21 @@ namespace Netherlands3D.T3DPipeline
         }
 
         //enable the mesh of a certain LOD
-        public void SetLODActive(int lod)
+        public bool SetLODActive(int lod)
         {
             var geometry = meshes.Keys.FirstOrDefault(g => g.Lod == lod);
-            var activeMesh = meshes[geometry];
-            meshFilter.mesh = activeMesh;
-            activeLOD = lod;
+            if (geometry != null)
+            {
+                var activeMesh = meshes[geometry];
+                meshFilter.mesh = activeMesh;
+                activeLOD = lod;
 
-            if (meshCollider)
-                meshCollider.sharedMesh = activeMesh;
+                if (meshCollider)
+                    meshCollider.sharedMesh = activeMesh;
+
+                return true;
+            }
+            return false;
         }
 
         //create the meshes for the object geometries
@@ -97,26 +102,26 @@ namespace Netherlands3D.T3DPipeline
             meshes = new Dictionary<CityGeometry, Mesh>();
             foreach (var geometry in cityObject.Geometries)
             {
-                var mesh = CreateMeshFromGeometry(geometry, cityObject.CoordinateSystem, transform.localToWorldMatrix);
+                var mesh = CreateMeshFromGeometry(geometry, cityObject.CoordinateSystem, cityObject.transform.worldToLocalMatrix);
                 meshes.Add(geometry, mesh);
             }
             return meshes;
         }
 
-        public static Mesh CreateMeshFromGeometry(CityGeometry geometry, CoordinateSystem coordinateSystem, Matrix4x4 localToWorldMatrix)
+        public static Mesh CreateMeshFromGeometry(CityGeometry geometry, CoordinateSystem coordinateSystem, Matrix4x4 transformationMatrix)
         {
             var boundaryMeshes = BoundariesToMeshes(geometry.BoundaryObject, coordinateSystem);
-            return CombineMeshes(boundaryMeshes, localToWorldMatrix);
+            return CombineMeshes(boundaryMeshes, transformationMatrix);
         }
 
-        public static Mesh CombineMeshes(List<Mesh> meshes, Matrix4x4 localToWorldMatrix)
+        public static Mesh CombineMeshes(List<Mesh> meshes, Matrix4x4 transformationMatrix)
         {
             CombineInstance[] combine = new CombineInstance[meshes.Count];
 
             for (int i = 0; i < meshes.Count; i++)
             {
                 combine[i].mesh = meshes[i];
-                combine[i].transform = localToWorldMatrix;
+                combine[i].transform = transformationMatrix;
             }
 
             var mesh = new Mesh();

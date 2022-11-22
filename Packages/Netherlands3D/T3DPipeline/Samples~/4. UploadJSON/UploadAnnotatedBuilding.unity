@@ -509,7 +509,7 @@ MonoBehaviour:
   onCityJSONReceived: {fileID: 11400000, guid: adde3c60afd4a4a488250d6acaaf23f9, type: 2}
   cityObjectPrefab: {fileID: 1807838613596807431, guid: 4e6516634cba34d2cb6da34b692c3247, type: 3}
   useAsRelativeRDCenter: 1
-  onJsonParsed: {fileID: 11400000, guid: a3d7bc3176844447aaf8b67070d5d2cc, type: 2}
+  onAllCityObjectsProcessed: {fileID: 11400000, guid: a3d7bc3176844447aaf8b67070d5d2cc, type: 2}
 --- !u!1 &202099905
 GameObject:
   m_ObjectHideFlags: 0
@@ -2488,7 +2488,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75b7e70441345c14ab89bfbaf4f57f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onEvent: {fileID: 11400000, guid: 82c0829d4d060494eb79fd98defb2536, type: 2}
+  onEvent: {fileID: 11400000, guid: a3d7bc3176844447aaf8b67070d5d2cc, type: 2}
   trigger:
     m_PersistentCalls:
       m_Calls:
