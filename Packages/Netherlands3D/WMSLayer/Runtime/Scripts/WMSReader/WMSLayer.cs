@@ -34,6 +34,10 @@ public class WMSLayer
 
     public void SelectStyle(WMSStyle styleToSelect)
     {
+        if(styleToSelect == null)
+        {
+            return;
+        }
         if (styles.ContainsKey(styleToSelect.Name))
         {
             activeStyle = styleToSelect;

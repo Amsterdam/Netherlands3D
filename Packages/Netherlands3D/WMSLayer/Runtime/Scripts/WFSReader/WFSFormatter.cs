@@ -5,20 +5,25 @@ using UnityEngine;
 public class WFSFormatter
 {
     private XmlNamespaceManager namespaceManager;
-    private string namespacePrefix = "";
+    //private string namespacePrefix = "";
     private XmlDocument xml;
-
-    private Dictionary<string, string> wfsXmlNamespaces;
     public WFS ReadFromWFS(XmlDocument wmsXml)
     {
 
         xml = wmsXml;
         FindNamespaces();
 
-        string fes = "http://www.opengis.net/fes/2.0";
+        XmlNode filterCapabilities = GetChildNode(xml.DocumentElement, "Filter_Capabilities", "fes");
 
-        //XmlNode filterCapabilities = GetChildNode(xml.DocumentElement, $"{fes}:Filter_Capabilities");
-        //Debug.Log(filterCapabilities.InnerText);
+        XmlNode conformance = GetChildNode(filterCapabilities, "Conformance", "fes");
+        Debug.Log(conformance.ChildNodes.Count);
+
+        foreach(XmlNode constraint in conformance)
+        {
+            Debug.Log(constraint.Attributes.Count);
+            //Debug.Log(constraint.ChildNodes);
+            //Debug.Log(constraint.Attributes.GetNamedItem("name")?.InnerText);
+        }
 
         //XmlNode featureList = GetChildNode(xml.DocumentElement, "FeatureTypeList");
         //Debug.Log(featureList.InnerText);
@@ -81,32 +86,28 @@ public class WFSFormatter
 
     private void FindNamespaces()
     {
-        wfsXmlNamespaces = new();
         namespaceManager = new XmlNamespaceManager(xml.NameTable);
 
         if (xml.DocumentElement.Attributes.GetNamedItem("xmlns:fes") != null)
         {
             string ns = xml.DocumentElement.Attributes.GetNamedItem("xmlns:fes").InnerText;
             namespaceManager.AddNamespace("fes", ns);
-            wfsXmlNamespaces.Add("fes", ns);
         }
         if (xml.DocumentElement.Attributes.GetNamedItem("xmlns:ows") != null)
         {
             string ns = xml.DocumentElement.Attributes.GetNamedItem("xmlns:ows").InnerText;
-            namespaceManager.AddNamespace("wfs", ns);
-            wfsXmlNamespaces.Add("ows", ns);
+            namespaceManager.AddNamespace("ows", ns);
         }
         if (xml.DocumentElement.Attributes.GetNamedItem("xmlns") != null)
         {
             string ns = xml.DocumentElement.Attributes.GetNamedItem("xmlns").InnerText;
             namespaceManager.AddNamespace("wfs", xml.DocumentElement.Attributes.GetNamedItem("xmlns").InnerText);
-            wfsXmlNamespaces.Add("wfs", ns);
         }
     }
 
     private string GetChildNodeValue(XmlNode parentNode, string childNodeName, string nameSpace)
     {
-        XmlNode selected = parentNode.SelectSingleNode($"{wfsXmlNamespaces[nameSpace]}{childNodeName}", namespaceManager);
+        XmlNode selected = parentNode.SelectSingleNode($"{nameSpace}:{childNodeName}", namespaceManager);
         if (selected != null)
         {
             return selected.InnerText;
@@ -116,11 +117,11 @@ public class WFSFormatter
 
     private XmlNode GetChildNode(XmlNode parentNode, string childNodeName, string nameSpace)
     {
-        return parentNode.SelectSingleNode($"{wfsXmlNamespaces[nameSpace]}{childNodeName}", namespaceManager);
+        return parentNode.SelectSingleNode($"{nameSpace}:{childNodeName}", namespaceManager);
     }
     private XmlNodeList GetChildNodes(XmlNode parentNode, string childNodeName, string nameSpace)
     {
-        return parentNode.SelectNodes($"{wfsXmlNamespaces[nameSpace]}{childNodeName}", namespaceManager);
+        return parentNode.SelectNodes($"{nameSpace}:{childNodeName}", namespaceManager);
     }
 
 }

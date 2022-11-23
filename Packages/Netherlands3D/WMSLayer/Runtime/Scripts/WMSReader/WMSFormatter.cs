@@ -66,14 +66,14 @@ public class WMSFormatter
                 }
                 extractLayer.AddStyleToDictionary(extractStyle.Name, extractStyle);
             }
-            if(extractLayer.styles.Count > 0)
-            {
-                constructedWMS.layers.Add(extractLayer);
-            }
-            else
-            {
-                Debug.Log("Found a layer without applicable styles! It won't be added to the possible layers for this WMS!");
-            }
+            constructedWMS.layers.Add(extractLayer);
+            //if(extractLayer.styles.Count > 0)
+            //{
+            //}
+            //else
+            //{
+            //    Debug.Log("Found a layer without applicable styles! It won't be added to the possible layers for this WMS!");
+            //}
         }
         return constructedWMS;
     }

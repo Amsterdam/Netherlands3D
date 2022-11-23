@@ -8,6 +8,8 @@ public class WMSInterface : MonoBehaviour
 {
     public static List<WMSLayer> ActivatedLayers { get; private set; } = new();
 
+    public int Health { get; private set; }
+
     [Header("Options Parents")]
     [SerializeField] private Transform layerContentParent;
     [SerializeField] private Transform styleContentParent;
@@ -18,7 +20,13 @@ public class WMSInterface : MonoBehaviour
     [SerializeField] private DualTextComponent dtcPrefab;
     [SerializeField] private Button layerButtonPrefab;
     
+    [Header("Preview Image")]
     [SerializeField] private RawImage previewRawImage;
+
+    [Header("Listen Events")]
+    [SerializeField] private TriggerEvent resetEvent;
+    [SerializeField] private ObjectEvent buildInterfaceEvent;
+    [SerializeField] private ObjectEvent imageEvent;
 
     //[Header("Invoke Events")]
     //[SerializeField] private ObjectEvent styleApplication;
@@ -26,16 +34,32 @@ public class WMSInterface : MonoBehaviour
 
     private Dictionary<System.Tuple<string, string>, DualTextComponent> dtcs = new();
     private List<string> activeCRSOptions = new();
-    
+
+    private void Awake()
+    {
+        resetEvent.started.AddListener(ResetInterface);
+        buildInterfaceEvent.started.AddListener(BuildInterface);
+        imageEvent.started.AddListener(DisplayPreviewImage);
+    }
+
     public void DisplayPreviewImage(object textureFromRequest)
     {
         previewRawImage.texture = (Texture)textureFromRequest;
     }
     public void ResetInterface()
     {
+        dtcs.Clear();
+        ActivatedLayers.Clear();
         for(int i = layerContentParent.childCount - 1; i >= 0; i--)
         {
             GameObject child = layerContentParent.GetChild(i).gameObject;
+            Button b = child.GetComponent<Button>();
+            b.onClick.RemoveAllListeners();
+            Destroy(child);
+        }
+        for (int i = activeLayerParent.childCount - 1; i >= 0; i--)
+        {
+            GameObject child = activeLayerParent.GetChild(i).gameObject;
             Button b = child.GetComponent<Button>();
             b.onClick.RemoveAllListeners();
             Destroy(child);
@@ -55,6 +79,11 @@ public class WMSInterface : MonoBehaviour
     public void DisplayStyles(WMSLayer styledLayer)
     {
         ClearStyles();
+        if(styledLayer.styles.Count is 0)
+        {
+            ApplyStyle(styledLayer, null);
+            return;
+        }
         foreach(KeyValuePair<string, WMSStyle> stylePair in styledLayer.styles)
         {
             Button newLayerButton = Instantiate(layerButtonPrefab, styleContentParent);
@@ -80,7 +109,15 @@ public class WMSInterface : MonoBehaviour
 
     private void ApplyStyle(WMSLayer layerToStyle, WMSStyle styleToApply)
     {
-        System.Tuple<string, string> layerStyleKey = new System.Tuple<string, string>(layerToStyle.Name, styleToApply.Name);
+        System.Tuple<string, string> layerStyleKey;
+        if(styleToApply == null)
+        {
+            layerStyleKey = new System.Tuple<string, string>(layerToStyle.Name, "null");
+        }
+        else
+        {
+            layerStyleKey = new System.Tuple<string, string>(layerToStyle.Name, styleToApply.Name);
+        }
         if (dtcs.ContainsKey(layerStyleKey))
         {
             Debug.Log("This layer has already been added with this particular style!");
@@ -100,7 +137,14 @@ public class WMSInterface : MonoBehaviour
         btn.onClick.AddListener(() => Destroy(btn.gameObject));
 
         dualText.SetMainText(layerToStyle.Title);
-        dualText.SetSubText(styleToApply.Title);
+        if(styleToApply != null)
+        {
+            dualText.SetSubText(styleToApply.Title);
+        }
+        else
+        {
+            dualText.SetSubText("");
+        }
         dtcs.Add(layerStyleKey, dualText);
     }
 

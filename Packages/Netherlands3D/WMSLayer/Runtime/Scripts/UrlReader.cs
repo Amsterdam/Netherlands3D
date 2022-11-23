@@ -16,21 +16,43 @@ public class UrlReader : MonoBehaviour
 
     [SerializeField] private InputField urlField;
 
-    [Header("Events")]
+    [Header("Invoked Events")]
     [SerializeField] private TriggerEvent resetReaderEvent;
     [SerializeField] private ObjectEvent wmsLayerEvent;
+    [SerializeField] private BoolEvent requestUrlButtonEvent;
+
+    [Header("Listen Events")]
+    [SerializeField] private StringEvent boundingBoxMinXEvent;
+    [SerializeField] private StringEvent boundingBoxMinYEvent;
+    [SerializeField] private StringEvent boundingBoxMaxXEvent;
+    [SerializeField] private StringEvent boundingBoxMaxYEvent;
+    [SerializeField] private StringEvent resolutionEvent;
 
 
     private static readonly HttpClient client = new();
 
     private void Awake()
     {
-        if(Instance is not null)
+        if(Instance != null)
         {
             Debug.LogWarning("Instance has already been set, duplicate reader found!");
             return;
         }
         Instance = this;
+
+        boundingBoxMinXEvent.started.AddListener(SetBoundingBoxMinX);
+        boundingBoxMaxXEvent.started.AddListener(SetBoundingBoxMaxX);
+        boundingBoxMinYEvent.started.AddListener(SetBoundingBoxMinY);
+        boundingBoxMaxYEvent.started.AddListener(SetBoundingBoxMaxY);
+        resolutionEvent.started.AddListener(SetResolution);
+    }
+
+    private void Start()
+    {
+        if(requestUrlButtonEvent != null)
+        {
+            requestUrlButtonEvent.Invoke(Application.isEditor);
+        }
     }
     public void GetFromURL()
     {
@@ -74,7 +96,6 @@ public class UrlReader : MonoBehaviour
                 ActiveWMS = wmsFormatter.ReadWMSFromXML(xml);
                 resetReaderEvent.Invoke();
                 wmsLayerEvent.Invoke(ActiveWMS.layers);
-                // We're going to send this over to the WMSFormatter and then return.
                 return;
             }
 
@@ -94,33 +115,31 @@ public class UrlReader : MonoBehaviour
                     wfsFormatter = new WFSFormatter();
                 }
                 ActiveWFS = wfsFormatter.ReadFromWFS(xml);
-                Debug.Log(ActiveWFS.Version);
-                // We're going to send this over to the WFSFormatter and then return [NOT IMPLEMENTED].
                 return;
             }
 
         }
     }
 
-    public void SetResolution(string resolution)
+    private void SetResolution(string resolution)
     {
         int res = int.Parse(resolution);
         ActiveWMS.Dimensions = new Vector2Int(res, res);
     }
 
-    public void SetBoundingBoxMinX(string value)
+    private void SetBoundingBoxMinX(string value)
     {
         ActiveWMS.BBox.MinX = float.Parse(value);
     }
-    public void SetBoundingBoxMaxX(string value)
+    private void SetBoundingBoxMaxX(string value)
     {
         ActiveWMS.BBox.MaxX = float.Parse(value);
     }
-    public void SetBoundingBoxMinY(string value)
+    private void SetBoundingBoxMinY(string value)
     {
         ActiveWMS.BBox.MinY = float.Parse(value);
     }
-    public void SetBoundingBoxMaxY(string value)
+    private void SetBoundingBoxMaxY(string value)
     {
         ActiveWMS.BBox.MaxY = float.Parse(value);
     }
