@@ -459,25 +459,6 @@ namespace Netherlands3D.T3DPipeline
     /// </summary>
     public static class CityGeometrySemantics
     {
-        //private List<CityGeometrySemanticsObject> surfaces = new List<CityGeometrySemanticsObject>();
-        //private CitySemanticsValues values;
-
-        //public void AddSemanticsObject(CityGeometrySemanticsObject semanticsObject)
-        //{
-        //    surfaces.Add(semanticsObject);
-        //}
-
-        //public void RemoveSemanticsObject(CityGeometrySemanticsObject semanticsObject)
-        //{
-        //    surfaces.Remove(semanticsObject);
-        //}
-
-        //public CityGeometrySemantics(CityBoundary boundaryObject)
-        //{
-            //int depth = GetSemanticsValuesDepth(boundaryObject);
-            //values = new CitySemanticsValues(depth);
-        //}
-
         //parse an existing Semantics node
         public static void FromJSONNode(JSONNode semanticsNode, CityBoundary boundaryObject)
         {

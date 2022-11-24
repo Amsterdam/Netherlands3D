@@ -30,7 +30,6 @@ namespace Netherlands3D.T3DPipeline
         public int Lod { get; private set; }
         public CityBoundary BoundaryObject { get; private set; }
         public bool IncludeSemantics { get; set; }
-        //public CityGeometrySemantics Semantics { get; private set; }
         public bool IncludeMaterials { get; set; } //todo: Materials currently not implemented yet
         public bool IncludeTextures { get; set; } //todo: Textures currently not implemented yet
 
@@ -97,9 +96,6 @@ namespace Netherlands3D.T3DPipeline
             IncludeSemantics = includeSemantics;
             IncludeMaterials = includeMaterials;
             IncludeTextures = includeTextures;
-
-            //if (includeSemantics)
-            //    Semantics = new CityGeometrySemantics(BoundaryObject);
         }
 
         //create a Boundary object based on the geometry type.
