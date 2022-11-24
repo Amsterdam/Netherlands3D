@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Netherlands3D.Core;
-using Netherlands3D.Events;
 using SimpleJSON;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -45,16 +44,16 @@ namespace Netherlands3D.T3DPipeline
     public class CityObject : MonoBehaviour
     {
         // Each CityObject has to have a unique id. This class also supports a prefix
-        public string Id { get; private set; }
+        public string Id { get; protected set; }
         // Each CityObject must have a Type. Each type has a different depth of arrays in arrays for the geometry boundaries
         public CityObjectType Type { get; set; }
-        public CoordinateSystem CoordinateSystem { get; private set; }
-        public Vector3Double MinExtent { get; private set; }
-        public Vector3Double MaxExtent { get; private set; }
+        public CoordinateSystem CoordinateSystem { get; protected set; }
+        public Vector3Double MinExtent { get; protected set; }
+        public Vector3Double MaxExtent { get; protected set; }
         public Vector3Double RelativeCenter { get { return (MaxExtent - MinExtent) / 2; } }
         public Vector3Double AbsoluteCenter { get { return (MaxExtent + MinExtent) / 2; } }
 
-        public List<CityGeometry> Geometries { get; private set; }
+        public List<CityGeometry> Geometries { get; protected set; }
         protected List<CityObjectAttribute> attributes = new List<CityObjectAttribute>();
 
         protected List<CityObject> cityChildren = new List<CityObject>();
@@ -82,11 +81,11 @@ namespace Netherlands3D.T3DPipeline
         }
 
         //add/remove the CityObject to the exporter when it is enabled/disabled
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             IncludeInExport = true;
         }
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             IncludeInExport = false;
         }
@@ -211,7 +210,7 @@ namespace Netherlands3D.T3DPipeline
                 Assert.IsTrue(CityGeometry.IsValidType(Type, geometry.Type));
                 Geometries.Add(geometry);
             }
-            attributes = CityObjectAttribute.ParseAttributesNode(cityObjectNode["attributes"]);
+            attributes = CityObjectAttribute.ParseAttributesNode(this, cityObjectNode["attributes"]);
 
             var geographicalExtent = cityObjectNode["geographicalExtent"];
             if (geographicalExtent.Count > 0)

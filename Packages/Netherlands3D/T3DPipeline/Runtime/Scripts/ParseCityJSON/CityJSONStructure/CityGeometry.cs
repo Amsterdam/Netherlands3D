@@ -30,7 +30,6 @@ namespace Netherlands3D.T3DPipeline
         public int Lod { get; private set; }
         public CityBoundary BoundaryObject { get; private set; }
         public bool IncludeSemantics { get; set; }
-        private CityGeometrySemantics semantics;
         public bool IncludeMaterials { get; set; } //todo: Materials currently not implemented yet
         public bool IncludeTextures { get; set; } //todo: Textures currently not implemented yet
 
@@ -97,9 +96,6 @@ namespace Netherlands3D.T3DPipeline
             IncludeSemantics = includeSemantics;
             IncludeMaterials = includeMaterials;
             IncludeTextures = includeTextures;
-
-            if (includeSemantics)
-                semantics = new CityGeometrySemantics();
         }
 
         //create a Boundary object based on the geometry type.
@@ -135,7 +131,7 @@ namespace Netherlands3D.T3DPipeline
             geometryNode["boundaries"] = BoundaryObject.GetBoundariesAndAddNewVertices(currentCityJSONVertices);
 
             if (IncludeSemantics)
-                geometryNode["semantics"] = semantics.GetSemanticObject();
+                geometryNode["semantics"] = CityGeometrySemantics.GetSemanticObject(BoundaryObject);
             if (IncludeMaterials)
                 geometryNode["material"] = GetMaterials();
             if (IncludeTextures)
@@ -167,7 +163,7 @@ namespace Netherlands3D.T3DPipeline
             var geometry = new CityGeometry(type, lod, includeSemantics, includeMaterials, includeTextures);
             geometry.BoundaryObject.FromJSONNode(geometryNode["boundaries"].AsArray, combinedVertices);
             if (includeSemantics)
-                geometry.semantics.FromJSONNode(semanticsNode, geometry.BoundaryObject);
+                CityGeometrySemantics.FromJSONNode(semanticsNode, geometry.BoundaryObject);
 
             return geometry;
         }

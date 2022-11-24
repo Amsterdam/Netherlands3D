@@ -10,16 +10,19 @@ namespace Netherlands3D.T3DPipeline
     /// </summary>
     public class CityObjectAttribute
     {
+        public CityObject ParentCityObject { get; protected set; }
         public string Key { get; protected set; }
         public JSONNode Value { get; protected set; }
 
-        public CityObjectAttribute(string key)
+        public CityObjectAttribute(CityObject parentCityObject, string key)
         {
+            ParentCityObject = parentCityObject;
             Key = key;
         }
 
-        public CityObjectAttribute(string key, JSONNode attributeNode)
+        public CityObjectAttribute(CityObject parentCityObject, string key, JSONNode attributeNode)
         {
+            ParentCityObject = parentCityObject;
             Key = key;
             Value = attributeNode;
         }
@@ -29,12 +32,12 @@ namespace Netherlands3D.T3DPipeline
             return Value;
         }
 
-        public static List<CityObjectAttribute> ParseAttributesNode(JSONNode attributeNode)
+        public static List<CityObjectAttribute> ParseAttributesNode(CityObject parentObject, JSONNode attributeNode)
         {
             var list = new List<CityObjectAttribute>();
             foreach(var node in attributeNode)
             {
-                var attribute = new CityObjectAttribute(node.Key, node.Value);
+                var attribute = new CityObjectAttribute(parentObject, node.Key, node.Value);
                 //attribute.FromJSONNode(node.Key, node.Value);
                 list.Add(attribute);
             }

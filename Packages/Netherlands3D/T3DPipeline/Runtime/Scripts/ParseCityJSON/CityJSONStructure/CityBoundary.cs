@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SimpleJSON;
+using UnityEngine;
 
 namespace Netherlands3D.T3DPipeline
 {
@@ -31,7 +32,8 @@ namespace Netherlands3D.T3DPipeline
 
     public class CityMultiPoint : CityBoundary
     {
-        public CityPolygon Points = new CityPolygon(); // Use a Polygon to represent the boundary array, because it behaves the same, even though it is not technically a polygon.
+        public CityPolygon Points { get; set; } = new CityPolygon(); // Use a Polygon to represent the boundary array, because it behaves the same, even though it is not technically a polygon.
+        public List<CityGeometrySemanticsObject> SemanticsObjects { get; set; } = new List<CityGeometrySemanticsObject>();
 
         public override int VertexCount => Points.Count;
         public override void FromJSONNode(JSONArray boundariesNode, List<Vector3Double> combinedVertices)
@@ -50,7 +52,8 @@ namespace Netherlands3D.T3DPipeline
 
     public class CityMultiLineString : CityBoundary
     {
-        public List<CityPolygon> LineStrings = new List<CityPolygon>() { new CityPolygon() };// Use a List of Polygon to represent the boundary array, because it behaves the same, even though it is not technically a List of polygon.
+        public List<CityPolygon> LineStrings { get; set; } = new List<CityPolygon>() { new CityPolygon() };// Use a List of Polygon to represent the boundary array, because it behaves the same, even though it is not technically a List of polygon.
+        public List<CityGeometrySemanticsObject> SemanticsObjects { get; set; } = new List<CityGeometrySemanticsObject>();
         public override int VertexCount
         {
             get
@@ -95,9 +98,10 @@ namespace Netherlands3D.T3DPipeline
 
     public class CitySurface : CityBoundary
     {
-        public List<CityPolygon> Polygons = new List<CityPolygon>() { new CityPolygon() };
+        public List<CityPolygon> Polygons { get; set; } = new List<CityPolygon>() { new CityPolygon() }; //add an empty polygon as the SolidSurfacePolygon
         public CityPolygon SolidSurfacePolygon => Polygons[0]; //the first polygon is solid, with all other polygons being holes in the first polygon
         public CityPolygon[] HolePolygons => Polygons.Skip(1).ToArray();
+        public CityGeometrySemanticsObject SemanticsObject { get; set; }
 
         public override int VertexCount
         {
@@ -148,22 +152,47 @@ namespace Netherlands3D.T3DPipeline
             return vertices;
         }
 
-        public void TryAddHole(CityPolygon hole)
+        public void SetSolidSurfacePolygon(CityPolygon solidSurfacePolygon)
         {
-            if (!Polygons.Contains(hole))
-                Polygons.Add(hole);
+            Polygons[0] = solidSurfacePolygon;
         }
 
-        public void TryRemoveHole(CityPolygon hole)
+        public bool TryAddHole(CityPolygon hole)
         {
+            if (SolidSurfacePolygon == hole)
+            {
+                Debug.LogError("Cannot add the Solid Surface Polygon as a hole");
+                return false;
+            }
+
+            if (!Polygons.Contains(hole))
+            {
+                Polygons.Add(hole);
+                return true;
+            }
+            return false;
+        }
+
+        public bool TryRemoveHole(CityPolygon hole)
+        {
+            if (SolidSurfacePolygon == hole)
+            {
+                Debug.LogError("Cannot remove the Solid Surface Polygon as a hole, use SetSolidSurfacePolygon() to assign a new SolidSurfacePolygon");
+                return false;
+            }
+
             if (Polygons.Contains(hole))
+            {
                 Polygons.Remove(hole);
+                return true;
+            }
+            return false;
         }
     }
 
     public class CityMultiOrCompositeSurface : CityBoundary
     {
-        public List<CitySurface> Surfaces = new List<CitySurface>() { new CitySurface() }; // from the specs: A "MultiSurface", or a "CompositeSurface", has an array containing surfaces, each surface is modelled by an array of array, the first array being the exterior boundary of the surface, and the others the interior boundaries.
+        public List<CitySurface> Surfaces { get; set; } = new List<CitySurface>() { new CitySurface() }; // from the specs: A "MultiSurface", or a "CompositeSurface", has an array containing surfaces, each surface is modelled by an array of array, the first array being the exterior boundary of the surface, and the others the interior boundaries.
         public override int VertexCount
         {
             get
@@ -211,7 +240,7 @@ namespace Netherlands3D.T3DPipeline
 
     public class CitySolid : CityBoundary
     {
-        public List<CityMultiOrCompositeSurface> Shells = new List<CityMultiOrCompositeSurface>() { new CityMultiOrCompositeSurface() }; //from the specs: A "Solid" has an array of shells, the first array being the exterior shell of the solid, and the others the interior shells. Each shell has an array of surfaces, modelled in the exact same way as a MultiSurface/CompositeSurface.
+        public List<CityMultiOrCompositeSurface> Shells { get; set; } = new List<CityMultiOrCompositeSurface>() { new CityMultiOrCompositeSurface() }; //from the specs: A "Solid" has an array of shells, the first array being the exterior shell of the solid, and the others the interior shells. Each shell has an array of surfaces, modelled in the exact same way as a MultiSurface/CompositeSurface.
         public override int VertexCount
         {
             get
@@ -257,7 +286,7 @@ namespace Netherlands3D.T3DPipeline
 
     public class CityMultiOrCompositeSolid : CityBoundary
     {
-        public List<CitySolid> Solids = new List<CitySolid>() { new CitySolid() }; // from the specs: A "MultiSolid", or a "CompositeSolid", has an array containing solids, each solid is modelled as above.
+        public List<CitySolid> Solids { get; set; } = new List<CitySolid>() { new CitySolid() }; // from the specs: A "MultiSolid", or a "CompositeSolid", has an array containing solids, each solid is modelled as above.
         public override int VertexCount
         {
             get

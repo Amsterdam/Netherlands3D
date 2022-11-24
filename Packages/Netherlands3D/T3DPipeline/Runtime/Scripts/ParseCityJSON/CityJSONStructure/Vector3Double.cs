@@ -1,3 +1,4 @@
+using Netherlands3D.Core;
 using SimpleJSON;
 using System;
 using UnityEngine;
@@ -88,4 +89,9 @@ public struct Vector3Double
     {
         return HashCode.Combine(x, y, z);
     }
+
+    public static explicit operator Vector3(Vector3Double v) => new Vector3((float)v.x, (float)v.y, (float)v.z);
+
+    public static implicit operator Vector3RD(Vector3Double v) => new Vector3RD(v.x, v.y, v.z);
+    public static implicit operator Vector3Double(Vector3RD v) => new Vector3Double(v.x, v.y, v.z);
 }
