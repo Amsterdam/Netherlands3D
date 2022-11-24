@@ -57,9 +57,9 @@ namespace Netherlands3D.T3DPipeline
     {
         //private static int globalId = 0; //counts all annotations with unique ID regardless of to which CityObject it belongs (so adding a annotation to CityObject1 will start at 0, adding a second annotation to CityObject2 will be 1)
         //private int localId = 0; // counts annotations with unique ids per CityObject (so adding a annotation to CityObject1 will start at 0, adding a second annotation to CityObject2 will be 0 as well)
-        private static List<CityObjectAnnotations> allCityObjectAnnotations = new List<CityObjectAnnotations>();
-        private static List<Annotation> allCompletedAnnotations = new List<Annotation>();
-        private static List<GameObject> annotationMarkers = new List<GameObject>();
+        private static List<CityObjectAnnotations> allCityObjectAnnotations;
+        private static List<Annotation> allCompletedAnnotations;
+        private static List<GameObject> annotationMarkers;
         private CityObject parentObject; //CityObject to add annotations to
         public CityObject CityObject => parentObject;
         private AnnotationsAttribute annotationsAttribute; // All Annotations are added as a single JSONObject to the CityObject's attributes
@@ -99,6 +99,10 @@ namespace Netherlands3D.T3DPipeline
 
         private void Awake()
         {
+            allCityObjectAnnotations = new List<CityObjectAnnotations>();
+            allCompletedAnnotations = new List<Annotation>();
+            annotationMarkers = new List<GameObject>();
+
             parentObject = GetComponent<CityObject>();
             annotationsAttribute = new AnnotationsAttribute(parentObject, "annotations");
         }
