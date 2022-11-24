@@ -81,11 +81,11 @@ namespace Netherlands3D.T3DPipeline
         }
 
         //add/remove the CityObject to the exporter when it is enabled/disabled
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             IncludeInExport = true;
         }
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             IncludeInExport = false;
         }
