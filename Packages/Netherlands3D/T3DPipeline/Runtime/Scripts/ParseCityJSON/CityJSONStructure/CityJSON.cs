@@ -30,6 +30,8 @@ namespace Netherlands3D.T3DPipeline
         public Vector3Double MaxExtent { get; private set; }
         public CoordinateSystem CoordinateSystem { get; private set; }
 
+        private Dictionary<string, JSONNode> extensionNodes = new Dictionary<string, JSONNode>();
+
         [Tooltip("event that provides a CityJSON to this class.")]
         [SerializeField]
         private StringEvent onCityJSONReceived;
@@ -55,11 +57,14 @@ namespace Netherlands3D.T3DPipeline
 
         public void ParseCityJSON(string cityJson)
         {
+            //remove old data if re-parsing
             foreach (var co in CityObjects)
             {
-                Destroy(co.gameObject);
+                Destroy(co.gameObject); 
             }
+            RemoveExtensionNodes(extensionNodes);
 
+            //parse
             var node = JSONNode.Parse(cityJson);
             var type = node["type"];
             Assert.IsTrue(type == "CityJSON");
@@ -79,7 +84,7 @@ namespace Netherlands3D.T3DPipeline
             }
 
             //custom nodes must be added as is to the exporter to ensure they are preserved.
-            AddExtensionNodesToExporter(node);
+            AddExtensionNodesToExporter(node, out extensionNodes);
 
             //vertices
             List<Vector3Double> parsedVertices = new List<Vector3Double>();
@@ -184,21 +189,23 @@ namespace Netherlands3D.T3DPipeline
         }
 
         //custom nodes must be added as is to the exporter to ensure they are preserved.
-        public static void AddExtensionNodesToExporter(JSONNode cityJsonNode)
+        public static void AddExtensionNodesToExporter(JSONNode cityJsonNode, out Dictionary<string, JSONNode> extensionNodes)
         {
+            extensionNodes = new Dictionary<string, JSONNode>();
             foreach (var node in cityJsonNode)
             {
                 if (definedNodes.Contains(node.Key))
                     continue;
 
+                extensionNodes.Add(node.Key, node.Value);
                 CityJSONFormatter.AddExtensionNode(node.Key, node.Value);
             }
         }
 
         // function to remove Extension nodes for use in future scripts that may need to do so
-        public static void RemoveExtensionNodes(JSONNode cityJsonNode)
+        public static void RemoveExtensionNodes(Dictionary<string, JSONNode> extensionNodes)
         {
-            foreach (var node in cityJsonNode)
+            foreach (var node in extensionNodes)
             {
                 if (definedNodes.Contains(node.Key))
                     continue;
