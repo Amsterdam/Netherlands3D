@@ -79,22 +79,29 @@ namespace Netherlands3D.T3DPipeline
             return new Vector3((float)center.x, (float)center.y, (float)center.z);
         }
 
+
         //enable the mesh of a certain LOD
         public bool SetLODActive(int lod)
         {
+            activeLOD = lod;
+
             var geometry = meshes.Keys.FirstOrDefault(g => g.Lod == lod);
             if (geometry != null)
             {
-                ActiveMesh = meshes[geometry];
-                meshFilter.mesh = ActiveMesh;
-                activeLOD = lod;
-
-                if (meshCollider)
-                    meshCollider.sharedMesh = ActiveMesh;
-
+                SetMesh(meshes[geometry]);
                 return true;
             }
+            SetMesh(null);
             return false;
+        }
+
+        private void SetMesh(Mesh mesh)
+        {
+            ActiveMesh = mesh;
+            meshFilter.mesh = ActiveMesh;
+
+            if (meshCollider)
+                meshCollider.sharedMesh = ActiveMesh;
         }
 
         //create the meshes for the object geometries
