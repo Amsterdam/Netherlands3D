@@ -111,7 +111,7 @@ public static class WMSRequest
     private static string MapRequest() => "request=getmap";
     private static string VersionRequest() => $"version={version}";
     private static string CRSRequest() => $"crs={crs}";
-    private static string DimensionRequest() => $"width={dimensions.x}&height={dimensions.y}";
+    private static string DimensionRequest() => isPreview ? $"width={dimensions.x}&height={dimensions.y}" : "width={Width}&height={Height}";
     private static string BoundingBoxRequest() => isPreview ? $"bbox={bbox.MinX},{bbox.MinY},{bbox.MaxX},{bbox.MaxY}" : "bbox={Xmin},{Ymin},{Xmax},{Ymax}";
     private static string FormatRequest() => "format=image/png";
     private static string TransparencyRequest() => "transparent=true";

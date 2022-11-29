@@ -18,12 +18,51 @@ public class WFSFormatter
         XmlNode conformance = GetChildNode(filterCapabilities, "Conformance", "fes");
         Debug.Log(conformance.ChildNodes.Count);
 
-        foreach(XmlNode constraint in conformance)
+        foreach(XmlNode constraint in GetChildNodes(conformance, "Constraint", "fes"))
         {
-            Debug.Log(constraint.Attributes.Count);
-            //Debug.Log(constraint.ChildNodes);
-            //Debug.Log(constraint.Attributes.GetNamedItem("name")?.InnerText);
+            Debug.Log(constraint.Attributes.GetNamedItem("name")?.InnerText);
         }
+
+        XmlNode scalarCapabilities = GetChildNode(filterCapabilities, "Scalar_Capabilities", "fes");
+        XmlNode comparisonOperators = GetChildNode(scalarCapabilities, "ComparisonOperators", "fes");
+
+        XmlNode spatialCapabilites = GetChildNode(filterCapabilities, "Spatial_Capabilities", "fes");
+        XmlNode geometryOperands = GetChildNode(spatialCapabilites, "GeometryOperands", "fes");
+        XmlNode spatialOperators = GetChildNode(spatialCapabilites, "SpatialOperators", "fes");
+
+        XmlNode temporalCapabilities = GetChildNode(filterCapabilities, "Temporal_Capabilities", "fes");
+        XmlNode temporalOperands = GetChildNode(temporalCapabilities, "TemporalOperands", "fes");
+        XmlNode temporalOperators = GetChildNode(temporalCapabilities, "TemporalOperators", "fes");
+
+        XmlNode functions = GetChildNode(filterCapabilities, "Functions", "fes");
+
+        foreach(XmlNode co in comparisonOperators)
+        {
+            Debug.Log(co.Attributes.GetNamedItem("name")?.InnerText);
+        }
+        foreach (XmlNode go in GetChildNodes(geometryOperands, "GeometryOperand", "fes"))
+        {
+            Debug.Log(go.Attributes.GetNamedItem("name")?.InnerText);
+        }
+        foreach (XmlNode so in GetChildNodes(spatialOperators, "SpatialOperator", "fes"))
+        {
+            Debug.Log(so.Attributes.GetNamedItem("name")?.InnerText);
+        }
+        foreach(XmlNode to in GetChildNodes(temporalOperands, "TemporalOperand", "fes"))
+        {
+            Debug.Log(to.Attributes.GetNamedItem("name")?.InnerText);
+        }
+        foreach (XmlNode to in GetChildNodes(temporalOperators, "TemporalOperator", "fes"))
+        {
+            Debug.Log(to.Attributes.GetNamedItem("name")?.InnerText);
+        }
+
+        Debug.Log(functions.ChildNodes.Count);
+        foreach(XmlNode funct in GetChildNodes(functions, "Function", "fes"))
+        {
+            Debug.Log(funct.Attributes.GetNamedItem("name")?.InnerText);
+        }
+
 
         //XmlNode featureList = GetChildNode(xml.DocumentElement, "FeatureTypeList");
         //Debug.Log(featureList.InnerText);
