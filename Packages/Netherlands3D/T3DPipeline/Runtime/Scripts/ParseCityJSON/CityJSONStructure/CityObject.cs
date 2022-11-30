@@ -90,6 +90,12 @@ namespace Netherlands3D.T3DPipeline
             IncludeInExport = false;
         }
 
+        public void SetId(string newId)
+        {
+            Id = newId;
+            gameObject.name = newId;
+        }
+
         public void SetParents(CityObject[] newParents)
         {
             // remove this as the child of old parents
