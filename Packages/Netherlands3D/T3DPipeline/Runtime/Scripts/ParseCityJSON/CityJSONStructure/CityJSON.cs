@@ -60,6 +60,7 @@ namespace Netherlands3D.T3DPipeline
             //remove old data if re-parsing
             foreach (var co in CityObjects)
             {
+                co.UnparentFromAll(); //needed because OnDestroy is not immediately called.
                 Destroy(co.gameObject); 
             }
             RemoveExtensionNodes(extensionNodes);

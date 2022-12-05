@@ -90,6 +90,11 @@ namespace Netherlands3D.T3DPipeline
             IncludeInExport = false;
         }
 
+        public void UnparentFromAll()
+        {
+            SetParents(new CityObject[] { });
+        }
+
         public void SetId(string newId)
         {
             Id = newId;
