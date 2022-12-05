@@ -141,7 +141,6 @@ namespace Netherlands3D.T3DPipeline
                 else
                 {
                     go = Instantiate(cityObjectPrefab, transform);
-                    go.name = cityObjectNode.Key;
                     co = go.GetComponent<CityObject>();
                 }
                 co.FromJSONNode(cityObjectNode.Key, cityObjectNode.Value, CoordinateSystem, parsedVertices);

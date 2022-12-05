@@ -205,7 +205,7 @@ namespace Netherlands3D.T3DPipeline
 
         public void FromJSONNode(string id, JSONNode cityObjectNode, CoordinateSystem coordinateSystem, List<Vector3Double> combinedVertices)
         {
-            Id = id;
+            SetId(id);
             Type = (CityObjectType)Enum.Parse(typeof(CityObjectType), cityObjectNode["type"]);
             CoordinateSystem = coordinateSystem;
             Geometries = new List<CityGeometry>();
