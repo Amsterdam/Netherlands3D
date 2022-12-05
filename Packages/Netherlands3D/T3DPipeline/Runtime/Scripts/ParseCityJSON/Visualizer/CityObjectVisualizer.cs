@@ -76,7 +76,7 @@ namespace Netherlands3D.T3DPipeline
                     var rd = new Vector3RD(center.x, center.y, center.z);
                     return CoordConvert.RDtoUnity(rd);
             }
-            return new Vector3((float)center.x, (float)center.y, (float)center.z);
+            return new Vector3((float)center.x, (float)center.z, (float)center.y);
         }
 
 
@@ -236,7 +236,7 @@ namespace Netherlands3D.T3DPipeline
                         convertedVert = CoordConvert.RDtoUnity(rd);
                         break;
                     default:
-                        convertedVert = new Vector3((float)relativeVert.x, (float)relativeVert.y, (float)relativeVert.z);
+                        convertedVert = new Vector3((float)relativeVert.x, (float)relativeVert.z, (float)relativeVert.y);
                         break;
                 }
 
