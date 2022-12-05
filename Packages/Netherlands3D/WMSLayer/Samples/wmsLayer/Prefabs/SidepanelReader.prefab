@@ -121,7 +121,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 46853717114046062}
   m_HandleRect: {fileID: 46853717114046061}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -588,7 +588,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 46853716740209756}
-  - component: {fileID: 46853716740209758}
   - component: {fileID: 46853716740209757}
   m_Layer: 5
   m_Name: WMS_HUD
@@ -610,32 +609,18 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 46853717042892666}
+  - {fileID: 46853717661753134}
   - {fileID: 46853717506205256}
   - {fileID: 46853718505824923}
-  - {fileID: 46853717661753134}
   - {fileID: 46853718671900433}
   m_Father: {fileID: 46853717719523932}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 115, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 220, y: 836.1375}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &46853716740209758
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 46853716740209755}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 1
-  m_VerticalFit: 1
 --- !u!114 &46853716740209757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -654,7 +639,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 1
-  m_Spacing: 0
+  m_Spacing: 5
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -2051,7 +2036,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 220, y: 260}
+  m_SizeDelta: {x: 220, y: 360}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &46853717042892668
 CanvasRenderer:
@@ -3740,7 +3725,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 46853718373583062}
   m_HandleRect: {fileID: 46853718373583061}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -4097,7 +4082,7 @@ RectTransform:
   - {fileID: 46853717268180475}
   - {fileID: 46853717609499903}
   m_Father: {fileID: 46853716740209756}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4765,7 +4750,7 @@ RectTransform:
   m_Children:
   - {fileID: 46853717749707513}
   m_Father: {fileID: 46853716740209756}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -5056,8 +5041,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000030517578}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.000091552734}
+  m_SizeDelta: {x: 0, y: 986.1375}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &46853717719523933
 MonoBehaviour:
@@ -5076,7 +5061,7 @@ MonoBehaviour:
     m_Right: 5
     m_Top: 5
     m_Bottom: 5
-  m_ChildAlignment: 0
+  m_ChildAlignment: 1
   m_Spacing: 5
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
@@ -5092,7 +5077,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 46853717719523931}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
   m_Name: 
@@ -6209,7 +6194,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 46853717302296597}
   m_Direction: 0
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6856,8 +6841,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 46853717588462770}
   m_HandleRect: {fileID: 46853717588462769}
   m_Direction: 0
-  m_Value: 0
-  m_Size: 0.99999976
+  m_Value: 1
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7336,7 +7321,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 46853717767391518}
   m_HandleRect: {fileID: 46853717767391517}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -7996,8 +7981,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 46853716760239982}
   m_HandleRect: {fileID: 46853716760239981}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.5961283
+  m_Value: 0.9999999
+  m_Size: 0.5348831
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -8647,7 +8632,7 @@ RectTransform:
   m_Children:
   - {fileID: 46853717403165899}
   m_Father: {fileID: 46853716740209756}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -8864,7 +8849,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -155}
-  m_SizeDelta: {x: 210, y: 100}
+  m_SizeDelta: {x: 210, y: 200}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &46853718534549085
 CanvasRenderer:

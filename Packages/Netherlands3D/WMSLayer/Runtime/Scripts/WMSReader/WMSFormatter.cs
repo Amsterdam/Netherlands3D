@@ -10,7 +10,7 @@ public class WMSFormatter
     private string namespacePrefix = "";
     private XmlDocument xml;
 
-    public WMS ReadWMSFromXML(XmlDocument wmsXml)
+    public WMS ReadWMSFromXML(WMS wms, XmlDocument wmsXml)
     {
 
         xml = wmsXml;
@@ -18,9 +18,8 @@ public class WMSFormatter
 
         XmlNode capabilityNode = GetChildNode(xml.DocumentElement, "Capability");
         string version = xml.DocumentElement.Attributes.GetNamedItem("version").InnerText;
-
-        WMS constructedWMS = new WMS(version);
-        // We create a new WMS if one is being submitted from the Input Field, we also give it the version as a parameter in the constructor as this won't change anymore.
+        
+        wms.SetVersion(version);
 
         XmlNode topLayer = GetChildNode(capabilityNode, "Layer");
         // We assume there is a top-level layer without styles, which contains layers that do have styles and get this layer.
@@ -42,7 +41,8 @@ public class WMSFormatter
             extractLayer.Abstract = GetChildNodeValue(subLayer, "Abstract");
 
             XmlNodeList crsElements = GetChildNodes(subLayer, "CRS");
-            foreach(XmlNode crs in crsElements)
+            wms.SetCRS(crsElements[0].InnerText);
+            foreach (XmlNode crs in crsElements)
             {
                 extractLayer.CRS.Add(crs.InnerText);
             }
@@ -66,7 +66,7 @@ public class WMSFormatter
                 }
                 extractLayer.AddStyleToDictionary(extractStyle.Name, extractStyle);
             }
-            constructedWMS.layers.Add(extractLayer);
+            wms.Layers.Add(extractLayer);
             //if(extractLayer.styles.Count > 0)
             //{
             //}
@@ -75,7 +75,7 @@ public class WMSFormatter
             //    Debug.Log("Found a layer without applicable styles! It won't be added to the possible layers for this WMS!");
             //}
         }
-        return constructedWMS;
+        return wms;
     }
 
     private void FindNamespaces()

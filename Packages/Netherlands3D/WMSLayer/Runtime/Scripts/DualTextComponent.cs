@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class DualTextComponent : MonoBehaviour
 {
+
+    public Button closeButton;
+
     [SerializeField] private Text mainText;
     [SerializeField] private Text subText;
 

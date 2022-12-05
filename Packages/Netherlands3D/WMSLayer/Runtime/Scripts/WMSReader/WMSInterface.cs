@@ -6,7 +6,7 @@ using Netherlands3D.Events;
 
 public class WMSInterface : MonoBehaviour
 {
-    public static List<WMSLayer> ActivatedLayers { get; private set; } = new();
+    //public static List<WMSLayer> ActivatedLayers { get; private set; } = new();
 
     public int Health { get; private set; }
 
@@ -19,14 +19,20 @@ public class WMSInterface : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField] private DualTextComponent dtcPrefab;
     [SerializeField] private Button layerButtonPrefab;
-    
+
     [Header("Preview Image")]
     [SerializeField] private RawImage previewRawImage;
+    [SerializeField] private RawImage legendRawImage;
 
     [Header("Listen Events")]
     [SerializeField] private TriggerEvent resetEvent;
     [SerializeField] private ObjectEvent buildInterfaceEvent;
     [SerializeField] private ObjectEvent imageEvent;
+    [SerializeField] private ObjectEvent legendEvent;
+
+    private int legendIndex = 0;
+    private List<Texture> legends = new();
+    private System.Action layerAdded;
 
     //[Header("Invoke Events")]
     //[SerializeField] private ObjectEvent styleApplication;
@@ -40,16 +46,12 @@ public class WMSInterface : MonoBehaviour
         resetEvent.started.AddListener(ResetInterface);
         buildInterfaceEvent.started.AddListener(BuildInterface);
         imageEvent.started.AddListener(DisplayPreviewImage);
+        legendEvent.started.AddListener(GetTexture);
     }
 
-    public void DisplayPreviewImage(object textureFromRequest)
-    {
-        previewRawImage.texture = (Texture)textureFromRequest;
-    }
     public void ResetInterface()
     {
         dtcs.Clear();
-        ActivatedLayers.Clear();
         for(int i = layerContentParent.childCount - 1; i >= 0; i--)
         {
             GameObject child = layerContentParent.GetChild(i).gameObject;
@@ -65,6 +67,7 @@ public class WMSInterface : MonoBehaviour
             Destroy(child);
         }
         ClearStyles();
+        ClearLegends();
     }
 
     public void BuildInterface(object layerList)
@@ -95,6 +98,26 @@ public class WMSInterface : MonoBehaviour
 
 
     }
+    public void ToggleLegendForward()
+    {
+        if (legends.Count <= 1)
+            return;
+        legendIndex = (legendIndex + 1) % legends.Count;
+        Debug.Log(legendIndex);
+        DisplayLegendImage(legends[legendIndex]);
+    }
+    public void ToggleLegendBackward()
+    {
+        if (legends.Count <= 1)
+            return;
+        legendIndex = legendIndex - 1 < 0 ? legends.Count - 1 : legendIndex - 1;
+        Debug.Log(legendIndex);
+        DisplayLegendImage(legends[legendIndex]);
+    }
+    public void ClearLegends()
+    {
+        legends.Clear();
+    }
 
     private void ClearStyles()
     {
@@ -110,7 +133,7 @@ public class WMSInterface : MonoBehaviour
     private void ApplyStyle(WMSLayer layerToStyle, WMSStyle styleToApply)
     {
         System.Tuple<string, string> layerStyleKey;
-        if(styleToApply == null)
+        if (styleToApply == null)
         {
             layerStyleKey = new System.Tuple<string, string>(layerToStyle.Name, "null");
         }
@@ -130,11 +153,19 @@ public class WMSInterface : MonoBehaviour
         layerToStyle.SelectStyle(styleToApply);
 
         DualTextComponent dualText = Instantiate(dtcPrefab, activeLayerParent);
-        Button btn = dualText.GetComponent<Button>();
+        Button btn = dualText.closeButton;
 
-        btn.onClick.AddListener(() => DeactivateLayer(layerToStyle));
-        btn.onClick.AddListener(() => dtcs.Remove(layerStyleKey));
-        btn.onClick.AddListener(() => Destroy(btn.gameObject));
+        TwoWayUISorter sorter = dualText.GetComponent<TwoWayUISorter>();
+        layerAdded += sorter.EvaluateButtonStates;
+
+        btn.onClick.AddListener(() =>
+        {
+            DeactivateLayer(layerToStyle);
+            dtcs.Remove(layerStyleKey);
+            layerAdded -= sorter.EvaluateButtonStates;
+            Destroy(dualText.gameObject);
+        }
+        );
 
         dualText.SetMainText(layerToStyle.Title);
         if(styleToApply != null)
@@ -150,7 +181,7 @@ public class WMSInterface : MonoBehaviour
 
     private bool ActivateLayer(WMSLayer layerToActivate)
     {
-        if(ActivatedLayers.Count is 0)
+        if(WMS.ActiveInstance.ActivatedLayers.Count is 0)
         {
             activeCRSOptions = layerToActivate.CRS;
         }
@@ -172,16 +203,17 @@ public class WMSInterface : MonoBehaviour
             }
             activeCRSOptions = newCRSOptions;
         }
-        ActivatedLayers.Add(layerToActivate);
+        WMS.ActiveInstance.ActivateLayer(layerToActivate);
+        layerAdded?.Invoke();
         ShowCRSOptions();
         return true;
     }
 
     private void DeactivateLayer(WMSLayer layerToDeactivate)
     {
-        if (ActivatedLayers.Contains(layerToDeactivate))
+        if (WMS.ActiveInstance.ActivatedLayers.Contains(layerToDeactivate))
         {
-            ActivatedLayers.Remove(layerToDeactivate);
+            WMS.ActiveInstance.DeactivateLayer(layerToDeactivate);
         }
     }
     private void ShowCRSOptions()
@@ -194,7 +226,25 @@ public class WMSInterface : MonoBehaviour
         {
             Button b = Instantiate(layerButtonPrefab, crsContentParent);
             b.GetComponentInChildren<Text>().text = crs;
-            b.onClick.AddListener(() => UrlReader.Instance.ActiveWMS.CRS = crs);
+            b.onClick.AddListener(() => WMS.ActiveInstance.SetCRS(crs));
         }
+    }
+    private void DisplayPreviewImage(object textureFromRequest)
+    {
+        previewRawImage.texture = (Texture)textureFromRequest;
+    }
+    private void GetTexture(object textureFromRequest)
+    {
+        Texture txt = (Texture)textureFromRequest;
+        legends.Add(txt);
+        Debug.Log(legends.Count);
+    }
+    private void DisplayLegendImage(Texture txt)
+    {
+        legendRawImage.texture = txt;
+        legendRawImage.SetNativeSize();
+        legendRawImage.rectTransform.ScaleWithAspectRatio(100);
+        //legendRawImage.SetNativeSize();
+        //legendRawImage.SizeToParent(5);
     }
 }

@@ -8,11 +8,8 @@ public class UrlReader : MonoBehaviour
 {
     public static UrlReader Instance { get; private set; }
 
-    public WMS ActiveWMS { get; private set; }
+    public WMS ActiveWMS { get; private set; } 
     public WFS ActiveWFS { get; private set; }
-
-    private WMSFormatter wmsFormatter;
-    private WFSFormatter wfsFormatter;
 
     [SerializeField] private InputField urlField;
 
@@ -20,6 +17,7 @@ public class UrlReader : MonoBehaviour
     [SerializeField] private TriggerEvent resetReaderEvent;
     [SerializeField] private ObjectEvent wmsLayerEvent;
     [SerializeField] private BoolEvent requestUrlButtonEvent;
+    [SerializeField] private BoolEvent isWMSEVent;
 
     [Header("Listen Events")]
     [SerializeField] private StringEvent boundingBoxMinXEvent;
@@ -28,8 +26,12 @@ public class UrlReader : MonoBehaviour
     [SerializeField] private StringEvent boundingBoxMaxYEvent;
     [SerializeField] private StringEvent resolutionEvent;
 
+    private IWebService activeService;
+    private WMSFormatter wmsFormatter;
+    private WFSFormatter wfsFormatter;
 
-    private static readonly HttpClient client = new();
+
+    //private static readonly HttpClient client = new();
 
     private void Awake()
     {
@@ -81,21 +83,21 @@ public class UrlReader : MonoBehaviour
         XmlDocument xml = new XmlDocument();
         if (url.Contains("wms"))
         {
-            WMSRequest.BaseURL = validatedURL;
-            string xmlData = GetDataFromURL(WMSRequest.GetCapabilitiesRequest());
+            ActiveWMS = new WMS(validatedURL);
+            string xmlData = ActiveWMS.GetCapabilities();
             xml.LoadXml(xmlData);
 
             XmlElement service = xml.DocumentElement["Service"]["Name"];
             if (service != null && service.InnerText.Contains("WMS"))
             {
-
                 if (wmsFormatter is null)
                 {
                     wmsFormatter = new WMSFormatter();
                 }
-                ActiveWMS = wmsFormatter.ReadWMSFromXML(xml);
+                ActiveWMS = wmsFormatter.ReadWMSFromXML(ActiveWMS, xml);
                 resetReaderEvent.Invoke();
-                wmsLayerEvent.Invoke(ActiveWMS.layers);
+                wmsLayerEvent.Invoke(ActiveWMS.Layers);
+                isWMSEVent.Invoke(true);
                 return;
             }
 
@@ -103,7 +105,7 @@ public class UrlReader : MonoBehaviour
         else if (url.Contains("wfs"))
         {
             WFSRequest.BaseURL = validatedURL;
-            string xmlData = GetDataFromURL(WFSRequest.GetCapabilitiesRequest());
+            string xmlData = WebCommunicator.GetDataFromURL(WFSRequest.GetCapabilitiesRequest());
             xml.LoadXml(xmlData);
 
             XmlElement serviceID = xml.DocumentElement["ows:ServiceIdentification"]["ows:ServiceType"];
@@ -115,6 +117,7 @@ public class UrlReader : MonoBehaviour
                     wfsFormatter = new WFSFormatter();
                 }
                 ActiveWFS = wfsFormatter.ReadFromWFS(xml);
+                isWMSEVent.Invoke(false);
                 return;
             }
 
@@ -124,7 +127,7 @@ public class UrlReader : MonoBehaviour
     private void SetResolution(string resolution)
     {
         int res = int.Parse(resolution);
-        ActiveWMS.Dimensions = new Vector2Int(res, res);
+        ActiveWMS.Resolution = new Vector2Int(res, res);
     }
 
     private void SetBoundingBoxMinX(string value)
@@ -144,8 +147,8 @@ public class UrlReader : MonoBehaviour
         ActiveWMS.BBox.MaxY = float.Parse(value);
     }
 
-    private string GetDataFromURL(string url)
-    {
-        return client.GetStringAsync(url).Result;
-    }
+    //private string GetDataFromURL(string url)
+    //{
+    //    return client.GetStringAsync(url).Result;
+    //}
 }

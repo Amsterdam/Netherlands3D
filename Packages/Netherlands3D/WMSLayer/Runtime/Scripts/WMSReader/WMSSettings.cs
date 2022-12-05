@@ -10,6 +10,7 @@ public class WMSSettings : MonoBehaviour
 
     [Header("Invoked Events")]
     [SerializeField] private ObjectEvent imageEvent;
+    [SerializeField] private ObjectEvent legendEvent;
     [SerializeField] private StringEvent wmsLayerEvent;
     [SerializeField] private StringEvent messageTitleEvent;
     [SerializeField] private StringEvent urlDisplayEvent;
@@ -27,39 +28,49 @@ public class WMSSettings : MonoBehaviour
             { 
                 messagePanel.SetActive(true);
                 messageTitleEvent.Invoke("Url Logged");
-                WMSRequest.ActivatedLayers = WMSInterface.ActivatedLayers;
-                urlDisplayEvent.Invoke(GetMapRequestUrl(false));
+                WMS.ActiveInstance.IsPreview(false);
+                urlDisplayEvent.Invoke(WMS.ActiveInstance.GetMapRequest());
             }
         );
     }
 
     public void SendRequest(bool preview)
     {
-        WMSRequest.ActivatedLayers = WMSInterface.ActivatedLayers;
-        string url = GetMapRequestUrl(preview);
+        //WMSRequest.ActivatedLayers = WMSInterface.ActivatedLayers;
+
+        WMS.ActiveInstance.IsPreview(preview);
+        string url = WMS.ActiveInstance.GetMapRequest();
         if (preview)
         {
-            StartCoroutine(DownloadImage(url));
+            StartCoroutine(DownloadImage(url, imageEvent));
             return;
         }
         if(wmsLayerEvent != null)
         {
             wmsLayerEvent.Invoke(url);
+            foreach(WMSLayer l in WMS.ActiveInstance.ActivatedLayers)
+            {
+                if(l.activeStyle != null)
+                {
+                    StartCoroutine(GetLegendImage(l.activeStyle.LegendURL));
+                }
+            }
+            //StartCoroutine(GetLegendImage(WMSRequest.ActivatedLayers[0].activeStyle.LegendURL));
         }
     }
 
-    private string GetMapRequestUrl(bool useCustomBBox)
-    {
-        return WMSRequest.GetMapRequest(UrlReader.Instance.ActiveWMS, useCustomBBox);
-    }
+    //private string GetMapRequestUrl(bool useCustomBBox)
+    //{
+    //    return WMS.ActiveInstance.GetMapRequest();
+    //}
 
-    IEnumerator DownloadImage(string mediaURL)
+    public IEnumerator DownloadImage(string mediaURL, ObjectEvent imageEvent)
     {
         UnityWebRequest request = UnityWebRequestTexture.GetTexture(mediaURL);
         yield return request.SendWebRequest();
         if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
         {
-            Debug.Log(request.error);
+            Debug.LogError(request.error);
         }
         else
         {
@@ -69,4 +80,22 @@ public class WMSSettings : MonoBehaviour
             }
         }
     }
+
+    IEnumerator GetLegendImage(string legendUrl)
+    {
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(legendUrl);
+        yield return request.SendWebRequest();
+        if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+        {
+            Debug.LogError(request.error);
+        }
+        else
+        {
+            if (legendEvent != null)
+            {
+                legendEvent.Invoke(((DownloadHandlerTexture)request.downloadHandler).texture);
+            }
+        }
+    }
+
 }
