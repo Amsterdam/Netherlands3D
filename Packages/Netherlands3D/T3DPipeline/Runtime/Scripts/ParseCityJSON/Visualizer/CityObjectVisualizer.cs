@@ -57,7 +57,7 @@ namespace Netherlands3D.T3DPipeline
         //create the meshes
         private void Visualize()
         {
-            transform.position = SetPosition(cityObject); //set position first so the CityObject's transformationMatrix can be used to position the mesh.
+            transform.localPosition = SetPosition(cityObject); //set position first so the CityObject's transformationMatrix can be used to position the mesh.
             meshes = CreateMeshes(cityObject);
             var highestLod = meshes.Keys.Max(g => g.Lod);
             SetLODActive(highestLod);
