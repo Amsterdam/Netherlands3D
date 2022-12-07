@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Net.Http;
 using System.Xml;
 using Netherlands3D.Events;
 using UnityEngine.UI;
@@ -26,12 +25,9 @@ public class UrlReader : MonoBehaviour
     [SerializeField] private StringEvent boundingBoxMaxYEvent;
     [SerializeField] private StringEvent resolutionEvent;
 
-    private IWebService activeService;
+    //private IWebService activeService;
     private WMSFormatter wmsFormatter;
     private WFSFormatter wfsFormatter;
-
-
-    //private static readonly HttpClient client = new();
 
     private void Awake()
     {
@@ -84,46 +80,85 @@ public class UrlReader : MonoBehaviour
         if (url.Contains("wms"))
         {
             ActiveWMS = new WMS(validatedURL);
-            string xmlData = ActiveWMS.GetCapabilities();
-            xml.LoadXml(xmlData);
+            WebServiceNetworker.Instance.WebStringEvent.started.AddListener(ProcessWMS);
+            ActiveWMS.GetCapabilities();
+            //Debug.Log(xmlData);
+            //xml.LoadXml(xmlData);
 
-            XmlElement service = xml.DocumentElement["Service"]["Name"];
-            if (service != null && service.InnerText.Contains("WMS"))
-            {
-                if (wmsFormatter is null)
-                {
-                    wmsFormatter = new WMSFormatter();
-                }
-                ActiveWMS = wmsFormatter.ReadWMSFromXML(ActiveWMS, xml);
-                resetReaderEvent.Invoke();
-                wmsLayerEvent.Invoke(ActiveWMS.Layers);
-                isWMSEVent.Invoke(true);
-                return;
-            }
+            //XmlElement service = xml.DocumentElement["Service"]["Name"];
+            //if (service != null && service.InnerText.Contains("WMS"))
+            //{
+            //    if (wmsFormatter is null)
+            //    {
+            //        wmsFormatter = new WMSFormatter();
+            //    }
+            //    ActiveWMS = wmsFormatter.ReadWMSFromXML(ActiveWMS, xml);
+            //    resetReaderEvent.Invoke();
+            //    wmsLayerEvent.Invoke(ActiveWMS.Layers);
+            //    isWMSEVent.Invoke(true);
+            //    return;
+            //}
 
         }
         else if (url.Contains("wfs"))
         {
-            WFSRequest.BaseURL = validatedURL;
-            string xmlData = WebCommunicator.GetDataFromURL(WFSRequest.GetCapabilitiesRequest());
-            xml.LoadXml(xmlData);
+            ActiveWFS = new WFS(validatedURL);
+            WebServiceNetworker.Instance.WebStringEvent.started.AddListener(ProcessWFS);
+            ActiveWFS.GetCapabilities();
+            //xml.LoadXml(xmlData);
 
-            XmlElement serviceID = xml.DocumentElement["ows:ServiceIdentification"]["ows:ServiceType"];
-            if (serviceID != null && serviceID.InnerText.Contains("WFS"))
-            {
-                print(serviceID.InnerText);
-                if (wfsFormatter is null)
-                {
-                    wfsFormatter = new WFSFormatter();
-                }
-                ActiveWFS = wfsFormatter.ReadFromWFS(xml);
-                isWMSEVent.Invoke(false);
-                return;
-            }
+            //XmlElement serviceID = xml.DocumentElement["ows:ServiceIdentification"]["ows:ServiceType"];
+            //if (serviceID != null && serviceID.InnerText.Contains("WFS"))
+            //{
+            //    print(serviceID.InnerText);
+            //    if (wfsFormatter is null)
+            //    {
+            //        wfsFormatter = new WFSFormatter();
+            //    }
+            //    ActiveWFS = wfsFormatter.ReadFromWFS(xml);
+            //    isWMSEVent.Invoke(false);
+            //    return;
+            //}
 
         }
     }
+    private void ProcessWMS(string xmlData)
+    {
+        XmlDocument xml = new XmlDocument();
+        xml.LoadXml(xmlData);
 
+        XmlElement service = xml.DocumentElement["Service"]["Name"];
+        if (service != null && service.InnerText.Contains("WMS"))
+        {
+            if (wmsFormatter is null)
+            {
+                wmsFormatter = new WMSFormatter();
+            }
+            ActiveWMS = wmsFormatter.ReadWMSFromXML(ActiveWMS, xml);
+            resetReaderEvent.Invoke();
+            wmsLayerEvent.Invoke(ActiveWMS.Layers);
+            isWMSEVent.Invoke(true);
+            return;
+        }
+    }
+    private void ProcessWFS(string xmlData)
+    {
+        XmlDocument xml = new XmlDocument();
+        xml.LoadXml(xmlData);
+
+        XmlElement serviceID = xml.DocumentElement["ows:ServiceIdentification"]["ows:ServiceType"];
+        if (serviceID != null && serviceID.InnerText.Contains("WFS"))
+        {
+            print(serviceID.InnerText);
+            if (wfsFormatter is null)
+            {
+                wfsFormatter = new WFSFormatter();
+            }
+            ActiveWFS = wfsFormatter.ReadFromWFS(xml);
+            isWMSEVent.Invoke(false);
+            return;
+        }
+    }
     private void SetResolution(string resolution)
     {
         int res = int.Parse(resolution);
@@ -146,9 +181,4 @@ public class UrlReader : MonoBehaviour
     {
         ActiveWMS.BBox.MaxY = float.Parse(value);
     }
-
-    //private string GetDataFromURL(string url)
-    //{
-    //    return client.GetStringAsync(url).Result;
-    //}
 }

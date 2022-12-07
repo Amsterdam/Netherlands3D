@@ -4,11 +4,15 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Netherlands3D.Events;
 
-public class WMSSettings : MonoBehaviour
+public class WebServiceNetworker : MonoBehaviour
 {
+    public static WebServiceNetworker Instance { get; private set; }
+
     [SerializeField] private GameObject messagePanel;
 
+    [field:SerializeField] public StringEvent WebStringEvent { get; private set; }
     [Header("Invoked Events")]
+    
     [SerializeField] private ObjectEvent imageEvent;
     [SerializeField] private ObjectEvent legendEvent;
     [SerializeField] private StringEvent wmsLayerEvent;
@@ -21,9 +25,10 @@ public class WMSSettings : MonoBehaviour
 
     private void Start()
     {
-        if(logEvent == null)
+        if(logEvent == null || Instance != null)
             return;
-       
+
+        Instance = this;
         logEvent.started.AddListener(() => 
             { 
                 messagePanel.SetActive(true);
@@ -63,7 +68,24 @@ public class WMSSettings : MonoBehaviour
     //{
     //    return WMS.ActiveInstance.GetMapRequest();
     //}
-
+    public IEnumerator GetWebString(string url)
+    {
+        UnityWebRequest request = UnityWebRequest.Get(url);
+        yield return request.SendWebRequest();
+        if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+        {
+            Debug.LogError(request.error);
+        }
+        else
+        {
+            if (WebStringEvent != null)
+            {
+                string result = request.downloadHandler.text;
+                WebStringEvent.Invoke(result);
+                WebStringEvent.started.RemoveAllListeners();
+            }
+        }
+    }
     public IEnumerator DownloadImage(string mediaURL, ObjectEvent imageEvent)
     {
         UnityWebRequest request = UnityWebRequestTexture.GetTexture(mediaURL);

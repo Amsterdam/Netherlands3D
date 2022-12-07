@@ -5,7 +5,7 @@ using UnityEngine;
 public interface IWebService
 {
     public string BaseUrl { get; }
-    string GetCapabilities();
+    void GetCapabilities();
 }
 
 public interface IWSMappable

@@ -43,10 +43,11 @@ public class WMSInterface : MonoBehaviour
 
     private void Awake()
     {
+        legendRawImage.gameObject.SetActive(false);
         resetEvent.started.AddListener(ResetInterface);
         buildInterfaceEvent.started.AddListener(BuildInterface);
         imageEvent.started.AddListener(DisplayPreviewImage);
-        legendEvent.started.AddListener(GetTexture);
+        legendEvent.started.AddListener(GetLegendTexture);
     }
 
     public void ResetInterface()
@@ -103,7 +104,6 @@ public class WMSInterface : MonoBehaviour
         if (legends.Count <= 1)
             return;
         legendIndex = (legendIndex + 1) % legends.Count;
-        Debug.Log(legendIndex);
         DisplayLegendImage(legends[legendIndex]);
     }
     public void ToggleLegendBackward()
@@ -111,12 +111,13 @@ public class WMSInterface : MonoBehaviour
         if (legends.Count <= 1)
             return;
         legendIndex = legendIndex - 1 < 0 ? legends.Count - 1 : legendIndex - 1;
-        Debug.Log(legendIndex);
         DisplayLegendImage(legends[legendIndex]);
     }
     public void ClearLegends()
     {
         legends.Clear();
+        legendRawImage.gameObject.SetActive(false);
+
     }
 
     private void ClearStyles()
@@ -233,17 +234,25 @@ public class WMSInterface : MonoBehaviour
     {
         previewRawImage.texture = (Texture)textureFromRequest;
     }
-    private void GetTexture(object textureFromRequest)
+    private void GetLegendTexture(object textureFromRequest)
     {
         Texture txt = (Texture)textureFromRequest;
         legends.Add(txt);
-        Debug.Log(legends.Count);
+        if(legends.Count == 1)
+        {
+            DisplayLegendImage(legends[0]);
+        }
     }
     private void DisplayLegendImage(Texture txt)
     {
+        if (!legendRawImage.gameObject.activeSelf)
+        {
+            legendRawImage.gameObject.SetActive(true);
+        }
         legendRawImage.texture = txt;
         legendRawImage.SetNativeSize();
-        legendRawImage.rectTransform.ScaleWithAspectRatio(100);
+        Rect rect = legendRawImage.rectTransform.rect;
+        legendRawImage.rectTransform.ScaleWithAspectRatio(100, rect.x <= rect.y ? SizeRef.WIDTH : SizeRef.HEIGHT);
         //legendRawImage.SetNativeSize();
         //legendRawImage.SizeToParent(5);
     }

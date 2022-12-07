@@ -4,6 +4,7 @@ using System.Text;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.Networking;
+using Netherlands3D.Events;
 
 public class WMS : IWebService, IWSMappable
 {
@@ -20,6 +21,7 @@ public class WMS : IWebService, IWSMappable
 
     private bool isPreview;
     private bool requiresSRS;
+    private StringEvent capabilitiesEvent;
 
     public WMS(string baseUrl)
     {
@@ -46,13 +48,14 @@ public class WMS : IWebService, IWSMappable
         requiresSRS = required;
         SRS = srs;
     }
-    public string GetCapabilities()
+    public void GetCapabilities()
     {
-        return WebCommunicator.GetDataFromURL(BaseUrl + "?request=getcapabilities&service=wms");
+        WebServiceNetworker wsn = WebServiceNetworker.Instance;
+        wsn.StartCoroutine(wsn.GetWebString(BaseUrl + "?request=getcapabilities&service=wms"));
     }
     public string GetMapRequest()
     {
-       return requiresSRS ? StandardRequest() + "&" + SRSRequest(SRS) : StandardRequest();
+        return StandardRequest() + (requiresSRS ? SRSRequest(SRS) : "");
     }
     public void ActivateLayer(WMSLayer layerToActivate)
     {

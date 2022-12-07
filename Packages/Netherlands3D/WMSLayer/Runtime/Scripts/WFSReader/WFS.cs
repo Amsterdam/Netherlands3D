@@ -13,7 +13,7 @@ public class WFS : IWebService
         Version = version;
     }
 
-    public string GetCapabilities()
+    public void GetCapabilities()
     {
         throw new System.NotImplementedException();
     }
