@@ -50,7 +50,11 @@ public class ObjImportManager : MonoBehaviour
             objFileName = value;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-        objFileName = System.IO.Path.Combine(Application.persistentDataPath, objFileName);
+        if (objFileName!="")
+	        {
+            objFileName = System.IO.Path.Combine(Application.persistentDataPath, objFileName);
+	        }
+        
 #endif
 
             Debug.Log("received objFile: " + objFileName);
@@ -69,7 +73,10 @@ public class ObjImportManager : MonoBehaviour
         {
             mtlFileName = value;
 #if UNITY_WEBGL && !UNITY_EDITOR
-        mtlFileName = System.IO.Path.Combine(Application.persistentDataPath, mtlFileName);
+        if(mtlFileName!="")
+            {
+            mtlFileName = System.IO.Path.Combine(Application.persistentDataPath, mtlFileName);
+            }
 #endif
             if (ReceivedMTLFilename) ReceivedMTLFilename.started.Invoke(System.IO.Path.GetFileName(mtlFileName));
         }

@@ -113,19 +113,19 @@ public class CreateGameObjects : MonoBehaviour
         {
             materiallist.Add(getMaterial(gameobjectdata.meshdata.submeshes[i].materialname));
         }
-        mr.sharedMaterials = materiallist.ToArray();
+        mr.materials = materiallist.ToArray();
         gameObjectCreated = true;
     }
 
     Material getMaterial(string materialname)
     {
         Material returnmaterial;
-        if (createdMaterials.ContainsKey(materialname))
-        {
-            returnmaterial = createdMaterials[materialname];
-        }
-        else
-        {
+        //if (createdMaterials.ContainsKey(materialname))
+        //{
+        //    returnmaterial = createdMaterials[materialname];
+        //}
+        //else
+        //{
             returnmaterial = new Material(BaseMaterial);
             returnmaterial.name = materialname;
             for (int i = 0; i < gameObjectData.materials.Count; i++)
@@ -134,10 +134,10 @@ public class CreateGameObjects : MonoBehaviour
                 {
                     returnmaterial.name = gameObjectData.materials[i].DisplayName;
                     returnmaterial.color = gameObjectData.materials[i].Diffuse;
-                    createdMaterials.Add(materialname, returnmaterial);
+                    //createdMaterials.Add(materialname, returnmaterial);
                 }
             }
-        }
+        //}
         return returnmaterial;
     }
 
