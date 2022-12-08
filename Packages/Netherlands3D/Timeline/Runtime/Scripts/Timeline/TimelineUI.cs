@@ -207,6 +207,16 @@ namespace Netherlands3D.Timeline
         }
 
         /// <summary>
+        /// Set a new timeline data object
+        /// </summary>
+        /// <param name="timelineData">The timeline data object</param>
+        public void SetData(TimelineData timelineData)
+        {
+            this.timelineData = timelineData;
+            LoadData();
+        }
+
+        /// <summary>
         /// Load the TimelineData in the UI
         /// </summary>
         public void LoadData()
