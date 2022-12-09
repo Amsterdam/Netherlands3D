@@ -28,6 +28,7 @@ namespace Netherlands3D.T3DPipeline
         public CityObject[] CityObjects { get; private set; } = new CityObject[0];
         public Vector3Double MinExtent { get; private set; }
         public Vector3Double MaxExtent { get; private set; }
+        public Vector3Double AbsoluteCenter { get { return (MaxExtent + MinExtent) / 2; } }
         public CoordinateSystem CoordinateSystem { get; private set; }
 
         private Dictionary<string, JSONNode> extensionNodes = new Dictionary<string, JSONNode>();
@@ -61,7 +62,7 @@ namespace Netherlands3D.T3DPipeline
             foreach (var co in CityObjects)
             {
                 co.UnparentFromAll(); //needed because OnDestroy is not immediately called.
-                Destroy(co.gameObject); 
+                Destroy(co.gameObject);
             }
             RemoveExtensionNodes(extensionNodes);
 
@@ -113,18 +114,18 @@ namespace Netherlands3D.T3DPipeline
                     MinExtent = new Vector3Double(geographicalExtent[0].AsDouble, geographicalExtent[1].AsDouble, geographicalExtent[2].AsDouble);
                     MaxExtent = new Vector3Double(geographicalExtent[3].AsDouble, geographicalExtent[4].AsDouble, geographicalExtent[5].AsDouble);
                 }
-                else if (parsedVertices.Count > 0)
-                {
-                    var minX = parsedVertices.Min(v => v.x);
-                    var minY = parsedVertices.Min(v => v.y);
-                    var minZ = parsedVertices.Min(v => v.z);
-                    var maxX = parsedVertices.Max(v => v.x);
-                    var maxY = parsedVertices.Max(v => v.y);
-                    var maxZ = parsedVertices.Max(v => v.z);
+            }
+            else if (parsedVertices.Count > 0)
+            {
+                var minX = parsedVertices.Min(v => v.x);
+                var minY = parsedVertices.Min(v => v.y);
+                var minZ = parsedVertices.Min(v => v.z);
+                var maxX = parsedVertices.Max(v => v.x);
+                var maxY = parsedVertices.Max(v => v.y);
+                var maxZ = parsedVertices.Max(v => v.z);
 
-                    MinExtent = new Vector3Double(minX, minY, minZ);
-                    MaxExtent = new Vector3Double(maxX, maxY, maxZ);
-                }
+                MinExtent = new Vector3Double(minX, minY, minZ);
+                MaxExtent = new Vector3Double(maxX, maxY, maxZ);
             }
 
             //CityObjects
