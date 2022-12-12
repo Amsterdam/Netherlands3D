@@ -110,13 +110,15 @@ namespace Netherlands3D.T3DPipeline
         private void OnEnable()
         {
             allCityObjectAnnotations.Add(this);
-            reselectAnnotationEvent.started.AddListener(OnReselectAnnotation);
+            if (reselectAnnotationEvent)
+                reselectAnnotationEvent.started.AddListener(OnReselectAnnotation);
         }
 
         private void OnDisable()
         {
             allCityObjectAnnotations.Remove(this);
-            reselectAnnotationEvent.started.RemoveListener(OnReselectAnnotation);
+            if (reselectAnnotationEvent)
+                reselectAnnotationEvent.started.RemoveListener(OnReselectAnnotation);
         }
 
         private void Start()
