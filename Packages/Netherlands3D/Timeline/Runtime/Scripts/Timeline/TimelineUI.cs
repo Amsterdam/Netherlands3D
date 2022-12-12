@@ -213,6 +213,7 @@ namespace Netherlands3D.Timeline
         public void SetData(TimelineData timelineData)
         {
             this.timelineData = timelineData;
+            this.timelineData.OrderTimePeriods();
             LoadData();
         }
 
