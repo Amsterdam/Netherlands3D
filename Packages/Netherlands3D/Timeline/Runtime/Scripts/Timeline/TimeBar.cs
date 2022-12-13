@@ -57,20 +57,41 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// Get the current dateTime based on a local x position of the bar
         /// </summary>
-        /// <param name="posX">The bar local x position</param>
-        /// <param name="minDistance">Should the posX be at a min distance of the datetimepos before returning it</param>
+        /// <param name="posX">The scrubber local x position</param>
+        /// <param name="snapping">Should the posX be at a min distance of the datetimepos before returning it</param>
         /// <returns>DateTime</returns>
-        public DateTime GetCurrentDateTime(float posX, bool minDistance = false)
+        public DateTime GetCurrentDateTime(float posX, bool snapping = false)
         {
-            if(!minDistance)
-                return dateTimePositions.OrderBy(x => Math.Abs(x.Key - posX + transform.localPosition.x)).FirstOrDefault().Value;
+            if (!snapping)
+            {
+                var closestPositions = dateTimePositions.OrderBy(x => Math.Abs(x.Key - posX + transform.localPosition.x));
+                var positions = closestPositions.ToArray();
+
+                //Earlier time is always left
+                var leftDateTime = (positions[0].Value < positions[1].Value) ? positions[0] : positions[1];
+                var rightDateTime = (positions[0].Value >= positions[1].Value) ? positions[0] : positions[1];
+
+                var left = leftDateTime.Value.Ticks;
+                var right = rightDateTime.Value.Ticks;
+
+                var scrubberPositionInBar = (posX - transform.localPosition.x);
+                var normalisedBetweenValue = Mathf.InverseLerp(leftDateTime.Key, rightDateTime.Key, scrubberPositionInBar);
+                var rangeTicks = right - left;
+                var interpolatedRange = (left) + ((double)rangeTicks * normalisedBetweenValue);
+                var interpolatedDateTime = new DateTime((long)interpolatedRange);
+
+#if UNITY_EDITOR
+                Debug.Log("TImeline scrub time: " + interpolatedDateTime);
+#endif
+                return interpolatedDateTime;
+            }
             else
             {
                 // For snapping purposes
                 var keyValue = dateTimePositions.OrderBy(x => Math.Abs(x.Key - posX + transform.localPosition.x)).FirstOrDefault();
                 posX = Mathf.Abs(posX);
                 float mod = posX % 100;
-                if(mod >= 90 || mod == 0 || mod <= 10)
+                if (mod >= 90 || mod == 0 || mod <= 10)
                 {
                     return keyValue.Value;
                 }

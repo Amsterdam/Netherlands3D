@@ -340,7 +340,7 @@ namespace Netherlands3D.Timeline
             }
 
             // Get currentDate from middle bar
-            CurrentDate = GetFocusedBar().GetCurrentDateTime();
+            CurrentDate = GetFocusedBar().GetCurrentDateTime(timeScrubber.transform.localPosition.x);
             UpdateCurrentDateVisual();
             UpdateVisableDateRange();
 
