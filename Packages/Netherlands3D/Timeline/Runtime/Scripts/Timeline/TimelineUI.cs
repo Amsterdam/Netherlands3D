@@ -10,6 +10,7 @@ using TMPro;
 using System.Globalization;
 using UnityEngine.EventSystems;
 using Netherlands3D.Events;
+using UnityEngine.InputSystem;
 
 namespace Netherlands3D.Timeline
 {
@@ -713,12 +714,13 @@ namespace Netherlands3D.Timeline
 
             if(mouseIsOn)
             {
-                if(Input.mouseScrollDelta.y < 0)
+                var scrollY = Mouse.current.scroll.ReadValue().y;
+                if (scrollY < 0)
                 {
                     // Up
                     SetTimeUnit(-1);
                 }
-                else if(Input.mouseScrollDelta.y > 0)
+                else if(scrollY > 0)
                 {
                     // Down
                     SetTimeUnit(1);
