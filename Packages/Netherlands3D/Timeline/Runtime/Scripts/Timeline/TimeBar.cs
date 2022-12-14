@@ -74,10 +74,17 @@ namespace Netherlands3D.Timeline
                 var left = leftDateTime.Value.Ticks;
                 var right = rightDateTime.Value.Ticks;
 
+                Debug.Log("LEFT: " + leftDateTime);
+                Debug.Log("RIGHT: " + rightDateTime);
+
                 var scrubberPositionInBar = (posX - transform.localPosition.x);
-                var normalisedBetweenValue = Mathf.InverseLerp(leftDateTime.Key, rightDateTime.Key, scrubberPositionInBar);
+                double normalisedBetweenValue = InverseLerpDoubles(leftDateTime.Key, rightDateTime.Key, scrubberPositionInBar);
+               
+                Debug.Log("Between: " + normalisedBetweenValue);
+
                 var rangeTicks = right - left;
-                var interpolatedRange = (left) + ((double)rangeTicks * normalisedBetweenValue);
+                Debug.Log("Range: " + rangeTicks);
+                var interpolatedRange = (left) + (long)(rangeTicks * normalisedBetweenValue);
                 var interpolatedDateTime = new DateTime((long)interpolatedRange);
 
 #if UNITY_EDITOR
@@ -97,6 +104,11 @@ namespace Netherlands3D.Timeline
                 }
                 else return new DateTime(1, 1, 1);
             }
+        }
+
+        private double InverseLerpDoubles(double a, double b, double v)
+        {
+            return ((v - a) / (b - a));
         }
 
         /// <summary>

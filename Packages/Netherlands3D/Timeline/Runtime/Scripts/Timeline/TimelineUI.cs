@@ -169,7 +169,7 @@ namespace Netherlands3D.Timeline
         {
             // Triggers LoadData
             timelineData.OrderTimePeriods();
-            SetCurrentDate(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0));
+            SetCurrentDate(new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0));
             currentDateIsSet = true;
         }
 
@@ -688,8 +688,8 @@ namespace Netherlands3D.Timeline
         {
             if(mouseIsDragging)
             {
-                float x = Mathf.Abs(mouseDownPosition.x - Input.mousePosition.x);
-                float y = Mathf.Abs(mouseDownPosition.y - Input.mousePosition.y);
+                float x = Mathf.Abs(mouseDownPosition.x - Mouse.current.position.ReadValue().x);
+                float y = Mathf.Abs(mouseDownPosition.y - Mouse.current.position.ReadValue().y);
                 // Based on direction, scroll horizontal or vertical (& minimum distance needed)
                 if(Math.Abs(x - y) >= 3 && x >= y) //TODO mouse x/y overflow needs to be smooth instead of having to mouseup/down to switch
                 {
