@@ -127,11 +127,11 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// The most visable date left
         /// </summary>
-        private DateTime visableDateLeft;
+        private DateTime visibleDateLeft;
         /// <summary>
         /// The most visable date right
         /// </summary>
-        private DateTime visableDateRight;        
+        private DateTime visibleDateRight;        
         /// <summary>
         /// List of all categories scripts
         /// </summary>
@@ -395,7 +395,7 @@ namespace Netherlands3D.Timeline
                     default:
                         break;
                 }
-                dt = new DateTime(year, dt.Month, dt.Day);
+                dt = new DateTime(year, dt.Month, dt.Day,0,0,0);
             }            
             SetCurrentDate(dt);
             UpdateCurrentDateVisual();
@@ -517,10 +517,10 @@ namespace Netherlands3D.Timeline
         /// <param name="dEvent">The even to check</param>
         private bool IsTimePeriodVisible(TimePeriod dEvent)
         {
-            return  dEvent.startDate <= visableDateLeft && dEvent.endDate >= visableDateRight ||                                            // 0---[-------]---0
-                    dEvent.startDate <= visableDateLeft && dEvent.endDate <= visableDateRight && dEvent.endDate >= visableDateLeft ||       // 0---[---0   ]
-                    dEvent.startDate >= visableDateLeft && dEvent.startDate <= visableDateRight && dEvent.endDate >= visableDateRight ||    //     [   0---]---0
-                    dEvent.startDate >= visableDateLeft && dEvent.endDate <= visableDateRight;                                              //     [0-----0]         
+            return  dEvent.startDate <= visibleDateLeft && dEvent.endDate >= visibleDateRight ||                                            // 0---[-------]---0
+                    dEvent.startDate <= visibleDateLeft && dEvent.endDate <= visibleDateRight && dEvent.endDate >= visibleDateLeft ||       // 0---[---0   ]
+                    dEvent.startDate >= visibleDateLeft && dEvent.startDate <= visibleDateRight && dEvent.endDate >= visibleDateRight ||    //     [   0---]---0
+                    dEvent.startDate >= visibleDateLeft && dEvent.endDate <= visibleDateRight;                                              //     [0-----0]         
         }
 
         /// <summary>
@@ -657,11 +657,11 @@ namespace Netherlands3D.Timeline
         {
             int datesToPlace = (int)((TimeBarParentWidth / TimeBar.PixelDistanceDates) / 2);
             // based on timeUnit & current date, get the most left and right date
-            visableDateLeft = TimeUnit.GetVisibleDateLeftRight(true, CurrentDate, timeUnit, datesToPlace);
-            visableDateRight = TimeUnit.GetVisibleDateLeftRight(false, CurrentDate, timeUnit, datesToPlace);
+            visibleDateLeft = TimeUnit.GetVisibleDateLeftRight(true, CurrentDate, timeUnit, datesToPlace);
+            visibleDateRight = TimeUnit.GetVisibleDateLeftRight(false, CurrentDate, timeUnit, datesToPlace);
             // Correct dates
-            visableDateLeft = new DateTime(visableDateLeft.Year, visableDateLeft.Month, visableDateLeft.Day, 0, 0, 0);
-            visableDateRight = new DateTime(visableDateRight.Year, visableDateRight.Month, visableDateRight.Day, 0, 0, 0);
+            visibleDateLeft = new DateTime(visibleDateLeft.Year, visibleDateLeft.Month, visibleDateLeft.Day, 0, 0, 0);
+            visibleDateRight = new DateTime(visibleDateRight.Year, visibleDateRight.Month, visibleDateRight.Day, 0, 0, 0);
             //print(visableDateLeft + " - " + visableDateRight);
 
             UpdateTimePeriods();
@@ -688,15 +688,17 @@ namespace Netherlands3D.Timeline
         {
             if(mouseIsDragging)
             {
-                float x = Mathf.Abs(mouseDownPosition.x - Mouse.current.position.ReadValue().x);
-                float y = Mathf.Abs(mouseDownPosition.y - Mouse.current.position.ReadValue().y);
+                var mousePosition = Mouse.current.position.ReadValue();
+
+                float x = Mathf.Abs(mouseDownPosition.x - mousePosition.x);
+                float y = Mathf.Abs(mouseDownPosition.y - mousePosition.y);
                 // Based on direction, scroll horizontal or vertical (& minimum distance needed)
                 if(Math.Abs(x - y) >= 3 && x >= y) //TODO mouse x/y overflow needs to be smooth instead of having to mouseup/down to switch
                 {
-                    int dirX = mouseDownPosition.x < Input.mousePosition.x ? 1 : -1;
+                    int dirX = mouseDownPosition.x < mousePosition.x ? 1 : -1;
                     scrollRectTimePeriodLayers.enabled = false;
                     scrollRectLayers.enabled = false;
-                    ScrollTimeBar(Vector3.Distance(mouseDownPosition, Input.mousePosition) * dirX * mouseSensitivity * UnityEngine.Time.deltaTime);
+                    ScrollTimeBar(Vector3.Distance(mouseDownPosition, mousePosition) * dirX * mouseSensitivity * UnityEngine.Time.deltaTime);
                     playback.PlayScroll(false);
                 }
                 else
