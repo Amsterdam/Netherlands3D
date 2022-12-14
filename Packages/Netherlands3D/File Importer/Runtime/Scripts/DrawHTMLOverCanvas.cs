@@ -76,9 +76,10 @@ namespace Netherlands3D.JavascriptConnection
 		private Rect GetScreenSpaceRectangle()
 		{
 			var size = Vector2.Scale(image.rectTransform.rect.size, image.rectTransform.lossyScale);
+			Debug.Log(gameObject.name + " SIZE " + size);
 			screenSpaceRectangle = new Rect(image.rectTransform.position.x, image.rectTransform.position.y, size.x, size.y);
 			screenSpaceRectangle.x -= (image.rectTransform.pivot.x * size.x);
-			screenSpaceRectangle.y -= ((1.0f - image.rectTransform.pivot.y) * size.y);
+			screenSpaceRectangle.y -= (image.rectTransform.pivot.y * size.y) + size.y;
 			return screenSpaceRectangle;
 		}
 	}
