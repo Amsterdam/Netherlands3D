@@ -34,6 +34,7 @@ public class UrlReader : MonoBehaviour
         if(Instance != null)
         {
             Debug.LogWarning("Instance has already been set, duplicate reader found!");
+            Destroy(gameObject);
             return;
         }
         Instance = this;
@@ -82,44 +83,12 @@ public class UrlReader : MonoBehaviour
             ActiveWMS = new WMS(validatedURL);
             WebServiceNetworker.Instance.WebStringEvent.started.AddListener(ProcessWMS);
             ActiveWMS.GetCapabilities();
-            //Debug.Log(xmlData);
-            //xml.LoadXml(xmlData);
-
-            //XmlElement service = xml.DocumentElement["Service"]["Name"];
-            //if (service != null && service.InnerText.Contains("WMS"))
-            //{
-            //    if (wmsFormatter is null)
-            //    {
-            //        wmsFormatter = new WMSFormatter();
-            //    }
-            //    ActiveWMS = wmsFormatter.ReadWMSFromXML(ActiveWMS, xml);
-            //    resetReaderEvent.Invoke();
-            //    wmsLayerEvent.Invoke(ActiveWMS.Layers);
-            //    isWMSEVent.Invoke(true);
-            //    return;
-            //}
-
         }
         else if (url.Contains("wfs"))
         {
             ActiveWFS = new WFS(validatedURL);
             WebServiceNetworker.Instance.WebStringEvent.started.AddListener(ProcessWFS);
             ActiveWFS.GetCapabilities();
-            //xml.LoadXml(xmlData);
-
-            //XmlElement serviceID = xml.DocumentElement["ows:ServiceIdentification"]["ows:ServiceType"];
-            //if (serviceID != null && serviceID.InnerText.Contains("WFS"))
-            //{
-            //    print(serviceID.InnerText);
-            //    if (wfsFormatter is null)
-            //    {
-            //        wfsFormatter = new WFSFormatter();
-            //    }
-            //    ActiveWFS = wfsFormatter.ReadFromWFS(xml);
-            //    isWMSEVent.Invoke(false);
-            //    return;
-            //}
-
         }
     }
     private void ProcessWMS(string xmlData)
@@ -130,7 +99,7 @@ public class UrlReader : MonoBehaviour
         XmlElement service = xml.DocumentElement["Service"]["Name"];
         if (service != null && service.InnerText.Contains("WMS"))
         {
-            if (wmsFormatter is null)
+            if (wmsFormatter == null)
             {
                 wmsFormatter = new WMSFormatter();
             }
@@ -138,7 +107,6 @@ public class UrlReader : MonoBehaviour
             resetReaderEvent.Invoke();
             wmsLayerEvent.Invoke(ActiveWMS.Layers);
             isWMSEVent.Invoke(true);
-            return;
         }
     }
     private void ProcessWFS(string xmlData)
@@ -150,13 +118,13 @@ public class UrlReader : MonoBehaviour
         if (serviceID != null && serviceID.InnerText.Contains("WFS"))
         {
             print(serviceID.InnerText);
-            if (wfsFormatter is null)
+            if (wfsFormatter == null)
             {
                 wfsFormatter = new WFSFormatter();
             }
-            ActiveWFS = wfsFormatter.ReadFromWFS(xml);
+            ActiveWFS = wfsFormatter.ReadFromWFS(ActiveWFS, xml);
+            resetReaderEvent.Invoke();
             isWMSEVent.Invoke(false);
-            return;
         }
     }
     private void SetResolution(string resolution)

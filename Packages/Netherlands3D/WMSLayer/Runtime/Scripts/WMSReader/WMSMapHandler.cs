@@ -14,9 +14,6 @@ public class WMSMapHandler : MonoBehaviour
     private bool cameraPositionMapUpdate = true;
     private float intervalTimer;
 
-    [Header("Invoked Events")]
-    [SerializeField] private ObjectEvent extentEvent;
-
     private void Awake()
     {
         if(cam == null)
@@ -26,8 +23,10 @@ public class WMSMapHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (cameraPositionMapUpdate)
+        if (cameraPositionMapUpdate && WMS.ActiveInstance != null)
         {
+            if (WMS.ActiveInstance.ActivatedLayers.Count == 0)
+                return;
             intervalTimer += Time.deltaTime;
             if(cam != Camera.main)
             {
@@ -37,9 +36,6 @@ public class WMSMapHandler : MonoBehaviour
             {
                 intervalTimer = 0;
                 Extent e = cam.GetRDExtent();
-                Debug.Log(e.MinX);
-                Debug.Log(e.MaxX); Debug.Log(e.MinY); Debug.Log(e.MaxY);
-                //extentEvent.started.Invoke(e);
                 WMS.ActiveInstance.BBox = new BoundingBox((float)e.MinX, (float)e.MinY, (float)e.MaxX, (float)e.MaxY);
                 WebServiceNetworker.Instance.SendRequest(true);
             }

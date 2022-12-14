@@ -7,11 +7,40 @@ public class WFSFormatter
     private XmlNamespaceManager namespaceManager;
     //private string namespacePrefix = "";
     private XmlDocument xml;
-    public WFS ReadFromWFS(XmlDocument wmsXml)
+    public WFS ReadFromWFS(WFS wfs, XmlDocument wmsXml)
     {
 
         xml = wmsXml;
         FindNamespaces();
+        bool allowsGeoJSON = false;
+
+        XmlNode operationsMetadata = GetChildNode(wmsXml.DocumentElement, "OperationsMetadata", "ows");
+        XmlNodeList operations = GetChildNodes(operationsMetadata, "Operation", "ows");
+        foreach(XmlNode o in operations)
+        {
+            if (o.Attributes.GetNamedItem("name")?.Value == "GetFeature")
+            {
+                Debug.Log("Found the Feature Node!");
+                foreach(XmlNode parameter in GetChildNodes(o, "Parameter", "ows"))
+                {
+                    if(parameter.Attributes.GetNamedItem("name").Value == "outputFormat")
+                    {
+                        XmlNode allowedValues = GetChildNode(parameter, "AllowedValues", "ows");
+                        foreach(XmlNode value in GetChildNodes(allowedValues, "Value", "ows"))
+                        {
+                            if (value.InnerText.ToLower().Contains("geojson"))
+                            {
+                                allowsGeoJSON = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+  
+        if (!allowsGeoJSON)
+            throw new System.NotImplementedException("This WFS does not support GeoJSON and currently cannot be processed!");
 
         XmlNode filterCapabilities = GetChildNode(xml.DocumentElement, "Filter_Capabilities", "fes");
 
@@ -20,7 +49,7 @@ public class WFSFormatter
 
         foreach(XmlNode constraint in GetChildNodes(conformance, "Constraint", "fes"))
         {
-            Debug.Log(constraint.Attributes.GetNamedItem("name")?.InnerText);
+            //Debug.Log(constraint.Attributes.GetNamedItem("name")?.InnerText);
         }
 
         XmlNode scalarCapabilities = GetChildNode(filterCapabilities, "Scalar_Capabilities", "fes");
@@ -36,41 +65,47 @@ public class WFSFormatter
 
         XmlNode functions = GetChildNode(filterCapabilities, "Functions", "fes");
 
-        foreach(XmlNode co in comparisonOperators)
+        //foreach(XmlNode co in comparisonOperators)
+        //{
+        //    Debug.Log(co.Attributes.GetNamedItem("name")?.InnerText);
+        //}
+        //foreach (XmlNode go in GetChildNodes(geometryOperands, "GeometryOperand", "fes"))
+        //{
+        //    Debug.Log(go.Attributes.GetNamedItem("name")?.InnerText);
+        //}
+        //foreach (XmlNode so in GetChildNodes(spatialOperators, "SpatialOperator", "fes"))
+        //{
+        //    Debug.Log(so.Attributes.GetNamedItem("name")?.InnerText);
+        //}
+        //foreach(XmlNode to in GetChildNodes(temporalOperands, "TemporalOperand", "fes"))
+        //{
+        //    Debug.Log(to.Attributes.GetNamedItem("name")?.InnerText);
+        //}
+        //foreach (XmlNode to in GetChildNodes(temporalOperators, "TemporalOperator", "fes"))
+        //{
+        //    Debug.Log(to.Attributes.GetNamedItem("name")?.InnerText);
+        //}
+
+        if(functions != null)
         {
-            Debug.Log(co.Attributes.GetNamedItem("name")?.InnerText);
-        }
-        foreach (XmlNode go in GetChildNodes(geometryOperands, "GeometryOperand", "fes"))
-        {
-            Debug.Log(go.Attributes.GetNamedItem("name")?.InnerText);
-        }
-        foreach (XmlNode so in GetChildNodes(spatialOperators, "SpatialOperator", "fes"))
-        {
-            Debug.Log(so.Attributes.GetNamedItem("name")?.InnerText);
-        }
-        foreach(XmlNode to in GetChildNodes(temporalOperands, "TemporalOperand", "fes"))
-        {
-            Debug.Log(to.Attributes.GetNamedItem("name")?.InnerText);
-        }
-        foreach (XmlNode to in GetChildNodes(temporalOperators, "TemporalOperator", "fes"))
-        {
-            Debug.Log(to.Attributes.GetNamedItem("name")?.InnerText);
+            Debug.Log(functions.ChildNodes.Count);
+            //foreach(XmlNode funct in GetChildNodes(functions, "Function", "fes"))
+            //{
+            //    Debug.Log(funct.Attributes.GetNamedItem("name")?.InnerText);
+            //}
         }
 
-        Debug.Log(functions.ChildNodes.Count);
-        foreach(XmlNode funct in GetChildNodes(functions, "Function", "fes"))
+
+        XmlNode featureList = GetChildNode(xml.DocumentElement, "FeatureTypeList", "wfs");
+        foreach(XmlNode feature in GetChildNodes(featureList, "FeatureType", "wfs"))
         {
-            Debug.Log(funct.Attributes.GetNamedItem("name")?.InnerText);
+            Debug.Log("Found a feature in the feature type list");
+            wfs.features.Add(new WFSFeature(GetChildNodeValue(feature, "Name", "wfs")));
         }
-
-
-        //XmlNode featureList = GetChildNode(xml.DocumentElement, "FeatureTypeList");
         //Debug.Log(featureList.InnerText);
 
         string version = xml.DocumentElement.Attributes.GetNamedItem("version").InnerText;
-
-        WFS wfs = new WFS(version);
-
+        wfs.Version = version;
         //XmlNode topLayer = GetChildNode(filterCapabilities, "Layer");
         //XmlNodeList subLayers = GetChildNodes(topLayer, "Layer");
 
@@ -146,7 +181,15 @@ public class WFSFormatter
 
     private string GetChildNodeValue(XmlNode parentNode, string childNodeName, string nameSpace)
     {
-        XmlNode selected = parentNode.SelectSingleNode($"{nameSpace}:{childNodeName}", namespaceManager);
+        XmlNode selected;
+        if(nameSpace == "")
+        {
+            selected = parentNode.SelectSingleNode($"wfs:{childNodeName}", namespaceManager);
+        }
+        else
+        {
+            selected = parentNode.SelectSingleNode($"{nameSpace}:{childNodeName}", namespaceManager);
+        }
         if (selected != null)
         {
             return selected.InnerText;
@@ -156,10 +199,18 @@ public class WFSFormatter
 
     private XmlNode GetChildNode(XmlNode parentNode, string childNodeName, string nameSpace)
     {
+        if (nameSpace == "")
+        {
+            return parentNode.SelectSingleNode($"wfs:{childNodeName}", namespaceManager);
+        }
         return parentNode.SelectSingleNode($"{nameSpace}:{childNodeName}", namespaceManager);
     }
     private XmlNodeList GetChildNodes(XmlNode parentNode, string childNodeName, string nameSpace)
     {
+        if (nameSpace == "")
+        {
+            return parentNode.SelectNodes($"wfs:{childNodeName}", namespaceManager);
+        }
         return parentNode.SelectNodes($"{nameSpace}:{childNodeName}", namespaceManager);
     }
 

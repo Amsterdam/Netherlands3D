@@ -13,7 +13,7 @@ public class WMS : IWebService, IWSMappable
     public string CRS { get; private set; }
     public string SRS { get; private set; }
 
-    public Vector2Int Resolution = new Vector2Int(225, 225);
+    public Vector2Int Resolution = new Vector2Int(1024, 1024);
     public BoundingBox BBox = BoundingBox.Zero;
     public List<WMSLayer> Layers { get; private set; }
     public List<WMSLayer> ActivatedLayers { get; private set; }
@@ -21,8 +21,6 @@ public class WMS : IWebService, IWSMappable
 
     private bool isPreview;
     private bool requiresSRS;
-    private StringEvent capabilitiesEvent;
-
     public WMS(string baseUrl)
     {
         BaseUrl = baseUrl;
@@ -91,8 +89,6 @@ public class WMS : IWebService, IWSMappable
         requestBuilder.Append(TransparencyRequest());
         requestBuilder.Append("&");
         requestBuilder.Append(ServiceRequest());
-
-        Debug.Log(requestBuilder.ToString());
         return requestBuilder.ToString();
     }
 
@@ -106,11 +102,6 @@ public class WMS : IWebService, IWSMappable
         styleBuilder.Append("styles=");
 
         ActivatedLayers = ActivatedLayers.OrderByDescending(l => l.styles.Count).ToList();
-        foreach (WMSLayer l in ActivatedLayers)
-        {
-            Debug.Log(l.Title + l.styles.Count);
-        }
-
         for (int i = 0; i < ActivatedLayers.Count; i++)
         {
             WMSLayer current = ActivatedLayers[i];
