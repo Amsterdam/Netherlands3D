@@ -74,16 +74,10 @@ namespace Netherlands3D.Timeline
                 var left = leftDateTime.Value.Ticks;
                 var right = rightDateTime.Value.Ticks;
 
-                Debug.Log("LEFT: " + leftDateTime);
-                Debug.Log("RIGHT: " + rightDateTime);
-
                 var scrubberPositionInBar = (posX - transform.localPosition.x);
                 double normalisedBetweenValue = InverseLerpDoubles(leftDateTime.Key, rightDateTime.Key, scrubberPositionInBar);
-               
-                Debug.Log("Between: " + normalisedBetweenValue);
 
                 var rangeTicks = right - left;
-                Debug.Log("Range: " + rangeTicks);
                 var interpolatedRange = (left) + (long)(rangeTicks * normalisedBetweenValue);
                 var interpolatedDateTime = new DateTime((long)interpolatedRange);
 
