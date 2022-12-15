@@ -28,11 +28,14 @@ namespace Netherlands3D.ModelParsing
         // variables containing the input
         public Vector3List vertices = new Vector3List();
         public Vector3List normals = new Vector3List();
+        public Vector2List uvs = new Vector2List();
         public List<Submesh> submeshes;
 
         // variable for creating the dataset
         Vector3List meshVertices = new Vector3List();
         Vector3List meshNormals = new Vector3List();
+        Vector2List meshUVs = new Vector2List();
+
         intList meshIndices = new intList();
         MeshData createdMeshData;
         SubMeshData createdSubMeshData;
@@ -96,6 +99,7 @@ namespace Netherlands3D.ModelParsing
 
             vertices.RemoveData();
             normals.RemoveData();
+            uvs.RemoveData();
             callback(container);
         }
 
@@ -146,17 +150,22 @@ namespace Netherlands3D.ModelParsing
 
             string meshvertexname = randomString(20);
             string meshnormalname = randomString(20);
+            
             meshVertices.SetupWriting(meshvertexname);
             meshNormals.SetupWriting(meshnormalname);
 
             string meshindicesname = randomString(20);
             meshIndices.SetupWriting(meshindicesname);
 
+            string meshuvname = randomString(20);
+            meshUVs.SetupWriting(meshuvname);
+
             createdMeshData = new MeshData();
             createdMeshData.name = submeshes[0].name;
             createdMeshData.vertexFileName = meshvertexname;
             createdMeshData.normalsFileName = meshnormalname;
             createdMeshData.indicesFileName = meshindicesname;
+            createdMeshData.uvFileName = meshuvname;
             nextindex = 0;
             int currentsubmesh = 1;
             int submeshcount = submeshes.Count;
@@ -177,12 +186,19 @@ namespace Netherlands3D.ModelParsing
                     meshNormals.RemoveData();
                     meshIndices.EndWriting();
                     meshIndices.RemoveData();
+
+                    meshUVs.EndWriting();
+                    meshUVs.RemoveData();
+
+
                     yield break;
                 }
             }
             meshVertices.EndWriting();
             meshNormals.EndWriting();
             meshIndices.EndWriting();
+
+            meshUVs.EndWriting();            
         }
         IEnumerator CreateSubMeshData(Submesh submesh)
         {
@@ -194,6 +210,7 @@ namespace Netherlands3D.ModelParsing
             rawdata.SetupReading(submesh.filename);
             vertices.SetupReading();
             normals.SetupReading();
+            uvs.SetupReading();
             long indexcount = rawdata.numberOfVertices();
             createdSubMeshData.startIndex = nextindex;
             for (int i = 0; i < indexcount; i++)
@@ -206,6 +223,10 @@ namespace Netherlands3D.ModelParsing
                     normals.EndReading();
                     vertices.RemoveData();
                     normals.RemoveData();
+
+                    uvs.EndReading();
+                    uvs.RemoveData();
+
                     yield break;
                 }
                 if ((System.DateTime.UtcNow-time).TotalMilliseconds > maximumFrameDurationInMilliseconds)
@@ -221,9 +242,17 @@ namespace Netherlands3D.ModelParsing
                 }
                 Vector3Int data = rawdata.ReadNext();
                 Vector3 vertex = vertices.ReadItem(data.x);
-                Vector3 normal = normals.ReadItem(data.y);
                 meshVertices.Add(vertex.x, vertex.y, vertex.z);
-                meshNormals.Add(normal.x, normal.y, normal.z);
+
+                Vector2 uv = uvs.ReadItem(data.x);
+                meshUVs.Add(uv.x, uv.y);                
+
+                if (normals.Count() > 0)
+                {
+                    Vector3 normal = normals.ReadItem(data.y);
+                    meshNormals.Add(normal.x, normal.y, normal.z);
+                }
+
                 meshIndices.Add(nextindex++);
             }
             createdSubMeshData.Indexcount = nextindex - createdSubMeshData.startIndex;
@@ -232,6 +261,8 @@ namespace Netherlands3D.ModelParsing
             rawdata.RemoveData(submesh.filename);
             vertices.EndReading();
             normals.EndReading();
+
+            uvs.EndReading();            
         }
 
 

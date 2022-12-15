@@ -6,13 +6,13 @@ using Netherlands3D.ModelParsing;
 
 public class CreateGameObjects : MonoBehaviour
 {
-    
+
     [HideInInspector]
     GameObjectDataSet gameObjectData;
 
     [HideInInspector]
     Material BaseMaterial;
-    
+
     [HideInInspector]
     public System.Action<float> BroadcastProgressPercentage;
     int gameobjectindex;
@@ -25,10 +25,12 @@ public class CreateGameObjects : MonoBehaviour
     Dictionary<string, Material> createdMaterials = new Dictionary<string, Material>();
     Vector3List vertices = new Vector3List();
     Vector3List normals = new Vector3List();
+    Vector2List uvs = new Vector2List();
+
     intList indices = new intList();
 
     bool gameObjectCreated = false;
-     //GameObject createdGameObject;
+    //GameObject createdGameObject;
     bool meshcreated = false;
     Mesh createdMesh;
 
@@ -36,10 +38,10 @@ public class CreateGameObjects : MonoBehaviour
     void BroadCastProgress()
     {
         float progress = 100 * gameobjectindex / totalgameobjects;
-        if (BroadcastProgressPercentage!=null) BroadcastProgressPercentage(progress);
+        if (BroadcastProgressPercentage != null) BroadcastProgressPercentage(progress);
     }
 
-    public void Create(GameObjectDataSet gameobjectDataset,Material basematerial, System.Action<GameObject> callbackToFunction = null)
+    public void Create(GameObjectDataSet gameobjectDataset, Material basematerial, System.Action<GameObject> callbackToFunction = null)
     {
         gameObjectData = gameobjectDataset;
         BaseMaterial = basematerial;
@@ -54,26 +56,26 @@ public class CreateGameObjects : MonoBehaviour
 
     IEnumerator createGameObjects()
     {
-        if (gameObjectData.gameObjects.Count==1)
+        if (gameObjectData.gameObjects.Count == 1)
         {
-            yield return StartCoroutine(AddGameObject(gameObjectData.gameObjects[0],parentobject));
+            yield return StartCoroutine(AddGameObject(gameObjectData.gameObjects[0], parentobject));
             parentobject.name = gameObjectData.name;
         }
-        else 
-        { 
-        foreach (var gameobjectdata in gameObjectData.gameObjects)
+        else
         {
-            gameobjectindex++;
-            BroadCastProgress();
-            gameObjectCreated = false;
-            StartCoroutine(AddGameObject(gameobjectdata));
-            while (gameObjectCreated==false)
+            foreach (var gameobjectdata in gameObjectData.gameObjects)
             {
-                yield return null;
+                gameobjectindex++;
+                BroadCastProgress();
+                gameObjectCreated = false;
+                StartCoroutine(AddGameObject(gameobjectdata));
+                while (gameObjectCreated == false)
+                {
+                    yield return null;
+                }
             }
         }
-        }
-        if (callback !=null)
+        if (callback != null)
         {
             callback(parentobject);
         }
@@ -94,11 +96,12 @@ public class CreateGameObjects : MonoBehaviour
         }
         gameobject.name = gameobjectdata.name;
         gameobject.transform.parent = parentobject.transform;
-        
+
         yield return StartCoroutine(CreateMesh(gameobjectdata.meshdata));
 
         if (createdMesh is null)
-        {   gameObjectCreated = true;
+        {
+            gameObjectCreated = true;
             Destroy(gameobject);
             yield break;
         }
@@ -130,14 +133,21 @@ public class CreateGameObjects : MonoBehaviour
             returnmaterial.name = materialname;
             for (int i = 0; i < gameObjectData.materials.Count; i++)
             {
-                if (gameObjectData.materials[i].Name==materialname)
+                if (gameObjectData.materials[i].Name == materialname)
                 {
                     returnmaterial.name = gameObjectData.materials[i].DisplayName;
                     returnmaterial.color = gameObjectData.materials[i].Diffuse;
-                    //createdMaterials.Add(materialname, returnmaterial);
+
+                    // Do we have a texture to apply?
+                    if (gameObjectData.materials[i].DiffuseTex != null)
+                    {
+                        returnmaterial.mainTexture =  gameObjectData.materials[i].DiffuseTex;
+                    }
+
+                    createdMaterials.Add(materialname, returnmaterial);
                 }
             }
-        //}
+        }
         return returnmaterial;
     }
 
@@ -148,36 +158,50 @@ public class CreateGameObjects : MonoBehaviour
         createdMesh = new Mesh();
         createdMesh.Clear();
         // add vertices
-        
+
         vertices.SetupReading(meshdata.vertexFileName);
+        uvs.SetupReading(meshdata.uvFileName);
+
         int vertexcount = vertices.Count();
-        if (vertexcount==0)
+        if (vertexcount == 0)
         {
             Debug.Log(meshdata.name + "has no vertices");
             Destroy(createdMesh);
             vertices.EndReading();
             vertices.RemoveData();
+
+            uvs.EndReading();
+            uvs.RemoveData();
+
             meshcreated = true;
             yield break;
         }
         Vector3[] meshvector3 = new Vector3[vertexcount];
+        Vector2[] meshuv = new Vector2[vertexcount];
+
         for (int i = 0; i < vertexcount; i++)
         {
-            if ((System.DateTime.UtcNow-time).TotalMilliseconds>400)
+            if ((System.DateTime.UtcNow - time).TotalMilliseconds > 400)
             {
                 yield return null;
                 time = System.DateTime.UtcNow;
             }
             meshvector3[i] = vertices.ReadItem(i);
+            meshuv[i] = uvs.ReadItem(i);
         }
         createdMesh.vertices = meshvector3;
+        createdMesh.uv = meshuv;
+
         //createdMesh.SetVertices(meshvector3);
-        
+
+        uvs.EndReading();
+        uvs.RemoveData();
+
         vertices.EndReading();
         vertices.RemoveData();
 
         // add indices
-        
+
         indices.SetupReading(meshdata.indicesFileName);
         int indexcount = indices.numberOfVertices();
         int[] meshindices = new int[indexcount];
@@ -196,39 +220,62 @@ public class CreateGameObjects : MonoBehaviour
         indices.EndReading();
         indices.RemoveData();
 
+
+        // Set uvs:
+
+
+
+
+
+
+
+
         // add normals
-        if (meshdata.normalsFileName!="")
+        if (meshdata.normalsFileName != "")
         {
-           
-            
+
+
             normals.SetupReading(meshdata.normalsFileName);
             int normalscount = normals.Count();
-            if (normalscount==vertexcount)
-            {
-                if ((System.DateTime.UtcNow - time).TotalMilliseconds > 400)
-                {
-                    yield return null;
-                    time = System.DateTime.UtcNow;
-                }
-                hasnormals = true;
-                Vector3[] meshnormals = new Vector3[normalscount];
-                for (int i = 0; i < normalscount; i++)
-                {
-                    meshnormals[i] = normals.ReadItem(i);
-                }
 
-                createdMesh.normals = meshnormals;
+            // Only check normals if > 0. 
+            if (normalscount > 0)
+            {
+                if (normalscount == vertexcount)
+                {
+                    if ((System.DateTime.UtcNow - time).TotalMilliseconds > 400)
+                    {
+                        yield return null;
+                        time = System.DateTime.UtcNow;
+                    }
+                    hasnormals = true;
+                    Vector3[] meshnormals = new Vector3[normalscount];
+                    for (int i = 0; i < normalscount; i++)
+                    {
+                        meshnormals[i] = normals.ReadItem(i);
+                    }
+
+                    createdMesh.normals = meshnormals;
+                }
+                else
+                {
+
+                    normals.EndReading();
+                    normals.RemoveData();
+                    Debug.Log(meshdata.name + "number of normals != number of vertices");
+                    Destroy(createdMesh);
+                    meshcreated = true;
+                    yield break;
+
+                }
             }
             else
             {
-                normals.EndReading();
-                normals.RemoveData();
-                Debug.Log(meshdata.name + "number of normals != number of vertices");
-                Destroy(createdMesh);
-                meshcreated = true;
-                yield break;
-
+                // Calculate normals using Unity:
+                hasnormals = false;
             }
+
+
             normals.EndReading();
             normals.RemoveData();
 
@@ -239,16 +286,17 @@ public class CreateGameObjects : MonoBehaviour
         {
             UnityEngine.Rendering.SubMeshDescriptor smd = new UnityEngine.Rendering.SubMeshDescriptor();
             smd.indexStart = (int)meshdata.submeshes[i].startIndex;
-            smd.indexCount = (int)meshdata.submeshes[i].Indexcount ;
+            smd.indexCount = (int)meshdata.submeshes[i].Indexcount;
             smd.topology = MeshTopology.Triangles;
             //              smd.baseVertex = sm.Value.startVertex;
             //              smd.vertexCount = sm.Value.vertexCount;
             createdMesh.SetSubMesh(i, smd);
         }
-        if (hasnormals ==false)
+        if (hasnormals == false)
         {
             createdMesh.RecalculateNormals();
         }
+
         if ((System.DateTime.UtcNow - time).TotalMilliseconds > 400)
         {
             yield return null;

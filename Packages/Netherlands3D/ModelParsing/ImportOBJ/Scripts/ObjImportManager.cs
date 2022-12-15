@@ -10,18 +10,24 @@ public class ObjImportManager : MonoBehaviour
     [SerializeField] Material baseMaterial;
     bool expectingObjFile = false;
     bool expectingMTLFile = false;
+    bool expectingImageFile = false;
     [SerializeField] StringEvent receiveFileToLoad;
     [SerializeField] TriggerEvent cancelImporting;
 
     [Header("Optional triggers")]
     [SerializeField] TriggerEvent expectOBJFile;
     [SerializeField] TriggerEvent expectMTLFile;
+    [SerializeField] TriggerEvent expectImageFile;
     [SerializeField, Tooltip("Use this trigger in combination with expectOBJFile and expectMTLFile to import OBJ and MTL files in specific steps")] TriggerEvent startImporting;
 
     [Header("Optional output")]
     [SerializeField] BoolEvent ReadyForImport;
     [SerializeField] StringEvent ReceivedOBJFilename;
     [SerializeField] StringEvent ReceivedMTLFilename;
+    
+    // We support one image right now.
+    [SerializeField] StringEvent ReceivedImageFilename;
+    
     [SerializeField] GameObjectEvent CreatedMoveableGameObject;
     [SerializeField] GameObjectEvent CreatedImmoveableGameObject;
 
@@ -82,6 +88,28 @@ public class ObjImportManager : MonoBehaviour
         }
     }
 
+
+
+    string imgFileName = "";
+    string imgfilename
+    {
+        get
+        {
+            return imgFileName;
+        }
+        set
+        {
+            imgFileName = value;
+#if UNITY_WEBGL && !UNITY_EDITOR
+Debug.Log("received imgfile: " + imgFileName);
+            imgFileName = System.IO.Path.Combine(Application.persistentDataPath, imgFileName);
+#endif
+            if (ReceivedImageFilename) ReceivedImageFilename.started.Invoke(System.IO.Path.GetFileName(imgFileName));
+        }
+    }
+
+
+
     ObjImporter importer;
     private void Awake()
     {
@@ -103,6 +131,18 @@ public class ObjImportManager : MonoBehaviour
         {
             expectingMTLFile = true;
         }
+
+        if (expectImageFile == true)
+        {
+            expectImageFile.started.AddListener(OnExpectingImageFile);
+        }
+        else
+        {
+            expectingImageFile = true;
+        }
+
+
+
         if (cancelImporting) cancelImporting.started.AddListener(OnCancel);
         if (true)
         {
@@ -130,6 +170,18 @@ public class ObjImportManager : MonoBehaviour
         receiveFileToLoad.started.AddListener(OnMTLFileReceived);
     }
 
+
+    void OnExpectingImageFile()
+    {
+        if (expectingImageFile == true)
+        {
+            receiveFileToLoad.started.RemoveListener(OnImageFileReceived);
+        }
+
+        receiveFileToLoad.started.AddListener(OnImageFileReceived);
+        expectingImageFile = true;
+    }
+
     void OnFileneamesReceived(string value)
     {
         Debug.Log("receiveid files: " + value);
@@ -142,16 +194,25 @@ public class ObjImportManager : MonoBehaviour
         
         foreach (var file in filenames)
         {
-            string fileextention = System.IO.Path.GetExtension(file);
-            if (fileextention == ".obj")
+            string fileextention = System.IO.Path.GetExtension(file).ToLower();
+            switch(fileextention)
             {
-                objfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
-            }
-            else if (fileextention == ".mtl")
-            {
-                mtlfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
+                case ".obj":
+                    objfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
+                    break;
+
+                case ".mtl":
+                    mtlfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
+                    break;
+
+                case ".jpg":
+                case ".png":
+                case ".jpeg":
+                    imgfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
+                    break;
             }
         }
+
         if (objfilename!="")
         {
             if(startImporting==null)
@@ -179,7 +240,13 @@ public class ObjImportManager : MonoBehaviour
         receiveFileToLoad.started.RemoveListener(OnMTLFileReceived);
         mtlfilename = value;
     }
-#endregion
+
+    void OnImageFileReceived(string value)
+    {
+        receiveFileToLoad.started.RemoveListener(OnImageFileReceived);
+        imgfilename = value;
+    }
+    #endregion
 
 
     public void OnCancel()
@@ -194,6 +261,8 @@ public class ObjImportManager : MonoBehaviour
 
         importer.objFilePath = objfilename;
         importer.mtlFilePath = mtlfilename;
+        importer.imgFilePath = imgfilename;
+
         importer.BaseMaterial = baseMaterial;
         importer.createSubMeshes = createSubMeshes;
         if(started)started.started.Invoke(true);
@@ -214,13 +283,18 @@ public class ObjImportManager : MonoBehaviour
             if (CreatedImmoveableGameObject) CreatedImmoveableGameObject.started.Invoke(returnedGameObject);
         }
         
-        objfilename = "";
-        mtlfilename = "";
+        objfilename = string.Empty; ;
+        mtlfilename = string.Empty; ;
+        imgfilename = string.Empty;
     }
 
     void ConnectToImporter()
     {
+        
         if (importer!=null) return;
+
+        Debug.Log("Connected ToImporter");
+
         importer = gameObject.AddComponent<ObjImporter>();
         // give the importer handles for progress- and errormessaging
         importer.currentActivity = BroadcastCurrentActivity;
