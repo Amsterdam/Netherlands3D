@@ -123,12 +123,12 @@ public class CreateGameObjects : MonoBehaviour
     Material getMaterial(string materialname)
     {
         Material returnmaterial;
-        //if (createdMaterials.ContainsKey(materialname))
-        //{
-        //    returnmaterial = createdMaterials[materialname];
-        //}
-        //else
-        //{
+        if (createdMaterials.ContainsKey(materialname))
+        {
+            returnmaterial = createdMaterials[materialname];
+        }
+        else
+        {
             returnmaterial = new Material(BaseMaterial);
             returnmaterial.name = materialname;
             for (int i = 0; i < gameObjectData.materials.Count; i++)
