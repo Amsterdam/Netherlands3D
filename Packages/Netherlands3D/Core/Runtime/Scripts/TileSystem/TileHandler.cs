@@ -62,7 +62,8 @@ namespace Netherlands3D.TileSystem
 		/// <summary>
 		/// list of tilechanges, ready to be processed
 		/// </summary>
-		private List<TileChange> pendingTileChanges = new List<TileChange>();
+		[HideInInspector]
+		public List<TileChange> pendingTileChanges = new List<TileChange>();
 
 		/// <summary>
 		/// dictionary with tilechanges that are curently being processed

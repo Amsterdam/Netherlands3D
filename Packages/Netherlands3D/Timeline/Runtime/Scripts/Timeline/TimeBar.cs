@@ -57,25 +57,58 @@ namespace Netherlands3D.Timeline
         /// <summary>
         /// Get the current dateTime based on a local x position of the bar
         /// </summary>
-        /// <param name="posX">The bar local x position</param>
-        /// <param name="minDistance">Should the posX be at a min distance of the datetimepos before returning it</param>
+        /// <param name="posX">The scrubber local x position</param>
+        /// <param name="snapping">Should the posX be at a min distance of the datetimepos before returning it</param>
         /// <returns>DateTime</returns>
-        public DateTime GetCurrentDateTime(float posX, bool minDistance = false)
+        public DateTime GetCurrentDateTime(float posX, bool snapping = false)
         {
-            if(!minDistance)
-                return dateTimePositions.OrderBy(x => Math.Abs(x.Key - posX + transform.localPosition.x)).FirstOrDefault().Value;
+            if (!snapping)
+            {
+                var closestPositions = dateTimePositions.OrderBy(x => Math.Abs(x.Key - posX + transform.localPosition.x));
+                var positions = closestPositions.ToArray();
+
+                //Earlier time is always left
+                var leftDateTime = (positions[0].Value < positions[1].Value) ? positions[0] : positions[1];
+                var rightDateTime = (positions[0].Value >= positions[1].Value) ? positions[0] : positions[1];
+
+                var left = leftDateTime.Value.Ticks;
+                var right = rightDateTime.Value.Ticks;
+
+                Debug.Log("LEFT: " + leftDateTime);
+                Debug.Log("RIGHT: " + rightDateTime);
+
+                var scrubberPositionInBar = (posX - transform.localPosition.x);
+                double normalisedBetweenValue = InverseLerpDoubles(leftDateTime.Key, rightDateTime.Key, scrubberPositionInBar);
+               
+                Debug.Log("Between: " + normalisedBetweenValue);
+
+                var rangeTicks = right - left;
+                Debug.Log("Range: " + rangeTicks);
+                var interpolatedRange = (left) + (long)(rangeTicks * normalisedBetweenValue);
+                var interpolatedDateTime = new DateTime((long)interpolatedRange);
+
+#if UNITY_EDITOR
+                Debug.Log("TImeline scrub time: " + interpolatedDateTime);
+#endif
+                return interpolatedDateTime;
+            }
             else
             {
                 // For snapping purposes
                 var keyValue = dateTimePositions.OrderBy(x => Math.Abs(x.Key - posX + transform.localPosition.x)).FirstOrDefault();
                 posX = Mathf.Abs(posX);
                 float mod = posX % 100;
-                if(mod >= 90 || mod == 0 || mod <= 10)
+                if (mod >= 90 || mod == 0 || mod <= 10)
                 {
                     return keyValue.Value;
                 }
                 else return new DateTime(1, 1, 1);
             }
+        }
+
+        private double InverseLerpDoubles(double a, double b, double v)
+        {
+            return ((v - a) / (b - a));
         }
 
         /// <summary>

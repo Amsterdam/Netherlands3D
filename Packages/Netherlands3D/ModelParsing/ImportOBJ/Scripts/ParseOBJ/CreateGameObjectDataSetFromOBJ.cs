@@ -93,6 +93,10 @@ namespace Netherlands3D.ModelParsing
             }
             if (broadcastCurrentAction != null)
                 broadcastCurrentAction("");
+
+            if (broadcastProgressPercentage != null)
+                broadcastProgressPercentage(100);
+
             vertices.RemoveData();
             normals.RemoveData();
             uvs.RemoveData();

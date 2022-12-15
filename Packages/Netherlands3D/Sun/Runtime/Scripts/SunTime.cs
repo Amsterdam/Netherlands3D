@@ -17,6 +17,7 @@
 */
 using System;
 using UnityEngine;
+using Netherlands3D.Events;
 
 namespace Netherlands3D.Sun
 {
@@ -78,12 +79,48 @@ namespace Netherlands3D.Sun
         private int frameStep;
 
         private const int gizmoRayLength = 10000;
+        [SerializeField] private DateTimeEvent dateTimeUpdate;
+        [SerializeField] private DateTimeEvent singleTriggerDateTimeEvent;
+        [SerializeField] private FloatEvent sendAnimationSpeed;
 
+        private void Start()
+        {
+            if (jumpToCurrentTimeAtStart)
+			{
+				ResetToNow();
+			}
+            else
+            {
+                Apply();
+            }
+        }
+
+       
+
+        private void Update()
+        {
+            if (!animate) return;
+
+            time = time.AddSeconds(timeSpeed * Time.deltaTime);
+            if (frameStep==0) {
+                if(dateTimeUpdate != null)
+                {
+                    dateTimeUpdate.Invoke(time);
+                }
+                SetPosition();
+            }
+            frameStep = (frameStep + 1) % frameSteps;
+		}
 		private void OnDrawGizmos()
 		{
             Gizmos.color = Color.yellow;
             Gizmos.DrawRay(this.transform.position, this.transform.position - sunDirectionalLight.transform.forward * gizmoRayLength);
 		}
+
+		private void OnValidate()
+        {
+            Apply();
+        }
 
 		public void ToggleAnimation(bool animate)
         {
@@ -103,6 +140,8 @@ namespace Netherlands3D.Sun
 
         public void SetHour(int hour)
         {
+
+
             this.hour = Mathf.Clamp(hour, 0, 24);
             OnValidate();
         }
@@ -146,22 +185,13 @@ namespace Netherlands3D.Sun
             frameSteps = i;
         }
 
-        public void SetTimeSpeed(float speed) {
-            timeSpeed = speed;
-        }
-
-        private void Start()
-        {
-            if (jumpToCurrentTimeAtStart)
-			{
-				ResetToNow();
-			}
-            else
+        public void SetTimeSpeed(float multiplicationFactor) {
+            timeSpeed = Math.Clamp(timeSpeed * multiplicationFactor, 1, 10000);
+            if(sendAnimationSpeed != null)
             {
-                Apply();
+                sendAnimationSpeed.Invoke(timeSpeed);
             }
-		}
-
+        }
 		public void ResetToNow()
 		{
 			time = DateTime.Now;
@@ -173,10 +203,35 @@ namespace Netherlands3D.Sun
 			year = time.Year;
 		}
 
-		private void OnValidate()
+        public void GetCurrentDateTime()
         {
-            Apply();
+            if(singleTriggerDateTimeEvent != null)
+            {
+                singleTriggerDateTimeEvent.Invoke(time);
+            }
         }
+
+        //public void SaveDateTimeData()
+        //{
+        //    savedDateTimeContainer.SetValue(time);
+        //}
+
+        //public void SaveDateTimeData(DateTime dateTime)
+        //{
+        //    savedDateTimeContainer.SetValue(dateTime);
+        //}
+
+        //public void LoadDateTimeData(DateTime dateTime)
+        //{
+        //    time = dateTime;
+        //    if (dateTimeUpdate != null)
+        //    {
+        //        dateTimeUpdate.Invoke(time);
+        //    }
+        //    SetPosition();
+        //}
+
+
 
         private void Apply()
         {
@@ -184,18 +239,7 @@ namespace Netherlands3D.Sun
             SetPosition();
         }
 
-        private void Update()
-        {
-            if (!animate) return;
-
-            time = time.AddSeconds(timeSpeed * Time.deltaTime);
-            if (frameStep==0) {
-                SetPosition();
-            }
-            frameStep = (frameStep + 1) % frameSteps;
-		}
-
-        void SetPosition()
+        private void SetPosition()
         {
             Vector3 angles = new Vector3();
 			SunPosition.CalculateSunPosition(time, (double)latitude, (double)longitude, out double azi, out double alt);
