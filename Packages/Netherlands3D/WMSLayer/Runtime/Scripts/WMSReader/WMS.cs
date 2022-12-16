@@ -46,10 +46,11 @@ public class WMS : IWebService, IWSMappable
         requiresSRS = required;
         SRS = srs;
     }
-    public void GetCapabilities()
+    public string GetCapabilities()
     {
-        WebServiceNetworker wsn = WebServiceNetworker.Instance;
-        wsn.StartCoroutine(wsn.GetWebString(BaseUrl + "?request=getcapabilities&service=wms"));
+        //WebServiceNetworker wsn = WebServiceNetworker.Instance;
+        //wsn.StartCoroutine(wsn.GetWebString(BaseUrl + "?request=getcapabilities&service=wms"));
+        return BaseUrl + "?request=getcapabilities&service=wms";
     }
     public string GetMapRequest()
     {

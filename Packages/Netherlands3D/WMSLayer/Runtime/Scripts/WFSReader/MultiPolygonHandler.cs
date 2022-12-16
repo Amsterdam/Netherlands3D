@@ -2,7 +2,7 @@ using Netherlands3D.Utilities;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Netherlands3D.Core;
 public class MultiPolygonHandler
 {
     private WFSHandler owner;
@@ -12,7 +12,7 @@ public class MultiPolygonHandler
     }
     public void ProcessMultiPolygon(List<List<List<GeoJSONPoint>>> multiPolyList)
     {
-        Debug.Log("Processing MultiPoly!");
+        //Debug.Log("Processing MultiPoly!");
         GameObject template = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         foreach (List<List<GeoJSONPoint>> pointListList in multiPolyList)
         {
@@ -30,9 +30,12 @@ public class MultiPolygonHandler
                         pointCoords = new Vector2(pointCoords.x / pointList.Count, pointCoords.y / pointList.Count);
                         Debug.Log($"Point coords at: {pointCoords}");
                         float yOffset = 30f;
-                        Object.Instantiate(template, new Vector3(pointCoords.x, yOffset, pointCoords.y), Quaternion.identity, owner.SpawnParent);
+                        Vector3 eval = pointCoords;
+                        Vector3 unityCoords = CoordConvert.RDtoUnity(eval);
+                        Object.Instantiate(template, new Vector3(unityCoords.x, yOffset, unityCoords.z), Quaternion.identity, owner.SpawnParent);
                     }
                 }
+                
             }
         }
         Object.Destroy(template);

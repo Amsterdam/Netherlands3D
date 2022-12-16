@@ -8,14 +8,21 @@ public class WMSMapHandler : MonoBehaviour
 {
 
     [SerializeField] private float updateInterval = 1f;
-
     [SerializeField] private Camera cam;
+    [SerializeField] private WMSHandler handler;
+
+    [Header("Invoked Events")]
+    [SerializeField] private TriggerEvent requestWMSData;
+    [SerializeField] private ObjectEvent mapImageEvent; 
+    [Header("Listen Events")]
+    [SerializeField] private ObjectEvent wmsDataEvent;
 
     private bool cameraPositionMapUpdate = true;
     private float intervalTimer;
 
     private void Awake()
     {
+        wmsDataEvent.started.AddListener(HandleMapPreview);
         if(cam == null)
             cam = Camera.main;
     }
@@ -25,19 +32,12 @@ public class WMSMapHandler : MonoBehaviour
     {
         if (cameraPositionMapUpdate && WMS.ActiveInstance != null)
         {
-            if (WMS.ActiveInstance.ActivatedLayers.Count == 0)
-                return;
+
             intervalTimer += Time.deltaTime;
-            if(cam != Camera.main)
-            {
-                cam.transform.position = Camera.main.transform.position;
-            }
             if(intervalTimer >= updateInterval)
             {
                 intervalTimer = 0;
-                Extent e = cam.GetRDExtent();
-                WMS.ActiveInstance.BBox = new BoundingBox((float)e.MinX, (float)e.MinY, (float)e.MaxX, (float)e.MaxY);
-                WebServiceNetworker.Instance.SendRequest(true);
+                requestWMSData.Invoke();
             }
         }
     }
@@ -46,4 +46,20 @@ public class WMSMapHandler : MonoBehaviour
     {
         cameraPositionMapUpdate = value;
     }
+
+    private void HandleMapPreview(object wms)
+    {
+        WMS current = (WMS)wms;
+        if (current.ActivatedLayers.Count == 0)
+            return;
+        if (cam != Camera.main)
+        {
+            cam.transform.position = Camera.main.transform.position;
+        }
+        Extent e = cam.GetRDExtent();
+        current.BBox = new BoundingBox((float)e.MinX, (float)e.MinY, (float)e.MaxX, (float)e.MaxY);
+        current.IsPreview(true);
+        handler.StartCoroutine(handler.DownloadImage(current.GetMapRequest(), mapImageEvent));
+    }
+
 }

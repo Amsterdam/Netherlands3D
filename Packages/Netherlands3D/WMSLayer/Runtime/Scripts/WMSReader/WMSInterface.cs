@@ -6,9 +6,7 @@ using Netherlands3D.Events;
 
 public class WMSInterface : MonoBehaviour
 {
-    //public static List<WMSLayer> ActivatedLayers { get; private set; } = new();
-
-    public int Health { get; private set; }
+    [SerializeField] private GameObject messagePanel;
 
     [Header("Options Parents")]
     [SerializeField] private Transform layerContentParent;
@@ -24,11 +22,16 @@ public class WMSInterface : MonoBehaviour
     [SerializeField] private RawImage previewRawImage;
     [SerializeField] private RawImage legendRawImage;
 
+    [Header("Invoked Events")]
+    [SerializeField] private StringEvent messageTitleEvent;
+    [SerializeField] private StringEvent urlDisplayEvent;
+
     [Header("Listen Events")]
     [SerializeField] private TriggerEvent resetEvent;
     [SerializeField] private ObjectEvent buildInterfaceEvent;
     [SerializeField] private ObjectEvent imageEvent;
     [SerializeField] private ObjectEvent legendEvent;
+    [SerializeField] private TriggerEvent logEvent;
 
     private int legendIndex = 0;
     private List<Texture> legends = new();
@@ -48,6 +51,15 @@ public class WMSInterface : MonoBehaviour
         buildInterfaceEvent.started.AddListener(BuildInterface);
         imageEvent.started.AddListener(DisplayPreviewImage);
         legendEvent.started.AddListener(GetLegendTexture);
+
+        logEvent.started.AddListener(() =>
+            {
+                messagePanel.SetActive(true);
+                messageTitleEvent.Invoke("Url Logged");
+                WMS.ActiveInstance.IsPreview(false);
+                urlDisplayEvent.Invoke(WMS.ActiveInstance.GetMapRequest());
+            }
+        );
     }
 
     public void ResetInterface()
@@ -63,7 +75,7 @@ public class WMSInterface : MonoBehaviour
         for (int i = activeLayerParent.childCount - 1; i >= 0; i--)
         {
             GameObject child = activeLayerParent.GetChild(i).gameObject;
-            Button b = child.GetComponent<Button>();
+            Button b = child.GetComponentInChildren<Button>();
             b.onClick.RemoveAllListeners();
             Destroy(child);
         }

@@ -106,53 +106,6 @@ public class WFSFormatter
 
         string version = xml.DocumentElement.Attributes.GetNamedItem("version").InnerText;
         wfs.Version = version;
-        //XmlNode topLayer = GetChildNode(filterCapabilities, "Layer");
-        //XmlNodeList subLayers = GetChildNodes(topLayer, "Layer");
-
-
-        //XmlNodeList layersList = wmsXml.SelectNodes("/WMS_Capabilities/Layer/Layer");
-        //List<WFSLayer> wfsLayers = new();
-
-        //foreach (XmlNode subLayer in subLayers)
-        //{
-        //    string name = GetChildNodeValue(subLayer, "Name");
-        //    Debug.Log(name);
-        //    if (string.IsNullOrEmpty(name))
-        //    {
-        //        // The layer has no name and can't be requested;
-        //        continue;
-        //    }
-        //    WMSLayer extractLayer = new WMSLayer();
-        //    extractLayer.Name = name;
-        //    extractLayer.Title = GetChildNodeValue(subLayer, "Title");
-        //    extractLayer.Abstract = GetChildNodeValue(subLayer, "Abstract");
-
-        //    XmlNodeList crsElements = GetChildNodes(subLayer, "CRS");
-        //    foreach (XmlNode crs in crsElements)
-        //    {
-        //        Debug.Log("Found a CRS element!");
-        //        extractLayer.CRS.Add(crs.InnerText);
-        //    }
-        //    XmlNodeList styles = GetChildNodes(subLayer, "Style");
-        //    foreach (XmlNode style in styles)
-        //    {
-        //        WMSStyle extractStyle = new WMSStyle();
-        //        extractStyle.Name = GetChildNodeValue(style, "Name");
-        //        extractStyle.Title = GetChildNodeValue(style, "Title");
-        //        XmlNode legendNode = GetChildNode(style, "LegendURL");
-        //        if (legendNode != null)
-        //        {
-        //            XmlNode onlineResourceNode = GetChildNode(legendNode, "OnlineResource");
-        //            extractStyle.LegendURL = onlineResourceNode.Attributes.GetNamedItem("xlink:href").InnerText;
-        //        }
-        //        extractLayer.AddStyleToDictionary(extractStyle.Name, extractStyle);
-        //    }
-        //    wmsLayers.Add(extractLayer);
-        //    Debug.Log(extractLayer);
-        //}
-
-        //resetReaderEvent.Invoke();
-        //wfsEvent.Invoke(wfsLayers);
 
         return wfs;
 
@@ -181,15 +134,8 @@ public class WFSFormatter
 
     private string GetChildNodeValue(XmlNode parentNode, string childNodeName, string nameSpace)
     {
-        XmlNode selected;
-        if(nameSpace == "")
-        {
-            selected = parentNode.SelectSingleNode($"wfs:{childNodeName}", namespaceManager);
-        }
-        else
-        {
-            selected = parentNode.SelectSingleNode($"{nameSpace}:{childNodeName}", namespaceManager);
-        }
+
+        XmlNode selected = parentNode.SelectSingleNode($"{nameSpace}:{childNodeName}", namespaceManager);
         if (selected != null)
         {
             return selected.InnerText;
@@ -199,18 +145,10 @@ public class WFSFormatter
 
     private XmlNode GetChildNode(XmlNode parentNode, string childNodeName, string nameSpace)
     {
-        if (nameSpace == "")
-        {
-            return parentNode.SelectSingleNode($"wfs:{childNodeName}", namespaceManager);
-        }
         return parentNode.SelectSingleNode($"{nameSpace}:{childNodeName}", namespaceManager);
     }
     private XmlNodeList GetChildNodes(XmlNode parentNode, string childNodeName, string nameSpace)
     {
-        if (nameSpace == "")
-        {
-            return parentNode.SelectNodes($"wfs:{childNodeName}", namespaceManager);
-        }
         return parentNode.SelectNodes($"{nameSpace}:{childNodeName}", namespaceManager);
     }
 

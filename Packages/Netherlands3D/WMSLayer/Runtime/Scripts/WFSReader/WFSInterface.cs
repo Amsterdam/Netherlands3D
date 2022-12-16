@@ -9,39 +9,25 @@ public class WFSInterface : MonoBehaviour
     [SerializeField] private Transform featureContentParent;
     [SerializeField] private Button featureButtonPrefab;
 
+    [Header("Invoked Events")]
+    [SerializeField] private StringEvent getFeatureEvent;
     [Header("Listen Events")]
-    [SerializeField] private BoolEvent isWmsEvent;
+    [SerializeField] private ObjectEvent wfsDataEvent;
 
     // Start is called before the first frame update
     void Start()
     {
-        isWmsEvent.started.AddListener((bool isWms) =>
-        {
-            if (!isWms)
-                BuildWFSInterface();
-        }
-        );
+        wfsDataEvent.started.AddListener((object wfs) => BuildWFSInterface((WFS)wfs));
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    private void BuildWFSInterface()
+    private void BuildWFSInterface(WFS wfs)
     {
         ResetInterface();
-
-        foreach (WFSFeature feature in WFS.ActiveInstance.features)
+        foreach (WFSFeature feature in wfs.features)
         {
             Button b = Instantiate(featureButtonPrefab, featureContentParent);
             b.GetComponentInChildren<Text>().text = feature.FeatureName;
-            b.onClick.AddListener(() =>
-            {
-                WFS.ActiveInstance.TypeName = feature.FeatureName;
-                WFS.ActiveInstance.GetFeature();
-            }); 
+            b.onClick.AddListener(() => getFeatureEvent.Invoke(feature.FeatureName));
         }
     }
 

@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Xml;
 using Netherlands3D.Events;
 using UnityEngine.UI;
 
@@ -14,20 +13,11 @@ public class UrlReader : MonoBehaviour
 
     [Header("Invoked Events")]
     [SerializeField] private TriggerEvent resetReaderEvent;
-    [SerializeField] private ObjectEvent wmsLayerEvent;
     [SerializeField] private BoolEvent requestUrlButtonEvent;
-    [SerializeField] private BoolEvent isWMSEVent;
+    //[SerializeField] private BoolEvent isWMSEvent;
 
-    [Header("Listen Events")]
-    [SerializeField] private StringEvent boundingBoxMinXEvent;
-    [SerializeField] private StringEvent boundingBoxMinYEvent;
-    [SerializeField] private StringEvent boundingBoxMaxXEvent;
-    [SerializeField] private StringEvent boundingBoxMaxYEvent;
-    [SerializeField] private StringEvent resolutionEvent;
-
-    //private IWebService activeService;
-    private WMSFormatter wmsFormatter;
-    private WFSFormatter wfsFormatter;
+    [SerializeField] private StringEvent wmsCreationEvent;
+    [SerializeField] private StringEvent wfsCreationEvent;
 
     private void Awake()
     {
@@ -38,12 +28,6 @@ public class UrlReader : MonoBehaviour
             return;
         }
         Instance = this;
-
-        boundingBoxMinXEvent.started.AddListener(SetBoundingBoxMinX);
-        boundingBoxMaxXEvent.started.AddListener(SetBoundingBoxMaxX);
-        boundingBoxMinYEvent.started.AddListener(SetBoundingBoxMinY);
-        boundingBoxMaxYEvent.started.AddListener(SetBoundingBoxMaxY);
-        resolutionEvent.started.AddListener(SetResolution);
     }
 
     private void Start()
@@ -55,16 +39,15 @@ public class UrlReader : MonoBehaviour
     }
     public void GetFromURL()
     {
-        if (resetReaderEvent == null || wmsLayerEvent == null)
+        if (resetReaderEvent != null)
         {
-            Debug.LogError("Events aren't properly set up! Please resolve this!");
+            resetReaderEvent.Invoke();
         }
         
         string url = urlField.text.ToLower();
         if (string.IsNullOrWhiteSpace(url))
         {
             throw new System.InvalidOperationException("You must input a valid URL to read");
-
         }
 
         string validatedURL = string.Empty;
@@ -76,77 +59,22 @@ public class UrlReader : MonoBehaviour
             }
             validatedURL += c;
         }
-
-        XmlDocument xml = new XmlDocument();
         if (url.Contains("wms"))
         {
-            ActiveWMS = new WMS(validatedURL);
-            WebServiceNetworker.Instance.WebStringEvent.started.AddListener(ProcessWMS);
-            ActiveWMS.GetCapabilities();
+            if(wmsCreationEvent != null)
+            {
+                wmsCreationEvent.Invoke(validatedURL);
+                //isWMSEvent.Invoke(true);
+            }
         }
         else if (url.Contains("wfs"))
         {
-            ActiveWFS = new WFS(validatedURL);
-            WebServiceNetworker.Instance.WebStringEvent.started.AddListener(ProcessWFS);
-            ActiveWFS.GetCapabilities();
-        }
-    }
-    private void ProcessWMS(string xmlData)
-    {
-        XmlDocument xml = new XmlDocument();
-        xml.LoadXml(xmlData);
-
-        XmlElement service = xml.DocumentElement["Service"]["Name"];
-        if (service != null && service.InnerText.Contains("WMS"))
-        {
-            if (wmsFormatter == null)
+            if(wfsCreationEvent != null)
             {
-                wmsFormatter = new WMSFormatter();
-            }
-            ActiveWMS = wmsFormatter.ReadWMSFromXML(ActiveWMS, xml);
-            resetReaderEvent.Invoke();
-            wmsLayerEvent.Invoke(ActiveWMS.Layers);
-            isWMSEVent.Invoke(true);
-        }
-    }
-    private void ProcessWFS(string xmlData)
-    {
-        XmlDocument xml = new XmlDocument();
-        xml.LoadXml(xmlData);
+                wfsCreationEvent.Invoke(validatedURL);
+                //isWMSEvent.Invoke(false);
 
-        XmlElement serviceID = xml.DocumentElement["ows:ServiceIdentification"]["ows:ServiceType"];
-        if (serviceID != null && serviceID.InnerText.Contains("WFS"))
-        {
-            print(serviceID.InnerText);
-            if (wfsFormatter == null)
-            {
-                wfsFormatter = new WFSFormatter();
             }
-            ActiveWFS = wfsFormatter.ReadFromWFS(ActiveWFS, xml);
-            resetReaderEvent.Invoke();
-            isWMSEVent.Invoke(false);
         }
-    }
-    private void SetResolution(string resolution)
-    {
-        int res = int.Parse(resolution);
-        ActiveWMS.Resolution = new Vector2Int(res, res);
-    }
-
-    private void SetBoundingBoxMinX(string value)
-    {
-        ActiveWMS.BBox.MinX = float.Parse(value);
-    }
-    private void SetBoundingBoxMaxX(string value)
-    {
-        ActiveWMS.BBox.MaxX = float.Parse(value);
-    }
-    private void SetBoundingBoxMinY(string value)
-    {
-        ActiveWMS.BBox.MinY = float.Parse(value);
-    }
-    private void SetBoundingBoxMaxY(string value)
-    {
-        ActiveWMS.BBox.MaxY = float.Parse(value);
     }
 }

@@ -16,8 +16,6 @@ public class WFS : IWebService
 
     private int startIndex = 0;
     private int count = 5;
-    private WFSHandler owner;
-
 
     public WFS(string baseUrl)
     {
@@ -25,102 +23,13 @@ public class WFS : IWebService
         ActiveInstance = this;
         features = new();
     }
-    public void SetHandler(WFSHandler handler)
-    {
-        owner = handler;
-    }
 
-    public void GetCapabilities()
+    public string GetCapabilities()
     {    
-        WebServiceNetworker wsn = WebServiceNetworker.Instance;
-        wsn.StartCoroutine(wsn.GetWebString(BaseUrl + "?request=getcapabilities&service=wfs"));
+        return BaseUrl + "?request=getcapabilities&service=wfs";
     }
 
-    public void GetFeature()
-    {
-        WebServiceNetworker wsn = WebServiceNetworker.Instance;
-        wsn.WebStringEvent.started.AddListener(HandleFeatureJSON);
-        Debug.Log(GetFeatureRequest());
-        wsn.StartCoroutine(wsn.GetWebString(GetFeatureRequest()));
-    }
-    private void HandleFeatureJSON(string json)
-    {
-        GeoJSON geojson = new GeoJSON(json);
-        //GeoJSON geoJSON = JsonUtility.FromJson<GeoJSON>(json);
-        //geoJSON.geoJSONString = json;
-        GameObject template = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        foreach(WFSFeature f in features)
-        {
-            Debug.Log($"Feature: {f.FeatureName}");
-        }
-        if (geojson.FindFirstFeature())
-        {
-            Debug.Log(geojson.FeatureString);
-            //foreach (List<List<GeoJSONPoint>> pointListList in geojson.GetMultiPolygon())
-            //{
-            //    foreach (List<GeoJSONPoint> pointList in pointListList)
-            //    {
-            //        Vector2 pointCoords = Vector2.zero;
-
-            //        for (int i = 0; i < pointList.Count; i++)
-            //        {
-            //            GeoJSONPoint p = pointList[i];
-            //            pointCoords.x += (float)p.x;
-            //            pointCoords.y += (float)p.y;
-            //            if (i == pointList.Count - 1)
-            //            {
-            //                pointCoords = new Vector2(pointCoords.x / pointList.Count, pointCoords.y / pointList.Count);
-            //                Debug.Log($"Point coords at: {pointCoords}");
-            //                float yOffset = 30f;
-            //                Object.Instantiate(template, new Vector3(pointCoords.x, yOffset, pointCoords.y), Quaternion.identity);
-            //            }
-
-            //        }
-            //        //foreach (GeoJSONPoint p in pointList)
-            //        //{
-            //        //    Debug.Log($"[{p.x}, {p.y}]\n");
-            //        //}
-            //    }
-            //}
-            while (geojson.GotoNextFeature())
-            {
-                Debug.Log("Found new Feature!");
-                foreach (List<List<GeoJSONPoint>> pointListList in geojson.GetMultiPolygon())
-                {
-                    foreach (List<GeoJSONPoint> pointList in pointListList)
-                    {
-                        Vector2 pointCoords = Vector2.zero;
-
-                        for (int i = 0; i < pointList.Count; i++)
-                        {
-                            GeoJSONPoint p = pointList[i];
-                            pointCoords.x += (float)p.x;
-                            pointCoords.y += (float)p.y;
-                            if (i == pointList.Count - 1)
-                            {
-                                pointCoords = new Vector2(pointCoords.x / pointList.Count, pointCoords.y / pointList.Count);
-                                Debug.Log($"Point coords at: {pointCoords}");
-                                float yOffset = 30f;
-                                Object.Instantiate(template, new Vector3(pointCoords.x, yOffset, pointCoords.y), Quaternion.identity);
-                            }
-
-                        }
-                        //foreach (GeoJSONPoint p in pointList)
-                        //{
-                        //    Debug.Log($"[{p.x}, {p.y}]\n");
-                        //}
-                    }
-                }
-                Object.Destroy(template);
-            }
-        }
-        else
-        {
-            Debug.Log("Couldn't find any feature in the WFS!");
-        }
-    }
-
-    private string GetFeatureRequest()
+    public string GetFeatures()
     {
         StringBuilder stringBuilder = new StringBuilder(BaseUrl);
         stringBuilder.Append(featureRequest);
@@ -136,6 +45,7 @@ public class WFS : IWebService
         stringBuilder.Append(startIndexRequest);
 
         return stringBuilder.ToString();
+
     }
     private string featureRequest => "?request=getfeature&service=wfs";
     private string versionRequest => $"version={Version}";

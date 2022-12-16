@@ -23,46 +23,46 @@ public class WebServiceNetworker : MonoBehaviour
     [SerializeField] private TriggerEvent logEvent;
 
 
-    private void Start()
-    {
-        if(logEvent == null || Instance != null)
-            return;
+    //private void Start()
+    //{
+    //    if(logEvent == null || Instance != null)
+    //        return;
 
-        Instance = this;
-        logEvent.started.AddListener(() => 
-            { 
-                messagePanel.SetActive(true);
-                messageTitleEvent.Invoke("Url Logged");
-                WMS.ActiveInstance.IsPreview(false);
-                urlDisplayEvent.Invoke(WMS.ActiveInstance.GetMapRequest());
-            }
-        );
-    }
+    //    Instance = this;
+    //    logEvent.started.AddListener(() => 
+    //        { 
+    //            messagePanel.SetActive(true);
+    //            messageTitleEvent.Invoke("Url Logged");
+    //            WMS.ActiveInstance.IsPreview(false);
+    //            urlDisplayEvent.Invoke(WMS.ActiveInstance.GetMapRequest());
+    //        }
+    //    );
+    //}
 
-    public void SendRequest(bool preview)
-    {
-        //WMSRequest.ActivatedLayers = WMSInterface.ActivatedLayers;
+    //public void SendRequest(bool preview)
+    //{
+    //    //WMSRequest.ActivatedLayers = WMSInterface.ActivatedLayers;
 
-        WMS.ActiveInstance.IsPreview(preview);
-        string url = WMS.ActiveInstance.GetMapRequest();
-        if (preview)
-        {
-            StartCoroutine(DownloadImage(url, imageEvent));
-            return;
-        }
-        if(wmsLayerEvent != null)
-        {
-            wmsLayerEvent.Invoke(url);
-            foreach(WMSLayer l in WMS.ActiveInstance.ActivatedLayers)
-            {
-                if(l.activeStyle != null)
-                {
-                    StartCoroutine(GetLegendImage(l.activeStyle.LegendURL));
-                }
-            }
-            //StartCoroutine(GetLegendImage(WMSRequest.ActivatedLayers[0].activeStyle.LegendURL));
-        }
-    }
+    //    WMS.ActiveInstance.IsPreview(preview);
+    //    string url = WMS.ActiveInstance.GetMapRequest();
+    //    if (preview)
+    //    {
+    //        StartCoroutine(DownloadImage(url, imageEvent));
+    //        return;
+    //    }
+    //    if(wmsLayerEvent != null)
+    //    {
+    //        wmsLayerEvent.Invoke(url);
+    //        foreach(WMSLayer l in WMS.ActiveInstance.ActivatedLayers)
+    //        {
+    //            if(l.activeStyle != null)
+    //            {
+    //                StartCoroutine(GetLegendImage(l.activeStyle.LegendURL));
+    //            }
+    //        }
+    //        //StartCoroutine(GetLegendImage(WMSRequest.ActivatedLayers[0].activeStyle.LegendURL));
+    //    }
+    //}
 
     //private string GetMapRequestUrl(bool useCustomBBox)
     //{
