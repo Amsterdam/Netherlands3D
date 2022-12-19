@@ -16,34 +16,46 @@ public class WFSHandler : MonoBehaviour
     [SerializeField] private BoolEvent isWmsEvent;
 
     [Header("Listen Events")]
+    [SerializeField] private StringEvent startIndexEvent;
+    [SerializeField] private StringEvent countEvent;
     [SerializeField] private TriggerEvent resetReaderEvent;
     [SerializeField] private StringEvent urlEvent;
     [SerializeField] private StringEvent wfsCreationEvent;
-    [SerializeField] private StringEvent getFeatureEvent;
+    //[SerializeField] private StringEvent getFeatureEvent;
+    [SerializeField] private ObjectEvent setActiveFeatureEvent;
 
     private bool foundFirstFeature;
     private WFSFormatter formatter;
+    private WFSFeature activeFeature;
 
     private void Awake()
     {
         SpawnParent = new GameObject().transform;
         SpawnParent.name = "WFS_ObjectParent";
         wfsCreationEvent.started.AddListener(CreateWFS);
-        getFeatureEvent.started.AddListener(GetFeature);
+        //getFeatureEvent.started.AddListener(GetFeature);
+        startIndexEvent.started.AddListener(SetStartIndex);
+        countEvent.started.AddListener(SetWebFeatureCount);
+        setActiveFeatureEvent.started.AddListener(SetActiveFeature);
     }
     public void CreateWFS(string baseUrl)
     {
         ActiveWFS = new WFS(baseUrl);
-        foundFirstFeature = false;
         ClearSpawnedMeshItems();
         resetReaderEvent.Invoke();
         StartCoroutine(GetWebString(ActiveWFS.GetCapabilities(), ProcessWFS));
     }
-    public void GetFeature(string typeName)
+    public void GetFeature()
     {
         Debug.Log("Getting Feature!");
-        ActiveWFS.TypeName = typeName;
+        ActiveWFS.TypeName = activeFeature.FeatureName;
+        Debug.Log(ActiveWFS.GetFeatures());
         StartCoroutine(GetWebString(ActiveWFS.GetFeatures(), (string s) => StartCoroutine(HandleFeatureJSON(s))));
+    }
+    public void SetActiveFeature(object activatedFeature)
+    {
+        activeFeature = (WFSFeature)activatedFeature;
+        foundFirstFeature = false;
     }
     private IEnumerator GetWebString(string url, System.Action<string> action)
     {
@@ -89,17 +101,27 @@ public class WFSHandler : MonoBehaviour
             }
         }
     }
+    private void SetStartIndex(string index)
+    {
+        ActiveWFS.StartIndex = int.Parse(index);
+    }
 
+    private void SetWebFeatureCount(string count)
+    {
+        ActiveWFS.Count = int.Parse(count);
+    }
     private void EvaluateGeoType(GeoJSON geoJSON)
     {
         switch (geoJSON.GetGeometryType())
         {
             case GeoJSON.GeoJSONGeometryType.Point:
+
                 throw new System.NotImplementedException("Geometry Type of type: 'Point' is not currently supported");
                 //break;
             case GeoJSON.GeoJSONGeometryType.MultiPoint:
-                throw new System.NotImplementedException("Geometry Type of type: 'MultiPoint' is not currently supported");
-                //break;
+                MultiPointHandler pointHandler = new MultiPointHandler(this);
+                pointHandler.ProcessMultiPoint(geoJSON.GetMultiPoint());
+                break;
             case GeoJSON.GeoJSONGeometryType.LineString:
                 throw new System.NotImplementedException("Geometry Type of type: 'LineString' is not currently supported");
                 //break;
@@ -107,8 +129,9 @@ public class WFSHandler : MonoBehaviour
                 throw new System.NotImplementedException("Geometry Type of type: 'MultiLineString' is not currently supported");
                 //break;
             case GeoJSON.GeoJSONGeometryType.Polygon:
-                throw new System.NotImplementedException("Geometry Type of type: 'Polygon' is not currently supported");
-                //break;
+                PolygonHandler polyHandler = new PolygonHandler(this);
+                polyHandler.ProcessPolygon(geoJSON.GetPolygon());
+                break;
             case GeoJSON.GeoJSONGeometryType.MultiPolygon:
                 MultiPolygonHandler multiPolyHandler = new MultiPolygonHandler(this);
                 multiPolyHandler.ProcessMultiPolygon(geoJSON.GetMultiPolygon());

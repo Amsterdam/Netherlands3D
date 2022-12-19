@@ -1,8 +1,7 @@
 using Netherlands3D.Utilities;
-using System.Collections;
+using Netherlands3D.Core;
 using System.Collections.Generic;
 using UnityEngine;
-using Netherlands3D.Core;
 public class MultiPolygonHandler
 {
     private WFSHandler owner;
@@ -23,12 +22,13 @@ public class MultiPolygonHandler
                 for (int i = 0; i < pointList.Count; i++)
                 {
                     GeoJSONPoint p = pointList[i];
+                    Debug.Log($"[{p.x}, {p.y}]");
                     pointCoords.x += (float)p.x;
                     pointCoords.y += (float)p.y;
                     if (i == pointList.Count - 1)
                     {
                         pointCoords = new Vector2(pointCoords.x / pointList.Count, pointCoords.y / pointList.Count);
-                        Debug.Log($"Point coords at: {pointCoords}");
+                        Debug.Log($"Averaged point coords at: {pointCoords}");
                         float yOffset = 30f;
                         Vector3 eval = pointCoords;
                         Vector3 unityCoords = CoordConvert.RDtoUnity(eval);

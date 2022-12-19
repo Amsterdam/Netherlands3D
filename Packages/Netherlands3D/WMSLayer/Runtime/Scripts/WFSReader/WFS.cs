@@ -14,8 +14,8 @@ public class WFS : IWebService
     public string BaseUrl { get; private set; }
 
 
-    private int startIndex = 0;
-    private int count = 5;
+    public int StartIndex = 0;
+    public int Count = 5;
 
     public WFS(string baseUrl)
     {
@@ -51,6 +51,6 @@ public class WFS : IWebService
     private string versionRequest => $"version={Version}";
     private string typeNameRequest => $"typename={TypeName}";
     private string outputFormatRequest => "outputFormat=geojson";
-    private string countRequest => $"count={count}";
-    private string startIndexRequest => $"startindex={startIndex}";
+    private string countRequest => $"count={Count}";
+    private string startIndexRequest => $"startindex={StartIndex}";
 }
