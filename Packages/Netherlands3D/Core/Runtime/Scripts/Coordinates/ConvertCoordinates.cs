@@ -199,7 +199,7 @@ namespace Netherlands3D.Core
         /// <param name="y">RD Y-coordinate</param>
         /// <param name="y">RD eleveation</param>
         /// <returns>Unity-Coordinate</returns>
-        private static Vector3 RDtoUnity(double X, double Y, double Z)
+        public static Vector3 RDtoUnity(double X, double Y, double Z)
         {
             Vector3 output = new Vector3();
             output.x = (float)( X - relativeCenterRD.x);
