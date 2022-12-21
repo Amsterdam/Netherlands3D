@@ -129,8 +129,8 @@ namespace Netherlands3D.Geoservice
 
                 Material material = tile.gameObject.GetComponent<MeshRenderer>().material;
                 material.SetTexture("_MainTex", myTexture);
-                material.SetFloat("_StencilRef", activeStencilID);
-                material.SetFloat("_ReadMask", activeStencilMask);
+                //material.SetFloat("_StencilRef", activeStencilID);
+                //material.SetFloat("_ReadMask", activeStencilMask);
                 tile.gameObject.SetActive(true);
                 callback(tileChange);
             }
@@ -189,8 +189,8 @@ namespace Netherlands3D.Geoservice
 
             foreach (var tile in tiles)
             {
-                tile.Value.gameObject.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_StencilRef", activeStencilID);
-                tile.Value.gameObject.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_ReadMask", activeStencilMask);
+               // tile.Value.gameObject.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_StencilRef", activeStencilID);
+               // tile.Value.gameObject.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_ReadMask", activeStencilMask);
             }
         }
 

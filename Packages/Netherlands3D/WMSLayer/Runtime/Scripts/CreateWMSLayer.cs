@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Netherlands3D.Events;
 using Netherlands3D.TileSystem;
+using UnityEngine.Rendering;
+
 
 namespace Netherlands3D.Geoservice
 {
@@ -25,6 +27,13 @@ namespace Netherlands3D.Geoservice
         public TriggerEvent ShowWMSOnTerrain;
         public TriggerEvent ShowWMSOnBuildingsAndTerrain;
         public TriggerEvent UnloadWMSService;
+
+        [Header("URP RenderObjects")]
+        
+        public Object RenderObjectTerrainAsTarget;
+        public Object RenderObjectTerrainNOTAsTarget;
+        public Object RenderObjectBuildingsAsTarget;
+        public Object RenderObjectBuildingsNOTAsTarget;
 
         [System.Serializable]
         public class WMSLOD
@@ -102,6 +111,7 @@ namespace Netherlands3D.Geoservice
 
         private void ShowOnlyOnTerrain(bool toggleValue)
         {
+            
             OnlyOnTerrain_Memory = toggleValue;
             if (toggleValue)
             {
@@ -122,6 +132,11 @@ namespace Netherlands3D.Geoservice
         }
         private void showWMSOnTerrain()
         {
+
+            if (RenderObjectTerrainAsTarget)
+            {
+                //RenderObjectTerrainAsTarget.hideFlags = 
+            }
             if (layer)
             {
                 layer.ProjectOnTerrain(terrainStencilID);
