@@ -45,6 +45,8 @@ namespace Netherlands3D.T3DPipeline
         [Tooltip("event that is called when the CityJSON is parsed")]
         [SerializeField]
         private TriggerEvent onAllCityObjectsProcessed;
+        [SerializeField]
+        private BoolEvent isCityJSONType; //if assigned it will call this event instead of Asserting the type field is "CityJSON"
 
         private void OnEnable()
         {
@@ -68,8 +70,14 @@ namespace Netherlands3D.T3DPipeline
 
             //parse
             var node = JSONNode.Parse(cityJson);
+
             var type = node["type"];
-            Assert.IsTrue(type == "CityJSON");
+            var isCityJSON = type == "CityJSON";
+            if (isCityJSONType)
+                isCityJSONType.Invoke(isCityJSON);
+            else
+                Assert.IsTrue(isCityJSON);
+
             Version = node["version"];
 
             //optional data
