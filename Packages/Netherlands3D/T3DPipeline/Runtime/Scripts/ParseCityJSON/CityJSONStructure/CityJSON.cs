@@ -65,6 +65,7 @@ namespace Netherlands3D.T3DPipeline
             {
                 co.UnparentFromAll(); //needed because OnDestroy is not immediately called.
                 Destroy(co.gameObject);
+                CityObjects = new CityObject[0]; //reset this in case an invalid CityJSON is parsed after a succesful parse
             }
             RemoveExtensionNodes(extensionNodes);
 
