@@ -113,6 +113,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeLOD: 0
   jsonVisualized: {fileID: 11400000, guid: 75872d7a7b4094523810f7573daf726c, type: 2}
+  materials:
+  - Type: 0
+    Material: {fileID: 2100000, guid: 1813c5b85524d4d9e842442713b84434, type: 2}
+  - Type: 1000
+    Material: {fileID: 2100000, guid: c19c85780cd7f450db02b55167f2b676, type: 2}
+  - Type: 1001
+    Material: {fileID: 2100000, guid: d0472e7df0c374cae9817021ec00f255, type: 2}
+  - Type: 1002
+    Material: {fileID: 2100000, guid: c2fe9701b3ad2444c9e146e5f28e983c, type: 2}
+  - Type: 1006
+    Material: {fileID: 2100000, guid: 35f607d55fd3a41df90eb90aa27d4c59, type: 2}
+  - Type: 1007
+    Material: {fileID: 2100000, guid: d27b4b3d1ad2a41de8bcf446eb52600f, type: 2}
 --- !u!64 &6016695265935519022
 MeshCollider:
   m_ObjectHideFlags: 0

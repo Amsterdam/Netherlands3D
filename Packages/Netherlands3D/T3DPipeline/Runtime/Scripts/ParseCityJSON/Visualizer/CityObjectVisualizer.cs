@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using Netherlands3D.Core;
 using Netherlands3D.Events;
@@ -8,6 +9,37 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.T3DPipeline
 {
+    public class BoundaryMesh
+    {
+        public Mesh Mesh;
+        public CityGeometrySemanticsObject SemanticsObject;
+
+        public BoundaryMesh(Mesh mesh, CityGeometrySemanticsObject semanticsObject)
+        {
+            Mesh = mesh;
+            SemanticsObject = semanticsObject;
+        }
+    }
+
+    public class MeshWithMaterials
+    {
+        public Mesh Mesh;
+        public Material[] Materials;
+
+        public MeshWithMaterials(Mesh mesh, Material[] materials)
+        {
+            Mesh = mesh;
+            Materials = materials;
+        }
+    }
+
+    [Serializable]
+    public class SemanticMaterials
+    {
+        public SurfaceSemanticType Type;
+        public Material Material;
+    }
+
     /// <summary>
     /// This class visualizes a CityObject by creating a mesh for each LOD geometry.
     /// </summary>
@@ -17,8 +49,9 @@ namespace Netherlands3D.T3DPipeline
     public class CityObjectVisualizer : MonoBehaviour
     {
         private CityObject cityObject;
-        private Dictionary<CityGeometry, Mesh> meshes;
+        private Dictionary<CityGeometry, MeshWithMaterials> meshes;
         private MeshFilter meshFilter;
+        private MeshRenderer meshRenderer;
         private MeshCollider meshCollider;
 
         [SerializeField]
@@ -28,6 +61,8 @@ namespace Netherlands3D.T3DPipeline
 
         [SerializeField]
         private GameObjectEvent jsonVisualized;
+        [SerializeField]
+        private SemanticMaterials[] materials;
 
 #if UNITY_EDITOR
         // allow to change the visible LOD from the inspector during runtime
@@ -41,6 +76,7 @@ namespace Netherlands3D.T3DPipeline
         {
             cityObject = GetComponent<CityObject>();
             meshFilter = GetComponent<MeshFilter>();
+            meshRenderer = GetComponent<MeshRenderer>();
             meshCollider = GetComponent<MeshCollider>();
         }
 
@@ -95,19 +131,28 @@ namespace Netherlands3D.T3DPipeline
             return false;
         }
 
-        private void SetMesh(Mesh mesh)
+        private void SetMesh(MeshWithMaterials mesh)
         {
-            ActiveMesh = mesh;
+            ActiveMesh = mesh.Mesh;
             meshFilter.mesh = ActiveMesh;
+            meshRenderer.materials = mesh.Materials;
 
             if (meshCollider)
                 meshCollider.sharedMesh = ActiveMesh;
         }
 
-        //create the meshes for the object geometries
-        private Dictionary<CityGeometry, Mesh> CreateMeshes(CityObject cityObject)
+        private Material GetMaterial(SurfaceSemanticType type)
         {
-            meshes = new Dictionary<CityGeometry, Mesh>();
+            var mat = materials.FirstOrDefault(m => m.Type == type);
+            if (mat != null)
+                return mat.Material;
+            return null;
+        }
+
+        //create the meshes for the object geometries
+        private Dictionary<CityGeometry, MeshWithMaterials> CreateMeshes(CityObject cityObject)
+        {
+            meshes = new Dictionary<CityGeometry, MeshWithMaterials>();
             foreach (var geometry in cityObject.Geometries)
             {
                 var mesh = CreateMeshFromGeometry(geometry, cityObject.CoordinateSystem, cityObject.transform.worldToLocalMatrix);
@@ -116,13 +161,47 @@ namespace Netherlands3D.T3DPipeline
             return meshes;
         }
 
-        public static Mesh CreateMeshFromGeometry(CityGeometry geometry, CoordinateSystem coordinateSystem, Matrix4x4 transformationMatrix)
+        public MeshWithMaterials CreateMeshFromGeometry(CityGeometry geometry, CoordinateSystem coordinateSystem, Matrix4x4 transformationMatrix)
         {
             var boundaryMeshes = BoundariesToMeshes(geometry.BoundaryObject, coordinateSystem);
-            return CombineMeshes(boundaryMeshes, transformationMatrix);
+            var subMeshes = CombineBoundaryMeshesWithTheSameSemanticObject(boundaryMeshes, transformationMatrix, out var types);
+            var materials = new Material[types.Count];
+            for (int i = 0; i < materials.Length; i++)
+            {
+                materials[i] = GetMaterial(types[i]);
+            }
+            var mesh = CombineMeshes(subMeshes, Matrix4x4.identity, false); //use identity matrix because we already transformed the submeshes
+            return new MeshWithMaterials(mesh, materials);
         }
 
-        public static Mesh CombineMeshes(List<Mesh> meshes, Matrix4x4 transformationMatrix)
+        public static List<Mesh> CombineBoundaryMeshesWithTheSameSemanticObject(List<BoundaryMesh> boundaryMeshes, Matrix4x4 transformationMatrix, out List<SurfaceSemanticType> types)
+        {
+            List<Mesh> combinedMeshes = new List<Mesh>();
+            types = new List<SurfaceSemanticType>();
+            while (boundaryMeshes.Count > 0)
+            {
+                List<Mesh> meshesToCombine = new List<Mesh>();
+                CityGeometrySemanticsObject activeSemanticsObject = boundaryMeshes[boundaryMeshes.Count - 1].SemanticsObject;
+                for (int i = boundaryMeshes.Count - 1; i >= 0; i--) //go backwards because collection will be modified
+                {
+                    var boundaryMesh = boundaryMeshes[i];
+                    if (boundaryMesh.SemanticsObject == activeSemanticsObject)
+                    {
+                        meshesToCombine.Add(boundaryMesh.Mesh);
+                        boundaryMeshes.Remove(boundaryMesh);
+                    }
+                }
+                var combinedMesh = CombineMeshes(meshesToCombine, transformationMatrix, true);
+                combinedMeshes.Add(combinedMesh);
+                if (activeSemanticsObject != null)
+                    types.Add(activeSemanticsObject.SurfaceType);
+                else
+                    types.Add(SurfaceSemanticType.Null);
+            }
+            return combinedMeshes;
+        }
+
+        public static Mesh CombineMeshes(List<Mesh> meshes, Matrix4x4 transformationMatrix, bool mergeSubMeshes)
         {
             CombineInstance[] combine = new CombineInstance[meshes.Count];
 
@@ -133,17 +212,17 @@ namespace Netherlands3D.T3DPipeline
             }
 
             var mesh = new Mesh();
-            mesh.CombineMeshes(combine);
+            mesh.CombineMeshes(combine, mergeSubMeshes);
             mesh.RecalculateBounds();
             mesh.RecalculateNormals();
             return mesh;
         }
 
         //Different boundary objects need to be parsed into meshes in different ways because of the different depths of the boundary arrays. We need to go as deep as needed to create meshes from surfaces.
-        private static List<Mesh> BoundariesToMeshes(CityBoundary boundary, CoordinateSystem coordinateSystem)
+        private static List<BoundaryMesh> BoundariesToMeshes(CityBoundary boundary, CoordinateSystem coordinateSystem)
         {
             if (boundary is CityMultiPoint || boundary is CityMultiLineString) //todo these boundary types are not supported as meshes
-                return new List<Mesh>();
+                return new List<BoundaryMesh>();
             if (boundary is CitySurface)
                 return BoundariesToMeshes(boundary as CitySurface, coordinateSystem);
             if (boundary is CityMultiOrCompositeSurface)
@@ -156,17 +235,17 @@ namespace Netherlands3D.T3DPipeline
             throw new ArgumentException("Unknown boundary type: " + boundary.GetType() + " is not supported to convert to mesh");
         }
 
-        private static List<Mesh> BoundariesToMeshes(CitySurface boundary, CoordinateSystem coordinateSystem)
+        private static List<BoundaryMesh> BoundariesToMeshes(CitySurface boundary, CoordinateSystem coordinateSystem)
         {
-            var meshes = new List<Mesh>();
+            var meshes = new List<BoundaryMesh>();
             var mesh = CitySurfaceToMesh(boundary, coordinateSystem);
             meshes.Add(mesh);
             return meshes;
         }
 
-        private static List<Mesh> BoundariesToMeshes(CityMultiOrCompositeSurface boundary, CoordinateSystem coordinateSystem)
+        private static List<BoundaryMesh> BoundariesToMeshes(CityMultiOrCompositeSurface boundary, CoordinateSystem coordinateSystem)
         {
-            var meshes = new List<Mesh>();
+            var meshes = new List<BoundaryMesh>();
             foreach (var surface in boundary.Surfaces)
             {
                 var mesh = CitySurfaceToMesh(surface, coordinateSystem);
@@ -175,9 +254,9 @@ namespace Netherlands3D.T3DPipeline
             return meshes;
         }
 
-        private static List<Mesh> BoundariesToMeshes(CitySolid boundary, CoordinateSystem coordinateSystem)
+        private static List<BoundaryMesh> BoundariesToMeshes(CitySolid boundary, CoordinateSystem coordinateSystem)
         {
-            var meshes = new List<Mesh>();
+            var meshes = new List<BoundaryMesh>();
             foreach (var shell in boundary.Shells)
             {
                 var shellMeshes = BoundariesToMeshes(shell, coordinateSystem);
@@ -186,9 +265,9 @@ namespace Netherlands3D.T3DPipeline
             return meshes;
         }
 
-        private static List<Mesh> BoundariesToMeshes(CityMultiOrCompositeSolid boundary, CoordinateSystem coordinateSystem)
+        private static List<BoundaryMesh> BoundariesToMeshes(CityMultiOrCompositeSolid boundary, CoordinateSystem coordinateSystem)
         {
-            var meshes = new List<Mesh>();
+            var meshes = new List<BoundaryMesh>();
             foreach (var solid in boundary.Solids)
             {
                 var solidMeshes = BoundariesToMeshes(solid, coordinateSystem);
@@ -198,8 +277,9 @@ namespace Netherlands3D.T3DPipeline
         }
 
         //create a mesh of a surface.
-        private static Mesh CitySurfaceToMesh(CitySurface surface, CoordinateSystem coordinateSystem)
+        private static BoundaryMesh CitySurfaceToMesh(CitySurface surface, CoordinateSystem coordinateSystem)
         {
+
             if (surface.VertexCount == 0)
                 return null;
 
@@ -214,7 +294,9 @@ namespace Netherlands3D.T3DPipeline
             polygon.outside = solidSurfacePolygon;
             polygon.holes = holePolygons;
 
-            return Poly2Mesh.CreateMesh(polygon);
+            var mesh = Poly2Mesh.CreateMesh(polygon);
+            var semanticsObject = surface.SemanticsObject;
+            return new BoundaryMesh(mesh, semanticsObject);
         }
 
         // convert the list of Vector3Doubles to a list of Vector3s and convert the coordinates to unity in the process.
