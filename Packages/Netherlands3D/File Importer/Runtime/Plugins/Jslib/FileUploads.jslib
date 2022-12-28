@@ -96,24 +96,26 @@ mergeInto(LibraryManager.library, {
         window.ReadFile = function ReadFile(file) {
             window.filereader = new FileReader();
             window.filereader.onload = function (e) {
-                var datastring = e.target.result;
-                window.SaveData(datastring, file.name);
-                window.counter = counter + 1;
-            };
-            window.filereader.readAsText(file);
-        };
 
-        window.SaveData = function SaveData(datastring, filename) {
-            var data = {
-                timestamp: "timestamp",
-                mode: 33206,
-                contents: "contents"
+            const uint8Array = new Uint8Array(e.target.result);
+            window.SaveData(uint8Array, file.name);
+            window.counter = counter + 1;
             };
-            data.timestamp = new Date();
-            data.contents = new TextEncoder("utf-8").encode(datastring);
+            window.filereader.readAsArrayBuffer(file);
+        };
+        
+        window.SaveData = function SaveData(uint8Array, filename) {
+
+            var data = {
+                timestamp: new Date(),
+                mode: 33206,
+                contents: uint8Array
+            };
+
             var transaction = window.databaseConnection.transaction(["FILE_DATA"], "readwrite");
             var newIndexedFilePath = window.databaseName + "/" + filename;
             var dbRequest = transaction.objectStore("FILE_DATA").put(data, newIndexedFilePath);
+            
             console.log("Saving file: " + newIndexedFilePath);
             dbRequest.onsuccess = function () {
                 unityInstance.SendMessage('UserFileUploads', 'LoadFile', filename);
@@ -176,9 +178,8 @@ mergeInto(LibraryManager.library, {
             console.log("Downloading from IndexedDB file: " + indexedFilePath);
 
             var dbRequest = transaction.objectStore("FILE_DATA").get(indexedFilePath);
-            dbRequest.onsuccess = function (e) {
-                var record = e.target.result;
-                var blob = new Blob([record.contents], { type: 'application/octetstream' });
+            dbRequest.onsuccess = function (e) {                
+                var blob = new Blob([e.target.result], { type: 'application/octetstream' });
 				var url = window.URL.createObjectURL(blob);
 				var onlyFileName = fileNameString.replace(/^.*[\\\/]/, '');
 				const a = document.createElement("a");
