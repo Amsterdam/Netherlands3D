@@ -133,9 +133,17 @@ namespace Netherlands3D.T3DPipeline
 
         private void SetMesh(MeshWithMaterials mesh)
         {
-            ActiveMesh = mesh.Mesh;
+            if (mesh != null)
+            {
+                ActiveMesh = mesh.Mesh;
+                meshRenderer.materials = mesh.Materials;
+            }
+            else
+            {
+                ActiveMesh = null;
+            }
+
             meshFilter.mesh = ActiveMesh;
-            meshRenderer.materials = mesh.Materials;
 
             if (meshCollider)
                 meshCollider.sharedMesh = ActiveMesh;
