@@ -154,6 +154,11 @@ namespace Netherlands3D.T3DPipeline
             var mat = materials.FirstOrDefault(m => m.Type == type);
             if (mat != null)
                 return mat.Material;
+
+            mat = materials.FirstOrDefault(m => m.Type == SurfaceSemanticType.Null);
+            if (mat != null)
+                return mat.Material;
+
             return null;
         }
 
