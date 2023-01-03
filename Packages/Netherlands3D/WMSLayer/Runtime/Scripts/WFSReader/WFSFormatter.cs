@@ -20,7 +20,7 @@ public class WFSFormatter
         {
             if (o.Attributes.GetNamedItem("name")?.Value == "GetFeature")
             {
-                Debug.Log("Found the Feature Node!");
+                //Debug.Log("Found the Feature Node!");
                 foreach(XmlNode parameter in GetChildNodes(o, "Parameter", "ows"))
                 {
                     if(parameter.Attributes.GetNamedItem("name").Value == "outputFormat")
@@ -45,25 +45,25 @@ public class WFSFormatter
         XmlNode filterCapabilities = GetChildNode(xml.DocumentElement, "Filter_Capabilities", "fes");
 
         XmlNode conformance = GetChildNode(filterCapabilities, "Conformance", "fes");
-        Debug.Log(conformance.ChildNodes.Count);
+        //Debug.Log(conformance.ChildNodes.Count);
 
-        foreach(XmlNode constraint in GetChildNodes(conformance, "Constraint", "fes"))
-        {
-            //Debug.Log(constraint.Attributes.GetNamedItem("name")?.InnerText);
-        }
+        //foreach(XmlNode constraint in GetChildNodes(conformance, "Constraint", "fes"))
+        //{
+        //    //Debug.Log(constraint.Attributes.GetNamedItem("name")?.InnerText);
+        //}
 
-        XmlNode scalarCapabilities = GetChildNode(filterCapabilities, "Scalar_Capabilities", "fes");
-        XmlNode comparisonOperators = GetChildNode(scalarCapabilities, "ComparisonOperators", "fes");
+        //XmlNode scalarCapabilities = GetChildNode(filterCapabilities, "Scalar_Capabilities", "fes");
+        //XmlNode comparisonOperators = GetChildNode(scalarCapabilities, "ComparisonOperators", "fes");
 
-        XmlNode spatialCapabilites = GetChildNode(filterCapabilities, "Spatial_Capabilities", "fes");
-        XmlNode geometryOperands = GetChildNode(spatialCapabilites, "GeometryOperands", "fes");
-        XmlNode spatialOperators = GetChildNode(spatialCapabilites, "SpatialOperators", "fes");
+        //XmlNode spatialCapabilites = GetChildNode(filterCapabilities, "Spatial_Capabilities", "fes");
+        //XmlNode geometryOperands = GetChildNode(spatialCapabilites, "GeometryOperands", "fes");
+        //XmlNode spatialOperators = GetChildNode(spatialCapabilites, "SpatialOperators", "fes");
 
-        XmlNode temporalCapabilities = GetChildNode(filterCapabilities, "Temporal_Capabilities", "fes");
-        XmlNode temporalOperands = GetChildNode(temporalCapabilities, "TemporalOperands", "fes");
-        XmlNode temporalOperators = GetChildNode(temporalCapabilities, "TemporalOperators", "fes");
+        //XmlNode temporalCapabilities = GetChildNode(filterCapabilities, "Temporal_Capabilities", "fes");
+        //XmlNode temporalOperands = GetChildNode(temporalCapabilities, "TemporalOperands", "fes");
+        //XmlNode temporalOperators = GetChildNode(temporalCapabilities, "TemporalOperators", "fes");
 
-        XmlNode functions = GetChildNode(filterCapabilities, "Functions", "fes");
+        //XmlNode functions = GetChildNode(filterCapabilities, "Functions", "fes");
 
         //foreach(XmlNode co in comparisonOperators)
         //{
@@ -86,21 +86,28 @@ public class WFSFormatter
         //    Debug.Log(to.Attributes.GetNamedItem("name")?.InnerText);
         //}
 
-        if(functions != null)
-        {
-            Debug.Log(functions.ChildNodes.Count);
-            //foreach(XmlNode funct in GetChildNodes(functions, "Function", "fes"))
-            //{
-            //    Debug.Log(funct.Attributes.GetNamedItem("name")?.InnerText);
-            //}
-        }
+        //if(functions != null)
+        //{
+        //    Debug.Log(functions.ChildNodes.Count);
+        //    //foreach(XmlNode funct in GetChildNodes(functions, "Function", "fes"))
+        //    //{
+        //    //    Debug.Log(funct.Attributes.GetNamedItem("name")?.InnerText);
+        //    //}
+        //}
 
 
         XmlNode featureList = GetChildNode(xml.DocumentElement, "FeatureTypeList", "wfs");
         foreach(XmlNode feature in GetChildNodes(featureList, "FeatureType", "wfs"))
         {
-            Debug.Log("Found a feature in the feature type list");
-            wfs.features.Add(new WFSFeature(GetChildNodeValue(feature, "Name", "wfs")));
+            //Debug.Log("Found a feature in the feature type list");
+            WFSFeature newFeature = new WFSFeature(GetChildNodeValue(feature, "Name", "wfs"));
+            newFeature.CRS.Add(GetChildNodeValue(feature, "DefaultCRS", "wfs"));
+            foreach(XmlNode crs in GetChildNodes(feature, "OtherCRS", "wfs"))
+            {
+                newFeature.CRS.Add(crs.InnerText);
+            }
+            //Debug.Log(newFeature.CRS.Count);
+            wfs.features.Add(newFeature);
         }
         //Debug.Log(featureList.InnerText);
 

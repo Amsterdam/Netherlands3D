@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3312799902719643015}
   - component: {fileID: 2558139999612632409}
   - component: {fileID: 8215911685052303735}
-  - component: {fileID: 3232273502763751181}
   m_Layer: 5
   m_Name: DualText
   m_TagString: Untagged
@@ -98,20 +97,6 @@ MonoBehaviour:
   closeButton: {fileID: 6119769257195020851}
   mainText: {fileID: 364176923903776186}
   subText: {fileID: 660970477703266301}
---- !u!114 &3232273502763751181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2700285049534092258}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0938a2bd4cbef8946bf8b20226400bd0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sortBackButton: {fileID: 7031344584763946929}
-  sortForwardButton: {fileID: 190067783299302555}
 --- !u!1 &3660338451859658275
 GameObject:
   m_ObjectHideFlags: 0
@@ -331,7 +316,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &415470086069683695
 RectTransform:
   m_ObjectHideFlags: 0
@@ -532,7 +517,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2125514896150306351
 RectTransform:
   m_ObjectHideFlags: 0

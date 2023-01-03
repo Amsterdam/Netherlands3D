@@ -2,43 +2,29 @@ using Netherlands3D.Utilities;
 using Netherlands3D.Core;
 using System.Collections.Generic;
 using UnityEngine;
-public class MultiPolygonHandler
+
+namespace Netherlands3D.WFSHandlers
 {
-    private WFSHandler owner;
-    public MultiPolygonHandler(WFSHandler owner)
+    public class MultiPolygonHandler
     {
-        this.owner = owner;
-    }
-    public void ProcessMultiPolygon(List<List<List<GeoJSONPoint>>> multiPolyList)
-    {
-        //Debug.Log("Processing MultiPoly!");
-        GameObject template = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        foreach (List<List<GeoJSONPoint>> pointListList in multiPolyList)
+        public List<IList<Vector3>> GetMultiPoly(List<List<List<GeoJSONPoint>>> multiPolyList)
         {
-            foreach (List<GeoJSONPoint> pointList in pointListList)
+            List<IList<Vector3>> result = new();
+            foreach (List<List<GeoJSONPoint>> pointListList in multiPolyList)
             {
-                Vector2 pointCoords = Vector2.zero;
-
-                for (int i = 0; i < pointList.Count; i++)
+                foreach (List<GeoJSONPoint> pointList in pointListList)
                 {
-                    GeoJSONPoint p = pointList[i];
-                    Debug.Log($"[{p.x}, {p.y}]");
-                    pointCoords.x += (float)p.x;
-                    pointCoords.y += (float)p.y;
-                    if (i == pointList.Count - 1)
+                    List<Vector3> points = new();
+                    foreach (GeoJSONPoint geoPoint in pointList)
                     {
-                        pointCoords = new Vector2(pointCoords.x / pointList.Count, pointCoords.y / pointList.Count);
-                        Debug.Log($"Averaged point coords at: {pointCoords}");
-                        float yOffset = 30f;
-                        Vector3 eval = pointCoords;
-                        Vector3 unityCoords = CoordConvert.RDtoUnity(eval);
-                        Object.Instantiate(template, new Vector3(unityCoords.x, yOffset, unityCoords.z), Quaternion.identity, owner.SpawnParent);
+                        Vector3 unityPoint = CoordConvert.RDtoUnity(geoPoint.x, geoPoint.y, -10);
+                        points.Add(unityPoint);
                     }
+                    result.Add(points);
                 }
-                
-            }
-        }
-        Object.Destroy(template);
-    }
 
+            }
+            return result;
+        }
+    }
 }

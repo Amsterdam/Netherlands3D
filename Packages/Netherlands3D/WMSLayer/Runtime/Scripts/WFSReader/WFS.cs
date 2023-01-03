@@ -13,9 +13,12 @@ public class WFS : IWebService
     public List<WFSFeature> features { get; set; }
     public string BaseUrl { get; private set; }
 
+    public BoundingBox BBox;
 
     public int StartIndex = 0;
-    public int Count = 5;
+    public int Count = 100;
+
+    private bool tileHandled;
 
     public WFS(string baseUrl)
     {
@@ -26,7 +29,7 @@ public class WFS : IWebService
 
     public string GetCapabilities()
     {    
-        return BaseUrl + "?request=getcapabilities&service=wfs";
+        return BaseUrl + "?REQUEST=GetCapabilities&SERVICE=WFS";
     }
 
     public string GetFeatures()
@@ -43,14 +46,17 @@ public class WFS : IWebService
         stringBuilder.Append(countRequest);
         stringBuilder.Append("&");
         stringBuilder.Append(startIndexRequest);
+        stringBuilder.Append("&");
+        stringBuilder.Append(boundingBoxRequest);
 
         return stringBuilder.ToString();
 
     }
-    private string featureRequest => "?request=getfeature&service=wfs";
-    private string versionRequest => $"version={Version}";
-    private string typeNameRequest => $"typename={TypeName}";
-    private string outputFormatRequest => "outputFormat=geojson";
+    private string featureRequest => "?REQUEST=GetFeature&SERVICE=WFS";
+    private string versionRequest => $"VERSION={Version}";
+    private string typeNameRequest => $"TypeName={TypeName}";
+    private string outputFormatRequest => "OutputFormat=geojson";
     private string countRequest => $"count={Count}";
     private string startIndexRequest => $"startindex={StartIndex}";
+    private string boundingBoxRequest => tileHandled ? "bbox={Xmin},{Ymin},{Xmax},{Ymax}" : $"bbox={BBox.MinX},{BBox.MinY},{BBox.MaxX},{BBox.MaxY}";
 }
