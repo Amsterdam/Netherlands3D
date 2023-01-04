@@ -37,6 +37,7 @@ namespace Netherlands3D.Events
         private StringEvent setDrawingObjectName;
         [SerializeField]
         private FloatEvent setExtrusionHeightEvent;
+        [SerializeField] private GameObjectEvent polyParentEvent;
 
         [SerializeField]
         private Material defaultMaterial;
@@ -69,12 +70,15 @@ namespace Netherlands3D.Events
         [SerializeField]
         GameObjectEvent createdPolygonGameObject;
 
+        private Transform geometryParent;
+
         void Awake()
         {
             if (setDrawingObjectName) setDrawingObjectName.started.AddListener(SetName);
             if (drawPolygonEvent) drawPolygonEvent.started.AddListener(CreatePolygon);
             if (drawSinglePolygonEvent) drawSinglePolygonEvent.started.AddListener(CreateSinglePolygon);
             if (setExtrusionHeightEvent) setExtrusionHeightEvent.started.AddListener(SetExtrusionHeight);
+            if (polyParentEvent) polyParentEvent.started.AddListener((parentObject) => geometryParent = parentObject.transform);
         }
 
 		public void SetExtrusionHeight(float extrusionHeight)
@@ -154,7 +158,14 @@ namespace Netherlands3D.Events
             if (addColliders)
                 newPolygonObject.AddComponent<MeshCollider>().sharedMesh = newPolygonMesh;
 
-            newPolygonObject.transform.SetParent(this.transform);
+            if(geometryParent != null)
+            {
+                newPolygonObject.transform.SetParent(geometryParent);
+            }
+            else
+            {
+                newPolygonObject.transform.SetParent(this.transform);
+            }
             newPolygonObject.transform.Translate(0, extrusionHeight, 0);
 
             if (createdPolygonGameObject) createdPolygonGameObject.Invoke(newPolygonObject);
