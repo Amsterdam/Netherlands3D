@@ -225,7 +225,7 @@ public class WMSInterface : MonoBehaviour
         }
         WMS.ActiveInstance.ActivateLayer(layerToActivate);
         //layerAdded?.Invoke();
-        ShowCRSOptions();
+        ShowReferenceSystemOptions();
         return true;
     }
 
@@ -236,17 +236,21 @@ public class WMSInterface : MonoBehaviour
             WMS.ActiveInstance.DeactivateLayer(layerToDeactivate);
         }
     }
-    private void ShowCRSOptions()
+    private void ShowReferenceSystemOptions()
     {
         for (int i = crsContentParent.childCount - 1; i >= 0; i--)
         {
             Destroy(crsContentParent.GetChild(i).gameObject);
         }
-        foreach(string crs in activeCRSOptions)
+        foreach(string referenceSystem in activeCRSOptions)
         {
             Button b = Instantiate(layerButtonPrefab, crsContentParent);
-            b.GetComponentInChildren<Text>().text = crs;
-            b.onClick.AddListener(() => WMS.ActiveInstance.SetCRS(crs));
+            b.GetComponentInChildren<Text>().text = referenceSystem;
+            // This AddListener checks if the current WMS requires an SRS instead of CRS and sets the appropiate value with one of two lambda functions.
+            // Scenarios in which you need both may(?) arise, in which case this part of building the interface would require some refactoring.
+            b.onClick.AddListener(WMS.ActiveInstance.RequiresSRS ? 
+                () => WMS.ActiveInstance.SetSRS(referenceSystem) : () => WMS.ActiveInstance.SetCRS(referenceSystem)
+                );
         }
     }
     private void DisplayPreviewImage(object textureFromRequest)

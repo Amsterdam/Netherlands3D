@@ -41,10 +41,33 @@ public class WMSFormatter
             extractLayer.Abstract = GetChildNodeValue(subLayer, "Abstract");
 
             XmlNodeList crsElements = GetChildNodes(subLayer, "CRS");
-            wms.SetCRS(crsElements[0].InnerText);
-            foreach (XmlNode crs in crsElements)
+            if(crsElements.Count > 0)
             {
-                extractLayer.CRS.Add(crs.InnerText);
+                wms.SetCRS(crsElements[0].InnerText);
+                foreach (XmlNode crs in crsElements)
+                {
+                    extractLayer.CRS.Add(crs.InnerText);
+                }
+            }
+            else
+            {
+                XmlNodeList srsElements = GetChildNodes(subLayer, "SRS");
+                if(srsElements.Count > 0)
+                {
+                    wms.SRSRequirement(true);
+                    wms.SetSRS(srsElements[0].InnerText);
+                    foreach (XmlNode srs in srsElements)
+                    {
+                        extractLayer.CRS.Add(srs.InnerText);
+                    }
+                }
+                else
+                {
+                    // The wms contains neither CRS', nor SRS', so it has no Reference System that can be processed.
+                    // Send an error message.
+                    Debug.LogWarning("This WMS contains no processable Reference System, cannot continue!");
+                    return null;
+                }
             }
             XmlNodeList styles = GetChildNodes(subLayer, "Style");
             foreach (XmlNode style in styles)

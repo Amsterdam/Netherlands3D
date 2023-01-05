@@ -18,9 +18,9 @@ public class WMS : IWebService, IWSMappable
     public List<WMSLayer> Layers { get; private set; }
     public List<WMSLayer> ActivatedLayers { get; private set; }
     public string BaseUrl { get; private set; }
+    public bool RequiresSRS { get; private set; }
 
     private bool isPreview;
-    private bool requiresSRS;
     public WMS(string baseUrl)
     {
         BaseUrl = baseUrl;
@@ -36,15 +36,18 @@ public class WMS : IWebService, IWSMappable
     {
         CRS = crs;
     }
+    public void SetSRS(string srs)
+    {
+        SRS = srs;
+    }
 
     public void IsPreview(bool isPreview)
     {
         this.isPreview = isPreview;
     }
-    public void RequiresSRS(bool required, string srs = "")
+    public void SRSRequirement(bool required)
     {
-        requiresSRS = required;
-        SRS = srs;
+        RequiresSRS = required;
     }
     public string GetCapabilities()
     {
@@ -54,7 +57,7 @@ public class WMS : IWebService, IWSMappable
     }
     public string GetMapRequest()
     {
-        return StandardRequest() + (requiresSRS ? SRSRequest(SRS) : "");
+        return StandardRequest();
     }
     public void ActivateLayer(WMSLayer layerToActivate)
     {
@@ -79,7 +82,7 @@ public class WMS : IWebService, IWSMappable
         requestBuilder.Append("&");
         requestBuilder.Append(VersionRequest());
         requestBuilder.Append("&");
-        requestBuilder.Append(CRSRequest());
+        requestBuilder.Append(RequiresSRS ? SRSRequest() : CRSRequest());
         requestBuilder.Append("&");
         requestBuilder.Append(DimensionRequest());
         requestBuilder.Append("&");
@@ -132,6 +135,6 @@ public class WMS : IWebService, IWSMappable
     private string FormatRequest() => "format=image/png";
     private string TransparencyRequest() => "transparent=true";
     private string ServiceRequest() => "service=wms";
-    private string SRSRequest(string srs) => $"srs={srs}";
+    private string SRSRequest() => $"srs={SRS}";
 
 }
