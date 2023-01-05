@@ -1,6 +1,6 @@
 mergeInto(LibraryManager.library, {
     InitializeIndexedDB: function (str) {
-        window.databaseName = Pointer_stringify(str);
+        window.databaseName = UTF8ToString(str);
 
         console.log("Database name: " + window.databaseName);
 
@@ -14,11 +14,19 @@ mergeInto(LibraryManager.library, {
         window.dbVersion = 21;
 
         //Inject our required html input fields
-        window.InjectHiddenFileInput = function InjectHiddenFileInput(inputFieldName, acceptedExtentions, multiFileSelect) {
-            var newInput = document.createElement("input");
+        window.InjectHiddenFileInput = function InjectHiddenFileInput(inputFieldName, acceptedExtentions, multiFileSelect) { 
+			
+			//Make sure file extentions start with a dot ([.jpg,.png] instead of [jpg,png] etc)
+			var acceptedExtentionsArray = acceptedExtentions.split(",");
+			for(var i = 0; i<acceptedExtentionsArray.length;i++)
+			{
+				acceptedExtentionsArray[i] = "." + acceptedExtentionsArray[i].replace(".","");
+			}
+			
+			var newInput = document.createElement("input");
             newInput.id = inputFieldName;
             newInput.type = 'file';
-            newInput.accept = acceptedExtentions;
+            newInput.accept = acceptedExtentionsArray.toString();
 			newInput.multiple = multiFileSelect;
 			newInput.onclick = function() {
 				unityInstance.SendMessage(inputFieldName, 'ClickNativeButton');
@@ -120,8 +128,8 @@ mergeInto(LibraryManager.library, {
         };
     },
     UploadFromIndexedDB: function (filePath, targetURL) {
-        var fileName = Pointer_stringify(filePath);
-        var url = Pointer_stringify(targetURL);
+        var fileName = UTF8ToString(filePath);
+        var url = UTF8ToString(targetURL);
 
         var dbConnectionRequest = window.indexedDB.open("/idbfs", window.dbVersion);
         dbConnectionRequest.onsuccess = function () {
@@ -150,9 +158,52 @@ mergeInto(LibraryManager.library, {
             alert("Kan geen verbinding maken met de indexedDatabase");
         }
     },
+	DownloadFromIndexedDB: function (filePath, callbackObject, callbackMethod) {
+        var fileNameString = UTF8ToString(filePath);	
+		var callbackObjectString = UTF8ToString(callbackObject);	
+		var callbackMethodString = UTF8ToString(callbackMethod);	
+		
+		console.log("Set callback object to " + callbackObjectString);
+		console.log("Set callback method to " + callbackMethodString);
+		
+        var dbConnectionRequest = window.indexedDB.open("/idbfs", window.dbVersion);
+        dbConnectionRequest.onsuccess = function () {
+            console.log("Connected to database");
+            window.databaseConnection = dbConnectionRequest.result;
+
+            var transaction = window.databaseConnection.transaction(["FILE_DATA"], "readonly");
+            var indexedFilePath = window.databaseName + "/" + fileNameString;
+            console.log("Downloading from IndexedDB file: " + indexedFilePath);
+
+            var dbRequest = transaction.objectStore("FILE_DATA").get(indexedFilePath);
+            dbRequest.onsuccess = function (e) {
+                var record = e.target.result;
+                var blob = new Blob([record.contents], { type: 'application/octetstream' });
+				var url = window.URL.createObjectURL(blob);
+				var onlyFileName = fileNameString.replace(/^.*[\\\/]/, '');
+				const a = document.createElement("a");
+			    a.href = url;
+			    a.setAttribute("download", onlyFileName);
+			    document.body.appendChild(a);
+			    a.click();
+				window.setTimeout(function() { 
+				  window.URL.revokeObjectURL(url);
+				  document.body.removeChild(a);
+				  unityInstance.SendMessage(callbackObjectString, callbackMethodString, fileNameString);
+				}, 0);
+                window.databaseConnection.close();
+            };
+            dbRequest.onerror = function () {
+                window.databaseConnection.close();
+            };
+        }
+        dbConnectionRequest.onerror = function () {
+            alert("Kan geen verbinding maken met de indexedDatabase");
+        }
+    },
 	AddFileInput: function (inputName,fileExtentions,multiSelect) {
-		var inputNameID = Pointer_stringify(inputName);
-        var allowedFileExtentions = Pointer_stringify(fileExtentions);
+		var inputNameID = UTF8ToString(inputName);
+        var allowedFileExtentions = UTF8ToString(fileExtentions);
 		
 		if (typeof window.InjectHiddenFileInput !== "undefined") { 
 			window.InjectHiddenFileInput(inputNameID, allowedFileExtentions, multiSelect);

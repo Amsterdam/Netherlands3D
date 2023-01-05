@@ -17,6 +17,7 @@
 */
 using System;
 using UnityEngine;
+using Netherlands3D.Events;
 
 namespace Netherlands3D.Sun
 {
@@ -78,6 +79,8 @@ namespace Netherlands3D.Sun
         private int frameStep;
 
         private const int gizmoRayLength = 10000;
+        [SerializeField] private DateTimeEvent sendDateTime;
+        [SerializeField] private FloatEvent sendAnimationSpeed;
 
 		private void OnDrawGizmos()
 		{
@@ -146,8 +149,9 @@ namespace Netherlands3D.Sun
             frameSteps = i;
         }
 
-        public void SetTimeSpeed(float speed) {
-            timeSpeed = speed;
+        public void SetTimeSpeed(float multiplicationFactor) {
+            timeSpeed = Math.Clamp(timeSpeed * multiplicationFactor, 1, 10000);
+            sendAnimationSpeed.Invoke(timeSpeed);
         }
 
         private void Start()
@@ -156,6 +160,10 @@ namespace Netherlands3D.Sun
 			{
 				ResetToNow();
 			}
+            else
+            {
+                Apply();
+            }
 		}
 
 		public void ResetToNow()
@@ -171,7 +179,12 @@ namespace Netherlands3D.Sun
 
 		private void OnValidate()
         {
-            time = new DateTime(year,month,day,hour,minutes,seconds,dateTimeKind);
+            Apply();
+        }
+
+        private void Apply()
+        {
+            time = new DateTime(year, month, day, hour, minutes, seconds, dateTimeKind);
             SetPosition();
         }
 
@@ -181,6 +194,7 @@ namespace Netherlands3D.Sun
 
             time = time.AddSeconds(timeSpeed * Time.deltaTime);
             if (frameStep==0) {
+                sendDateTime.Invoke(time);
                 SetPosition();
             }
             frameStep = (frameStep + 1) % frameSteps;

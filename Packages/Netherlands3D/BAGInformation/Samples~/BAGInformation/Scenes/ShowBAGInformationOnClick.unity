@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028377, g: 0.22571409, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -631,7 +631,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &626960510
 GameObject:
@@ -1765,8 +1765,6 @@ MonoBehaviour:
   filterByCameraFrustum: 1
   layers:
   - {fileID: 4681655142019714451}
-  pendingTileChanges: []
-  activeTileChangesView: []
 --- !u!4 &1512706335
 Transform:
   m_ObjectHideFlags: 0
@@ -1780,7 +1778,7 @@ Transform:
   m_Children:
   - {fileID: 1200672875177179467}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1546844732
 GameObject:
@@ -2108,6 +2106,7 @@ MonoBehaviour:
   relativeCenterRD:
     x: 121000
     y: 487000
+  setInvariantCultureInfo: 1
 --- !u!4 &1725853390
 Transform:
   m_ObjectHideFlags: 0
@@ -2187,7 +2186,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1845496220
 MonoBehaviour:
@@ -2488,7 +2487,7 @@ GameObject:
   - component: {fileID: 2110277490}
   - component: {fileID: 2110277491}
   m_Layer: 0
-  m_Name: InputEvents
+  m_Name: BasicInput
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2506,7 +2505,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2110277491
 MonoBehaviour:
@@ -2520,6 +2519,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 671edf7e95eb48945a664eb2234fbdb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputActionAsset: {fileID: -944628639613478452, guid: c62fb5dd0e99d7c4d8da0a9e86f1b111, type: 3}
   clickOnScreenPosition: {fileID: 11400000, guid: 1a3fcaa9dcfd1924385e66fd0012b8ba, type: 2}
   secondaryClickOnScreenPosition: {fileID: 11400000, guid: 1a3fcaa9dcfd1924385e66fd0012b8ba, type: 2}
 --- !u!1 &2118079839

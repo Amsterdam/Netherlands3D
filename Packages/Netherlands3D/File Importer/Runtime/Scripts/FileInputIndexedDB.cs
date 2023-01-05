@@ -37,7 +37,7 @@ public class FileInputIndexedDB : MonoBehaviour
     private static extern void SyncFilesToIndexedDB();
     [DllImport("__Internal")]
     private static extern void ClearFileInputFields();
-
+    Action<string> callbackAdress;
     private List<string> filenames = new List<string>();
     private int numberOfFilesToLoad = 0;
     private int fileCount = 0;
@@ -50,11 +50,18 @@ public class FileInputIndexedDB : MonoBehaviour
 
 	private void Awake()
 	{
+        if(clearDataBaseEvent)
         clearDataBaseEvent.started.AddListener(ClearDatabase);
 
 #if !UNITY_EDITOR && UNITY_WEBGL
         InitializeIndexedDB(Application.persistentDataPath);
 #endif
+    }
+
+    public void SetCallbackAdress(Action<string> callback)
+    {
+        Debug.Log("Callback set for FileInputIndexedDB");
+        callbackAdress = callback;
     }
 
     // Called from javascript, the total number of files that are being loaded.
@@ -64,8 +71,7 @@ public class FileInputIndexedDB : MonoBehaviour
         fileCount = 0;
         filenames = new List<string>();
         Debug.Log("expecting " + count + " files");
-        //LoadingScreen.Instance.ShowMessage($"{numberOfFilesToLoad} {((numberOfFilesToLoad>1) ? "bestanden worden" : "bestand wordt")} ingeladen..");
-        //LoadingScreen.Instance.ProgressBar.SetMessage($"");
+
         StartCoroutine(WaitForFilesToBeLoaded());
     }
     
@@ -113,7 +119,16 @@ public class FileInputIndexedDB : MonoBehaviour
         //LoadingScreen.Instance.Hide();
 
         var files = string.Join(",", filenames);
-        filesImportedEvent.started.Invoke(files);
+        if (callbackAdress == null)
+        {
+            Debug.Log("FileInputIndexedDB: No callback set. Using default file import event.");
+            if (filesImportedEvent) filesImportedEvent.started.Invoke(files);
+        }
+        else
+        {
+            callbackAdress(files);
+            callbackAdress = null;
+        }
     }
 
     public void ClearDatabase(bool succes)

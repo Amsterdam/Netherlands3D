@@ -16,6 +16,7 @@ namespace Netherlands3D.Geoservice
         private int buildingStencilID;
         [SerializeField]
         private int terrainStencilID;
+
         [Header("Events")]
         public StringEvent OnWMSUrlDefined_String;
         public BoolEvent AleenOpMaaiveld_Bool;
@@ -25,14 +26,29 @@ namespace Netherlands3D.Geoservice
         public TriggerEvent ShowWMSOnBuildingsAndTerrain;
         public TriggerEvent UnloadWMSService;
 
+        [System.Serializable]
+        public class WMSLOD
+        {
+            public int textureSize;
+            public float maximumDistance;
+        }
+        [Header("WMS texture sizes")]
+        [SerializeField]
+        private WMSLOD[] wmsLods = new WMSLOD[3]
+        {
+            new WMSLOD() { textureSize = 16, maximumDistance = 6000 },
+            new WMSLOD() { textureSize = 256, maximumDistance = 3000 },
+            new WMSLOD() { textureSize = 2048, maximumDistance = 1000 }
+        };
+
+        [SerializeField]
+        private int tileSize = 1500;
+        [SerializeField] private bool compressLoadedTextures = true;
         private bool OnlyOnTerrain_Memory = false;
         private bool DisplayState = true;
-        //public List<LayerMask> layermasks;
-        
-        // Start is called before the first frame update
+
         void Start()
         {
-
             tileHandler = FindObjectOfType(typeof(TileSystem.TileHandler)) as TileSystem.TileHandler;
             if (OnWMSUrlDefined_String)
             {
@@ -77,14 +93,14 @@ namespace Netherlands3D.Geoservice
             }
         }
 
-        void UnloadLayer()
+        private void UnloadLayer()
         {
             tileHandler.RemoveLayer(layer);
             Destroy(layer.gameObject);
             layer = null;
         }
 
-        void ShowOnlyOnTerrain(bool toggleValue)
+        private void ShowOnlyOnTerrain(bool toggleValue)
         {
             OnlyOnTerrain_Memory = toggleValue;
             if (toggleValue)
@@ -97,21 +113,21 @@ namespace Netherlands3D.Geoservice
             }
         }
 
-        void showWMSOnBuildings()
+        private void showWMSOnBuildings()
         {
             if (layer)
             {
                layer.ProjectOnBuildings(buildingStencilID);
                             }
         }
-        void showWMSOnTerrain()
+        private void showWMSOnTerrain()
         {
             if (layer)
             {
                 layer.ProjectOnTerrain(terrainStencilID);
             }
         }
-        void showWMSOnBuildingsAndTerrain()
+        private void showWMSOnBuildingsAndTerrain()
         {
             if (layer)
             {
@@ -119,12 +135,10 @@ namespace Netherlands3D.Geoservice
             }
         }
 
-        // Update is called once per frame
-        void CreateWMS_Layer(string baseURL)
+        private void CreateWMS_Layer(string baseURL)
         {
-            Debug.Log("createWMSlayer");
-            GameObject layercontainer=null;
-
+            Debug.Log("Create WMS layer");
+            GameObject layercontainer = null;
 
             if (layer != null)
             {
@@ -132,17 +146,16 @@ namespace Netherlands3D.Geoservice
                 layercontainer = layer.gameObject;
                 layer = null;
             }
-            
+
             if (layercontainer == null)
             {
                 layercontainer = new GameObject("WMSLayer");
                 layercontainer.layer = this.gameObject.layer;
                 layercontainer.transform.parent = transform;
-                
-                
             }
             layer = layercontainer.AddComponent<WMSImageLayer>();
-            layer.tileSize = 1500;
+            layer.compressLoadedTextures = compressLoadedTextures;
+            layer.tileSize = tileSize;
             if (OnlyOnTerrain_Memory)
             {
                 showWMSOnTerrain();
@@ -151,40 +164,29 @@ namespace Netherlands3D.Geoservice
             {
                 showWMSOnBuildingsAndTerrain();
             }
-            
 
-            DataSet dataSet = new DataSet();
-            string datasetURL = baseURL.Replace("{Width}", "16");
-            datasetURL = datasetURL.Replace("{Height}", "16");
-            dataSet.path = datasetURL;
-            dataSet.lod = 0;
-            dataSet.maximumDistance = 6000;
-            layer.TilePrefab = TilePrefab;
-            layer.Datasets.Add(dataSet);
-
-            dataSet = new DataSet();
-            datasetURL = baseURL.Replace("{Width}", "256");
-            datasetURL = datasetURL.Replace("{Height}", "256");
-            dataSet.path = datasetURL;
-            dataSet.lod = 1;
-            dataSet.maximumDistance = 3000;
-            layer.TilePrefab = TilePrefab;
-            layer.Datasets.Add(dataSet);
-
-            dataSet = new DataSet();
-            datasetURL = baseURL.Replace("{Width}", "2048");
-            datasetURL = datasetURL.Replace("{Height}", "2048");
-            dataSet.path = datasetURL;
-            dataSet.lod = 2;
-            dataSet.maximumDistance = 1000;
-            layer.TilePrefab = TilePrefab;
-            layer.Datasets.Add(dataSet);
+            AddWMSLayerDataSets(baseURL);
             tileHandler.AddLayer(layer);
-
 
             ShowLayer(DisplayState);
         }
 
-        
+        private void AddWMSLayerDataSets(string baseURL)
+        {
+            for (int i = 0; i < wmsLods.Length; i++)
+            {
+                var wmsLOD = wmsLods[i];
+                DataSet dataSet = new DataSet();
+                string datasetURL = baseURL.Replace("{Width}", wmsLOD.textureSize.ToString());
+                datasetURL = datasetURL.Replace("{Height}", wmsLOD.textureSize.ToString());
+                dataSet.path = datasetURL;
+                dataSet.lod = i;
+                dataSet.maximumDistance = wmsLOD.maximumDistance;
+
+                layer.TilePrefab = TilePrefab;
+                layer.Datasets.Add(dataSet);
+            }
+        }
+
     }
 }

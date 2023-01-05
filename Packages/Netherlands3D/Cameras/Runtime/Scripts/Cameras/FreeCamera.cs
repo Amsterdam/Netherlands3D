@@ -22,86 +22,58 @@ public class FreeCamera : MonoBehaviour
 {
     [Header("Options")]
     [Tooltip("Move forward on world plane instead of camera forward")]
-    [SerializeField]
-    private bool moveForwardOnPlane = true;
+    [SerializeField] private bool moveForwardOnPlane = true;
     [Tooltip("Value threshold from 0 to 1 to switch to dragging coplanar")]
-    [SerializeField]
-    private float dragOnPlaneThreshold = 0.5f;
-    [SerializeField]
-    private bool dragToMoveCamera = true;
-    [SerializeField]
-    private bool multiplySpeedBasedOnHeight = true;
+    [SerializeField] private float dragOnPlaneThreshold = 0.5f;
+    [SerializeField] private bool dragToMoveCamera = true;
+    [SerializeField] private bool multiplySpeedBasedOnHeight = true;
 
     [Header("Speeds")]
-    [SerializeField]
-    private float moveSpeed = 1.0f;
-    [SerializeField]
-    private float upAndDownSpeed = 10.0f;
-    [SerializeField]
-    private float dragSpeed = 1.0f;
-    [SerializeField]
-    private float easing = 1.0f;
-    [SerializeField]
-    private float zoomSpeed = 1.0f;
+    [SerializeField] private float moveSpeed = 1.0f;
+    [SerializeField] private float upAndDownSpeed = 10.0f;
+    [SerializeField] private float dragSpeed = 1.0f;
+    [SerializeField] private float easing = 1.0f;
+    [SerializeField] private float zoomSpeed = 1.0f;
     private float dynamicMoveSpeed = 1.0f;
     private float dynamicDragSpeed = 1.0f;
     private float dynamicZoomSpeed = 1.0f;
 
-    [SerializeField]
-    private float minimumSpeed = 5.0f;
-    [SerializeField]
-    private float maximumSpeed = 1000.0f;
-    [SerializeField]
-    private float minimumDragSpeed = 5.0f;
-    [SerializeField]
-    private float maximumDragSpeed = 1000.0f;
-    [SerializeField]
-    private float dragRotateSpeed = 1.0f;
-
-    [SerializeField]
-    private float rotateAroundPointSpeed = 1.0f;
+    [SerializeField] private float minimumSpeed = 5.0f;
+    [SerializeField] private float maximumSpeed = 1000.0f;
+    [SerializeField] private float minimumDragSpeed = 5.0f;
+    [SerializeField] private float maximumDragSpeed = 1000.0f;
+    [SerializeField] private float dragRotateSpeed = 1.0f;
+    [SerializeField] private float rotateAroundPointSpeed = 1.0f;
 
     [Header("Gamepad")]
-    [SerializeField]
-    private float gamepadRotateSpeed = 1.0f;
-    [SerializeField]
-    private float gamepadMoveSpeed = 1.0f;
+    [SerializeField] private float gamepadRotateSpeed = 1.0f;
+    [SerializeField] private float gamepadMoveSpeed = 1.0f;
 
     [Header("Limits")]
-    [SerializeField]
-    private float maxPointerDistance = 10000;
-    [SerializeField]
-    private float maxCameraHeight = 1500;
-    [SerializeField]
-    private float minCameraHeight = -500;
-    [SerializeField]
-    private bool useRotationLimits = true;
+    [SerializeField] private float maxPointerDistance = 10000;
+    [SerializeField] private float maxCameraHeight = 1500;
+    [SerializeField] private float minCameraHeight = -500;
+    [SerializeField] private bool useRotationLimits = true;
 
     [Header("Listen to input events")]
-    [SerializeField]
-    private FloatEvent horizontalInput;
-    [SerializeField]
-    private FloatEvent verticalInput;
-    [SerializeField]
-    private FloatEvent upDownInput;
-    [SerializeField]
-    private Vector3Event lookInput;
-    [SerializeField]
-    private Vector3Event flyInput;
-    [SerializeField]
-    private Vector3Event rotateInput;
+    [SerializeField] private FloatEvent horizontalInput;
+    [SerializeField] private FloatEvent verticalInput;
+    [SerializeField] private FloatEvent upDownInput;
+    [SerializeField] private Vector3Event lookInput;
+    [SerializeField] private Vector3Event flyInput;
+    [SerializeField] private Vector3Event rotateInput;
+    [SerializeField] private FloatEvent zoomToPointerInput;
+    [SerializeField] private Vector3Event pointerPosition;
+    [SerializeField] private BoolEvent dragModifier;
+    [SerializeField] private BoolEvent rotateModifier;
+    [SerializeField] private BoolEvent firstPersonModifier;
 
-    [SerializeField]
-    private FloatEvent zoomToPointerInput;
-    [SerializeField]
-    private Vector3Event pointerPosition;
-
-    [SerializeField]
-    private BoolEvent dragModifier;
-    [SerializeField]
-    private BoolEvent rotateModifier;
-    [SerializeField]
-    private BoolEvent firstPersonModifier;
+    [Header("Other setting events")]
+    [SerializeField] public BoolEvent blockCameraDrag;
+    [SerializeField] public BoolEvent ortographicEnabled;
+    [SerializeField] public GameObjectEvent focusOnObject;
+    [SerializeField] private float focusAngle = 45.0f;
+    [SerializeField] private float focusDistanceMultiplier = 2.0f;
 
     private Vector3 currentPointerPosition;
     private Vector3 zoomTarget;
@@ -113,6 +85,7 @@ public class FreeCamera : MonoBehaviour
     private Vector3 currentPointerDelta;
 
     private bool dragging = false;
+    private bool lockDraggingInput = false;
     private bool rotate = false;
     private bool rotatingAroundPoint = false;
     private bool firstPersonRotate = false;
@@ -139,6 +112,68 @@ public class FreeCamera : MonoBehaviour
         dragModifier.started.AddListener(Drag);
         rotateModifier.started.AddListener(Rotate);
         firstPersonModifier.started.AddListener(RotateFirstPerson);
+
+        if(blockCameraDrag) blockCameraDrag.started.AddListener(LockDragging);
+        if(ortographicEnabled) ortographicEnabled.started.AddListener(EnableOrtographic);
+        if(focusOnObject) focusOnObject.started.AddListener(FocusOnObject);
+    }
+
+    /// <summary>
+    /// Switch camera to ortographic mode and limit its controls
+    /// </summary>
+    /// <param name="enableOrtographic">Ortographic mode enabled</param>
+    public void EnableOrtographic(bool enableOrtographic)
+    {
+        if (enableOrtographic)
+        {
+            var cameraLookWorldPosition = GetWorldPoint(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0));
+            cameraLookWorldPosition.y = this.transform.position.y;
+            this.transform.position = cameraLookWorldPosition;
+
+            var flattenedForward = this.transform.forward;
+            flattenedForward.y = 0;
+            this.transform.rotation = Quaternion.LookRotation(Vector3.down, flattenedForward);
+        }
+
+        cameraComponent.orthographic = enableOrtographic;
+    }
+
+    /// <summary>
+    /// Focus camera on gameobject using origin.
+    /// Move camera backwards to contain renderer bounds.
+    /// </summary>
+    /// <param name="focusObject"></param>
+    public void FocusOnObject(GameObject focusObject)
+    {
+        this.transform.position = focusObject.transform.position;
+        this.transform.eulerAngles = new Vector3((cameraComponent.orthographic) ? 90 : focusAngle, 0, 0);
+
+        var meshRenderer = focusObject.GetComponentInChildren<MeshRenderer>();
+        if(meshRenderer)
+        {
+            this.transform.Translate(Vector3.back * meshRenderer.bounds.size.magnitude * focusDistanceMultiplier, Space.Self);
+        }
+        else
+        {
+            this.transform.Translate(Vector3.back * focusDistanceMultiplier, Space.Self);
+        }
+
+    }
+
+    private void OrtographicLimitations()
+    {
+        //Link size and camera height to support features depending on camera height
+        cameraComponent.orthographicSize = this.transform.position.y;
+    }
+
+    /// <summary>
+    /// Set dragging input to locked/unlocked. This ignores pointer drag input while still allowing other movement inputs.
+    /// If another feature used mouse pointer but want to stop the camera from dragging while click+dragging, set this to locked.
+    /// </summary>
+    /// <param name="locked">Lock pointer drag events</param>
+    public void LockDragging(bool locked)
+    {
+        lockDraggingInput = locked;
     }
 
     /// <summary>
@@ -177,9 +212,11 @@ public class FreeCamera : MonoBehaviour
 		StorePreviousTransform();
 
 		this.transform.Rotate(0, value.x * dragRotateSpeed, 0, Space.World);
-		this.transform.Rotate(value.y * dragRotateSpeed, 0, 0, Space.Self);
-
-		RevertIfOverAxis();
+        if (!cameraComponent.orthographic)
+        {
+            this.transform.Rotate(value.y * dragRotateSpeed, 0, 0, Space.Self);
+            RevertIfOverAxis();
+        }	
 	}
 
     /// <summary>
@@ -194,9 +231,11 @@ public class FreeCamera : MonoBehaviour
         StorePreviousTransform();
 
         this.transform.Rotate(0, value.x * gamepadRotateSpeed * Time.deltaTime, 0, Space.World);
-        this.transform.Rotate(value.y * gamepadRotateSpeed * Time.deltaTime, 0, 0, Space.Self);
-
-        RevertIfOverAxis();
+        if (!cameraComponent.orthographic)
+        {
+            this.transform.Rotate(value.y * gamepadRotateSpeed * Time.deltaTime, 0, 0, Space.Self);
+            RevertIfOverAxis();
+        }
     }
 
     /// <summary>
@@ -218,10 +257,12 @@ public class FreeCamera : MonoBehaviour
 
         StorePreviousTransform();
 
-        this.transform.RotateAround(dragStart, this.transform.right, -pointerDelta.y * rotateAroundPointSpeed);
-		this.transform.RotateAround(dragStart, Vector3.up, pointerDelta.x * rotateAroundPointSpeed);
-
-        RevertIfOverAxis();
+        this.transform.RotateAround(dragStart, Vector3.up, pointerDelta.x * rotateAroundPointSpeed);
+        if (!cameraComponent.orthographic)
+        {
+            this.transform.RotateAround(dragStart, this.transform.right, -pointerDelta.y * rotateAroundPointSpeed);
+            RevertIfOverAxis();
+        }
     }
 
     /// <summary>
@@ -273,12 +314,14 @@ public class FreeCamera : MonoBehaviour
 	{
         EaseDragTarget();
         Clamp();
-	}
+
+        if (cameraComponent.orthographic) OrtographicLimitations();
+    }
 
     /// <summary>
     /// Clamp camera to limits
     /// </summary>
-	private void Clamp()
+    private void Clamp()
 	{
 		if(this.transform.position.y > maxCameraHeight)
         {
@@ -318,6 +361,11 @@ public class FreeCamera : MonoBehaviour
 	public void Drag(bool isDragging)
 	{
         if (!dragToMoveCamera) return;
+        if(lockDraggingInput)
+        {
+            dragVelocity = Vector3.zero;
+            return;
+        }
 
 		if(!dragging && isDragging)
         {
@@ -330,9 +378,10 @@ public class FreeCamera : MonoBehaviour
             var screenMove = currentPointerDelta / Screen.height;
 
             StorePreviousTransform();
-            if (Vector3.Dot(Vector3.down, transform.forward) >= dragOnPlaneThreshold)
+            var lookingDown = Vector3.Dot(Vector3.down, transform.forward);
+            if (lookingDown >= dragOnPlaneThreshold)
             {
-                var flattenedForward = this.transform.forward;
+                var flattenedForward = this.transform.up;
                 flattenedForward.y = 0;
                 this.transform.Translate(flattenedForward.normalized * -screenMove.y * dynamicDragSpeed, Space.World);
                 screenMove.y = 0;

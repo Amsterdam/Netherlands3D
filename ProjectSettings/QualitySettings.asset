@@ -116,13 +116,5 @@ QualitySettings:
     excludedTargetPlatforms: []
   m_PerPlatformDefaultQuality:
     Android: 2
-    Lumin: 2
-    Nintendo Switch: 2
-    PS4: 2
-    Stadia: 2
     Standalone: 2
     WebGL: 2
-    Windows Store Apps: 2
-    XboxOne: 2
-    iPhone: 1
-    tvOS: 1

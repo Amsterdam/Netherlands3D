@@ -16,7 +16,7 @@ namespace Netherlands3D.Geoservice
         [SerializeField]
         private int activeStencilID = 0;
         private int activeStencilMask = 255;
-
+        public bool compressLoadedTextures = false;
         public GameObject TilePrefab;
         public override void HandleTile(TileChange tileChange, Action<TileChange> callback = null)
         {
@@ -68,7 +68,7 @@ namespace Netherlands3D.Geoservice
                 //destroy the image
                 Texture tex= tile.gameObject.GetComponent<MeshRenderer>().material.GetTexture("_MainTex");
                 tile.gameObject.GetComponent<MeshRenderer>().material.SetTexture("_MainTex",null);
-                DestroyImmediate(tex,true);
+                Destroy(tex);
 
                 //destroy the gameobject
                 Destroy(tiles[tileKey].gameObject);
@@ -88,9 +88,6 @@ namespace Netherlands3D.Geoservice
             Vector2Int origin = new Vector2Int(tileKey.x+(tileSize/2), tileKey.y + (tileSize / 2));
             tile.gameObject.transform.position = CoordConvert.RDtoUnity(origin);
             
-            
-            
-
             return tile;
         }
 
@@ -122,10 +119,11 @@ namespace Netherlands3D.Geoservice
                 Texture OldTexture = tiles[tileKey].gameObject.GetComponent<MeshRenderer>().material.GetTexture("_MainTex");
                 if (OldTexture!=null)
                 {
-                    DestroyImmediate(OldTexture,true);
+                    Destroy(OldTexture);
                 }
 
-                Texture myTexture = ((DownloadHandlerTexture)webRequest.downloadHandler).texture; ;
+                Texture2D myTexture = ((DownloadHandlerTexture)webRequest.downloadHandler).texture;
+                if(compressLoadedTextures) myTexture.Compress(false);
                 myTexture.wrapMode = TextureWrapMode.Clamp;
                 Tile tile = tiles[tileKey];
 
