@@ -9,6 +9,7 @@ public class WFSInterface : MonoBehaviour
     [SerializeField] private Transform featureContentParent;
     [SerializeField] private Transform settingsParent;
     [SerializeField] private Button featureButtonPrefab;
+    [SerializeField] private Text activeFeatureText;
 
     [Header("Invoked Events")]
     //[SerializeField] private StringEvent getFeatureEvent;
@@ -38,6 +39,7 @@ public class WFSInterface : MonoBehaviour
             b.onClick.AddListener(() => 
                 {
                     setActiveFeatureEvent.Invoke(feature);
+                    activeFeatureText.text = feature.FeatureName;
                     settingsParent.gameObject.SetActive(true);
                 }
             );
