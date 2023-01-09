@@ -34,10 +34,10 @@
       "description": "For importing files.",
       "path": "File Importer/Samples~/Scene Setup"
     },
-	{
+    {
       "displayName": "Import OBJ",
       "description": "For importing OBJ-files.",
-      "path": "Modelparsing/ImportOBJ/Samples~/Import obj-file"
+      "path": "Modelparsing/ImportOBJ/Samples~/Import OBJ-File"
     },
     {
       "displayName": "Minimap Template",
@@ -47,7 +47,7 @@
     {
       "displayName": "Selection Tools",
       "description": "Example for selecting areas using pointer",
-      "path": "SelectionTools/Samples~/SelectionTools"  
+      "path": "SelectionTools/Samples~/SelectionTools"
     },
     {
       "displayName": "Profile Tool",
@@ -65,6 +65,11 @@
       "path": "SubobjectFiltering/Samples~/SubobjectFiltering"
     },
     {
+      "displayName": "T3DPipeline/CityJSON visualizer Sample",
+      "description": "CityJSON visualizer, gets a CityJSON building from a BAGID, visualises it, allows for annotations, and resumbits it to be registered",
+      "path": "T3DPipeline/Samples~/"
+    },
+    {
       "displayName": "TileSystem",
       "description": "Basic TileSystem",
       "path": "Core/Samples~/TileSystem"
@@ -78,7 +83,7 @@
       "displayName": "Traffic Sample",
       "description": "Ready to use traffic example",
       "path": "Traffic/Samples~/Traffic Example"
-    },    
+    },
     {
       "displayName": "WMS-layer",
       "description": "Example of a wms-layer",
@@ -93,7 +98,7 @@
       "displayName": "WebGL template example",
       "description": "A WebGL template example to use for Netherlands3D WebGL projects with unityInstance reference and responsive full browser window behaviour.",
       "path": "WebGL/Samples~/WebGL"
-    }    
+    }
   ],
   "hideInEditor": false,
   "author": {

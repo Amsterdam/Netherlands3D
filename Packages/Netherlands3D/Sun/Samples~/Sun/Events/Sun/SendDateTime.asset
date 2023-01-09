@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3806bf4ed8508374aa40d46634c7a461, type: 3}
   m_Name: SendDateTime
   m_EditorClassIdentifier: 
-  eventName: 
-  description: 
+  eventName: SendDateTime
+  description: This event is used to update the DateTime every frame
   started:
     m_PersistentCalls:
       m_Calls: []

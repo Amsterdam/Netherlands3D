@@ -20,6 +20,16 @@ using UnityEngine;
 namespace Netherlands3D.Core
 {
     /// <summary>
+    /// Supported coordinate systems
+    /// </summary>
+    public enum CoordinateSystem
+    {
+        Unity,
+        WGS84,
+        RD
+    }
+
+    /// <summary>
     /// Vector2 width Double values to represent RD-coordinates (X,Y)
     /// </summary>
     [System.Serializable]

@@ -30,6 +30,14 @@ namespace Netherlands3D.ModelParsing
             {
                 System.IO.File.Delete(indicesFileName);
             }
+
+            uvFileName = Application.persistentDataPath + "/" + uvFileName + ".dat";
+            if (System.IO.File.Exists(uvFileName))
+            {
+                System.IO.File.Delete(uvFileName);
+            }
+
+
             submeshes.Clear();
 
         }

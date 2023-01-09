@@ -69,7 +69,7 @@ namespace Netherlands3D.Timeline
             float value = width * slider.value;
             // Convert to bar local x (-960, 0, 960)
             float convertedValue = value - (width / 2);
-            DateTime dt = timelineUI.GetClosestBar(convertedValue).GetCurrentDateTime(convertedValue, true);
+            DateTime dt = timelineUI.GetClosestBar(convertedValue).GetCurrentDateTime(convertedValue, false);
             if(dt.Year != 1)
             {
                 timelineUI.SetCurrentDateNoNotify(dt);
