@@ -26,4 +26,13 @@ public static class TransformExtensions
 	 var worldToLocalMatrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one).inverse;
 	 return worldToLocalMatrix.MultiplyPoint3x4(position);
 	}
+
+	public static void ClearAllChildren(this Transform transform)
+    {
+		for(int i = transform.childCount -1; i >= 0; i--)
+        {
+			Object.Destroy(transform.GetChild(i));
+        }
+    }
+
 }
