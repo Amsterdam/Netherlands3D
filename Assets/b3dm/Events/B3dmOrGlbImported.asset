@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a6319a1c876ebd247a42bdca122ae5c3, type: 3}
-  m_Name: Event File Importer File Imported
+  m_Name: B3dmOrGlbImported
   m_EditorClassIdentifier: 
   eventName: Event File Imported
   description: Triggerd when file/files are imported
