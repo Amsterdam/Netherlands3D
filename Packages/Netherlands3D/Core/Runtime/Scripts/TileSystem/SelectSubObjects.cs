@@ -15,6 +15,7 @@ namespace Netherlands3D.TileSystem
 
         [Header("Sub object selection:")]
         [SerializeField] private string removeFromID = "NL.IMBAG.Pand.";
+        [SerializeField] private string brotliExtention = ".br";
 
         [SerializeField]
         private LayerMask clickCheckLayerMask;
@@ -56,6 +57,10 @@ namespace Netherlands3D.TileSystem
 
         private void Awake()
         {
+            //Global settings for subobject data
+            SubObjects.removeFromID = removeFromID;
+            SubObjects.brotliExtention = brotliExtention;
+
             selectedIDs = new List<string>();
             hiddenIDs = new List<string>();
 

@@ -15,6 +15,9 @@ public partial class SubObjects : MonoBehaviour
 	public List<SubOjectData> SubObjectsData { get => subObjectsData; private set => subObjectsData = value; }
 	public bool Altered { get; private set; }
 
+	public static string removeFromID = "NL.IMBAG.Pand.";
+	public static string brotliExtention = ".br";
+
 	private Mesh mesh;
 	private Color[] vertexColors;
 
@@ -65,6 +68,10 @@ public partial class SubObjects : MonoBehaviour
 					var firstVertex = reader.ReadInt32();
 					var vertexCount = reader.ReadInt32();
 					var subMeshID = reader.ReadInt32();
+
+					if (removeFromID.Length > 0)
+						id = id.Replace(removeFromID, "");
+
 					SubObjectsData.Add(new SubOjectData()
 					{
 						objectID = id,
@@ -138,7 +145,13 @@ public partial class SubObjects : MonoBehaviour
 		downloadingSubObjects = true;
 
 		var metaDataName = mesh.name.Replace(".bin","-data.bin");
-		var webRequest = UnityWebRequest.Get(metaDataName);
+
+#if !UNITY_EDITOR && UNITY_WEBGL
+		if(brotliExtention.Length>0)
+			metaDataName += brotliExtention;
+#endif
+
+        var webRequest = UnityWebRequest.Get(metaDataName);
 
 		yield return webRequest.SendWebRequest();
 
