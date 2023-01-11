@@ -59,7 +59,7 @@ MonoBehaviour:
   - {fileID: -5709656557854672685}
   m_RendererFeatureMap: 64b18a1cd8fd544a511f44df160d4c6bd3b897979c39c3b0
   m_UseNativeRenderPass: 0
-  postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
+  postProcessData: {fileID: 0}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   shaders:
     blitPS: {fileID: 4800000, guid: c17132b1f77d20942aa75f8429c0f8bc, type: 3}
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_AssetVersion: 2
   m_OpaqueLayerMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 1079
   m_TransparentLayerMask:
     serializedVersion: 2
     m_Bits: 55
