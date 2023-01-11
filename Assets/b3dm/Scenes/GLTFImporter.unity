@@ -350,6 +350,7 @@ MonoBehaviour:
   loadFromURL: {fileID: 11400000, guid: 7054d45c6fb4dc54fb3bdc5f8eab4323, type: 2}
   parseTime: {fileID: 11400000, guid: abe6a151a1ed92146bf234a801b4a247, type: 2}
   cameraOffsetDirection: {x: 0, y: 1, z: -1}
+  writeGlbNextToB3dm: 1
 --- !u!4 &416403326
 Transform:
   m_ObjectHideFlags: 0

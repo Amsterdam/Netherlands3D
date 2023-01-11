@@ -58,6 +58,7 @@ public class TileImport : MonoBehaviour
                     if (writeGlbNextToB3dm)
                     {
                         var localGlbPath = Application.persistentDataPath + "/" + Path.GetFileName(url).Replace(".b3dm", ".glb");
+                        Debug.Log("Writing local file: " + localGlbPath);
                         File.WriteAllBytes(localGlbPath, bytes);
                     }
 #endif
@@ -88,6 +89,7 @@ public class TileImport : MonoBehaviour
             if (writeGlbNextToB3dm)
             {
                 var localGlbPath = filepath.Replace(".b3dm", ".glb");
+                Debug.Log("Writing local file: " + localGlbPath);
                 File.WriteAllBytes(localGlbPath, bytes);
             }
 #endif
