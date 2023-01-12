@@ -6,6 +6,7 @@ using System.IO;
 using B3dm.Tile;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
+using GLTFast;
 
 public class TileImport : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class TileImport : MonoBehaviour
 
     private string url = "";
 
+    [Header("Develop")]
     [SerializeField]
     private bool writeGlbNextToB3dm;
 
@@ -108,21 +110,41 @@ public class TileImport : MonoBehaviour
         stopwatch.Start();
 
         //Use our parser (in this case GLTFFast to read the binary data and instantiate the Unity objects in the scene)
-        var gameObject = new GameObject();
-        var gltf = gameObject.AddComponent<GLTFast.GltfBinary>();
-        await gltf.LoadBinaryAndInstantiate(glbBuffer);
+        var gltf = new GltfImport();
+        var settings = new ImportSettings();
+        settings.AnimationMethod = AnimationMethod.None;
+
+        
+        var success = await gltf.Load(glbBuffer,null, settings);
 
         stopwatch.Stop();
         parseTime.Invoke(stopwatch.ElapsedTicks.ToString() + " ticks");
 
-        FocusCamera(gameObject);
+        if (success)
+        {
+            var gameObject = new GameObject("glTFScenes");
+            var scenes = gltf.SceneCount;
+            for (int i = 0; i < scenes; i++)
+            {
+                await gltf.InstantiateSceneAsync(gameObject.transform, i);
+            }
+
+            FocusCamera(gameObject);
+        }
+        else
+        {
+            Debug.LogError("Loading glTF failed!");
+        }
     }
 
     private void FocusCamera(GameObject gameObject)
     {
         //Move camera for preview
         var renderer = gameObject.GetComponentInChildren<Renderer>();
-        Camera.main.transform.position = renderer.bounds.center + (cameraOffsetDirection * renderer.bounds.size.magnitude);
-        Camera.main.transform.LookAt(renderer.bounds.center);
+        if (renderer != null)
+        {
+            Camera.main.transform.position = renderer.bounds.center + (cameraOffsetDirection * renderer.bounds.size.magnitude);
+            Camera.main.transform.LookAt(renderer.bounds.center);
+        }
     }
 }
