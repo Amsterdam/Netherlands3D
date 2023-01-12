@@ -66,7 +66,7 @@ public class TileImport : MonoBehaviour
 #endif
                 }
 
-                yield return ParseFromBytes(bytes);
+                yield return ParseFromBytes(bytes, url);
             }
         }
     }
@@ -101,10 +101,10 @@ public class TileImport : MonoBehaviour
             bytes = File.ReadAllBytes(filepath);
         }
 
-        await ParseFromBytes(bytes);
+        await ParseFromBytes(bytes, filepath);
     }
 
-    private async Task ParseFromBytes(byte[] glbBuffer)
+    private async Task ParseFromBytes(byte[] glbBuffer, string sourcePath)
     {
         System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
         stopwatch.Start();
@@ -113,9 +113,8 @@ public class TileImport : MonoBehaviour
         var gltf = new GltfImport();
         var settings = new ImportSettings();
         settings.AnimationMethod = AnimationMethod.None;
-
         
-        var success = await gltf.Load(glbBuffer,null, settings);
+        var success = await gltf.Load(glbBuffer, new System.Uri(sourcePath), settings);
 
         stopwatch.Stop();
         parseTime.Invoke(stopwatch.ElapsedTicks.ToString() + " ticks");
