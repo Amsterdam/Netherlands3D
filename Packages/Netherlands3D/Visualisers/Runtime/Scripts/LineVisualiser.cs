@@ -27,6 +27,7 @@ namespace Netherlands3D.Visualisers
 		private Vector3 offset = Vector3.zero;
 
 		[SerializeField] private GameObjectEvent lineParentEvent;
+		[SerializeField] private ColorEvent lineColorEvent;
 
 		private Transform lineParent;
 
@@ -34,6 +35,7 @@ namespace Netherlands3D.Visualisers
 		{
 			lineCoordinatesEvent.started.AddListener(DrawLine);
 			if(lineParentEvent) lineParentEvent.started.AddListener((parentObject) => lineParent = parentObject.transform);
+			if (lineColorEvent) lineColorEvent.started.AddListener((color) => lineColor = color);
 		}
 
 		public void DrawLine(List<Vector3> linePoints)

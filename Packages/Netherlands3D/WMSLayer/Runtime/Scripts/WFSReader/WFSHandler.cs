@@ -25,6 +25,7 @@ public class WFSHandler : MonoBehaviour
     [SerializeField] private Vector3Event pointEvent;
     [SerializeField] private Vector3ListEvent multiPointEvent;
     [SerializeField] private GameObjectEvent wfsParentEvent;
+    [SerializeField] private ColorEvent lineColorEvent;
 
     [Header("Listen Events")]
     [SerializeField] private StringEvent startIndexEvent;
@@ -42,7 +43,9 @@ public class WFSHandler : MonoBehaviour
     private WFSFormatter formatter;
     private WFSFeature activeFeature;
     private float coroutineRunTime = 200;
-
+    private float hue = 0;
+    private float saturation = 0.5f;
+    private float brightness = 0.5f;
 
     private void Awake()
     {
@@ -98,8 +101,9 @@ public class WFSHandler : MonoBehaviour
     }
     private IEnumerator HandleFeatureJSON(GeoJSON geoJSON)
     {
+        ShiftLineColor();
         SpawnParent = new GameObject().transform;
-        SpawnParent.name = "WFS_ObjectParent" + UnityEngine.Random.Range(0, 100);
+        SpawnParent.name = "WFS_ObjectParent";
         wfsParentEvent.Invoke(SpawnParent.gameObject);
 
         DateTime dateTime = DateTime.UtcNow;
@@ -123,12 +127,12 @@ public class WFSHandler : MonoBehaviour
     }
     private void SetStartIndex(string index)
     {
-        ActiveWFS.StartIndex = int.Parse(index);
+        int.TryParse(index, out ActiveWFS.StartIndex);
     }
 
     private void SetWebFeatureCount(string count)
     {
-        ActiveWFS.Count = int.Parse(count);
+        int.TryParse(count, out ActiveWFS.Count);
     }
     private void EvaluateGeoType(GeoJSON geoJSON)
     {
@@ -144,13 +148,12 @@ public class WFSHandler : MonoBehaviour
                 break;
             case GeoJSON.GeoJSONGeometryType.LineString:
                 LineStringHandler lineStringHandler = new LineStringHandler();
+                //ShiftLineColor();
                 drawLineEvent.Invoke(lineStringHandler.ProcessLineString(geoJSON.GetGeometryLineString()));
-                //throw new System.NotImplementedException("Geometry Type of type: 'LineString' is not currently supported");
                 break;
             case GeoJSON.GeoJSONGeometryType.MultiLineString:
                 MultiLineHandler multiLineHandler = new MultiLineHandler();
                 drawLinesEvent.Invoke(multiLineHandler.ProcessMultiLine(geoJSON.GetMultiLine()));
-                //throw new System.NotImplementedException("Geometry Type of type: 'MultiLineString' is not currently supported");
                 break;
             case GeoJSON.GeoJSONGeometryType.Polygon:
                 PolygonHandler polyHandler = new PolygonHandler();
@@ -215,9 +218,29 @@ public class WFSHandler : MonoBehaviour
     {
         ActiveWFS.BBox.MaxY = float.Parse(value);
     }
+    private void ShiftLineColor()
+    {
+        hue += 0.1f;
+        if(hue > 1)
+        {
+            hue = 0;
+            saturation += 0.1f;
+            if(saturation > 1)
+            {
+                saturation = 0;
+                brightness += 0.1f;
+                if(brightness > 1)
+                {
+                    brightness = 0;
+                }
+            }
+        }
+        lineColorEvent.Invoke(Color.HSVToRGB(hue, saturation, brightness));
+    }
 
     private void TestMultiLine(List<IList<Vector3>> multiLine)
     {
+        //ShiftLineColor();
         foreach(List<Vector3> lines in multiLine)
         {
             drawLineEvent.Invoke(lines);

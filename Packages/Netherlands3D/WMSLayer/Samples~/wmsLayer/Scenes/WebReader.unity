@@ -767,6 +767,7 @@ MonoBehaviour:
   - {fileID: 1321060332}
   - {fileID: 1282425849}
   - {fileID: 795119923}
+  pendingTileChanges: []
 --- !u!4 &421058739
 Transform:
   m_ObjectHideFlags: 0
@@ -2001,7 +2002,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1154597152}
   - component: {fileID: 1154597151}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: wmsLayerManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2333,6 +2334,7 @@ MonoBehaviour:
   pointEvent: {fileID: 11400000, guid: de30cf7eb366261498596c969a7f956f, type: 2}
   multiPointEvent: {fileID: 11400000, guid: b85001e84563d4c4ebe67b8530d9c003, type: 2}
   wfsParentEvent: {fileID: 11400000, guid: 7a02357272862b34baf21640505cdd47, type: 2}
+  lineColorEvent: {fileID: 11400000, guid: 9411c184c621adc42b98ec297f6c7066, type: 2}
   startIndexEvent: {fileID: 11400000, guid: ceb24388bd74d6d4da6a6d6b2f94d5ca, type: 2}
   countEvent: {fileID: 11400000, guid: d98ef3002449df9418eba61596073328, type: 2}
   resetReaderEvent: {fileID: 11400000, guid: d6d90274d0bae8a4084f3136e436344b, type: 2}
@@ -2608,6 +2610,7 @@ MonoBehaviour:
   - {fileID: 3146379110839247089}
   - {fileID: 886154575666521789}
   - {fileID: 4627494509830521717}
+  pendingTileChanges: []
 --- !u!4 &1512706335
 Transform:
   m_ObjectHideFlags: 0
@@ -2927,6 +2930,7 @@ MonoBehaviour:
   thickness: 25
   offset: {x: 0, y: 20, z: 0}
   lineParentEvent: {fileID: 11400000, guid: 7a02357272862b34baf21640505cdd47, type: 2}
+  lineColorEvent: {fileID: 11400000, guid: 9411c184c621adc42b98ec297f6c7066, type: 2}
 --- !u!1 &1928408494
 GameObject:
   m_ObjectHideFlags: 0
