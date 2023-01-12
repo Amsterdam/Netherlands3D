@@ -128,11 +128,11 @@ namespace Netherlands3D.TileSystem
 					newTile.runningCoroutine = StartCoroutine(DownloadTextNameData(tileChange, newTile, callback));
 					break;
 				case TileAction.Upgrade:
-					tiles[tileKey].LOD++;
+					tiles[tileKey].unityLOD++;
 					//callback(tileChange);
 					break;
 				case TileAction.Downgrade:
-					tiles[tileKey].LOD--;
+					tiles[tileKey].unityLOD--;
 					//callback(tileChange);
 					break;
 				case TileAction.Remove:
@@ -149,7 +149,7 @@ namespace Netherlands3D.TileSystem
 		private Tile CreateNewTile(Vector2Int tileKey)
 		{
 			Tile tile = new Tile();
-			tile.LOD = 0;
+			tile.unityLOD = 0;
 			tile.tileKey = tileKey;
 			tile.layer = transform.gameObject.GetComponent<Layer>();
 			tile.gameObject = new GameObject();

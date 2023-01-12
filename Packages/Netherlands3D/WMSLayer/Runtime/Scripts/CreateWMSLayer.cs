@@ -180,7 +180,6 @@ namespace Netherlands3D.Geoservice
                 string datasetURL = baseURL.Replace("{Width}", wmsLOD.textureSize.ToString());
                 datasetURL = datasetURL.Replace("{Height}", wmsLOD.textureSize.ToString());
                 dataSet.path = datasetURL;
-                dataSet.lod = i;
                 dataSet.maximumDistance = wmsLOD.maximumDistance;
 
                 layer.TilePrefab = TilePrefab;

@@ -435,10 +435,10 @@ namespace Netherlands3D.TileSystem
 				foreach (Vector3Int tileDistance in tileDistances[tilesizeIndex])
 				{
 					tileKey = new Vector2Int(tileDistance.x, tileDistance.y);
-					int LOD = CalculateLOD(tileDistance, layer);
+					int LOD = CalculateUnityLOD(tileDistance, layer);
 					if (layer.tiles.ContainsKey(tileKey))
 					{
-						int activeLOD = layer.tiles[tileKey].LOD;
+						int activeLOD = layer.tiles[tileKey].unityLOD;
 						if (LOD == -1)
 						{
 							TileChange tileChange = new TileChange();
@@ -513,9 +513,9 @@ namespace Netherlands3D.TileSystem
 			}
 		}
 
-		private int CalculateLOD(Vector3Int tiledistance, Layer layer)
+		private int CalculateUnityLOD(Vector3Int tiledistance, Layer layer)
 		{
-			int lod = -1;
+			int unityLod = -1;
 
 			foreach (DataSet dataSet in layer.Datasets)
 			{
@@ -533,11 +533,11 @@ namespace Netherlands3D.TileSystem
 					}
 					else
 					{
-						lod = dataSet.lod;
+						unityLod = layer.Datasets.IndexOf(dataSet);
 					}
 				}
 			}
-			return lod;
+			return unityLod;
 		}
 
 		/// <summary>
@@ -651,7 +651,7 @@ namespace Netherlands3D.TileSystem
 	public class DataSet
 	{
 		public string Description;
-		public int lod;
+		public string geoLOD;
 		public string path;
 		public float maximumDistance;
 		[HideInInspector]
@@ -662,7 +662,7 @@ namespace Netherlands3D.TileSystem
 	public class Tile
 	{
 		public Layer layer;
-		public int LOD;
+		public int unityLOD;
 		public GameObject gameObject;
 		public AssetBundle assetBundle;
 		public Vector2Int tileKey;
