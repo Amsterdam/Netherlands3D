@@ -31,10 +31,10 @@ namespace Netherlands3D.TileSystem
 					tiles.Add(tileKey, newTile);
 					break;
 				case TileAction.Upgrade:
-					tiles[tileKey].LOD++;
+					tiles[tileKey].unityLOD++;
 					break;
 				case TileAction.Downgrade:
-					tiles[tileKey].LOD--;
+					tiles[tileKey].unityLOD--;
 					break;
 				case TileAction.Remove:
 					InteruptRunningProcesses(tileKey);
@@ -51,7 +51,7 @@ namespace Netherlands3D.TileSystem
 		private Tile CreateNewTile(Vector2Int tileKey)
 		{
 			Tile tile = new Tile();
-			tile.LOD = 0;
+			tile.unityLOD = 0;
 			tile.tileKey = tileKey;
 			tile.layer = transform.gameObject.GetComponent<Layer>();
 			tile.gameObject = new GameObject();
@@ -85,11 +85,11 @@ namespace Netherlands3D.TileSystem
 		private IEnumerator DownloadBinaryMesh(TileChange tileChange, System.Action<TileChange> callback = null)
 		{
 			var tileKey = new Vector2Int(tileChange.X, tileChange.Y);
-			int lod = tiles[tileKey].LOD;
-			string url = Datasets[lod].path;
-			if (Datasets[lod].path.StartsWith("https://") || Datasets[lod].path.StartsWith("file://"))
+			int index = tiles[tileKey].unityLOD;
+			string url = Datasets[index].path;
+			if (Datasets[index].path.StartsWith("https://") || Datasets[index].path.StartsWith("file://"))
 			{
-				url = Datasets[lod].path;
+				url = Datasets[index].path;
 			}
 
 			url = url.ReplaceXY(tileChange.X, tileChange.Y);

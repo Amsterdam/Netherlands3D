@@ -32,12 +32,12 @@ namespace Netherlands3D.Geoservice
             }
             if (tileChange.action == TileAction.Upgrade)
             {
-                tiles[tileKey].LOD++;
+                tiles[tileKey].unityLOD++;
                 tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
             }
             if (tileChange.action == TileAction.Downgrade)
             {
-                tiles[tileKey].LOD--;
+                tiles[tileKey].unityLOD--;
                 tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
             }
 
@@ -78,7 +78,7 @@ namespace Netherlands3D.Geoservice
         private Tile CreateNewTile(Vector2Int tileKey)
         {
             Tile tile = new Tile();
-            tile.LOD = 0;
+            tile.unityLOD = 0;
             tile.tileKey = tileKey;
             tile.layer = transform.gameObject.GetComponent<Layer>();
             tile.gameObject = Instantiate(TilePrefab);
@@ -94,7 +94,7 @@ namespace Netherlands3D.Geoservice
         IEnumerator DownloadTexture(TileChange tileChange, Action<TileChange> callback = null)
         {
             var tileKey = new Vector2Int(tileChange.X, tileChange.Y);
-            string url = Datasets[tiles[tileKey].LOD].path;
+            string url = Datasets[tiles[tileKey].unityLOD].path;
             url = url.Replace("{Xmin}", tileChange.X.ToString());
             url = url.Replace("{Ymin}", tileChange.Y.ToString()); ;
             url = url.Replace("{Xmax}", (tileChange.X+tileSize).ToString());
