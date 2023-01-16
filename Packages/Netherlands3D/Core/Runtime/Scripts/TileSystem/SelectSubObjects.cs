@@ -30,6 +30,7 @@ namespace Netherlands3D.TileSystem
         [SerializeField] private int submeshIndex = 0;
 
         [SerializeField] private bool applyHideOnReload = false;
+        [SerializeField] private bool applyOnExistingTiles = true;
 
         [SerializeField]
         private float maxSelectDistance = 8000;
@@ -68,7 +69,7 @@ namespace Netherlands3D.TileSystem
             SelectedIDs = new List<string>();
             HiddenIDs = new List<string>();
 
-            if(onColoringSubobjects)
+            if (onColoringSubobjects)
                 onColoringSubobjects.started.AddListener(DisableWhileColoring);
 
             if (clickedOnPosition)
@@ -81,11 +82,11 @@ namespace Netherlands3D.TileSystem
         {
             if (applyHideOnReload && hiddenIDs.Count > 0)
             {
-                UpdatHiddenListToChildren(false);
+                UpdateHiddenListToChildren(applyOnExistingTiles);
             }
         }
 
-        private void UpdatHiddenListToChildren(bool applyToExistingSubObjects = false)
+        public void UpdateHiddenListToChildren(bool applyToExistingSubObjects = false)
         {
             foreach (Transform child in transform)
             {
@@ -106,18 +107,19 @@ namespace Netherlands3D.TileSystem
         }
 
         private void ShootRayAtPosition(Vector3 screenPosition)
-		{
+        {
             var ray = Camera.main.ScreenPointToRay(screenPosition);
-            SelectWithInputs(ray,false,false);
+            SelectWithInputs(ray, false, false);
         }
 
-		private void DisableWhileColoring(bool coloring)
-		{
+        private void DisableWhileColoring(bool coloring)
+        {
             pauseSelectHighlighting = coloring;
         }
 
-        public void SelectWithInputs(Ray inputRay, bool multiSelect, bool secondary = false){
-            if (pauseSelectHighlighting) 
+        public void SelectWithInputs(Ray inputRay, bool multiSelect, bool secondary = false)
+        {
+            if (pauseSelectHighlighting)
                 return;
 
             ray = inputRay;
@@ -144,7 +146,8 @@ namespace Netherlands3D.TileSystem
             {
                 Select();
             }
-            else{
+            else
+            {
                 //Simply retrigger the selection list with the new values
                 HighlightObjectsWithIDs(SelectedIDs);
             }
@@ -222,28 +225,28 @@ namespace Netherlands3D.TileSystem
         /// </summary>
         /// <param name="ids">List of IDs to add to our selection</param>
         private void HighlightObjectsWithIDs(List<string> ids = null)
-		{
-			if (!enabled) return;
+        {
+            if (!enabled) return;
 
-			if (ids != null) SelectedIDs.AddRange(ids);
-			SelectedIDs = SelectedIDs.Distinct().ToList(); //Filter out any possible duplicates
+            if (ids != null) SelectedIDs.AddRange(ids);
+            SelectedIDs = SelectedIDs.Distinct().ToList(); //Filter out any possible duplicates
 
-			lastSelectedID = (SelectedIDs.Count > 0) ? SelectedIDs.Last() : emptyID;
+            lastSelectedID = (SelectedIDs.Count > 0) ? SelectedIDs.Last() : emptyID;
 
-			HighlightSelectedWithColor(selectionVertexColor);
+            HighlightSelectedWithColor(selectionVertexColor);
 
             selectedIdsOnClick.started.Invoke(SelectedIDs);
         }
 
         public void HighlightSelectedWithColor(Color highlightColor)
-		{
-			//Apply highlight to all selected objects
-			var subObjectContainers = GetComponentsInChildren<SubObjects>();
-			foreach (var subObjectContainer in subObjectContainers)
-			{
-				subObjectContainer.ColorWithIDs(SelectedIDs, highlightColor);
-			}
-		}
+        {
+            //Apply highlight to all selected objects
+            var subObjectContainers = GetComponentsInChildren<SubObjects>();
+            foreach (var subObjectContainer in subObjectContainers)
+            {
+                subObjectContainer.ColorWithIDs(SelectedIDs, highlightColor);
+            }
+        }
         public void HighlightAllWithColor(Color highlightColor)
         {
             //Apply highlight to all objects
@@ -353,7 +356,7 @@ namespace Netherlands3D.TileSystem
                 while (hitAlpha == 0 && pierces > 0)
                 {
                     pierces--;
-                    if(pierces % renderFrameEvery == 0)
+                    if (pierces % renderFrameEvery == 0)
                         yield return new WaitForEndOfFrame();
 
                     Vector3 deeperHitPoint = lastRaycastHit.point + (ray.direction * 0.01f);
@@ -367,12 +370,12 @@ namespace Netherlands3D.TileSystem
                 }
 
                 //No visible geometry found under click? Then stop and break out.
-                if(hitAlpha == 0)
+                if (hitAlpha == 0)
                     yield break;
             }
             //Fetch this tile's subject data (if we didnt already)
             SubObjects subObjects = tileContainer.GetComponent<SubObjects>();
-            if(!subObjects) subObjects = tileContainer.AddComponent<SubObjects>();
+            if (!subObjects) subObjects = tileContainer.AddComponent<SubObjects>();
 
             //Pass down the ray we used to click to get the ID we clicked
             subObjects.Select(vertexIndex, callback);
