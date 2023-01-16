@@ -206,7 +206,7 @@ namespace Netherlands3D.TileSystem
             selectedIdsOnClick.started.Invoke(SelectedIDs);
         }
 
-		private void HighlightSelectedWithColor(Color highlightColor)
+        public void HighlightSelectedWithColor(Color highlightColor)
 		{
 			//Apply highlight to all selected objects
 			var subObjectContainers = GetComponentsInChildren<SubObjects>();
@@ -215,7 +215,7 @@ namespace Netherlands3D.TileSystem
 				subObjectContainer.ColorWithIDs(SelectedIDs, highlightColor);
 			}
 		}
-        private void HighlightAllWithColor(Color highlightColor)
+        public void HighlightAllWithColor(Color highlightColor)
         {
             //Apply highlight to all objects
             var subObjectContainers = GetComponentsInChildren<SubObjects>();
@@ -224,7 +224,7 @@ namespace Netherlands3D.TileSystem
                 subObjectContainer.ColorAll(highlightColor);
             }
         }
-        private void HideSelectedSubObjects()
+        public void HideSelectedSubObjects()
         {
             //Apply highlight to all objects
             var subObjectContainers = GetComponentsInChildren<SubObjects>();
@@ -233,7 +233,7 @@ namespace Netherlands3D.TileSystem
                 subObjectContainer.HideWithIDs(HiddenIDs);
             }
         }
-        private void UnhideAllSubObjects()
+        public void UnhideAllSubObjects()
         {
             //Apply highlight to all objects
             var subObjectContainers = GetComponentsInChildren<SubObjects>();
