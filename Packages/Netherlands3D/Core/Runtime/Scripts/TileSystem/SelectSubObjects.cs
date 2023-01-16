@@ -41,6 +41,7 @@ namespace Netherlands3D.TileSystem
 
         private List<string> selectedIDs;
         private List<string> hiddenIDs;
+        private List<string> tilesWithInteractedSubObjects;
 
         private bool doingMultiselect = false;
         private bool pauseSelectHighlighting = false;
@@ -59,6 +60,7 @@ namespace Netherlands3D.TileSystem
 
         public List<string> SelectedIDs { get => selectedIDs; set => selectedIDs = value; }
         public List<string> HiddenIDs { get => hiddenIDs; set => hiddenIDs = value; }
+        public List<string> TilesWithInteractedSubObjects { get => tilesWithInteractedSubObjects; set => tilesWithInteractedSubObjects = value; }
 
         private void Awake()
         {
@@ -68,6 +70,7 @@ namespace Netherlands3D.TileSystem
 
             SelectedIDs = new List<string>();
             HiddenIDs = new List<string>();
+            TilesWithInteractedSubObjects = new List<string>();
 
             if (onColoringSubobjects)
                 onColoringSubobjects.started.AddListener(DisableWhileColoring);
@@ -90,6 +93,8 @@ namespace Netherlands3D.TileSystem
         {
             foreach (Transform child in transform)
             {
+                if (!TilesWithInteractedSubObjects.Contains(child.name)) continue;
+
                 SubObjects subObjects = child.gameObject.GetComponent<SubObjects>();
                 if (!subObjects)
                 {
@@ -168,7 +173,10 @@ namespace Netherlands3D.TileSystem
             if (!doingMultiselect) SelectedIDs.Clear();
 
             //Try to find a selected mesh ID and highlight it
-            StartCoroutine(FindSelectedSubObjectID(ray, (id) => { HighlightSelectedID(id); }));
+            StartCoroutine(FindSelectedSubObjectID(ray, (id) =>
+            {
+                HighlightSelectedID(id);
+            }));
         }
 
         /// <summary>
@@ -238,6 +246,10 @@ namespace Netherlands3D.TileSystem
             selectedIdsOnClick.started.Invoke(SelectedIDs);
         }
 
+        /// <summary>
+        /// Highlight the current selected subobject(s) with a color
+        /// </summary>
+        /// <param name="highlightColor">Color for object(s)</param>
         public void HighlightSelectedWithColor(Color highlightColor)
         {
             //Apply highlight to all selected objects
@@ -247,6 +259,11 @@ namespace Netherlands3D.TileSystem
                 subObjectContainer.ColorWithIDs(SelectedIDs, highlightColor);
             }
         }
+
+        /// <summary>
+        /// Highlight all subobjects with a color
+        /// </summary>
+        /// <param name="highlightColor">Color for objects</param>
         public void HighlightAllWithColor(Color highlightColor)
         {
             //Apply highlight to all objects
@@ -256,6 +273,10 @@ namespace Netherlands3D.TileSystem
                 subObjectContainer.ColorAll(highlightColor);
             }
         }
+
+        /// <summary>
+        /// Hide the selected subobjects by changing the vertex colors alpha
+        /// </summary>
         public void HideSelectedSubObjects()
         {
             //Apply highlight to all objects
@@ -265,6 +286,10 @@ namespace Netherlands3D.TileSystem
                 subObjectContainer.HideWithIDs(HiddenIDs);
             }
         }
+
+        /// <summary>
+        /// Clear all colors, and with that the alpha 0 for the vertex colors
+        /// </summary>
         public void UnhideAllSubObjects()
         {
             //Apply highlight to all objects
@@ -287,6 +312,8 @@ namespace Netherlands3D.TileSystem
                 lastSelectedID = emptyID;
                 SelectedIDs.Clear();
             }
+
+            TilesWithInteractedSubObjects.Clear();
 
             //Remove highlights by highlighting our empty list
             HighlightObjectsWithIDs();
@@ -343,7 +370,9 @@ namespace Netherlands3D.TileSystem
             }
 
             //Get the mesh we selected and find the triangle vert index we hit
-            Mesh mesh = lastRaycastHit.collider.gameObject.GetComponent<MeshFilter>().sharedMesh;
+            var tileObject = lastRaycastHit.collider.gameObject;
+
+            Mesh mesh = tileObject.GetComponent<MeshFilter>().sharedMesh;
             int triangleVertexIndex = lastRaycastHit.triangleIndex * 3;
             var vertexIndex = mesh.GetIndices(submeshIndex)[triangleVertexIndex];
             var tileContainer = lastRaycastHit.collider.gameObject;
@@ -379,6 +408,12 @@ namespace Netherlands3D.TileSystem
 
             //Pass down the ray we used to click to get the ID we clicked
             subObjects.Select(vertexIndex, callback);
+
+            //Add this mesh name to the list of tilenames that contain selection/hidden files
+            if (!TilesWithInteractedSubObjects.Contains(tileObject.name))
+            {
+                TilesWithInteractedSubObjects.Add(tileObject.name);
+            }
         }
     }
 }
