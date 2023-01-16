@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Netherlands3D.Events;
+using TMPro;
 
 public class WMSInterface : MonoBehaviour
 {
@@ -76,7 +77,7 @@ public class WMSInterface : MonoBehaviour
         foreach(WMSLayer layer in (List<WMSLayer>)layerList)
         {
             Button newLayerButton = Instantiate(layerButtonPrefab, layerContentParent);
-            newLayerButton.GetComponentInChildren<Text>().text = layer.Title;
+            newLayerButton.GetComponentInChildren<TextMeshProUGUI>().text = layer.Title;
             newLayerButton.onClick.AddListener(() => DisplayStyles(layer));
         }
     }
@@ -91,7 +92,7 @@ public class WMSInterface : MonoBehaviour
         foreach(KeyValuePair<string, WMSStyle> stylePair in styledLayer.styles)
         {
             Button newLayerButton = Instantiate(layerButtonPrefab, styleContentParent);
-            newLayerButton.GetComponentInChildren<Text>().text = stylePair.Value.Title;
+            newLayerButton.GetComponentInChildren<TextMeshProUGUI>().text = stylePair.Value.Title;
             // Implementation for style selection needs to be done here!
 
             newLayerButton.onClick.AddListener(() => ApplyStyle(styledLayer, stylePair.Value));
@@ -245,7 +246,7 @@ public class WMSInterface : MonoBehaviour
         foreach(string referenceSystem in activeCRSOptions)
         {
             Button b = Instantiate(layerButtonPrefab, crsContentParent);
-            b.GetComponentInChildren<Text>().text = referenceSystem;
+            b.GetComponentInChildren<TextMeshProUGUI>().text = referenceSystem;
             // This AddListener checks if the current WMS requires an SRS instead of CRS and sets the appropiate value with one of two lambda functions.
             // Scenarios in which you need both may(?) arise, in which case this part of building the interface would require some refactoring.
             b.onClick.AddListener(WMS.ActiveInstance.RequiresSRS ? 

@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class WFSInterface : MonoBehaviour
 {
     [SerializeField] private Transform featureContentParent;
     [SerializeField] private Transform settingsParent;
     [SerializeField] private Button featureButtonPrefab;
-    [SerializeField] private Text activeFeatureText;
+    [SerializeField] private TextMeshProUGUI activeFeatureText;
 
     [Header("Invoked Events")]
     //[SerializeField] private StringEvent getFeatureEvent;
@@ -35,7 +36,7 @@ public class WFSInterface : MonoBehaviour
         foreach (WFSFeature feature in wfs.features)
         {
             Button b = Instantiate(featureButtonPrefab, featureContentParent);
-            b.GetComponentInChildren<Text>().text = feature.FeatureName;
+            b.GetComponentInChildren<TextMeshProUGUI>().text = feature.FeatureName;
             b.onClick.AddListener(() => 
                 {
                     setActiveFeatureEvent.Invoke(feature);

@@ -1,6 +1,6 @@
 using UnityEngine;
 using Netherlands3D.Events;
-using UnityEngine.UI;
+using TMPro;
 
 public class UrlReader : MonoBehaviour
 {
@@ -9,7 +9,7 @@ public class UrlReader : MonoBehaviour
     public WMS ActiveWMS { get; private set; } 
     public WFS ActiveWFS { get; private set; }
 
-    [SerializeField] private InputField urlField;
+    [SerializeField] private TMP_InputField urlField;
 
     [Header("Invoked Events")]
     [SerializeField] private TriggerEvent resetReaderEvent;
