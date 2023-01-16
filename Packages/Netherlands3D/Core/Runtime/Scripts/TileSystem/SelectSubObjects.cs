@@ -27,8 +27,9 @@ namespace Netherlands3D.TileSystem
 
         private RaycastHit lastRaycastHit;
 
-        [SerializeField]
-        private int submeshIndex = 0;
+        [SerializeField] private int submeshIndex = 0;
+
+        [SerializeField] private bool applyHideOnReload = false;
 
         [SerializeField]
         private float maxSelectDistance = 8000;
@@ -76,7 +77,24 @@ namespace Netherlands3D.TileSystem
             containerLayer = gameObject.GetComponent<BinaryMeshLayer>();
         }
 
-		private void ShootRayAtPosition(Vector3 screenPosition)
+        private void OnTransformChildrenChanged()
+        {
+            if (applyHideOnReload && hiddenIDs.Count > 0)
+            {
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    var childTile = transform.GetChild(i).gameObject;
+
+                    //Fetch this tile's subject data (if we didnt already)
+                    SubObjects subObjects = childTile.GetComponent<SubObjects>();
+                    if (!subObjects) subObjects = childTile.AddComponent<SubObjects>();
+
+                    subObjects.HideWithIDs(HiddenIDs);
+                }
+            }
+        }
+
+        private void ShootRayAtPosition(Vector3 screenPosition)
 		{
             var ray = Camera.main.ScreenPointToRay(screenPosition);
             SelectWithInputs(ray,false,false);
