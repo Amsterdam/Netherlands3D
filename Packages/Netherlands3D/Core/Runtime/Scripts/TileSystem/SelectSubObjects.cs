@@ -55,8 +55,8 @@ namespace Netherlands3D.TileSystem
         [SerializeField]
         private BoolEvent onColoringSubobjects;
 
-        public List<string> SelectedIDs { get => selectedIDs; private set => selectedIDs = value; }
-        public List<string> HiddenIDs { get => hiddenIDs; private set => hiddenIDs = value; }
+        public List<string> SelectedIDs { get => selectedIDs; set => selectedIDs = value; }
+        public List<string> HiddenIDs { get => hiddenIDs; set => hiddenIDs = value; }
 
         private void Awake()
         {
