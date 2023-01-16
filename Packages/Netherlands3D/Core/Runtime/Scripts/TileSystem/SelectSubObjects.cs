@@ -81,15 +81,26 @@ namespace Netherlands3D.TileSystem
         {
             if (applyHideOnReload && hiddenIDs.Count > 0)
             {
-                for (int i = 0; i < transform.childCount; i++)
+                UpdatHiddenListToChildren(false);
+            }
+        }
+
+        private void UpdatHiddenListToChildren(bool applyToExistingSubObjects = false)
+        {
+            foreach (Transform child in transform)
+            {
+                SubObjects subObjects = child.gameObject.GetComponent<SubObjects>();
+                if (!subObjects)
                 {
-                    var childTile = transform.GetChild(i).gameObject;
-
-                    //Fetch this tile's subject data (if we didnt already)
-                    SubObjects subObjects = childTile.GetComponent<SubObjects>();
-                    if (!subObjects) subObjects = childTile.AddComponent<SubObjects>();
-
-                    subObjects.HideWithIDs(HiddenIDs);
+                    if (child.gameObject.GetComponent<MeshFilter>())
+                    {
+                        subObjects = child.gameObject.AddComponent<SubObjects>();
+                        subObjects.HideWithIDs(hiddenIDs);
+                    }
+                }
+                else if (applyToExistingSubObjects)
+                {
+                    subObjects.HideWithIDs(hiddenIDs);
                 }
             }
         }
