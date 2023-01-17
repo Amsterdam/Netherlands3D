@@ -51,12 +51,12 @@ public class FileInputIndexedDB : MonoBehaviour
     private string sendMessageObjectName = "UserFileUploads";
 
     private void Awake()
-	{
+    {
         //This name is required so .SendMessage can send messages back to this object from FileUploads.jslib
         this.gameObject.name = sendMessageObjectName;
 
         if (clearDataBaseEvent)
-        clearDataBaseEvent.started.AddListener(ClearDatabase);
+            clearDataBaseEvent.started.AddListener(ClearDatabase);
 
 #if !UNITY_EDITOR && UNITY_WEBGL
         InitializeIndexedDB(Application.persistentDataPath);
@@ -79,13 +79,13 @@ public class FileInputIndexedDB : MonoBehaviour
 
         StartCoroutine(WaitForFilesToBeLoaded());
     }
-    
+
     //called from javascript
     public void LoadFile(string filename)
     {
         filenames.Add(filename);
         fileCount++;
-        Debug.Log("received: "+filename);        
+        Debug.Log("received: " + filename);
     }
 
     // called from javascript
@@ -99,7 +99,7 @@ public class FileInputIndexedDB : MonoBehaviour
     // runs while javascript is busy saving files to indexedDB.
     IEnumerator WaitForFilesToBeLoaded()
     {
-        while (fileCount<numberOfFilesToLoad)
+        while (fileCount < numberOfFilesToLoad)
         {
             yield return null;
         }
@@ -107,7 +107,7 @@ public class FileInputIndexedDB : MonoBehaviour
         fileCount = 0;
         ProcessFiles();
     }
-    
+
     public void ProcessFiles()
     {
         // start js-function to update the contents of application.persistentdatapath to match the contents of indexedDB.
@@ -144,13 +144,13 @@ public class FileInputIndexedDB : MonoBehaviour
 
     public void ClearDatabase(bool succes)
     {
-    #if !UNITY_EDITOR && UNITY_WEBGL
+#if !UNITY_EDITOR && UNITY_WEBGL
         ClearFileInputFields();
         filenames.Clear();
         if (succes)
         {
             SyncFilesToIndexedDB();
         }
-    #endif
+#endif
     }
 }
