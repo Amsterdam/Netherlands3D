@@ -50,7 +50,6 @@ public class FileInputIndexedDB : MonoBehaviour
 
     private string sendMessageObjectName = "UserFileUploads";
 
-
     private void Awake()
 	{
         //This name is required so .SendMessage can send messages back to this object from FileUploads.jslib
@@ -136,6 +135,11 @@ public class FileInputIndexedDB : MonoBehaviour
             callbackAdress(files);
             callbackAdress = null;
         }
+    }
+
+    public void IndexedDBSyncCompleted()
+    {
+        Debug.Log("Synced indexedDB back to Unity");
     }
 
     public void ClearDatabase(bool succes)
