@@ -107,7 +107,7 @@ public class Read3DTileset : MonoBehaviour
         subtreeURL = subtreeURL.Replace("{level}", "0");
         subtreeURL = subtreeURL.Replace("{x}", "0");
         subtreeURL = subtreeURL.Replace("{y}", "0");
-        subtreeReader.DownloadSubtree(subtreeURL,ReturnTiles);
+        subtreeReader.DownloadSubtree(subtreeURL,implicitTilingSettings,ReturnTiles);
     }
 
     public void ReturnTiles(Tile rootTile)

@@ -9,7 +9,8 @@ public class ReadSubtree : MonoBehaviour
 {
     public subtree.Subtree subtree;
      Tile tile;
-    string subtreeUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/subtrees/0_0_0.subtree";
+    ImplicitTilingSettings settings;
+    public string subtreeUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/subtrees/0_0_0.subtree";
     System.Action<Tile> sendResult;
 
     // Start is called before the first frame update
@@ -18,8 +19,9 @@ public class ReadSubtree : MonoBehaviour
         //StartCoroutine(downloadSubtree());
     }
 
-    public void DownloadSubtree(string url, System.Action<Tile> callback)
+    public void DownloadSubtree(string url, ImplicitTilingSettings tilingSettings, System.Action<Tile> callback)
     {
+        settings = tilingSettings;
         sendResult = callback;
         subtreeUrl = url;
         StartCoroutine(downloadSubtree());
@@ -39,6 +41,10 @@ public class ReadSubtree : MonoBehaviour
 
             byte[] subtreeData = www.downloadHandler.data;
             string tempFilePath = Path.Combine(Application.persistentDataPath, "st.subtree");
+            if (File.Exists(tempFilePath))
+            {
+                File.Delete(tempFilePath);
+            }
             File.WriteAllBytes(tempFilePath, subtreeData);
             using FileStream fileStream = File.Open(tempFilePath, FileMode.Open);
             using BinaryReader binaryReader = new(fileStream);
@@ -50,7 +56,9 @@ public class ReadSubtree : MonoBehaviour
             tile.X = 0;
             tile.Y = 0;
             tile.Z = 0;
-
+            tile.geometricError = settings.geometricError;
+            tile.hascontent = subtree.ContentAvailability[0];
+           
             AddChildren(tile, 0,0);
 
             sendResult( tile);
@@ -64,15 +72,19 @@ public class ReadSubtree : MonoBehaviour
         int localIndex = parentNortonIndex * 4;
         int levelstart = LevelStartIndex+ (int)Mathf.Pow(4, tile.X);
         int childOne = levelstart+localIndex;
-        Debug.Log(childOne);
+        if (childOne>subtree.TileAvailability.Length)
+        {
+            return;
+        }
         if (subtree.TileAvailability[childOne])
         {
             Tile childTile = new Tile();
             childTile.X = tile.X + 1;
             childTile.Y = tile.Y * 2;
             childTile.Z = tile.Z * 2;
-            
-            if (childTile.X<6)
+            childTile.geometricError = tile.geometricError / 2f;
+            childTile.hascontent = subtree.ContentAvailability[childOne];
+            if (childTile.X<settings.subtreeLevels-1)
             {
                 AddChildren(childTile, localIndex,levelstart);
             }
@@ -87,8 +99,9 @@ public class ReadSubtree : MonoBehaviour
             childTile.X = tile.X + 1;
             childTile.Y = tile.Y * 2;
             childTile.Z = tile.Z * 2+1;
-
-            if (childTile.X < 6)
+            childTile.geometricError = tile.geometricError / 2f;
+            childTile.hascontent = subtree.ContentAvailability[childOne];
+            if (childTile.X < settings.subtreeLevels - 1)
             {
                 AddChildren(childTile, localIndex, levelstart);
             }
@@ -103,8 +116,9 @@ public class ReadSubtree : MonoBehaviour
             childTile.X = tile.X + 1;
             childTile.Y = tile.Y * 2+1;
             childTile.Z = tile.Z * 2;
-
-            if (childTile.X < 6)
+            childTile.geometricError = tile.geometricError / 2f;
+            childTile.hascontent = subtree.ContentAvailability[childOne];
+            if (childTile.X < settings.subtreeLevels - 1)
             {
                 AddChildren(childTile, localIndex, levelstart);
             }
@@ -119,8 +133,9 @@ public class ReadSubtree : MonoBehaviour
             childTile.X = tile.X + 1;
             childTile.Y = tile.Y * 2+1;
             childTile.Z = tile.Z * 2+1;
-
-            if (childTile.X < 6)
+            childTile.geometricError = tile.geometricError / 2f;
+            childTile.hascontent = subtree.ContentAvailability[childOne];
+            if (childTile.X < settings.subtreeLevels - 1)
             {
                 AddChildren(childTile, localIndex, levelstart);
             }

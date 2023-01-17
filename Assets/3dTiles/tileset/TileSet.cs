@@ -17,7 +17,9 @@ public class Tile
     public int X;
     public int Y;
     public int Z;
+    public bool hascontent;
     public List<Tile> children = new List<Tile>();
+    
     public double[] transform;
     public float geometricError;
     public string refine;
