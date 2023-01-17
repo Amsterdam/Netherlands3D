@@ -8,16 +8,22 @@ using System.IO;
 public class ReadSubtree : MonoBehaviour
 {
     public subtree.Subtree subtree;
-    public Tile tile;
+     Tile tile;
     string subtreeUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/subtrees/0_0_0.subtree";
-
+    System.Action<Tile> sendResult;
 
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(downloadSubtree());
+        //StartCoroutine(downloadSubtree());
     }
 
+    public void DownloadSubtree(string url, System.Action<Tile> callback)
+    {
+        sendResult = callback;
+        subtreeUrl = url;
+        StartCoroutine(downloadSubtree());
+    }
 
     IEnumerator downloadSubtree()
     {
@@ -46,8 +52,8 @@ public class ReadSubtree : MonoBehaviour
             tile.Z = 0;
 
             AddChildren(tile, 0,0);
-            
 
+            sendResult( tile);
 
         }
     }

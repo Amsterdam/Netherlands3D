@@ -9,23 +9,7 @@ public class TileSet
     public Tile root;
     public float geometricError;
     public string filepath;
-    
-    public void SetRotationMatrix()
-    {
-        Matrix4x4 rotationMatrix = new Matrix4x4();
-        //Vector4 col0 = new Vector4(1, 0, 0, 0);
-        //Vector4 col1 = new Vector4(0, 1, 0, 0);
-        //Vector4 col2 = new Vector4(0, 0, 1, 0);
-        //Vector4 col3 = new Vector4(3889257.5313360146f, 332923.5169855651f, 5027059.006517078f, 1.0f);
-        //Matrix4x4 tm = new Matrix4x4(col0, col1, col2, col3);
-    }
-
-    public void GetNextTileToLoad(Plane[] viewFrustrum,Vector3 cameraPosition,float sseComponent)
-    {
-
-    }
-
-}
+ }
 
 [System.Serializable]
 public class Tile

@@ -419,62 +419,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
---- !u!1 &915591403
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 915591405}
-  - component: {fileID: 915591404}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &915591404
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 915591403}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b5ff742a37465440ade3029dfbbbc9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tile:
-    X: 0
-    Y: 0
-    Z: 0
-    children: []
-    transform: []
-    geometricError: 0
-    refine: 
-    boundingVolume:
-      box: []
-    content:
-      uri: 
---- !u!4 &915591405
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 915591403}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -210.23999, y: -511.47052, z: 293.97156}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1239146266
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,6 +429,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1239146268}
   - component: {fileID: 1239146267}
+  - component: {fileID: 1239146269}
   m_Layer: 0
   m_Name: read tileset
   m_TagString: Untagged
@@ -504,22 +449,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b632da76a49ee5745b7fb140e0689838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileset:
-    root:
-      X: 0
-      Y: 0
-      Z: 0
-      children: []
-      transform: []
-      geometricError: 0
-      refine: 
-      boundingVolume:
-        box: []
-      content:
-        uri: 
+  tilesetUrl: https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/tiles_1_1/tileset.json
+  root:
+    X: 0
+    Y: 0
+    Z: 0
+    children: []
+    transform: []
     geometricError: 0
-    filepath: 
+    refine: 
+    boundingVolume:
+      box: []
+    content:
+      uri: 
   transformValues: []
+  implicitTilingSettings:
+    refinementtype: 0
+    subdivisionScheme: 0
+    subtreeLevels: 0
+    subtreeUri: 
+    contentUri: 
+    geometricError: 0
+    boundingRegion: []
   tilecount: 0
   nestingDepth: 0
   cubePrefab: {fileID: 290402928}
@@ -538,3 +489,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1239146269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239146266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b5ff742a37465440ade3029dfbbbc9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

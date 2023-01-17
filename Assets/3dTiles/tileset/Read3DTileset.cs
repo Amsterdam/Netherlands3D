@@ -1,23 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json;
+using SimpleJSON;
 using UnityEngine.Networking;
 
 public class Read3DTileset : MonoBehaviour
 {
-    string tilesetUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json";
-    //[SerializeField] importLosseB3dm b3dmImporter;
-    
-    public TileSet tileset;
+    public string tilesetUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json";
+
+    public Tile root;
     public double[] transformValues;
+    TilingMethod tilingmethod = TilingMethod.explicitTiling;
+
+    public ImplicitTilingSettings implicitTilingSettings;
 
     public int tilecount;
     public int nestingDepth;
 
     public GameObject cubePrefab;
 
-    Plane[] viewFrustrum= new Plane[6];
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -38,32 +40,83 @@ public class Read3DTileset : MonoBehaviour
         {
 
             string jsonstring = www.downloadHandler.text;
-            tileset = JsonConvert.DeserializeObject<TileSet>(jsonstring);
-            tileset.filepath = tilesetUrl;
 
+            JSONNode rootnode = JSON.Parse(jsonstring)["root"];
+            readTileset(rootnode);
         }
 
-        
 
-        
+
+
     }
 
-    public void LoadTile(Tile tile)
+    void readTileset(JSONNode rootnode)
     {
-        Debug.Log("hoi");
+        JSONNode transformNode = rootnode["transform"];
+        transformValues = new double[16];
+        for (int i = 0; i < 16; i++)
+        {
+            transformValues[i] = transformNode[i].AsDouble;
+        }
+        JSONNode implicitTilingNode = rootnode["implicitTiling"];
+        if (implicitTilingNode!=null)
+        {
+            readImplicitTiling(rootnode);
+        }
+
+    }
+    void readImplicitTiling(JSONNode rootnode)
+    {
+        tilingmethod = TilingMethod.implicitTiling;
+        implicitTilingSettings = new ImplicitTilingSettings();
+        string refine = rootnode["refine"].Value;
+        switch (refine)
+        {
+            case "REPLACE":
+                implicitTilingSettings.refinementtype = refinementType.Replace;
+                break;
+            case "ADD":
+                implicitTilingSettings.refinementtype = refinementType.Add;
+                break;
+            default:
+                break;
+        }
+        implicitTilingSettings.geometricError = rootnode["geometricError"].AsFloat;
+        implicitTilingSettings.boundingRegion = new double[6];
+        for (int i = 0; i < 6; i++)
+        {
+            implicitTilingSettings.boundingRegion[i] = rootnode["boundingVolume"]["region"][i].AsDouble;
+        }
+        implicitTilingSettings.contentUri = rootnode["content"]["uri"].Value;
+        JSONNode implicitTilingNode = rootnode["implicitTiling"];
+        string subdivisionScheme = implicitTilingNode["subsivisionScheme"].Value;
+        switch (subdivisionScheme)
+        {
+            case "QUADTREE":
+                implicitTilingSettings.subdivisionScheme = Subdivisionscheme.Quadtree;
+                break;
+            default:
+                implicitTilingSettings.subdivisionScheme = Subdivisionscheme.Octree;
+                break;
+        }
+        implicitTilingSettings.subtreeLevels = implicitTilingNode["subtreeLevels"];
+        implicitTilingSettings.subtreeUri = implicitTilingNode["subtrees"]["uri"].Value;
+
+        ReadSubtree subtreeReader = GetComponent<ReadSubtree>();
+        string subtreeURL = tilesetUrl.Replace("tileset.json", implicitTilingSettings.subtreeUri);
+        subtreeURL = subtreeURL.Replace("{level}", "0");
+        subtreeURL = subtreeURL.Replace("{x}", "0");
+        subtreeURL = subtreeURL.Replace("{y}", "0");
+        subtreeReader.DownloadSubtree(subtreeURL,ReturnTiles);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ReturnTiles(Tile rootTile)
     {
-        
+        root = rootTile;
     }
+    
 
-    public void SetViewFrustrum()
-    {
-        viewFrustrum = GeometryUtility.CalculateFrustumPlanes(Camera.main);
-        //return GeometryUtility.TestPlanesAABB(viewFrustrum, renderer.bounds);
-    }
+    
 
     public void SetSSEComponent()
     {
@@ -73,4 +126,33 @@ public class Read3DTileset : MonoBehaviour
         // to get the screenspaceError in pixels;
 
     }
+}
+public enum TilingMethod
+{
+    explicitTiling,
+    implicitTiling
+}
+
+public enum refinementType
+{
+    Replace,
+    Add
+}
+public enum Subdivisionscheme
+{
+    Quadtree,
+    Octree
+}
+
+[System.Serializable]
+public class ImplicitTilingSettings
+{
+    public refinementType refinementtype;
+    public Subdivisionscheme subdivisionScheme;
+    public int subtreeLevels;
+    public string subtreeUri;
+    public string contentUri;
+    public float geometricError;
+    public double[] boundingRegion;
+
 }
