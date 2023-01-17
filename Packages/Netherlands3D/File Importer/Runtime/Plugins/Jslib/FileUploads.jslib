@@ -222,7 +222,7 @@ mergeInto(LibraryManager.library, {
     SyncFilesToIndexedDB: function () {
         FS.syncfs(false, function (err) {
             console.log(err);
-            SendMessage('Share', 'IndexedDBSyncCompleted');
+            SendMessage('UserFileUploads', 'IndexedDBSyncCompleted');
         });
     },
     ClearFileInputFields: function () {
