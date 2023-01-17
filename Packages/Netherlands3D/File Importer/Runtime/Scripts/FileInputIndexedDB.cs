@@ -48,9 +48,15 @@ public class FileInputIndexedDB : MonoBehaviour
     [SerializeField]
     private BoolEvent clearDataBaseEvent;
 
-	private void Awake()
+    private string sendMessageObjectName = "UserFileUploads";
+
+
+    private void Awake()
 	{
-        if(clearDataBaseEvent)
+        //This name is required so .SendMessage can send messages back to this object from FileUploads.jslib
+        this.gameObject.name = sendMessageObjectName;
+
+        if (clearDataBaseEvent)
         clearDataBaseEvent.started.AddListener(ClearDatabase);
 
 #if !UNITY_EDITOR && UNITY_WEBGL
