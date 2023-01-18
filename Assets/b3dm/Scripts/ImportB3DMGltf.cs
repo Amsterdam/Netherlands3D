@@ -13,9 +13,12 @@ namespace Netherlands3D.B3DM
 {
     public class ImportB3DMGltf : MonoBehaviour
     {
+        [Header("Listen to")]
         [SerializeField] StringEvent binTilePath;
         [SerializeField] StringEvent changeUrl;
         [SerializeField] TriggerEvent loadFromURL;
+
+        [Header("Invoke")]
         [SerializeField] GameObjectEvent onCreatedGameObject;
 
         private string url = "";
@@ -27,9 +30,9 @@ namespace Netherlands3D.B3DM
 
         private void Awake()
         {
-            binTilePath.started.AddListener(ImportBinFromFile);
-            changeUrl.started.AddListener((newUrl) => { url = newUrl; });
-            loadFromURL.started.AddListener(LoadFromURL);
+            if(binTilePath) binTilePath.started.AddListener(ImportBinFromFile);
+            if (changeUrl) changeUrl.started.AddListener((newUrl) => { url = newUrl; });
+            if (loadFromURL) loadFromURL.started.AddListener(LoadFromURL);
         }
 
         public void LoadFromURL()
