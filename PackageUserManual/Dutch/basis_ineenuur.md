@@ -147,3 +147,10 @@ Klik op het rondje rechts van "Sun Source" en kies in "Scene" voor "Directional 
 
 De scene werkt nu met gegevens voor NoordwestVeluwe, maar je wilt natuurlijk eigen data koppelen. Hiervoor kunnen we weer gebruik maken van de handleiding [Datakoppelen.md](https://github.com/Amsterdam/Netherlands3D/blob/main/PackageUserManual/Dutch/DataKoppelen.md)
 
+
+
+## Publicatie
+
+Nu alles draait kan je er voor kiezen om een build te maken die als stand alone programma op je computer kan draaien. Hiervoor hoef je geen instelling te wijzigen in Unity. Deze staan bij het maken van het project op de juiste. Als je echter een WebGL (internetpagina) wilt publiceren, dan kun je in de handleiding Webbuild_maken.md zien hoe dat moet. 
+
+Succes!!!
