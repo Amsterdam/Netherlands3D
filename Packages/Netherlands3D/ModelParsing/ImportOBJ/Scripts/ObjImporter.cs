@@ -10,7 +10,7 @@ namespace Netherlands3D.ModelParsing
         StreamreadOBJ objreader;
         ReadMTL mtlreader;
         CreateGameObjectDataSetFromOBJ objectDataCreator;
-        CreateGameObjects cgo;
+        CreateGameObjects createGameObjects;
         [HideInInspector]
         public bool createdGameobjectIsMoveable = false;
         public GameObjectDataSet gameObjectData;
@@ -18,7 +18,7 @@ namespace Netherlands3D.ModelParsing
         public Material BaseMaterial;
         [HideInInspector]
         public string objFilePath = "";
-        
+
         [HideInInspector]
         public string mtlFilePath = "";
 
@@ -43,25 +43,25 @@ namespace Netherlands3D.ModelParsing
         #region send progress and errors
         void BroadcastCurrentActivity(string value)
         {
-            if (currentActivity!=null) currentActivity(value);
+            if (currentActivity != null) currentActivity(value);
         }
         void BroadcastCurrentAction(string value)
         {
-            if (currentAction!=null) currentAction(value);
+            if (currentAction != null) currentAction(value);
         }
-       
+
         void BroadcastProgressPercentage(float value)
         {
-            if (progressPercentage!=null) progressPercentage(value);
+            if (progressPercentage != null) progressPercentage(value);
         }
 
         void BroadcastAlertmessage(string value)
         {
-            if (alertmessage!=null) alertmessage(value);
+            if (alertmessage != null) alertmessage(value);
         }
         void BroadcastErrormessage(string value)
         {
-            if (errormessage!=null) errormessage(value);
+            if (errormessage != null) errormessage(value);
         }
 
 
@@ -75,16 +75,23 @@ namespace Netherlands3D.ModelParsing
             {
                 return;
             }
-            if (objreader is null)
-            {
-                objreader = gameObject.AddComponent<StreamreadOBJ>();
-                objreader.broadcastProgressPercentage = BroadcastProgressPercentage;
-                objreader.BroadcastErrorMessage = BroadcastErrormessage;
 
-            }
+            objreader = gameObject.AddComponent<StreamreadOBJ>();
+            objreader.broadcastProgressPercentage = BroadcastProgressPercentage;
+            objreader.BroadcastErrorMessage = BroadcastErrormessage;
+
+
             BroadcastCurrentActivity("obj-bestand inlezen");
 
             objreader.ReadOBJ(objFilePath, OnOBJRead);
+        }
+
+        private void OnDestroy()
+        {
+            if (objreader) Destroy(objreader);
+            if (mtlreader) Destroy(mtlreader);
+            if (objectDataCreator) Destroy(objectDataCreator);
+            if (createGameObjects) Destroy(createGameObjects);
         }
 
         public void Cancel()
@@ -94,8 +101,7 @@ namespace Netherlands3D.ModelParsing
         }
 
 
-
-        void OnOBJRead(bool succes)
+        private void OnOBJRead(bool succes)
         {
             if (!succes) //something went wrong
             {
@@ -107,11 +113,11 @@ namespace Netherlands3D.ModelParsing
                 return;
             }
             createdGameobjectIsMoveable = !objreader.ObjectUsesRDCoordinates;
-            
 
-            if (mtlFilePath!="")
+
+            if (mtlFilePath != "")
             {
-                if (mtlreader is null)
+                if (mtlreader == null)
                 {
                     mtlreader = gameObject.AddComponent<ReadMTL>();
                     mtlreader.broadcastProgressPercentage = BroadcastProgressPercentage;
@@ -124,7 +130,7 @@ namespace Netherlands3D.ModelParsing
                     mtlreader.AddTexture(System.IO.Path.GetFileName(imgFilePath), imgFilePath);
                 }
 
-                mtlreader.StartMTLParse(System.IO.File.ReadAllText(mtlFilePath),onMTLRead,mtlFilePath);
+                mtlreader.StartMTLParse(System.IO.File.ReadAllText(mtlFilePath), OnMTLRead, mtlFilePath);
             }
             else
             {
@@ -133,7 +139,7 @@ namespace Netherlands3D.ModelParsing
             }
         }
 
-        void onMTLRead(bool succes)
+        private void OnMTLRead(bool succes)
         {
             if (!succes)
             {
@@ -157,7 +163,7 @@ namespace Netherlands3D.ModelParsing
         {
             BroadcastCurrentActivity("geometrie samenstellen");
 
-            if (objectDataCreator is null)
+            if (objectDataCreator == null)
             {
                 objectDataCreator = gameObject.AddComponent<CreateGameObjectDataSetFromOBJ>();
                 objectDataCreator.broadcastProgressPercentage = BroadcastProgressPercentage;
@@ -167,17 +173,14 @@ namespace Netherlands3D.ModelParsing
             objectDataCreator.normals = objreader.normals;
             objectDataCreator.uvs = objreader.uvs;
             objectDataCreator.broadcastProgressPercentage = progressPercentage;
-            
+
             List<Submesh> submeshes = new List<Submesh>();
-            foreach (KeyValuePair<string,Submesh> kvp in objreader.submeshes)
+            foreach (KeyValuePair<string, Submesh> kvp in objreader.submeshes)
             {
-               submeshes.Add(kvp.Value);
+                submeshes.Add(kvp.Value);
             }
             objectDataCreator.submeshes = submeshes;
-            objectDataCreator.CreateGameObjectDataSet(OnGameObjectDataSetCreated,!createSubMeshes);
-
-
-            
+            objectDataCreator.CreateGameObjectDataSet(OnGameObjectDataSetCreated, !createSubMeshes);
 
         }
 
@@ -189,7 +192,7 @@ namespace Netherlands3D.ModelParsing
             if (needToCancel)
             {
                 Debug.Log("cancelled while creating GameObjectDataSet");
-                
+
                 returnObjectTo(null);
                 return;
             }
@@ -215,25 +218,19 @@ namespace Netherlands3D.ModelParsing
         void CreateTheGameObject()
         {
             BroadcastCurrentActivity("objecten creeren");
-            
-            cgo = FindObjectOfType<CreateGameObjects>();
-            if (cgo is null)
-            {
-                cgo = gameObject.AddComponent<CreateGameObjects>();
-                cgo.BroadcastProgressPercentage = BroadcastProgressPercentage;
-            }
 
-            cgo.Create(gameObjectData,BaseMaterial, OnGameObjectCreated);
-            
+            createGameObjects = FindObjectOfType<CreateGameObjects>();
+            if (createGameObjects == null)
+            {
+                createGameObjects = gameObject.AddComponent<CreateGameObjects>();
+                createGameObjects.BroadcastProgressPercentage = BroadcastProgressPercentage;
+            }
+            createGameObjects.Create(gameObjectData, BaseMaterial, OnGameObjectCreated);
         }
-        
+
         void OnGameObjectCreated(GameObject gameObject)
         {
             returnObjectTo(gameObject);
-            
-
         }
-
-
     }
 }
