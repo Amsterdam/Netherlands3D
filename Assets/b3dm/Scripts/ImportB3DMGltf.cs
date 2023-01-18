@@ -159,6 +159,12 @@ namespace Netherlands3D.B3DM
 
         private static void LogB3DMFeatures(B3dm.Tile.B3dm b3dm)
         {
+            Debug.Log("B3DM Version:");
+            Debug.Log(b3dm.B3dmHeader.Version);
+
+            Debug.Log("FeatureTableJson:");
+            Debug.Log(b3dm.FeatureTableJson);
+
             Debug.Log("BatchTableJson:");
             Debug.Log(b3dm.BatchTableJson);
         }
