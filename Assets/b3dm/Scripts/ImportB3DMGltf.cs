@@ -20,8 +20,10 @@ namespace Netherlands3D.B3DM
 
         [Header("Invoke")]
         [SerializeField] GameObjectEvent onCreatedGameObject;
+        [SerializeField] StringEvent logStat;
 
         private string url = "";
+        private string stats = "";
 
         [Header("Develop")]
         [SerializeField] StringEvent parseTime;
@@ -157,30 +159,38 @@ namespace Netherlands3D.B3DM
         }
 
 
-        private static void LogB3DMFeatures(B3dm.Tile.B3dm b3dm)
+        private void LogB3DMFeatures(B3dm.Tile.B3dm b3dm)
         {
-            Debug.Log("B3DM Version:");
-            Debug.Log(b3dm.B3dmHeader.Version);
+            LogStat("B3DM Version:");
+            LogStat(b3dm.B3dmHeader.Version.ToString());
 
-            Debug.Log("FeatureTableJson:");
-            Debug.Log(b3dm.FeatureTableJson);
+            LogStat("FeatureTableJson:");
+            LogStat(b3dm.FeatureTableJson);
 
-            Debug.Log("BatchTableJson:");
-            Debug.Log(b3dm.BatchTableJson);
+            LogStat("BatchTableJson:");
+            LogStat(b3dm.BatchTableJson);
         }
 
-        private static void LogGltfStats(GltfImport gltf)
+        private void LogGltfStats(GltfImport gltf)
         {
-            Debug.Log("GLTF scene count: " + gltf.SceneCount);
-            Debug.Log("GLTF material count: " + gltf.MaterialCount);
-            Debug.Log("GLTF texture count: " + gltf.TextureCount);
+            LogStat("GLTF scene count: " + gltf.SceneCount);
+            LogStat("GLTF material count: " + gltf.MaterialCount);
+            LogStat("GLTF texture count: " + gltf.TextureCount);
 
             var meshes = gltf.GetMeshes();
-            Debug.Log("GLTF mesh count: " + meshes.Length);
+            LogStat("GLTF mesh count: " + meshes.Length);
             foreach (var mesh in meshes)
             {
-                Debug.Log("Mesh " + mesh.name + " with submesh count: " + mesh.subMeshCount);
+                LogStat("Mesh " + mesh.name + " with submesh count: " + mesh.subMeshCount);
             }
+        }
+
+        private void LogStat(string stat)
+        {
+            Debug.Log(stat);
+
+            stats += stat + "\n\n";
+            if (logStat) logStat.Invoke(stats);
         }
     }
 }

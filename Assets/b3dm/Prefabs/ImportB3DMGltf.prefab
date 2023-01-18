@@ -48,6 +48,7 @@ MonoBehaviour:
   changeUrl: {fileID: 11400000, guid: 316e9cc487002c64aa4abf806e9dd32f, type: 2}
   loadFromURL: {fileID: 11400000, guid: 7054d45c6fb4dc54fb3bdc5f8eab4323, type: 2}
   onCreatedGameObject: {fileID: 11400000, guid: 4351723b7888e6643aa75ca4bb0fda60, type: 2}
+  logStat: {fileID: 11400000, guid: 89e87fbe8ccf0bf4f926bb443d4fa26d, type: 2}
   parseTime: {fileID: 11400000, guid: abe6a151a1ed92146bf234a801b4a247, type: 2}
   debug: 1
   writeGlbNextToB3dm: 0
