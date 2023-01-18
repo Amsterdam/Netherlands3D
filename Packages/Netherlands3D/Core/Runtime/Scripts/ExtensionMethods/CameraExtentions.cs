@@ -91,4 +91,10 @@ public static class CameraExtensions
     {
         return corners;
     }
+
+    public static bool IsVisibleFrom(this Camera camera, Bounds bounds)
+    {
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(camera);
+        return GeometryUtility.TestPlanesAABB(planes, bounds);
+    }
 }
