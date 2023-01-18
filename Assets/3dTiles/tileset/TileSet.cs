@@ -106,40 +106,16 @@ public class Tile
 [System.Serializable]
 public class BoundingVolume
 {
-    public float[] box;
-    ConvertCoordinates.Vector3RD positionRD;
+    public BoundingVolumeType boundingVolumeType;
+    public double[] values;
+    
+}
 
-    public ConvertCoordinates.Vector3RD PositionRD()
-    {
-        positionRD = new ConvertCoordinates.Vector3RD(box[0],box[2],box[1]);
-        return positionRD;
-    }
-
-    public Vector3 Position()
-    {
-        return new Vector3(box[0], box[1], box[2]);
-    }
-
-    public Vector3 Size()
-    {
-        Vector3 scale = new Vector3();
-        //    float sizeX = (float)Math.Sqrt(Math.Pow(box[3], 2) + Math.Pow(box[3], 2) + Math.Pow(box[3], 2));
-        float sizeX = new Vector3(box[3], box[4], box[5]).magnitude * 2;
-        scale.x = sizeX;
-        float sizeY = new Vector3(box[6], box[7], box[8]).magnitude * 2;
-        scale.y = sizeY;
-        float sizeZ = new Vector3(box[9], box[10], box[11]).magnitude * 2;
-        scale.z = sizeZ;
-
-        return scale;
-    }
-
-    //public Bounds bounds()
-    //{
-    //    Bounds result = new Bounds();
-
-    //}
-
+public enum BoundingVolumeType
+{
+    Box,
+    Sphere,
+    Region
 }
 
 [System.Serializable]

@@ -449,11 +449,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b632da76a49ee5745b7fb140e0689838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilesetUrl: https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/tiles_1_1/tileset.json
+  tilesetUrl: https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json
   root:
     X: 0
     Y: 0
     Z: 0
+    hascontent: 0
     children: []
     transform: []
     geometricError: 0
@@ -501,3 +502,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b5ff742a37465440ade3029dfbbbc9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  subtreeUrl: https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/subtrees/0_0_0.subtree
