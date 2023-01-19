@@ -135,7 +135,9 @@ mergeInto(LibraryManager.library, {
 		var callbackMethodFailedString = UTF8ToString(callbackMethodFailed);	
 		
 		console.log("Set callback object to " + callbackObjectString);
-		console.log("Set callback method to " + callbackMethodString);
+		console.log("Set callback succeeded method to " + callbackMethodSuccessString);
+		console.log("Set callback failed method to " + callbackMethodFailedString);
+		
         var fileName = UTF8ToString(filePath);
         var url = UTF8ToString(targetURL);
 
