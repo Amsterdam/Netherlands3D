@@ -91,6 +91,7 @@ namespace Netherlands3D.ModelParsing
             if (objreader) Destroy(objreader);
             if (mtlreader) Destroy(mtlreader);
             if (objectDataCreator) Destroy(objectDataCreator);
+            if (createGameObjects) Destroy(createGameObjects);
         }
 
         public void Cancel()
@@ -100,7 +101,7 @@ namespace Netherlands3D.ModelParsing
         }
 
 
-        void OnOBJRead(bool succes)
+        private void OnOBJRead(bool succes)
         {
             if (!succes) //something went wrong
             {
@@ -129,7 +130,7 @@ namespace Netherlands3D.ModelParsing
                     mtlreader.AddTexture(System.IO.Path.GetFileName(imgFilePath), imgFilePath);
                 }
 
-                mtlreader.StartMTLParse(System.IO.File.ReadAllText(mtlFilePath), onMTLRead, mtlFilePath);
+                mtlreader.StartMTLParse(System.IO.File.ReadAllText(mtlFilePath), OnMTLRead, mtlFilePath);
             }
             else
             {
@@ -138,7 +139,7 @@ namespace Netherlands3D.ModelParsing
             }
         }
 
-        void onMTLRead(bool succes)
+        private void OnMTLRead(bool succes)
         {
             if (!succes)
             {
@@ -224,17 +225,12 @@ namespace Netherlands3D.ModelParsing
                 createGameObjects = gameObject.AddComponent<CreateGameObjects>();
                 createGameObjects.BroadcastProgressPercentage = BroadcastProgressPercentage;
             }
-
             createGameObjects.Create(gameObjectData, BaseMaterial, OnGameObjectCreated);
         }
 
         void OnGameObjectCreated(GameObject gameObject)
         {
             returnObjectTo(gameObject);
-
-
         }
-
-
     }
 }

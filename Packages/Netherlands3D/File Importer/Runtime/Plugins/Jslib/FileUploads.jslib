@@ -213,16 +213,30 @@ mergeInto(LibraryManager.library, {
 			console.log("Cant create file inputfield. You need to initialize the IndexedDB connection first using InitializeIndexedDB(str)");
 		}
     },
-    SyncFilesFromIndexedDB: function () {
+    SyncFilesFromIndexedDB: function (callbackObject, callbackMethod) {
+		var callbackObjectString = UTF8ToString(callbackObject);
+		var callbackMethodString = UTF8ToString(callbackMethod);	
+		console.log("Set callback object to " + callbackObjectString);
+		console.log("Set callback method to " + callbackMethodString);
+		
         FS.syncfs(true, function (err) {
-            console.log(err);
-            SendMessage('UserFileUploads', 'IndexedDBUpdated');
+            if(err != null){
+				console.log(err);
+			}
+            SendMessage(callbackObjectString, callbackMethodString);
         });
     },
-    SyncFilesToIndexedDB: function () {
+    SyncFilesToIndexedDB: function (callbackObject, callbackMethod) {
+		var callbackObjectString = UTF8ToString(callbackObject);
+		var callbackMethodString = UTF8ToString(callbackMethod);	
+		console.log("Set callback object to " + callbackObjectString);
+		console.log("Set callback method to " + callbackMethodString);
+	
         FS.syncfs(false, function (err) {
-            console.log(err);
-            SendMessage('UserFileUploads', 'IndexedDBSyncCompleted');
+			if(err != null){
+				console.log(err);
+			}
+            SendMessage(callbackObjectString, callbackMethodString);
         });
     },
     ClearFileInputFields: function () {
