@@ -43,7 +43,7 @@ public class WFSHandler : MonoBehaviour
     private WFSFormatter formatter;
     private WFSFeature activeFeature;
     private float coroutineRunTime = 200;
-    private float hue = 0;
+    private float hue = 0.9f;
     private float saturation = 0.5f;
     private float brightness = 0.5f;
 
@@ -180,7 +180,7 @@ public class WFSHandler : MonoBehaviour
 
         for (int i = SpawnParent.childCount - 1; i >= 0; i--)
         {
-            Destroy(SpawnParent.GetChild(i));
+            Destroy(SpawnParent.GetChild(i).gameObject);
         }
     }
     private void ProcessWFS(string xmlData)
