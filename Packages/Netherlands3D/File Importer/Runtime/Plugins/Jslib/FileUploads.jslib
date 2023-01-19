@@ -129,7 +129,13 @@ mergeInto(LibraryManager.library, {
             };
         };
     },
-    UploadFromIndexedDB: function (filePath, targetURL) {
+    UploadFromIndexedDB: function (filePath, targetURL, callbackObject, callbackMethodSuccess, callbackMethodFailed) {
+		var callbackObjectString = UTF8ToString(callbackObject);	
+		var callbackMethodSuccessString = UTF8ToString(callbackMethodSuccess);	
+		var callbackMethodFailedString = UTF8ToString(callbackMethodFailed);	
+		
+		console.log("Set callback object to " + callbackObjectString);
+		console.log("Set callback method to " + callbackMethodString);
         var fileName = UTF8ToString(filePath);
         var url = UTF8ToString(targetURL);
 
@@ -149,11 +155,11 @@ mergeInto(LibraryManager.library, {
                 xhr.open("PUT", url, false);
                 xhr.send(record.contents);
                 window.databaseConnection.close();
-                unityInstance.SendMessage('UserFileUploads', 'IndexedDBUploadCompleted');
+                unityInstance.SendMessage(callbackObjectString, callbackMethodSuccessString);
             };
             dbRequest.onerror = function () {
                 window.databaseConnection.close();
-                unityInstance.SendMessage('UserFileUploads', 'IndexedDBUploadFailed', filename);
+                unityInstance.SendMessage(callbackObjectString, callbackMethodFailedString, filename);
             };
         }
         dbConnectionRequest.onerror = function () {
