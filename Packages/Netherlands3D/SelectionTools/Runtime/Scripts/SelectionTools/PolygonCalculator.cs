@@ -21,8 +21,19 @@ using UnityEngine;
 
 namespace Netherlands3D.SelectionTools
 {
-    public static class GeometryCalculator
+    public static class PolygonCalculator
     {
+        public static Vector2[] FlattenPolygon(Vector3[] polygon3D, Plane plane)
+        {
+            Vector2[] polygon = new Vector2[polygon3D.Length];
+            for (int i = 0; i < polygon3D.Length; i++)
+            {
+                Quaternion planeRotation = Quaternion.FromToRotation(-plane.normal, Vector3.forward); //use forward so that z component can be ignored
+                polygon[i] = planeRotation * polygon3D[i];
+            }
+            return polygon;
+        }
+
         public static bool ContainsPoint(Vector2[] polygon, Vector2 p)
         {
             var j = polygon.Length - 1;
