@@ -278,6 +278,22 @@ public partial class SubObjects : MonoBehaviour
 	public void HideWithIDs(List<string> ids){
 		Altered = true;
 
+		if (runningColoringProcess != null)
+		{
+			StopCoroutine(runningColoringProcess);
+			runningColoringProcess = null;
+		}
+
+		runningColoringProcess = StartCoroutine(LoadAndHideWithIDs(ids));
+	}
+
+	private IEnumerator LoadAndHideWithIDs(List<string> ids)
+	{
+		Altered = true;
+
+		if (SubObjectsData.Count == 0)
+			yield return LoadMetaData(mesh);
+
 		for (int i = 0; i < SubObjectsData.Count; i++)
 		{
 			var subObject = SubObjectsData[i];
@@ -286,7 +302,8 @@ public partial class SubObjects : MonoBehaviour
 				subObject.hidden = true;
 				subObject.color = new Color(subObject.color.r, subObject.color.g, subObject.color.b, 0.0f);
 			}
-			else{
+			else
+			{
 				subObject.hidden = false;
 				subObject.color = new Color(subObject.color.r, subObject.color.g, subObject.color.b, 1.0f);
 			}

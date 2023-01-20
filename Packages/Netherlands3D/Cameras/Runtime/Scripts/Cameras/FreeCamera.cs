@@ -151,6 +151,7 @@ public class FreeCamera : MonoBehaviour
         var meshRenderer = focusObject.GetComponentInChildren<MeshRenderer>();
         if(meshRenderer)
         {
+            this.transform.position = meshRenderer.bounds.center;
             this.transform.Translate(Vector3.back * meshRenderer.bounds.size.magnitude * focusDistanceMultiplier, Space.Self);
         }
         else
