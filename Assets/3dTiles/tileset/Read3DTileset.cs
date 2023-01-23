@@ -19,14 +19,14 @@ public class Read3DTileset : MonoBehaviour
 
     public GameObject cubePrefab;
 
-    
+
     // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(LoadTileset());
     }
 
-        IEnumerator LoadTileset()
+    IEnumerator LoadTileset()
     {
 
         UnityWebRequest www = UnityWebRequest.Get(tilesetUrl);
@@ -42,15 +42,12 @@ public class Read3DTileset : MonoBehaviour
             string jsonstring = www.downloadHandler.text;
 
             JSONNode rootnode = JSON.Parse(jsonstring)["root"];
-            readTileset(rootnode);
+            ReadTileset(rootnode);
         }
-
-
-
 
     }
 
-    void readTileset(JSONNode rootnode)
+    void ReadTileset(JSONNode rootnode)
     {
         JSONNode transformNode = rootnode["transform"];
         transformValues = new double[16];
@@ -59,13 +56,13 @@ public class Read3DTileset : MonoBehaviour
             transformValues[i] = transformNode[i].AsDouble;
         }
         JSONNode implicitTilingNode = rootnode["implicitTiling"];
-        if (implicitTilingNode!=null)
+        if (implicitTilingNode != null)
         {
-            readImplicitTiling(rootnode);
+            ReadImplicitTiling(rootnode);
         }
 
     }
-    void readImplicitTiling(JSONNode rootnode)
+    void ReadImplicitTiling(JSONNode rootnode)
     {
         tilingmethod = TilingMethod.implicitTiling;
         implicitTilingSettings = new ImplicitTilingSettings();
@@ -107,16 +104,13 @@ public class Read3DTileset : MonoBehaviour
         subtreeURL = subtreeURL.Replace("{level}", "0");
         subtreeURL = subtreeURL.Replace("{x}", "0");
         subtreeURL = subtreeURL.Replace("{y}", "0");
-        subtreeReader.DownloadSubtree(subtreeURL,implicitTilingSettings,ReturnTiles);
+        subtreeReader.DownloadSubtree(subtreeURL, implicitTilingSettings, ReturnTiles);
     }
 
     public void ReturnTiles(Tile rootTile)
     {
         root = rootTile;
     }
-    
-
-    
 
     public void SetSSEComponent()
     {
@@ -154,5 +148,4 @@ public class ImplicitTilingSettings
     public string contentUri;
     public float geometricError;
     public double[] boundingRegion;
-
 }

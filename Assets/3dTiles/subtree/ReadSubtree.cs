@@ -38,7 +38,6 @@ public class ReadSubtree : MonoBehaviour
         }
         else
         {
-
             byte[] subtreeData = www.downloadHandler.data;
             string tempFilePath = Path.Combine(Application.persistentDataPath, "st.subtree");
             if (File.Exists(tempFilePath))
