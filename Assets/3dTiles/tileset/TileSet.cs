@@ -26,7 +26,7 @@ public class Tile
     public BoundingVolume boundingVolume;
     public Content content;
     TileStatus status = TileStatus.unloaded;
-    //public importLosseB3dm b3dmImporter;
+
     Bounds bounds;
     bool boundsIsDefined = false;
 
@@ -37,7 +37,7 @@ public class Tile
         float posY = (float)(transform[13] / 1000); // measured from earth-center to 90degrees east at equator
         float posZ = (float)(transform[14] / 1000); // measured from earth-center to nothpole
 
-        Vector3 basedirection = new Vector3(posX, posY, posZ);
+        Vector3 baseDirection = new Vector3(posX, posY, posZ);
 
         float angleX = -Mathf.Rad2Deg * Mathf.Atan(posY / posZ);
         float angleY = -Mathf.Rad2Deg * Mathf.Atan(posX / posZ);
@@ -85,13 +85,15 @@ public class Tile
         loaded
     }
 
-    bool IsInViewFrustrum(Plane[] viewFrustrum)
+    public bool IsInViewFrustrum()
     {
-        Camera.main.GetRDExtent
+        return Camera.main.InView(bounds);
     }
-    void DefineBounds()
+
+    public void DefineBounds()
     {
-       
+        bounds = new Bounds();
+
         boundsIsDefined = true;
     }
 
