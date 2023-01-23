@@ -3,7 +3,6 @@ using System.Linq;
 
 namespace subtree
 {
-
     public static class MortonIndex
     {
         public static (string tileAvailability, string contentAvailability) GetMortonIndices(List<Tile> tiles)

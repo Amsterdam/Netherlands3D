@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SimpleJSON;
 using UnityEngine.Networking;
-using Netherlands3D.B3DM;
+using System;
 
 public class Read3DTileset : MonoBehaviour
 {
@@ -43,7 +43,41 @@ public class Read3DTileset : MonoBehaviour
         }
     }
 
-    void ReadTileset(JSONNode rootnode)
+    [ContextMenu("Load all content")]
+    private void LoadAll()
+    {
+        StartCoroutine(LoadAllTileContent());
+    }
+
+    private IEnumerator LoadAllTileContent()
+    {
+        bool contentFound = false;
+        var targetTile = root;
+        while (!contentFound)
+        {
+            yield return new WaitForEndOfFrame();
+            yield return LoadContentInChildren(root);
+        }
+    }
+
+    private IEnumerator LoadContentInChildren(Tile tile)
+    {
+        var absolutePath = new Uri(tilesetUrl).AbsolutePath;
+
+        foreach (var child in tile.children)
+        {
+            if(child.hascontent)
+            {
+                child.content = new Content();
+                child.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", "").Replace("{x}", "").Replace("{y}", "");
+                child.content.Load();
+            }
+            yield return new WaitForEndOfFrame();
+            yield return LoadContentInChildren(child);
+        }
+    }
+
+    private void ReadTileset(JSONNode rootnode)
     {
         JSONNode transformNode = rootnode["transform"];
         transformValues = new double[16];
@@ -58,7 +92,7 @@ public class Read3DTileset : MonoBehaviour
         }
     }
 
-    void ReadImplicitTiling(JSONNode rootnode)
+    private void ReadImplicitTiling(JSONNode rootnode)
     {
         tilingMethod = TilingMethod.implicitTiling;
         implicitTilingSettings = new ImplicitTilingSettings();
@@ -111,7 +145,7 @@ public class Read3DTileset : MonoBehaviour
 
     public void SetSSEComponent()
     {
-        float ssecomponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * Camera.main.fieldOfView / 2));
+        float sseComponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * Camera.main.fieldOfView / 2));
         // multiply with Geomettric Error and
         // divide by distance to camera
         // to get the screenspaceError in pixels;

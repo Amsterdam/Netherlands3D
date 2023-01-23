@@ -20,11 +20,13 @@ public class Content : MonoBehaviour, IDisposable
     /// <summary>
     /// Load the content from an url
     /// </summary>
-    public void Load()
+    public Coroutine Load()
     {
         state = ContentLoadState.LOADING;
 
         runningContentRequest = StartCoroutine(ImportB3DMGltf.ImportBinFromURL(uri, GotContent));
+
+        return runningContentRequest;
     }
 
     private void GotContent(GameObject contentGameObject)

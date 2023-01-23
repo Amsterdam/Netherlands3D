@@ -44,7 +44,7 @@ public class ReadSubtree : MonoBehaviour
 
             subtree = SubtreeReader.ReadSubtree(binaryReader);
 
-            // setup tootTile
+            // setup rootTile
             tile = new Tile();
             tile.X = 0;
             tile.Y = 0;
@@ -66,7 +66,6 @@ public class ReadSubtree : MonoBehaviour
 
     public void AddChildren(Tile tile,int parentNortonIndex, int LevelStartIndex)
     {
-
         int localIndex = parentNortonIndex * 4;
         int levelstart = LevelStartIndex+ (int)Mathf.Pow(4, tile.X);
         int childOne = levelstart+localIndex;
