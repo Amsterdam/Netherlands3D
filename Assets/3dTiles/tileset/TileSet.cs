@@ -87,7 +87,7 @@ public class Tile
 
     bool IsInViewFrustrum(Plane[] viewFrustrum)
     {
-        //Camera.main.GetRDExtent
+        Camera.main.GetRDExtent
     }
     void DefineBounds()
     {
