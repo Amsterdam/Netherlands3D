@@ -10,17 +10,15 @@ public class Read3DTileset : MonoBehaviour
 
     public Tile root;
     public double[] transformValues;
-    TilingMethod tilingmethod = TilingMethod.explicitTiling;
+    TilingMethod tilingMethod = TilingMethod.explicitTiling;
 
     public ImplicitTilingSettings implicitTilingSettings;
 
-    public int tilecount;
+    public int tileCount;
     public int nestingDepth;
 
     public GameObject cubePrefab;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(LoadTileset());
@@ -28,7 +26,6 @@ public class Read3DTileset : MonoBehaviour
 
     IEnumerator LoadTileset()
     {
-
         UnityWebRequest www = UnityWebRequest.Get(tilesetUrl);
         yield return www.SendWebRequest();
 
@@ -38,7 +35,6 @@ public class Read3DTileset : MonoBehaviour
         }
         else
         {
-
             string jsonstring = www.downloadHandler.text;
 
             JSONNode rootnode = JSON.Parse(jsonstring)["root"];
@@ -64,7 +60,7 @@ public class Read3DTileset : MonoBehaviour
     }
     void ReadImplicitTiling(JSONNode rootnode)
     {
-        tilingmethod = TilingMethod.implicitTiling;
+        tilingMethod = TilingMethod.implicitTiling;
         implicitTilingSettings = new ImplicitTilingSettings();
         string refine = rootnode["refine"].Value;
         switch (refine)

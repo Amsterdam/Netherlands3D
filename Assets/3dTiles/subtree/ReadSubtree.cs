@@ -8,7 +8,7 @@ using System.IO;
 public class ReadSubtree : MonoBehaviour
 {
     public subtree.Subtree subtree;
-     Tile tile;
+    Tile tile;
     ImplicitTilingSettings settings;
     public string subtreeUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/subtrees/0_0_0.subtree";
     System.Action<Tile> sendResult;
@@ -58,9 +58,11 @@ public class ReadSubtree : MonoBehaviour
             tile.geometricError = settings.geometricError;
             tile.hascontent = subtree.ContentAvailability[0];
 
-            tile.boundingVolume = new BoundingVolume();
-            tile.boundingVolume.boundingVolumeType = BoundingVolumeType.Region;
-            tile.boundingVolume.values = settings.boundingRegion;
+            tile.boundingVolume = new BoundingVolume
+            {
+                boundingVolumeType = BoundingVolumeType.Region,
+                values = settings.boundingRegion
+            };
 
             AddChildren(tile, 0,0);
 
