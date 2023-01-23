@@ -7,27 +7,21 @@ using System.IO;
 
 public class ReadSubtree : MonoBehaviour
 {
-    public subtree.Subtree subtree;
+    public Subtree subtree;
     Tile tile;
     ImplicitTilingSettings settings;
     public string subtreeUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/subtrees/0_0_0.subtree";
     System.Action<Tile> sendResult;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        //StartCoroutine(downloadSubtree());
-    }
 
     public void DownloadSubtree(string url, ImplicitTilingSettings tilingSettings, System.Action<Tile> callback)
     {
         settings = tilingSettings;
         sendResult = callback;
         subtreeUrl = url;
-        StartCoroutine(downloadSubtree());
+        StartCoroutine(DownloadSubtree());
     }
 
-    IEnumerator downloadSubtree()
+    IEnumerator DownloadSubtree()
     {
         UnityWebRequest www = UnityWebRequest.Get(subtreeUrl);
         yield return www.SendWebRequest();
@@ -66,8 +60,7 @@ public class ReadSubtree : MonoBehaviour
 
             AddChildren(tile, 0,0);
 
-            sendResult( tile);
-
+            sendResult(tile);
         }
     }
 
@@ -88,7 +81,6 @@ public class ReadSubtree : MonoBehaviour
         AddChild(tile, localIndex, levelstart, 3);
 
     }
-
 
     private void AddChild(Tile parentTile, int localIndex, int LevelStartIndex, int childNumber)
     {

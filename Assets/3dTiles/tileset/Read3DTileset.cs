@@ -114,7 +114,6 @@ public class Read3DTileset : MonoBehaviour
         // multiply with Geomettric Error and
         // divide by distance to camera
         // to get the screenspaceError in pixels;
-
     }
 }
 public enum TilingMethod

@@ -25,7 +25,7 @@ public class Tile
     public string refine;
     public BoundingVolume boundingVolume;
     public Content content;
-    TileStatus status= TileStatus.unloaded;
+    TileStatus status = TileStatus.unloaded;
     //public importLosseB3dm b3dmImporter;
     Bounds bounds;
     bool boundsIsDefined = false;
@@ -33,15 +33,11 @@ public class Tile
 
     public Vector3 EulerRotationToVertical()
     {
-       
-
-
         float posX = (float)(transform[12] / 1000); // measured for earth-center to prime meridian (greenwich)
         float posY = (float)(transform[13] / 1000); // measured from earth-center to 90degrees east at equator
         float posZ = (float)(transform[14] / 1000); // measured from earth-center to nothpole
 
         Vector3 basedirection = new Vector3(posX, posY, posZ);
-
 
         float angleX = -Mathf.Rad2Deg * Mathf.Atan(posY / posZ);
         float angleY = -Mathf.Rad2Deg * Mathf.Atan(posX / posZ);
@@ -61,22 +57,22 @@ public class Tile
         return rotation;
     }
 
-    public int getChildCount()
+    public int GetChildCount()
     {
         int childcount = 1;
         foreach (var child in children)
         {
-            childcount += child.getChildCount();
+            childcount += child.GetChildCount();
         }
         return childcount;
     }
 
-    public int getNestingDepth()
+    public int GetNestingDepth()
     {
         int maxDepth = 1;
         foreach (var child in children)
         {
-            int depth = child.getNestingDepth()+1;
+            int depth = child.GetNestingDepth()+1;
             if (depth > maxDepth) maxDepth = depth;
 
         }
@@ -89,11 +85,9 @@ public class Tile
         loaded
     }
 
-    bool isInViewFrustrum(Plane[] viewFrustrum)
+    bool IsInViewFrustrum(Plane[] viewFrustrum)
     {
-
-
-        return false;
+        //Camera.main.GetRDExtent
     }
     void DefineBounds()
     {
@@ -122,6 +116,8 @@ public enum BoundingVolumeType
 public class Content
 {
     public string uri;
+
+    public GameObject loadedGameObject;
 }
 
 
