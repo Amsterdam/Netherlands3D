@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SimpleJSON;
 using UnityEngine.Networking;
+using Netherlands3D.B3DM;
 
 public class Read3DTileset : MonoBehaviour
 {
@@ -40,7 +41,6 @@ public class Read3DTileset : MonoBehaviour
             JSONNode rootnode = JSON.Parse(jsonstring)["root"];
             ReadTileset(rootnode);
         }
-
     }
 
     void ReadTileset(JSONNode rootnode)
@@ -56,8 +56,8 @@ public class Read3DTileset : MonoBehaviour
         {
             ReadImplicitTiling(rootnode);
         }
-
     }
+
     void ReadImplicitTiling(JSONNode rootnode)
     {
         tilingMethod = TilingMethod.implicitTiling;
@@ -96,10 +96,11 @@ public class Read3DTileset : MonoBehaviour
         implicitTilingSettings.subtreeUri = implicitTilingNode["subtrees"]["uri"].Value;
 
         ReadSubtree subtreeReader = GetComponent<ReadSubtree>();
-        string subtreeURL = tilesetUrl.Replace("tileset.json", implicitTilingSettings.subtreeUri);
-        subtreeURL = subtreeURL.Replace("{level}", "0");
-        subtreeURL = subtreeURL.Replace("{x}", "0");
-        subtreeURL = subtreeURL.Replace("{y}", "0");
+        string subtreeURL = tilesetUrl.Replace("tileset.json", implicitTilingSettings.subtreeUri)
+                            .Replace("{level}", "0")
+                            .Replace("{x}", "0")
+                            .Replace("{y}", "0");
+        
         subtreeReader.DownloadSubtree(subtreeURL, implicitTilingSettings, ReturnTiles);
     }
 

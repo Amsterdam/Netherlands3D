@@ -37,52 +37,39 @@ namespace Netherlands3D.B3DM
             if (loadFromURL) loadFromURL.started.AddListener(LoadFromURL);
         }
 
-        public void LoadFromURL()
+        private void LoadFromURL()
         {
             StartCoroutine(ImportBinFromURL(url, null));
         }
 
-        public void LoadFromURL(string url, Action<GameObject> callback)
+        private void LoadFromURL(string url, Action<GameObject> callback)
         {
             StartCoroutine(ImportBinFromURL(url, callback));
         }
 
-        private IEnumerator ImportBinFromURL(string url, Action<GameObject> callback)
+        public static IEnumerator ImportBinFromURL(string url, Action<GameObject> callback)
         {
-            using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+            using UnityWebRequest webRequest = UnityWebRequest.Get(url);
+
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result != UnityWebRequest.Result.Success)
             {
-                yield return webRequest.SendWebRequest();
+                Debug.LogError(webRequest.error);
+                callback.Invoke(null);
+            }
+            else
+            {
+                byte[] bytes = webRequest.downloadHandler.data;
 
-                if (webRequest.result != UnityWebRequest.Result.Success)
+                if (Path.GetExtension(url).Equals(".b3dm"))
                 {
-                    Debug.LogError(webRequest.error);
+                    var memoryStream = new MemoryStream(bytes);
+                    var b3dm = B3dmReader.ReadB3dm(memoryStream);
+                    bytes = new MemoryStream(b3dm.GlbData).ToArray();
                 }
-                else
-                {
-                    byte[] bytes = webRequest.downloadHandler.data;
 
-                    if (Path.GetExtension(url).Equals(".b3dm"))
-                    {
-                        var memoryStream = new MemoryStream(bytes);
-                        var b3dm = B3dmReader.ReadB3dm(memoryStream);
-                        if (debug)
-                        {
-                            LogB3DMFeatures(b3dm);
-                        }
-                        bytes = new MemoryStream(b3dm.GlbData).ToArray();
-
-#if UNITY_EDITOR
-                        if (writeGlbNextToB3dm)
-                        {
-                            var localGlbPath = Application.persistentDataPath + "/" + Path.GetFileName(url).Replace(".b3dm", ".glb");
-                            Debug.Log("Writing local file: " + localGlbPath);
-                            File.WriteAllBytes(localGlbPath, bytes);
-                        }
-#endif
-                    }
-
-                    yield return ParseFromBytes(bytes, url, callback);
-                }
+                yield return ParseFromBytes(bytes, url, callback);
             }
         }
 
@@ -91,7 +78,7 @@ namespace Netherlands3D.B3DM
             byte[] bytes = null;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-        filepath = Application.persistentDataPath + "/" + filepath;
+            filepath = Application.persistentDataPath + "/" + filepath;
 #endif
 
             if (Path.GetExtension(filepath).Equals(".b3dm"))
@@ -119,11 +106,8 @@ namespace Netherlands3D.B3DM
             await ParseFromBytes(bytes, filepath, null);
         }
 
-        private async Task ParseFromBytes(byte[] glbBuffer, string sourcePath, Action<GameObject> callback)
+        private static async Task ParseFromBytes(byte[] glbBuffer, string sourcePath, Action<GameObject> callback)
         {
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-            stopwatch.Start();
-
             //Use our parser (in this case GLTFFast to read the binary data and instantiate the Unity objects in the scene)
             var gltf = new GltfImport();
             var settings = new ImportSettings();
@@ -131,25 +115,16 @@ namespace Netherlands3D.B3DM
 
             var success = await gltf.Load(glbBuffer, new System.Uri(sourcePath), settings);
 
-            stopwatch.Stop();
-            parseTime.Invoke(stopwatch.ElapsedTicks.ToString() + " ticks");
-
             if (success)
             {
                 var gameObject = new GameObject("glTFScenes");
                 var scenes = gltf.SceneCount;
-
-                if(debug)
-                    LogGltfStats(gltf);
-
                 for (int i = 0; i < scenes; i++)
                 {
                     await gltf.InstantiateSceneAsync(gameObject.transform, i);
                 }
 
                 callback?.Invoke(gameObject);
-
-                if(onCreatedGameObject) onCreatedGameObject.Invoke(gameObject);
             }
             else
             {
