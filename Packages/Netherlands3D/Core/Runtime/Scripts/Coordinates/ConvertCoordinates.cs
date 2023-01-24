@@ -229,9 +229,9 @@ namespace Netherlands3D.Core
         public static Vector3 RDtoUnity(double X, double Y, double Z)
         {
             Vector3 output = new Vector3();
-            output.x = (float)( X - RelativeCenterRD.x);
+            output.x = (float)( X - relativeCenterRD.x);
             output.y = (float)(Z + zeroGroundLevelY);
-            output.z = (float)(Y - RelativeCenterRD.y);
+            output.z = (float)(Y - relativeCenterRD.y);
             return output;
         }
 
@@ -257,8 +257,8 @@ namespace Netherlands3D.Core
         {
             //Vector3WGS wgs = UnitytoWGS84(coordinaat);
             Vector3RD RD = new Vector3RD();
-            RD.x = coordinaat.x + RelativeCenterRD.x;
-            RD.y = coordinaat.z + RelativeCenterRD.y;
+            RD.x = coordinaat.x + relativeCenterRD.x;
+            RD.y = coordinaat.z + relativeCenterRD.y;
             RD.z = coordinaat.y - zeroGroundLevelY;
             return RD;
         }
