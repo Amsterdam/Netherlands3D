@@ -23,6 +23,7 @@ public class Tile
     public double[] transform;
     public float geometricError;
     public string refine;
+    public Bounds unityBounds;
     public BoundingVolume boundingVolume;
     public Content content;
     TileStatus status= TileStatus.unloaded;
