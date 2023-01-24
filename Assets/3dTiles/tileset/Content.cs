@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class Content : MonoBehaviour, IDisposable
 {
-    public string uri;
+    public string uri = "";
 
     public GameObject contentGameObject;
     private Coroutine runningContentRequest;
@@ -23,17 +23,22 @@ public class Content : MonoBehaviour, IDisposable
     public Coroutine Load()
     {
         state = ContentLoadState.LOADING;
-
         runningContentRequest = StartCoroutine(ImportB3DMGltf.ImportBinFromURL(uri, GotContent));
-
         return runningContentRequest;
     }
 
     private void GotContent(GameObject contentGameObject)
     {
         state = ContentLoadState.READY;
-
-        this.contentGameObject = contentGameObject;
+        if (contentGameObject != null)
+        {
+            this.contentGameObject = contentGameObject;
+            this.contentGameObject.transform.SetParent(this.gameObject.transform, true);
+        }
+        else
+        {
+            Debug.LogWarning("Could not load GameObject");
+        }
     }
 
     /// <summary>
@@ -48,6 +53,8 @@ public class Content : MonoBehaviour, IDisposable
 
         if (contentGameObject)
             Destroy(contentGameObject);
+
+        Destroy(this);
     }
 }
 

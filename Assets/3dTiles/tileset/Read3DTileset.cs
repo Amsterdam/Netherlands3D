@@ -4,6 +4,7 @@ using UnityEngine;
 using SimpleJSON;
 using UnityEngine.Networking;
 using System;
+using Netherlands3D.Core;
 
 public class Read3DTileset : MonoBehaviour
 {
@@ -23,6 +24,13 @@ public class Read3DTileset : MonoBehaviour
     void Start()
     {
         StartCoroutine(LoadTileset());
+
+        CoordConvert.relativeCenterChanged.AddListener(CenterChanged);
+    }
+
+    private void CenterChanged()
+    {
+        //Teleport tiles
     }
 
     IEnumerator LoadTileset()
@@ -51,25 +59,20 @@ public class Read3DTileset : MonoBehaviour
 
     private IEnumerator LoadAllTileContent()
     {
-        bool contentFound = false;
-        var targetTile = root;
-        while (!contentFound)
-        {
-            yield return new WaitForEndOfFrame();
-            yield return LoadContentInChildren(root);
-        }
+        yield return new WaitForEndOfFrame();
+        yield return LoadContentInChildren(root);
     }
 
     private IEnumerator LoadContentInChildren(Tile tile)
     {
-        var absolutePath = new Uri(tilesetUrl).AbsolutePath;
+        var absolutePath = tilesetUrl.Replace("tileset.json","");
 
         foreach (var child in tile.children)
         {
             if(child.hascontent)
             {
-                child.content = new Content();
-                child.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", "").Replace("{x}", "").Replace("{y}", "");
+                child.content = gameObject.AddComponent<Content>();
+                child.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", child.X.ToString()).Replace("{x}", child.Y.ToString()).Replace("{y}", child.Z.ToString());
                 child.content.Load();
             }
             yield return new WaitForEndOfFrame();
@@ -151,6 +154,7 @@ public class Read3DTileset : MonoBehaviour
         // to get the screenspaceError in pixels;
     }
 }
+
 public enum TilingMethod
 {
     explicitTiling,

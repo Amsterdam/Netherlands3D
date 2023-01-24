@@ -36,6 +36,7 @@ public class Tile : IDisposable
         Vector3 result = new Vector3(angleX, angleY, angleZ);
         return result;
     }
+
     public Quaternion RotationToVertical()
     { 
         float posX = (float)(transform[12]/1000000); // measured for earth-center to prime meridian (greenwich)
