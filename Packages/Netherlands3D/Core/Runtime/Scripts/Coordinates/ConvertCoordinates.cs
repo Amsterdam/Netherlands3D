@@ -11,6 +11,8 @@ implied. See the License for the specific language governing permissions and lim
 
 using System;
 using UnityEngine;
+using UnityEngine.Events;
+using Netherlands3D.Events;
 
 /// <summary>
 /// Convert coordinates between Unity, WGS84 and RD(EPSG7415)
@@ -99,9 +101,24 @@ namespace Netherlands3D.Core
         private static byte[] RDCorrectionZ = Resources.Load<TextAsset>("nlgeo04").bytes;
 
         private static Vector3RD output = new Vector3RD();
-
         public static float zeroGroundLevelY = 0;
-        public static Vector2RD relativeCenterRD = new Vector2RD();
+
+        private static Vector2RD relativeCenterRDCoordinate = new Vector2RD();
+        public static Vector2RD relativeCenterRD { 
+            get => relativeCenterRDCoordinate; 
+            set
+            {
+                Vector2RD change = new Vector2RD(value.x - relativeCenterRDCoordinate.x, value.y - relativeCenterRDCoordinate.y);
+                var changeUnity = new Vector3((float)change.x, 0, (float)change.y);
+
+                //TODO: rotation from earth centered earth fixed
+                relativeCenterRDCoordinate = value;
+                relativeCenterChanged.Invoke(changeUnity, Quaternion.identity);
+            }
+        }
+
+        public class CenterChangedEvent : UnityEvent<Vector3,Quaternion> { }
+        public static CenterChangedEvent relativeCenterChanged = new CenterChangedEvent();
 
         /// <summary>
         /// Converts WGS84-coordinate to UnityCoordinate
@@ -212,9 +229,9 @@ namespace Netherlands3D.Core
         public static Vector3 RDtoUnity(double X, double Y, double Z)
         {
             Vector3 output = new Vector3();
-            output.x = (float)( X - relativeCenterRD.x);
+            output.x = (float)( X - RelativeCenterRD.x);
             output.y = (float)(Z + zeroGroundLevelY);
-            output.z = (float)(Y - relativeCenterRD.y);
+            output.z = (float)(Y - RelativeCenterRD.y);
             return output;
         }
 
@@ -240,8 +257,8 @@ namespace Netherlands3D.Core
         {
             //Vector3WGS wgs = UnitytoWGS84(coordinaat);
             Vector3RD RD = new Vector3RD();
-            RD.x = coordinaat.x + relativeCenterRD.x;
-            RD.y = coordinaat.z + relativeCenterRD.y;
+            RD.x = coordinaat.x + RelativeCenterRD.x;
+            RD.y = coordinaat.z + RelativeCenterRD.y;
             RD.z = coordinaat.y - zeroGroundLevelY;
             return RD;
         }
@@ -321,6 +338,7 @@ namespace Netherlands3D.Core
         private static double[] Sp = new double[] { 1, 0, 2, 1, 3, 0, 2, 1, 0, 1 };
         private static double[] Sq = new double[] { 0, 2, 0, 2, 0, 1, 2, 1, 4, 4 };
         private static double[] Spq = new double[] { 309056.544, 3638.893, 73.077, -157.984, 59.788, 0.433, -6.439, -0.032, 0.092, -0.054 };
+
 
         public static Vector3RD WGS84toRD(double lon, double lat)
         {
