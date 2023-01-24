@@ -28,10 +28,11 @@ public class Read3DTileset : MonoBehaviour
         CoordConvert.relativeCenterChanged.AddListener(CenterChanged);
     }
 
-    private void CenterChanged()
+    private void CenterChanged(Vector3 positionOffset, Quaternion rotationOffset)
     {
-        //Teleport tiles
+        //
     }
+
 
     IEnumerator LoadTileset()
     {
