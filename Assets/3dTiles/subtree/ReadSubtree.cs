@@ -4,31 +4,24 @@ using UnityEngine;
 using UnityEngine.Networking;
 using subtree;
 using System.IO;
-using Netherlands3D.Core;
 
 public class ReadSubtree : MonoBehaviour
 {
-    public subtree.Subtree subtree;
-     Tile rootTile;
+    public Subtree subtree;
+    Tile tile;
     ImplicitTilingSettings settings;
     public string subtreeUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/subtrees/0_0_0.subtree";
     System.Action<Tile> sendResult;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        //StartCoroutine(downloadSubtree());
-    }
 
     public void DownloadSubtree(string url, ImplicitTilingSettings tilingSettings, System.Action<Tile> callback)
     {
         settings = tilingSettings;
         sendResult = callback;
         subtreeUrl = url;
-        StartCoroutine(downloadSubtree());
+        StartCoroutine(DownloadSubtree());
     }
 
-    IEnumerator downloadSubtree()
+    IEnumerator DownloadSubtree()
     {
         UnityWebRequest www = UnityWebRequest.Get(subtreeUrl);
         yield return www.SendWebRequest();
@@ -39,7 +32,6 @@ public class ReadSubtree : MonoBehaviour
         }
         else
         {
-
             byte[] subtreeData = www.downloadHandler.data;
             string tempFilePath = Path.Combine(Application.persistentDataPath, "st.subtree");
             if (File.Exists(tempFilePath))
@@ -52,28 +44,28 @@ public class ReadSubtree : MonoBehaviour
 
             subtree = SubtreeReader.ReadSubtree(binaryReader);
 
-            // setup tootTile
-            rootTile = new Tile();
-            rootTile.X = 0;
-            rootTile.Y = 0;
-            rootTile.Z = 0;
-            rootTile.geometricError = settings.geometricError;
-            rootTile.hascontent = subtree.ContentAvailability[0];
+            // setup rootTile
+            tile = new Tile();
+            tile.X = 0;
+            tile.Y = 0;
+            tile.Z = 0;
+            tile.geometricError = settings.geometricError;
+            tile.hascontent = subtree.ContentAvailability[0];
 
-            rootTile.boundingVolume = new BoundingVolume();
-            rootTile.boundingVolume.boundingVolumeType = BoundingVolumeType.Region;
-            rootTile.boundingVolume.values = settings.boundingRegion;
+            tile.boundingVolume = new BoundingVolume
+            {
+                boundingVolumeType = BoundingVolumeType.Region,
+                values = settings.boundingRegion
+            };
 
-            AddChildren(rootTile, 0,0);
+            AddChildren(tile, 0,0);
 
-            sendResult( rootTile);
-
+            sendResult(tile);
         }
     }
 
     public void AddChildren(Tile tile,int parentNortonIndex, int LevelStartIndex)
     {
-
         int localIndex = parentNortonIndex * 4;
         int levelstart = LevelStartIndex+ (int)Mathf.Pow(4, tile.X);
         int childOne = levelstart+localIndex;
@@ -88,7 +80,6 @@ public class ReadSubtree : MonoBehaviour
         AddChild(tile, localIndex, levelstart, 3);
 
     }
-
 
     private void AddChild(Tile parentTile, int localIndex, int LevelStartIndex, int childNumber)
     {
@@ -139,38 +130,11 @@ public class ReadSubtree : MonoBehaviour
             childTile.boundingVolume.values[4] = parentTile.boundingVolume.values[4];
             childTile.boundingVolume.values[5] = parentTile.boundingVolume.values[5];
 
-            childTile.unityBounds = CalculateUnityBounds(childTile);
             if (childTile.X < settings.subtreeLevels - 1)
             {
                 AddChildren(childTile, localIndex + childNumber, LevelStartIndex);
             }
-
             parentTile.children.Add(childTile);
         }
-    }
-
-    Bounds CalculateUnityBounds(Tile tile)
-    {
-        Bounds result = new Bounds();
-        Vector3WGS bottomleft = new Vector3WGS();
-        Vector3WGS topright = new Vector3WGS();
-
-        bottomleft.lon = tile.boundingVolume.values[0] * 180 / System.Math.PI;
-        bottomleft.lat = tile.boundingVolume.values[1] * 180 / System.Math.PI;
-        bottomleft.h = tile.boundingVolume.values[4];
-
-        topright.lon = tile.boundingVolume.values[2] * 180 / System.Math.PI;
-        topright.lat = tile.boundingVolume.values[3] * 180 / System.Math.PI;
-        topright.h = tile.boundingVolume.values[4];
-
-        Vector3 bottomleftUnity = CoordConvert.WGS84toUnity(bottomleft);
-        Vector3 toprightUnity = CoordConvert.WGS84toUnity(topright);
-
-        float deltaX = (toprightUnity.x - bottomleftUnity.x)/2;
-        float deltaY = (toprightUnity.y - bottomleftUnity.y) / 2;
-        result.size = new Vector3(deltaX, deltaY,0 );
-
-
-        return result;
     }
 }

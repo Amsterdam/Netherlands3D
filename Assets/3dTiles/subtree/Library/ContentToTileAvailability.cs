@@ -2,7 +2,6 @@
 
 namespace subtree
 {
-
     public static class ContentToTileAvailability
     {
         public static AvailabilityLevels GetTileAvailabilityLevels(AvailabilityLevels contentAvailabilitylevels)
@@ -42,9 +41,7 @@ namespace subtree
                     }
                 }
             }
-
             return tileAvailabilitylevels;
         }
-
     }
 }

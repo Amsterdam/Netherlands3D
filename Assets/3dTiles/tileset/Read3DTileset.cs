@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using SimpleJSON;
 using UnityEngine.Networking;
+using System;
+using Netherlands3D.Core;
 
 public class Read3DTileset : MonoBehaviour
 {
@@ -10,25 +12,30 @@ public class Read3DTileset : MonoBehaviour
 
     public Tile root;
     public double[] transformValues;
-    TilingMethod tilingmethod = TilingMethod.explicitTiling;
+    TilingMethod tilingMethod = TilingMethod.explicitTiling;
 
     public ImplicitTilingSettings implicitTilingSettings;
 
-    public int tilecount;
+    public int tileCount;
     public int nestingDepth;
 
     public GameObject cubePrefab;
 
-    
-    // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(LoadTileset());
+
+        CoordConvert.relativeCenterChanged.AddListener(CenterChanged);
     }
 
-        IEnumerator LoadTileset()
+    private void CenterChanged(Vector3 positionOffset, Quaternion rotationOffset)
     {
+        //
+    }
 
+
+    IEnumerator LoadTileset()
+    {
         UnityWebRequest www = UnityWebRequest.Get(tilesetUrl);
         yield return www.SendWebRequest();
 
@@ -38,19 +45,43 @@ public class Read3DTileset : MonoBehaviour
         }
         else
         {
-
             string jsonstring = www.downloadHandler.text;
 
             JSONNode rootnode = JSON.Parse(jsonstring)["root"];
-            readTileset(rootnode);
+            ReadTileset(rootnode);
         }
-
-
-
-
     }
 
-    void readTileset(JSONNode rootnode)
+    [ContextMenu("Load all content")]
+    private void LoadAll()
+    {
+        StartCoroutine(LoadAllTileContent());
+    }
+
+    private IEnumerator LoadAllTileContent()
+    {
+        yield return new WaitForEndOfFrame();
+        yield return LoadContentInChildren(root);
+    }
+
+    private IEnumerator LoadContentInChildren(Tile tile)
+    {
+        var absolutePath = tilesetUrl.Replace("tileset.json","");
+
+        foreach (var child in tile.children)
+        {
+            if(child.hascontent)
+            {
+                child.content = gameObject.AddComponent<Content>();
+                child.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", child.X.ToString()).Replace("{x}", child.Y.ToString()).Replace("{y}", child.Z.ToString());
+                child.content.Load();
+            }
+            yield return new WaitForEndOfFrame();
+            yield return LoadContentInChildren(child);
+        }
+    }
+
+    private void ReadTileset(JSONNode rootnode)
     {
         JSONNode transformNode = rootnode["transform"];
         transformValues = new double[16];
@@ -59,15 +90,15 @@ public class Read3DTileset : MonoBehaviour
             transformValues[i] = transformNode[i].AsDouble;
         }
         JSONNode implicitTilingNode = rootnode["implicitTiling"];
-        if (implicitTilingNode!=null)
+        if (implicitTilingNode != null)
         {
-            readImplicitTiling(rootnode);
+            ReadImplicitTiling(rootnode);
         }
-
     }
-    void readImplicitTiling(JSONNode rootnode)
+
+    private void ReadImplicitTiling(JSONNode rootnode)
     {
-        tilingmethod = TilingMethod.implicitTiling;
+        tilingMethod = TilingMethod.implicitTiling;
         implicitTilingSettings = new ImplicitTilingSettings();
         string refine = rootnode["refine"].Value;
         switch (refine)
@@ -103,30 +134,28 @@ public class Read3DTileset : MonoBehaviour
         implicitTilingSettings.subtreeUri = implicitTilingNode["subtrees"]["uri"].Value;
 
         ReadSubtree subtreeReader = GetComponent<ReadSubtree>();
-        string subtreeURL = tilesetUrl.Replace("tileset.json", implicitTilingSettings.subtreeUri);
-        subtreeURL = subtreeURL.Replace("{level}", "0");
-        subtreeURL = subtreeURL.Replace("{x}", "0");
-        subtreeURL = subtreeURL.Replace("{y}", "0");
-        subtreeReader.DownloadSubtree(subtreeURL,implicitTilingSettings,ReturnTiles);
+        string subtreeURL = tilesetUrl.Replace("tileset.json", implicitTilingSettings.subtreeUri)
+                            .Replace("{level}", "0")
+                            .Replace("{x}", "0")
+                            .Replace("{y}", "0");
+        
+        subtreeReader.DownloadSubtree(subtreeURL, implicitTilingSettings, ReturnTiles);
     }
 
     public void ReturnTiles(Tile rootTile)
     {
         root = rootTile;
     }
-    
-
-    
 
     public void SetSSEComponent()
     {
-        float ssecomponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * Camera.main.fieldOfView / 2));
+        float sseComponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * Camera.main.fieldOfView / 2));
         // multiply with Geomettric Error and
         // divide by distance to camera
         // to get the screenspaceError in pixels;
-
     }
 }
+
 public enum TilingMethod
 {
     explicitTiling,
@@ -154,5 +183,4 @@ public class ImplicitTilingSettings
     public string contentUri;
     public float geometricError;
     public double[] boundingRegion;
-
 }
