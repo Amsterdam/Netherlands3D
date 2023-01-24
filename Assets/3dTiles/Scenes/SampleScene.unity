@@ -338,6 +338,90 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+--- !u!1 &788951357
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 788951360}
+  - component: {fileID: 788951359}
+  - component: {fileID: 788951358}
+  m_Layer: 0
+  m_Name: read tileset buildings
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &788951358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788951357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b5ff742a37465440ade3029dfbbbc9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  subtreeUrl: https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/subtrees/0_0_0.subtree
+--- !u!114 &788951359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788951357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b632da76a49ee5745b7fb140e0689838, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilesetUrl: https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/building_1_1/tileset.json
+  root:
+    X: 0
+    Y: 0
+    Z: 0
+    hascontent: 0
+    children: []
+    transform: []
+    geometricError: 0
+    refine: 
+    boundingVolume:
+      boundingVolumeType: 0
+      values: []
+    content: {fileID: 0}
+  transformValues: []
+  implicitTilingSettings:
+    refinementtype: 0
+    subdivisionScheme: 0
+    subtreeLevels: 0
+    subtreeUri: 
+    contentUri: 
+    geometricError: 0
+    boundingRegion: []
+  tileCount: 0
+  nestingDepth: 0
+  cubePrefab: {fileID: 290402928}
+--- !u!4 &788951360
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788951357}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &805777383
 GameObject:
   m_ObjectHideFlags: 0
@@ -453,6 +537,90 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
+--- !u!1 &1070083286
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1070083289}
+  - component: {fileID: 1070083288}
+  - component: {fileID: 1070083287}
+  m_Layer: 0
+  m_Name: read tileset overig
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1070083287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070083286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b5ff742a37465440ade3029dfbbbc9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  subtreeUrl: https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/subtrees/0_0_0.subtree
+--- !u!114 &1070083288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070083286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b632da76a49ee5745b7fb140e0689838, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilesetUrl: https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/tiles_1_1/tileset.json
+  root:
+    X: 0
+    Y: 0
+    Z: 0
+    hascontent: 0
+    children: []
+    transform: []
+    geometricError: 0
+    refine: 
+    boundingVolume:
+      boundingVolumeType: 0
+      values: []
+    content: {fileID: 0}
+  transformValues: []
+  implicitTilingSettings:
+    refinementtype: 0
+    subdivisionScheme: 0
+    subtreeLevels: 0
+    subtreeUri: 
+    contentUri: 
+    geometricError: 0
+    boundingRegion: []
+  tileCount: 0
+  nestingDepth: 0
+  cubePrefab: {fileID: 290402928}
+--- !u!4 &1070083289
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070083286}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1239146266
 GameObject:
   m_ObjectHideFlags: 0
@@ -465,7 +633,7 @@ GameObject:
   - component: {fileID: 1239146267}
   - component: {fileID: 1239146269}
   m_Layer: 0
-  m_Name: read tileset
+  m_Name: read tileset landuse
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

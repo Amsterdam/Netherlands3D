@@ -100,7 +100,7 @@ public class Read3DTileset : MonoBehaviour
         Vector3WGS positionWGS = CoordConvert.ECEFtoWGS84(positionECEF);
         Vector3 position = CoordConvert.WGS84toUnity(positionWGS);
         transform.position = position;
-        Vector3 rotation = CoordConvert.RotationToUnityUP(positionWGS);
+        Vector3 rotation = CoordConvert.RotationToUnityUP(CoordConvert.UnitytoWGS84(Vector3.zero));
         transform.rotation = Quaternion.Euler(rotation.x,rotation.y,rotation.z);
     }
 
