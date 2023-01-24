@@ -128,7 +128,7 @@ namespace Netherlands3D.Core
                 relativeCenterChanged.Invoke(changeUnity, Quaternion.identity);
             }
         }
-
+        public static Vector3ECEF relativeCEnterECEF;
         public class CenterChangedEvent : UnityEvent<Vector3,Quaternion> { }
         public static CenterChangedEvent relativeCenterChanged = new CenterChangedEvent();
 

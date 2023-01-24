@@ -98,10 +98,18 @@ public class Read3DTileset : MonoBehaviour
         //setup location and rotation
         Vector3ECEF positionECEF = new Vector3ECEF(transformValues[12], transformValues[13], transformValues[14]);
         Vector3WGS positionWGS = CoordConvert.ECEFtoWGS84(positionECEF);
-        Vector3 position = CoordConvert.WGS84toUnity(positionWGS);
+
+        //positionWGS = ConvertEcef.Coord.ecef_to_geo(new Vector3RD(positionECEF.X, positionECEF.Y, positionECEF.Z));
+        Vector3 position = new Vector3((float)(positionECEF.Y - CoordConvert.relativeCEnterECEF.Y), (float)(positionECEF.Z - CoordConvert.relativeCEnterECEF.Z), (float)(-positionECEF.X + CoordConvert.relativeCEnterECEF.X));
+        position = CoordConvert.WGS84toUnity(positionWGS);
         transform.position = position;
+
+
         Vector3 rotation = CoordConvert.RotationToUnityUP(CoordConvert.UnitytoWGS84(Vector3.zero));
-        transform.rotation = Quaternion.Euler(rotation.x,rotation.y,rotation.z);
+        
+        Vector3 newposition = Quaternion.Euler(rotation)*position;
+        transform.position = newposition;
+        transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
     }
 
     private void ReadImplicitTiling(JSONNode rootnode)

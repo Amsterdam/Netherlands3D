@@ -30,6 +30,7 @@ namespace Netherlands3D.Core
 
             Vector3WGS origin_wgs = CoordConvert.UnitytoWGS84(Vector3.zero);
             Vector3ECEF origin_ecef = CoordConvert.WGS84toECEF(origin_wgs);
+            CoordConvert.relativeCEnterECEF = origin_ecef;
             Debug.Log("X: " + origin_ecef.X);
             Debug.Log("Y: " + origin_ecef.Y);
             Debug.Log("Z: " + origin_ecef.Z);
