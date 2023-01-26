@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Packages/nl.netherlands3d/WMSLayer/Samples/wmsLayer/Scenes/WebReader.unity
     guid: 039675b83adafc94fb245086c230099d
   m_configObjects:

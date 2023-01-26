@@ -57,7 +57,7 @@ public class WMSMapHandler : MonoBehaviour
             cam.transform.position = Camera.main.transform.position;
         }
         Extent e = cam.GetRDExtent();
-        current.BBox = new BoundingBox((float)e.MinX, (float)e.MinY, (float)e.MaxX, (float)e.MaxY);
+        current.BBox = new BoundingBox(e.MinX, e.MinY, e.MaxX, e.MaxY);
         current.IsPreview(true);
         handler.StartCoroutine(handler.DownloadImage(current.GetMapRequest(), mapImageEvent));
     }

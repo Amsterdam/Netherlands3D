@@ -4,9 +4,15 @@ using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.Networking;
+using TMPro;
 
 public class WMSHandler : MonoBehaviour
 {
+    [SerializeField] private TMP_InputField minXField;
+    [SerializeField] private TMP_InputField maxXField;
+    [SerializeField] private TMP_InputField minYField;
+    [SerializeField] private TMP_InputField maxYField;
+
     [Header("Invoked Events")]
     //[SerializeField] private TriggerEvent resetReaderEvent;
     [SerializeField] private BoolEvent isWMSEvent;
@@ -25,10 +31,10 @@ public class WMSHandler : MonoBehaviour
     [SerializeField] private StringEvent boundingBoxMinYEvent;
     [SerializeField] private StringEvent boundingBoxMaxXEvent;
     [SerializeField] private StringEvent boundingBoxMaxYEvent;
+    [SerializeField] private DoubleArrayEvent boundingBoxDoubleArrayEvent;
     [SerializeField] private StringEvent resolutionEvent;
 
     private WMS wms;
-    private WMSFormatter formatter;
 
     // Start is called before the first frame update
     void Start()
@@ -41,6 +47,9 @@ public class WMSHandler : MonoBehaviour
         boundingBoxMaxXEvent.started.AddListener(SetBoundingBoxMaxX);
         boundingBoxMinYEvent.started.AddListener(SetBoundingBoxMinY);
         boundingBoxMaxYEvent.started.AddListener(SetBoundingBoxMaxY);
+
+        if (boundingBoxDoubleArrayEvent) boundingBoxDoubleArrayEvent.started.AddListener(SetBoundsFromDoubleArray);
+
         resolutionEvent.started.AddListener(SetResolution);
     }
 
@@ -57,12 +66,14 @@ public class WMSHandler : MonoBehaviour
             if (imageEvent != null)
             {
                 imageEvent.Invoke(((DownloadHandlerTexture)request.downloadHandler).texture);
-                StopCoroutine("DownloadImage");
             }
         }
     }
     public void SendRequest(bool preview)
     {
+        if (!ParseFields())
+            return;
+
         wms.IsPreview(preview);
         string url = wms.GetMapRequest();
         if (preview)
@@ -82,6 +93,31 @@ public class WMSHandler : MonoBehaviour
             }
         }
     }
+    private bool ParseFields()
+    {
+        if (!double.TryParse(minXField.text, out wms.BBox.MinX))
+            return false;
+
+        if (!double.TryParse(maxXField.text, out wms.BBox.MaxX))
+            return false;
+
+        if (!double.TryParse(minYField.text, out wms.BBox.MinY))
+            return false;
+
+        if (!double.TryParse(maxYField.text, out wms.BBox.MaxY))
+            return false;
+
+        return true;
+    }
+
+    private void SetBoundsFromDoubleArray(double[] boundsArray)
+    {
+        minXField.text = boundsArray[0].ToString();
+        minYField.text = boundsArray[1].ToString();
+        maxXField.text = boundsArray[2].ToString();
+        maxYField.text = boundsArray[3].ToString();
+    }
+
     private void CreateWMS(string baseUrl)
     {
         wms = new WMS(baseUrl);
@@ -94,6 +130,7 @@ public class WMSHandler : MonoBehaviour
     }
     private IEnumerator GetWebString(string url)
     {
+        Debug.Log(url);
         UnityWebRequest request = UnityWebRequest.Get(url);
         yield return request.SendWebRequest();
         if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
@@ -132,11 +169,8 @@ public class WMSHandler : MonoBehaviour
         XmlElement service = xml.DocumentElement["Service"]["Name"];
         if (service != null && service.InnerText.Contains("WMS"))
         {
-            if (formatter == null)
-            {
-                formatter = new WMSFormatter();
-            }
-            wms = formatter.ReadWMSFromXML(wms, xml);
+            WMSFormatterX formatter = new WMSFormatterX();
+            formatter.ReadWMSFromXML(ref wms, xml);
             //resetReaderEvent.Invoke();
             wmsLayerBuildEvent.Invoke(wms.Layers);
             isWMSEvent.Invoke(true);
@@ -164,4 +198,5 @@ public class WMSHandler : MonoBehaviour
     {
         wms.BBox.MaxY = float.Parse(value);
     }
+
 }

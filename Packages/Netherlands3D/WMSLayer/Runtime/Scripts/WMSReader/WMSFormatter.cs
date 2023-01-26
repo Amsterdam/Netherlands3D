@@ -90,17 +90,9 @@ public class WMSFormatter
                 extractLayer.AddStyleToDictionary(extractStyle.Name, extractStyle);
             }
             wms.Layers.Add(extractLayer);
-            //if(extractLayer.styles.Count > 0)
-            //{
-            //}
-            //else
-            //{
-            //    Debug.Log("Found a layer without applicable styles! It won't be added to the possible layers for this WMS!");
-            //}
         }
         return wms;
     }
-
     private void FindNamespaces()
     {
         namespacePrefix = "";

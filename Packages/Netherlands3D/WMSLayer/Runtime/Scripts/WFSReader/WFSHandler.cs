@@ -18,6 +18,7 @@ public class WFSHandler : MonoBehaviour
     [Header("Invoked Events")]
     [SerializeField] private ObjectEvent wfsDataEvent;
     [SerializeField] private BoolEvent isWmsEvent;
+    [SerializeField] private ObjectEvent propertyFeatureEvent;
     [SerializeField] private Vector3ListsEvent drawPolygonsEvent;
     [SerializeField] private Vector3ListEvent drawPolygonEvent;
     [SerializeField] private Vector3ListEvent drawLineEvent;
@@ -40,9 +41,12 @@ public class WFSHandler : MonoBehaviour
     [SerializeField] private StringEvent wfsMinYEvent;
     [SerializeField] private StringEvent wfsMaxYEvent;
 
+    [SerializeField] private DoubleArrayEvent boundingBoxDoubleArrayEvent;
+
+
     private WFSFormatter formatter;
     private WFSFeature activeFeature;
-    private float coroutineRunTime = 200;
+    private float coroutineRunTime = 200f;
     private float hue = 0.9f;
     private float saturation = 0.5f;
     private float brightness = 0.5f;
@@ -60,12 +64,26 @@ public class WFSHandler : MonoBehaviour
         wfsMinYEvent.started.AddListener(SetBoundingBoxMinY);
         wfsMaxYEvent.started.AddListener(SetBoundingBoxMaxY);
 
+        if (boundingBoxDoubleArrayEvent) boundingBoxDoubleArrayEvent.started.AddListener(SetBoundsFromDoubleArray);
+
         // The addition of these functions to the events are only for testing and debugging purposes.
         // They should be removed or commented out later.
         pointEvent.started.AddListener(TestPoint);
         multiPointEvent.started.AddListener(TestMultiPoints);
         drawLinesEvent.started.AddListener(TestMultiLine);
     }
+
+    private void SetBoundsFromDoubleArray(double[] boundsArray)
+    {
+        if (ActiveWFS == null)
+            return;
+
+        ActiveWFS.BBox.MinX = boundsArray[0];
+        ActiveWFS.BBox.MinY = boundsArray[1];
+        ActiveWFS.BBox.MaxX = boundsArray[2];
+        ActiveWFS.BBox.MaxY = boundsArray[3];
+    }
+
     public void CreateWFS(string baseUrl)
     {
         ActiveWFS = new WFS(baseUrl);
@@ -76,7 +94,6 @@ public class WFSHandler : MonoBehaviour
     }
     public void GetFeature()
     {
-        Debug.Log("Getting Feature!");
         ActiveWFS.TypeName = activeFeature.FeatureName;
         Debug.Log(ActiveWFS.GetFeatures());
         StartCoroutine(GetWebString(ActiveWFS.GetFeatures(), (string s) => StartCoroutine(HandleFeatureJSON(new GeoJSON(s)))));
@@ -113,17 +130,29 @@ public class WFSHandler : MonoBehaviour
         {
             Debug.Log("Hadn't found first feature! Doing it now!");
             EvaluateGeoType(geoJSON);
+
+            WFSFeatureData featureData = new WFSFeatureData();
+            featureData.TransferDictionary(geoJSON.GetProperties());
+            activeFeature.AddNewFeatureData(featureData);
+
         }
         while (geoJSON.GotoNextFeature())
         {
             Debug.Log("Evaluating next feature!");
             EvaluateGeoType(geoJSON);
-            if((DateTime.UtcNow - dateTime).Milliseconds > coroutineRunTime)
+
+            WFSFeatureData featureData = new WFSFeatureData();
+            featureData.TransferDictionary(geoJSON.GetProperties());
+            activeFeature.AddNewFeatureData(featureData);
+
+            if ((DateTime.UtcNow - dateTime).Milliseconds > coroutineRunTime)
             {
                 yield return null;
                 dateTime = DateTime.UtcNow;
             }
         }
+        if (propertyFeatureEvent)
+            propertyFeatureEvent.Invoke(activeFeature);
     }
     private void SetStartIndex(string index)
     {

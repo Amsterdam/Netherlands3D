@@ -53,7 +53,7 @@ public class WMS : IWebService, IWSMappable
     {
         //WebServiceNetworker wsn = WebServiceNetworker.Instance;
         //wsn.StartCoroutine(wsn.GetWebString(BaseUrl + "?request=getcapabilities&service=wms"));
-        return BaseUrl + "?request=getcapabilities&service=wms";
+        return BaseUrl + "?request=GetCapabilities&SERVICE=WMS";
     }
     public string GetMapRequest()
     {
@@ -127,14 +127,14 @@ public class WMS : IWebService, IWSMappable
         return $"{layerBuilder}&{styleBuilder}";
     }
 
-    private string MapRequest() => "request=getmap";
+    private string MapRequest() => "request=GetMap";
     private string VersionRequest() => $"version={Version}";
     private string CRSRequest() => $"crs={CRS}";
-    private string DimensionRequest() => isPreview ? $"width={Resolution.x}&height={Resolution.y}" : "width={Width}&height={Height}";
+    private string DimensionRequest() => isPreview ? $"Width={Resolution.x}&Height={Resolution.y}" : "Width={Width}&Height={Height}";
     private string BoundingBoxRequest() => isPreview ? $"bbox={BBox.MinX},{BBox.MinY},{BBox.MaxX},{BBox.MaxY}" : "bbox={Xmin},{Ymin},{Xmax},{Ymax}";
     private string FormatRequest() => "format=image/png";
     private string TransparencyRequest() => "transparent=true";
-    private string ServiceRequest() => "service=wms";
+    private string ServiceRequest() => "SERVICE=WMS";
     private string SRSRequest() => $"srs={SRS}";
 
 }

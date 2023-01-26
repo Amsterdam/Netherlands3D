@@ -10,6 +10,7 @@ public class WMSLayer
     public string Title;
     public string Abstract;
 
+    public bool CoordinatesAreSRS = false;
     public XmlNodeList KeywordList;
     public List<string> CRS = new();
 

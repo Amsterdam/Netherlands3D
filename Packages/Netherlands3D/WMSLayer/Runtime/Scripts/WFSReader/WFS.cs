@@ -16,7 +16,7 @@ public class WFS : IWebService
     public BoundingBox BBox;
 
     public int StartIndex = 0;
-    public int Count = 100;
+    public int Count = 0;
 
     private bool tileHandled;
 
@@ -29,7 +29,7 @@ public class WFS : IWebService
 
     public string GetCapabilities()
     {    
-        return BaseUrl + "?REQUEST=GetCapabilities&SERVICE=WFS";
+        return BaseUrl + "?request=GetCapabilities&service=WFS";
     }
 
     public string GetFeatures()
@@ -43,8 +43,11 @@ public class WFS : IWebService
         stringBuilder.Append("&");
         stringBuilder.Append(outputFormatRequest);
         stringBuilder.Append("&");
-        stringBuilder.Append(countRequest);
-        stringBuilder.Append("&");
+        if(Count > 0)
+        {
+            stringBuilder.Append(countRequest);
+            stringBuilder.Append("&");
+        }
         stringBuilder.Append(startIndexRequest);
         stringBuilder.Append("&");
         stringBuilder.Append(boundingBoxRequest);

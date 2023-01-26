@@ -12,6 +12,7 @@ public class WMSInterface : MonoBehaviour
     [Header("Options Parents")]
     [SerializeField] private Transform layerContentParent;
     [SerializeField] private Transform styleContentParent;
+    [SerializeField] private GameObject styleWindow;
     [SerializeField] private Transform crsContentParent;
     [SerializeField] private Transform activeLayerParent;
 
@@ -63,6 +64,10 @@ public class WMSInterface : MonoBehaviour
         );
     }
 
+    private void Start()
+    {
+        styleWindow.SetActive(false);
+    }
     public void ResetInterface()
     {
         dtcs.Clear();
@@ -76,6 +81,8 @@ public class WMSInterface : MonoBehaviour
     {
         foreach(WMSLayer layer in (List<WMSLayer>)layerList)
         {
+            // Create a new button for each Layer, based on the prefab. Set the text in the button to the Layer's title.
+            // Pressing the button will display the styles within that Layer in the style window.
             Button newLayerButton = Instantiate(layerButtonPrefab, layerContentParent);
             newLayerButton.GetComponentInChildren<TextMeshProUGUI>().text = layer.Title;
             newLayerButton.onClick.AddListener(() => DisplayStyles(layer));
@@ -83,19 +90,28 @@ public class WMSInterface : MonoBehaviour
     }
     public void DisplayStyles(WMSLayer styledLayer)
     {
+        // We clear the styles that are currently displayed and belong to the previous (if applicable)
         ClearStyles();
         if(styledLayer.styles.Count is 0)
         {
+            // We can immediately apply the layer if it has no styles (such as aerial photos).
             ApplyStyle(styledLayer, null);
             return;
         }
+        // If the selected layer has no styles, we don't need to show the style window at all.
+        styleWindow.SetActive(true);
         foreach(KeyValuePair<string, WMSStyle> stylePair in styledLayer.styles)
         {
+            // Create a new button for each Style, based on the prefab. Set the text in the button to the Style's title.
+            // Pressing the button will apply the Style for the active layer.
             Button newLayerButton = Instantiate(layerButtonPrefab, styleContentParent);
             newLayerButton.GetComponentInChildren<TextMeshProUGUI>().text = stylePair.Value.Title;
-            // Implementation for style selection needs to be done here!
-
-            newLayerButton.onClick.AddListener(() => ApplyStyle(styledLayer, stylePair.Value));
+            newLayerButton.onClick.AddListener(() => 
+            {
+                // Pressing a style button will apply it and also close the style window.
+                ApplyStyle(styledLayer, stylePair.Value);
+                styleWindow.SetActive(false); 
+            });
         }
 
 

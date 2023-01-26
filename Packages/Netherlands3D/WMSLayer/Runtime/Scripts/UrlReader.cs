@@ -1,6 +1,11 @@
 using UnityEngine;
 using Netherlands3D.Events;
 using TMPro;
+using System.Xml;
+using UnityEngine.Networking;
+using System.Collections;
+
+public enum WebServiceType { NONE, WMS, WFS };
 
 public class UrlReader : MonoBehaviour
 {
@@ -9,7 +14,9 @@ public class UrlReader : MonoBehaviour
     public WMS ActiveWMS { get; private set; } 
     public WFS ActiveWFS { get; private set; }
 
-    [SerializeField] private TMP_InputField urlField;
+    [SerializeField] private TMP_InputField wfsInputField;
+    [SerializeField] private TMP_InputField wmsInputField;
+
 
     [Header("Invoked Events")]
     [SerializeField] private TriggerEvent resetReaderEvent;
@@ -18,6 +25,8 @@ public class UrlReader : MonoBehaviour
 
     [SerializeField] private StringEvent wmsCreationEvent;
     [SerializeField] private StringEvent wfsCreationEvent;
+
+    private string xmlResult;
 
     private void Awake()
     {
@@ -37,44 +46,56 @@ public class UrlReader : MonoBehaviour
             requestUrlButtonEvent.Invoke(Application.isEditor);
         }
     }
-    public void GetFromURL()
+    public void ReadAsWMS()
     {
-        if (resetReaderEvent != null)
-        {
+        wmsCreationEvent.Invoke(ValidateUrl(wmsInputField.text));
+    }
+    public void ReadAsWFS()
+    {
+        wfsCreationEvent.Invoke(ValidateUrl(wfsInputField.text));
+    }
+
+    private string ValidateUrl(string url)
+    {
+        if (resetReaderEvent)
             resetReaderEvent.Invoke();
-        }
-        
-        string url = urlField.text.ToLower();
+
+        url.Trim();
         if (string.IsNullOrWhiteSpace(url))
         {
             throw new System.InvalidOperationException("You must input a valid URL to read");
         }
 
         string validatedURL = string.Empty;
-        foreach(char c in url)
+        foreach (char c in url)
         {
-            if(c == char.Parse("?"))
+            if (c == char.Parse("?"))
             {
                 break;
             }
             validatedURL += c;
         }
-        if (url.Contains("wms"))
-        {
-            if(wmsCreationEvent != null)
-            {
-                wmsCreationEvent.Invoke(validatedURL);
-                //isWMSEvent.Invoke(true);
-            }
-        }
-        else if (url.Contains("wfs"))
-        {
-            if(wfsCreationEvent != null)
-            {
-                wfsCreationEvent.Invoke(validatedURL);
-                //isWMSEvent.Invoke(false);
 
+        return validatedURL;
+
+    }
+    private IEnumerator GetWebString(string url)
+    {
+
+        while(xmlResult == null)
+        {
+            UnityWebRequest request = UnityWebRequest.Get(url);
+            yield return request.SendWebRequest();
+            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.LogError(request.error);
             }
+            else
+            {
+                xmlResult = request.downloadHandler.text;
+            }
+
         }
+
     }
 }
