@@ -129,7 +129,15 @@ mergeInto(LibraryManager.library, {
             };
         };
     },
-    UploadFromIndexedDB: function (filePath, targetURL) {
+    UploadFromIndexedDB: function (filePath, targetURL, callbackObject, callbackMethodSuccess, callbackMethodFailed) {
+		var callbackObjectString = UTF8ToString(callbackObject);	
+		var callbackMethodSuccessString = UTF8ToString(callbackMethodSuccess);	
+		var callbackMethodFailedString = UTF8ToString(callbackMethodFailed);	
+		
+		console.log("Set callback object to " + callbackObjectString);
+		console.log("Set callback succeeded method to " + callbackMethodSuccessString);
+		console.log("Set callback failed method to " + callbackMethodFailedString);
+		
         var fileName = UTF8ToString(filePath);
         var url = UTF8ToString(targetURL);
 
@@ -149,11 +157,11 @@ mergeInto(LibraryManager.library, {
                 xhr.open("PUT", url, false);
                 xhr.send(record.contents);
                 window.databaseConnection.close();
-                unityInstance.SendMessage('UserFileUploads', 'IndexedDBUploadCompleted');
+                unityInstance.SendMessage(callbackObjectString, callbackMethodSuccessString);
             };
             dbRequest.onerror = function () {
                 window.databaseConnection.close();
-                unityInstance.SendMessage('UserFileUploads', 'IndexedDBUploadFailed', filename);
+                unityInstance.SendMessage(callbackObjectString, callbackMethodFailedString, filename);
             };
         }
         dbConnectionRequest.onerror = function () {
@@ -213,16 +221,30 @@ mergeInto(LibraryManager.library, {
 			console.log("Cant create file inputfield. You need to initialize the IndexedDB connection first using InitializeIndexedDB(str)");
 		}
     },
-    SyncFilesFromIndexedDB: function () {
+    SyncFilesFromIndexedDB: function (callbackObject, callbackMethod) {
+		var callbackObjectString = UTF8ToString(callbackObject);
+		var callbackMethodString = UTF8ToString(callbackMethod);	
+		console.log("Set callback object to " + callbackObjectString);
+		console.log("Set callback method to " + callbackMethodString);
+		
         FS.syncfs(true, function (err) {
-            console.log(err);
-            SendMessage('UserFileUploads', 'IndexedDBUpdated');
+            if(err != null){
+				console.log(err);
+			}
+            SendMessage(callbackObjectString, callbackMethodString);
         });
     },
-    SyncFilesToIndexedDB: function () {
+    SyncFilesToIndexedDB: function (callbackObject, callbackMethod) {
+		var callbackObjectString = UTF8ToString(callbackObject);
+		var callbackMethodString = UTF8ToString(callbackMethod);	
+		console.log("Set callback object to " + callbackObjectString);
+		console.log("Set callback method to " + callbackMethodString);
+	
         FS.syncfs(false, function (err) {
-            console.log(err);
-            SendMessage('UserFileUploads', 'IndexedDBSyncCompleted');
+			if(err != null){
+				console.log(err);
+			}
+            SendMessage(callbackObjectString, callbackMethodString);
         });
     },
     ClearFileInputFields: function () {

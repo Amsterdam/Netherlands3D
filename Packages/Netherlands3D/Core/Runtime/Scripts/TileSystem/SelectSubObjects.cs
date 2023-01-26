@@ -298,6 +298,8 @@ namespace Netherlands3D.TileSystem
             {
                 subObjectContainer.ResetColors();
             }
+
+            TilesWithInteractedSubObjects.Clear();
         }
 
         /// <summary>
@@ -312,8 +314,6 @@ namespace Netherlands3D.TileSystem
                 lastSelectedID = emptyID;
                 SelectedIDs.Clear();
             }
-
-            TilesWithInteractedSubObjects.Clear();
 
             //Remove highlights by highlighting our empty list
             HighlightObjectsWithIDs();

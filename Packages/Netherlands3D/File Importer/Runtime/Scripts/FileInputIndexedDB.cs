@@ -32,9 +32,9 @@ public class FileInputIndexedDB : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void InitializeIndexedDB(string dataPath);
     [DllImport("__Internal")]
-    private static extern void SyncFilesFromIndexedDB();
+    private static extern void SyncFilesFromIndexedDB(string callbackObject,string callbackMethod);
     [DllImport("__Internal")]
-    private static extern void SyncFilesToIndexedDB();
+    private static extern void SyncFilesToIndexedDB(string callbackObject, string callbackMethod);
     [DllImport("__Internal")]
     private static extern void ClearFileInputFields();
     Action<string> callbackAdress;
@@ -111,7 +111,7 @@ public class FileInputIndexedDB : MonoBehaviour
     public void ProcessFiles()
     {
         // start js-function to update the contents of application.persistentdatapath to match the contents of indexedDB.
-        SyncFilesFromIndexedDB();
+        SyncFilesFromIndexedDB(this.gameObject.name, "IndexedDBUpdated");
     }
 
     public void IndexedDBUpdated() // called from SyncFilesFromIndexedDB
@@ -139,7 +139,7 @@ public class FileInputIndexedDB : MonoBehaviour
 
     public void IndexedDBSyncCompleted()
     {
-        Debug.Log("Synced indexedDB back to Unity");
+        Debug.Log("Synced Unity file changes back to IndexedDB");
     }
 
     public void ClearDatabase(bool succes)
@@ -149,7 +149,7 @@ public class FileInputIndexedDB : MonoBehaviour
         filenames.Clear();
         if (succes)
         {
-            SyncFilesToIndexedDB();
+            SyncFilesToIndexedDB(this.gameObject.name,"IndexedDBSyncCompleted");
         }
 #endif
     }
