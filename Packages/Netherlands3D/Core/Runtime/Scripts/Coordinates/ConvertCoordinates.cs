@@ -93,6 +93,18 @@ namespace Netherlands3D.Core
             h = H;
         }
     }
+    public struct Vector3ECEF
+    {
+        public double X;
+        public double Y;
+        public double Z;
+        public Vector3ECEF(double x, double y, double z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+    }
 
     public static class CoordConvert
     {
@@ -104,6 +116,8 @@ namespace Netherlands3D.Core
         public static float zeroGroundLevelY = 0;
 
         private static Vector2RD relativeCenterRDCoordinate = new Vector2RD();
+        
+        public static Vector3ECEF relativeCenterECEF;
         public static Vector2RD relativeCenterRD { 
             get => relativeCenterRDCoordinate; 
             set
@@ -111,12 +125,15 @@ namespace Netherlands3D.Core
                 Vector2RD change = new Vector2RD(value.x - relativeCenterRDCoordinate.x, value.y - relativeCenterRDCoordinate.y);
                 var changeUnity = new Vector3((float)change.x, 0, (float)change.y);
 
+                relativeCenterECEF = WGS84toECEF(RDtoWGS84(value.x, value.y));
+
                 //TODO: rotation from earth centered earth fixed
                 relativeCenterRDCoordinate = value;
                 relativeCenterChanged.Invoke(changeUnity, Quaternion.identity);
             }
         }
-
+        
+        public static bool ecefIsSet;
         public class CenterChangedEvent : UnityEvent<Vector3,Quaternion> { }
         public static CenterChangedEvent relativeCenterChanged = new CenterChangedEvent();
 
@@ -206,7 +223,6 @@ namespace Netherlands3D.Core
             return RDtoUnity(coordinaat.x, coordinaat.y, 0);
         }
 
-
         /// <summary>
         /// Convert RD-coordinate to Unity-coordinate
         /// </summary>
@@ -280,6 +296,7 @@ namespace Netherlands3D.Core
         private static double[] Lp = new double[] { 1, 1, 1, 3, 1, 3, 0, 3, 1, 0, 2, 5 };
         private static double[] Lq = new double[] { 0, 1, 2, 0, 3, 1, 1, 2, 4, 2, 0, 0 };
         private static double[] Lpq = new double[] { 5260.52916, 105.94684, 2.45656, -0.81885, 0.05594, -.05607, 0.01199, -0.00256, 0.00128, 0.00022, -0.00022, 0.00026 };
+
         public static Vector3WGS RDtoWGS84(double x, double y)
         {
             //coordinates of basepoint in RD
@@ -339,7 +356,6 @@ namespace Netherlands3D.Core
         private static double[] Sq = new double[] { 0, 2, 0, 2, 0, 1, 2, 1, 4, 4 };
         private static double[] Spq = new double[] { 309056.544, 3638.893, 73.077, -157.984, 59.788, 0.433, -6.439, -0.032, 0.092, -0.054 };
 
-
         public static Vector3RD WGS84toRD(double lon, double lat)
         {
             //coordinates of basepoint in RD
@@ -381,6 +397,80 @@ namespace Netherlands3D.Core
             return output;
         }
 
+        //setup coefficients for ecef-calculation
+        private static double semimajorAxis = 6378137;
+        private static double flattening = 0.00335281066;
+        private static double eccentricity = 0.08161284189827;
+
+        public static Quaternion ecefRotionToUp()
+        {
+            Vector3 vector = new Vector3((float)-relativeCenterECEF.X, (float)relativeCenterECEF.Z, (float)-relativeCenterECEF.Y);
+            Quaternion result = Quaternion.FromToRotation(vector, Vector3.up);
+           // Quaternion rotate = Quaternion.FromToRotation(Vector3.forward, Vector3.left);
+            //result =rotate* result;
+            return result;
+        }
+
+        public static Vector3 ECEFToUnity(Vector3ECEF ecef)
+        {
+            Vector3 result = new Vector3();
+            float deltaX = (float)(ecef.X - relativeCenterECEF.X);
+            float deltaY = (float)(ecef.Y - relativeCenterECEF.Y);
+            float deltaZ = (float)(ecef.Z - relativeCenterECEF.Z);
+
+            result.x = -deltaX;
+            result.y = deltaZ;
+            result.z = -deltaY;
+
+            //check Rotation
+            result = ecefRotionToUp()*result;
+
+            return result;
+        }
+        public static Vector3ECEF WGS84toECEF(Vector3WGS wgsCoordinate)
+        {
+            Vector3ECEF result = new Vector3ECEF();
+            double lattitude = wgsCoordinate.lat * Math.PI / 180;
+            double longitude = wgsCoordinate.lon * Math.PI / 180;
+            //EPSG datset coordinate operation method code 9602)
+            double primeVerticalRadius = semimajorAxis / (Math.Sqrt(1 - (Math.Pow(eccentricity, 2) * Math.Pow(Math.Sin(lattitude), 2))));
+            result.X = (primeVerticalRadius + wgsCoordinate.h) * Math.Cos(lattitude) * Math.Cos(longitude);
+            result.Y = (primeVerticalRadius + wgsCoordinate.h) * Math.Cos(lattitude) * Math.Sin(longitude);
+            result.Z = ((1 - Math.Pow(eccentricity, 2)) * primeVerticalRadius + wgsCoordinate.h) * Math.Sin(lattitude);
+
+            return result;
+        }
+        public static Vector3WGS ECEFtoWGS84(Vector3ECEF ecefCoordinate)
+        {
+            
+            double eta = Math.Pow(eccentricity, 2) / (1 - Math.Pow(eccentricity, 2));
+            double b = semimajorAxis * (1 - flattening);
+            double p = Math.Sqrt(Math.Pow(ecefCoordinate.X, 2) + Math.Pow(ecefCoordinate.Y, 2));
+            double q = Math.Atan2((ecefCoordinate.Z * semimajorAxis), p * b);
+
+            double lattitude = Math.Atan2((ecefCoordinate.Z + eta * b * Math.Pow(Math.Sin(q), 3)), p - Math.Pow(eccentricity, 2) * semimajorAxis * Math.Pow(Math.Cos(q), 3));
+            double longitude = Math.Atan2(ecefCoordinate.Y, ecefCoordinate.X);
+            double primeVerticalRadius = semimajorAxis / (Math.Sqrt(1 - (Math.Pow(eccentricity, 2) * Math.Pow(Math.Sin(lattitude), 2))));
+            double height = (p / Math.Cos(lattitude)) - primeVerticalRadius;
+            Vector3WGS result = new Vector3WGS( longitude * 180 / Math.PI, lattitude * 180 / Math.PI, height);
+
+
+            return result;
+        }
+        public static Vector3 RotationToUnityUP(Vector3WGS position)
+        {
+            Vector3 rotation = new Vector3((float)position.lon,-90,(float)-(90-position.lat));
+            Vector3ECEF positionECEF = WGS84toECEF(position);
+            Vector3 direction = new Vector3();
+            direction.x = (float)-positionECEF.X;
+            direction.y = (float)positionECEF.Z;
+            direction.z = (float)positionECEF.Y;
+            rotation = Quaternion.FromToRotation(direction, Vector3.up).eulerAngles;
+            rotation.y -= 90;
+            rotation.x *= -1;
+
+            return rotation;
+        }
 
         /// <summary>
         /// checks if RD-coordinate is within the defined valid region

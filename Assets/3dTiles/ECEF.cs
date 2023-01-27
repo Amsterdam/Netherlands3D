@@ -8,7 +8,7 @@ using System;
 namespace ConvertEcef
 {
     //http://danceswithcode.net/engineeringnotes/geodetic_to_ecef/geodetic_to_ecef.html
-    public class Coord
+    public static class Coord
     {
         private static  double a = 6378137.0;              //WGS-84 semi-major axis
         private static double e2 = 6.6943799901377997e-3;  //WGS-84 first eccentricity squared

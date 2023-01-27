@@ -10,7 +10,7 @@ public class ReadSubtree : MonoBehaviour
     public Subtree subtree;
     Tile tile;
     ImplicitTilingSettings settings;
-    public string subtreeUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/subtrees/0_0_0.subtree";
+    public string subtreeUrl;
     System.Action<Tile> sendResult;
 
     public void DownloadSubtree(string url, ImplicitTilingSettings tilingSettings, System.Action<Tile> callback)

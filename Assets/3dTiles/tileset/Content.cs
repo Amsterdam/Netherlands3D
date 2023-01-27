@@ -34,6 +34,8 @@ public class Content : MonoBehaviour, IDisposable
         {
             this.contentGameObject = contentGameObject;
             this.contentGameObject.transform.SetParent(this.gameObject.transform, true);
+            this.contentGameObject.transform.localRotation = Quaternion.identity;
+            this.contentGameObject.transform.localPosition = Vector3.zero;
         }
         else
         {
