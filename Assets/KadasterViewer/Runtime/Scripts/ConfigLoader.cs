@@ -63,7 +63,9 @@ namespace KadasterViewer {
             {
                 if (tileset.url == examplePath) continue;
 
-                var tileSetReader = this.gameObject.AddComponent<Read3DTileset>();
+                var newTileSet = new GameObject(tileset.url);
+                newTileSet.transform.SetParent(this.transform);
+                var tileSetReader = newTileSet.AddComponent<Read3DTileset>();
                 tileSetReader.tilesetUrl = tileset.url;
             }
         }

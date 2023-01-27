@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 using System;
 using Netherlands3D.Core;
 
+[RequireComponent(typeof(ReadSubtree))]
 public class Read3DTileset : MonoBehaviour
 {
     public string tilesetUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json";
@@ -24,15 +25,7 @@ public class Read3DTileset : MonoBehaviour
     void Start()
     {
         StartCoroutine(LoadTileset());
-
-        CoordConvert.relativeCenterChanged.AddListener(CenterChanged);
     }
-
-    private void CenterChanged(Vector3 positionOffset, Quaternion rotationOffset)
-    {
-        //
-    }
-
 
     IEnumerator LoadTileset()
     {
@@ -57,8 +50,6 @@ public class Read3DTileset : MonoBehaviour
     private void LoadAll()
     {
         StartCoroutine(LoadAllTileContent());
-        
-
     }
 
     private IEnumerator LoadAllTileContent()
@@ -75,13 +66,18 @@ public class Read3DTileset : MonoBehaviour
         {
             if(child.hascontent)
             {
-                child.content = gameObject.AddComponent<Content>();
-                child.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", child.X.ToString()).Replace("{x}", child.Y.ToString()).Replace("{y}", child.Z.ToString());
-                child.content.Load();
+                LoadChildContent(absolutePath, child);
             }
             yield return new WaitForEndOfFrame();
             yield return LoadContentInChildren(child);
         }
+    }
+
+    private void LoadChildContent(string absolutePath, Tile child)
+    {
+        child.content = gameObject.AddComponent<Content>();
+        child.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", child.X.ToString()).Replace("{x}", child.Y.ToString()).Replace("{y}", child.Z.ToString());
+        child.content.Load();
     }
 
     private void ReadTileset(JSONNode rootnode)
@@ -102,6 +98,10 @@ public class Read3DTileset : MonoBehaviour
         Vector3ECEF positionECEF = new Vector3ECEF(transformValues[12], transformValues[13], transformValues[14]);
         transform.position = CoordConvert.ECEFToUnity(positionECEF);
         transform.rotation = CoordConvert.ecefRotionToUp();
+
+        //Add automatic follower
+        gameObject.AddComponent<MovingOriginFollower>();
+
         //Vector3WGS positionWGS = CoordConvert.ECEFtoWGS84(positionECEF);
 
         //positionWGS = ConvertEcef.Coord.ecef_to_geo(new Vector3RD(positionECEF.X, positionECEF.Y, positionECEF.Z));
@@ -110,9 +110,9 @@ public class Read3DTileset : MonoBehaviour
 
 
         //Vector3 rotation = CoordConvert.RotationToUnityUP(CoordConvert.UnitytoWGS84(Vector3.zero));
-        
+
         //Vector3 newposition = Quaternion.Euler(rotation)*position;
-       //transform.position = position;
+        //transform.position = position;
         //transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
     }
 
@@ -158,7 +158,8 @@ public class Read3DTileset : MonoBehaviour
                             .Replace("{level}", "0")
                             .Replace("{x}", "0")
                             .Replace("{y}", "0");
-        
+
+        Debug.Log("Load subtree: " + subtreeURL);
         subtreeReader.DownloadSubtree(subtreeURL, implicitTilingSettings, ReturnTiles);
     }
 

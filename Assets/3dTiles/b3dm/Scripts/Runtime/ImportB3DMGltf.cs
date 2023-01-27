@@ -55,7 +55,7 @@ namespace Netherlands3D.B3DM
 
             if (webRequest.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError(webRequest.error);
+                Debug.LogWarning(url + " -> " +webRequest.error);
                 callback.Invoke(null);
             }
             else

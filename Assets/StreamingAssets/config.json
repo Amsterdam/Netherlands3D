@@ -1,0 +1,14 @@
+{
+    "viewerVersion": "0.0.1",
+    "tilesets": [
+        {
+            "url": "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/building_1_1/tileset.json"
+        },
+        {
+            "url": "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json"
+        },
+        {
+            "url": "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/tiles_1_1/tileset.json"
+        }
+    ]
+}
