@@ -10,6 +10,7 @@ using Netherlands3D.Core;
 public class Read3DTileset : MonoBehaviour
 {
     public string tilesetUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json";
+    private string absolutePath = "";
 
     public Tile root;
     public double[] transformValues;
@@ -22,9 +23,19 @@ public class Read3DTileset : MonoBehaviour
 
     public GameObject cubePrefab;
 
+    private float sseComponent = -1;
+
     void Start()
     {
+        absolutePath = tilesetUrl.Replace("tileset.json", "");
         StartCoroutine(LoadTileset());
+
+        CoordConvert.relativeCenterChanged.AddListener(RecalculateUnityBounds);
+    }
+
+    private void RecalculateUnityBounds(Vector3 newCenter, Quaternion newRotation)
+    {
+        //Flag all calculated bounds to be recalculated when tile bounds is requested
     }
 
     IEnumerator LoadTileset()
@@ -51,7 +62,6 @@ public class Read3DTileset : MonoBehaviour
     {
         StartCoroutine(LoadAllTileContent());
     }
-
     private IEnumerator LoadAllTileContent()
     {
         yield return new WaitForEndOfFrame();
@@ -60,24 +70,26 @@ public class Read3DTileset : MonoBehaviour
 
     private IEnumerator LoadContentInChildren(Tile tile)
     {
-        var absolutePath = tilesetUrl.Replace("tileset.json","");
-
         foreach (var child in tile.children)
         {
             if(child.hascontent)
             {
-                LoadChildContent(absolutePath, child);
+                LoadChildContent(child);
             }
             yield return new WaitForEndOfFrame();
             yield return LoadContentInChildren(child);
         }
     }
 
-    private void LoadChildContent(string absolutePath, Tile child)
+    private void LoadChildContent(Tile child)
     {
-        child.content = gameObject.AddComponent<Content>();
-        child.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", child.X.ToString()).Replace("{x}", child.Y.ToString()).Replace("{y}", child.Z.ToString());
-        child.content.Load();
+        if(!child.content)
+        {
+            child.content = gameObject.AddComponent<Content>();
+            child.content.ParentTile = child;
+            child.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", child.X.ToString()).Replace("{x}", child.Y.ToString()).Replace("{y}", child.Z.ToString());
+            child.content.Load();
+        }
     }
 
     private void ReadTileset(JSONNode rootnode)
@@ -166,12 +178,47 @@ public class Read3DTileset : MonoBehaviour
     public void ReturnTiles(Tile rootTile)
     {
         root = rootTile;
-        LoadAll();
+        StartCoroutine(LoadInView());
+    }
+
+    /// <summary>
+    /// Check what tiles should be loaded/unloaded based on view
+    /// </summary>
+    private IEnumerator LoadInView()
+    {
+        yield return new WaitForEndOfFrame();
+
+        while (true)
+        {
+            SetSSEComponent();
+            LoadInViewRecursively(root);
+
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    private void LoadInViewRecursively(Tile tile)
+    {
+        foreach (var child in tile.children)
+        {
+            var tileSSEInPixels = (sseComponent * child.geometricError) / Vector3.Distance(Camera.main.transform.position, tile.Bounds.center);
+
+            if (tileSSEInPixels > child.geometricError && child.IsInViewFrustrum())
+            {
+                LoadChildContent(child);
+            }
+            else if (child.geometricError <= sseComponent && child.content)
+            {
+                child.Dispose();
+            }
+            LoadInViewRecursively(child);
+        }
     }
 
     public void SetSSEComponent()
     {
-        float sseComponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * Camera.main.fieldOfView / 2));
+        sseComponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * Camera.main.fieldOfView / 2));
+
         // multiply with Geomettric Error and
         // divide by distance to camera
         // to get the screenspaceError in pixels;

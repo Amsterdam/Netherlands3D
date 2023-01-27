@@ -10,12 +10,43 @@ public class Content : MonoBehaviour, IDisposable
     public GameObject contentGameObject;
     private Coroutine runningContentRequest;
 
+    private Tile parentTile;
+    public Tile ParentTile { get => parentTile; set => parentTile = value; }
+
     public enum ContentLoadState{
         NOTLOADED,
         LOADING,
         READY,
     }
     public ContentLoadState state = ContentLoadState.NOTLOADED;
+
+    /// <summary>
+    /// Draw wire cube in editor with bounds and color coded state
+    /// </summary>
+    private void OnDrawGizmos()
+    {
+        if (ParentTile == null) return;
+
+        Color color = Color.white;
+        switch (state)
+        {
+            case ContentLoadState.NOTLOADED:
+                color = Color.red;
+                break;
+            case ContentLoadState.LOADING:
+                color = Color.yellow;
+                break;
+            case ContentLoadState.READY:
+                color = Color.green;
+                break;
+            default:
+                break;
+        }
+
+        Gizmos.color = color;
+        var parentTileBounds = ParentTile.Bounds;
+        Gizmos.DrawWireCube(parentTileBounds.center, parentTileBounds.size);
+    }
 
     /// <summary>
     /// Load the content from an url
