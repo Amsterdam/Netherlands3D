@@ -202,8 +202,8 @@ public class Read3DTileset : MonoBehaviour
         foreach (var child in tile.children)
         {
             var tileSSEInPixels = (sseComponent * child.geometricError) / Vector3.Distance(Camera.main.transform.position, tile.Bounds.center);
-
-            if (tileSSEInPixels > child.geometricError && child.IsInViewFrustrum())
+            if(true)
+            //if (tileSSEInPixels > child.geometricError && child.IsInViewFrustrum())
             {
                 LoadChildContent(child);
             }
