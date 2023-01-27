@@ -50,12 +50,15 @@ public class Read3DTileset : MonoBehaviour
             JSONNode rootnode = JSON.Parse(jsonstring)["root"];
             ReadTileset(rootnode);
         }
+        
     }
 
     [ContextMenu("Load all content")]
     private void LoadAll()
     {
         StartCoroutine(LoadAllTileContent());
+        
+
     }
 
     private IEnumerator LoadAllTileContent()
@@ -97,19 +100,20 @@ public class Read3DTileset : MonoBehaviour
 
         //setup location and rotation
         Vector3ECEF positionECEF = new Vector3ECEF(transformValues[12], transformValues[13], transformValues[14]);
-        Vector3WGS positionWGS = CoordConvert.ECEFtoWGS84(positionECEF);
+        transform.position = CoordConvert.ECEFToUnity(positionECEF);
+        transform.rotation = CoordConvert.ecefRotionToUp();
+        //Vector3WGS positionWGS = CoordConvert.ECEFtoWGS84(positionECEF);
 
         //positionWGS = ConvertEcef.Coord.ecef_to_geo(new Vector3RD(positionECEF.X, positionECEF.Y, positionECEF.Z));
-        Vector3 position = new Vector3((float)(positionECEF.Y - CoordConvert.relativeCEnterECEF.Y), (float)(positionECEF.Z - CoordConvert.relativeCEnterECEF.Z), (float)(-positionECEF.X + CoordConvert.relativeCEnterECEF.X));
-        position = CoordConvert.WGS84toUnity(positionWGS);
-        transform.position = position;
+        //Vector3 position = new Vector3((float)(positionECEF.Y - CoordConvert.relativeCEnterECEF.Y), (float)(positionECEF.Z - CoordConvert.relativeCEnterECEF.Z), (float)(-positionECEF.X + CoordConvert.relativeCEnterECEF.X));
+        //Vector3 position = new Vector3(-(float)(positionECEF.X - CoordConvert.relativeCEnterECEF.X), (float)(positionECEF.Z - CoordConvert.relativeCEnterECEF.Z), -(float)(positionECEF.Y - CoordConvert.relativeCEnterECEF.Y));
 
 
-        Vector3 rotation = CoordConvert.RotationToUnityUP(CoordConvert.UnitytoWGS84(Vector3.zero));
+        //Vector3 rotation = CoordConvert.RotationToUnityUP(CoordConvert.UnitytoWGS84(Vector3.zero));
         
-        Vector3 newposition = Quaternion.Euler(rotation)*position;
-        transform.position = newposition;
-        transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
+        //Vector3 newposition = Quaternion.Euler(rotation)*position;
+       //transform.position = position;
+        //transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
     }
 
     private void ReadImplicitTiling(JSONNode rootnode)
@@ -161,6 +165,7 @@ public class Read3DTileset : MonoBehaviour
     public void ReturnTiles(Tile rootTile)
     {
         root = rootTile;
+        LoadAll();
     }
 
     public void SetSSEComponent()

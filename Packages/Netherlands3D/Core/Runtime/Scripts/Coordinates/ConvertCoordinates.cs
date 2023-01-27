@@ -116,6 +116,8 @@ namespace Netherlands3D.Core
         public static float zeroGroundLevelY = 0;
 
         private static Vector2RD relativeCenterRDCoordinate = new Vector2RD();
+        
+        public static Vector3ECEF relativeCenterECEF;
         public static Vector2RD relativeCenterRD { 
             get => relativeCenterRDCoordinate; 
             set
@@ -123,12 +125,15 @@ namespace Netherlands3D.Core
                 Vector2RD change = new Vector2RD(value.x - relativeCenterRDCoordinate.x, value.y - relativeCenterRDCoordinate.y);
                 var changeUnity = new Vector3((float)change.x, 0, (float)change.y);
 
+                relativeCenterECEF = WGS84toECEF(RDtoWGS84(value.x, value.y));
+
                 //TODO: rotation from earth centered earth fixed
                 relativeCenterRDCoordinate = value;
                 relativeCenterChanged.Invoke(changeUnity, Quaternion.identity);
             }
         }
-        public static Vector3ECEF relativeCEnterECEF;
+        
+        public static bool ecefIsSet;
         public class CenterChangedEvent : UnityEvent<Vector3,Quaternion> { }
         public static CenterChangedEvent relativeCenterChanged = new CenterChangedEvent();
 
@@ -397,6 +402,31 @@ namespace Netherlands3D.Core
         private static double flattening = 0.00335281066;
         private static double eccentricity = 0.08161284189827;
 
+        public static Quaternion ecefRotionToUp()
+        {
+            Vector3 vector = new Vector3((float)-relativeCenterECEF.X, (float)relativeCenterECEF.Z, (float)-relativeCenterECEF.Y);
+            Quaternion result = Quaternion.FromToRotation(vector, Vector3.up);
+           // Quaternion rotate = Quaternion.FromToRotation(Vector3.forward, Vector3.left);
+            //result =rotate* result;
+            return result;
+        }
+
+        public static Vector3 ECEFToUnity(Vector3ECEF ecef)
+        {
+            Vector3 result = new Vector3();
+            float deltaX = (float)(ecef.X - relativeCenterECEF.X);
+            float deltaY = (float)(ecef.Y - relativeCenterECEF.Y);
+            float deltaZ = (float)(ecef.Z - relativeCenterECEF.Z);
+
+            result.x = -deltaX;
+            result.y = deltaZ;
+            result.z = -deltaY;
+
+            //check Rotation
+            result = ecefRotionToUp()*result;
+
+            return result;
+        }
         public static Vector3ECEF WGS84toECEF(Vector3WGS wgsCoordinate)
         {
             Vector3ECEF result = new Vector3ECEF();
