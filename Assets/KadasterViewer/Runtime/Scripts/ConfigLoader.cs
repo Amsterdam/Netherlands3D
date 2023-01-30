@@ -20,6 +20,7 @@ namespace KadasterViewer {
             public class TileSet
             {
                 public string url = "";
+                public int maxPixelError = 5;
             }
         }
 
