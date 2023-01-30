@@ -23,6 +23,7 @@ public class Read3DTileset : MonoBehaviour
 
     public GameObject cubePrefab;
 
+    public int maxPixelError = 5;
     private float sseComponent = -1;
 
     void Start()
@@ -191,19 +192,19 @@ public class Read3DTileset : MonoBehaviour
         while (true)
         {
             SetSSEComponent();
-            LoadInViewRecursively(root);
+            LoadInViewRecursively(root, Camera.main.transform.position);
 
             yield return new WaitForEndOfFrame();
         }
     }
 
-    private void LoadInViewRecursively(Tile tile)
+    private void LoadInViewRecursively(Tile tile, Vector3 cameraPosition)
     {
         foreach (var child in tile.children)
         {
-            var tileSSEInPixels = (sseComponent * child.geometricError) / Vector3.Distance(Camera.main.transform.position, tile.Bounds.center);
-            if(true)
-            //if (tileSSEInPixels > child.geometricError && child.IsInViewFrustrum())
+            var pixelError = (sseComponent * child.geometricError) / Vector3.Distance(cameraPosition, tile.Bounds.ClosestPoint(cameraPosition));
+
+            if (pixelError > maxPixelError && child.IsInViewFrustrum())
             {
                 LoadChildContent(child);
             }
@@ -211,7 +212,7 @@ public class Read3DTileset : MonoBehaviour
             {
                 child.Dispose();
             }
-            LoadInViewRecursively(child);
+            LoadInViewRecursively(child, cameraPosition);
         }
     }
 
