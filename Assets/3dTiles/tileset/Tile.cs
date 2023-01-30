@@ -21,11 +21,11 @@ public class Tile : IDisposable
     TileStatus status = TileStatus.unloaded;
 
     private Bounds bounds;
-    public bool boundsCalculated = false;
+    public bool dirtyBounds = true;
     public Bounds Bounds 
     { 
         get {
-            if (!boundsCalculated) CalculateBounds();
+            if (dirtyBounds) CalculateBounds();
             return bounds;
         } 
         set => bounds = value; 
@@ -93,22 +93,20 @@ public class Tile : IDisposable
     private void CalculateBounds()
     {
         //TODO: Direct conversion WGS84toUnity
-        var ecefMin = CoordConvert.WGS84toECEF(new Vector3WGS(boundingVolume.values[0], boundingVolume.values[1],0));
-        var ecefMax = CoordConvert.WGS84toECEF(new Vector3WGS(boundingVolume.values[2], boundingVolume.values[3],0));
+        //Array order: west, south, east, north, minimum height, maximum height
+        var ecefMin = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[0] * 180.0f) / Mathf.PI, (boundingVolume.values[1] * 180.0f) / Mathf.PI, boundingVolume.values[4]));
+        var ecefMax = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[2] * 180.0f) / Mathf.PI, (boundingVolume.values[3] * 180.0f) / Mathf.PI, boundingVolume.values[5]));
 
         var unityMin = CoordConvert.ECEFToUnity(ecefMin);
         var unityMax = CoordConvert.ECEFToUnity(ecefMax);
 
-        var rotatedMin = CoordConvert.ecefRotionToUp() * unityMin;
-        var rotatedMax = CoordConvert.ecefRotionToUp() * unityMax;
-
         var newBounds = new Bounds();
-        newBounds.min = rotatedMin;
-        newBounds.max = rotatedMax;
+        newBounds.center = unityMin;
+        newBounds.Encapsulate(unityMax);
 
         Bounds = newBounds;
 
-        boundsCalculated = true;
+        dirtyBounds = false;
     }
 
     public void Dispose()
