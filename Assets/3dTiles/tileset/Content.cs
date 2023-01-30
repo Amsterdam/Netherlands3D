@@ -23,7 +23,7 @@ public class Content : MonoBehaviour, IDisposable
     /// <summary>
     /// Draw wire cube in editor with bounds and color coded state
     /// </summary>
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         if (ParentTile == null) return;
 
