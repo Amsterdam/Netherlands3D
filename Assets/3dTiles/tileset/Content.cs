@@ -86,8 +86,13 @@ public class Content : MonoBehaviour, IDisposable
             StopCoroutine(runningContentRequest);
 
         if (contentGameObject)
-            Destroy(contentGameObject);
+        {
+            var meshFilters = contentGameObject.GetComponentsInChildren<MeshFilter>();
+            foreach (var meshFilter in meshFilters)
+                Destroy(meshFilter.sharedMesh);
 
+            Destroy(contentGameObject);
+        }
         Destroy(this);
     }
 }
