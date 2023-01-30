@@ -87,6 +87,19 @@ public class Content : MonoBehaviour, IDisposable
 
         if (contentGameObject)
         {
+            //TODO: Make sure GLTFast cleans up its internal stuff like textures, animations etc. It has a Dispose but might be shared lists
+            //For now we do mats and meshes manualy.
+
+            //Materials
+            var renderers = contentGameObject.GetComponentsInChildren<Renderer>();
+            foreach(var renderer in renderers)
+            {
+                var materials = renderer.sharedMaterials;
+                foreach (var mat in materials)
+                    Destroy(mat);
+            }
+
+            //Meshes
             var meshFilters = contentGameObject.GetComponentsInChildren<MeshFilter>();
             foreach (var meshFilter in meshFilters)
                 Destroy(meshFilter.sharedMesh);
