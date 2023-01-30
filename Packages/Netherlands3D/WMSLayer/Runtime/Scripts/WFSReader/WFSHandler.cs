@@ -8,12 +8,18 @@ using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.Networking;
+using TMPro;
 
 public class WFSHandler : MonoBehaviour
 {
     public WFS ActiveWFS { get; private set; }
     public Transform SpawnParent { get; private set; }
     [SerializeField] private GameObject visualizer;
+
+    [SerializeField] private TMP_InputField minXField;
+    [SerializeField] private TMP_InputField maxXField;
+    [SerializeField] private TMP_InputField minYField;
+    [SerializeField] private TMP_InputField maxYField;
 
     [Header("Invoked Events")]
     [SerializeField] private ObjectEvent wfsDataEvent;
@@ -46,6 +52,7 @@ public class WFSHandler : MonoBehaviour
 
     private WFSFormatter formatter;
     private WFSFeature activeFeature;
+    private WFSFeatureData featureData;
     private float coroutineRunTime = 200f;
     private float hue = 0.9f;
     private float saturation = 0.5f;
@@ -72,16 +79,29 @@ public class WFSHandler : MonoBehaviour
         multiPointEvent.started.AddListener(TestMultiPoints);
         drawLinesEvent.started.AddListener(TestMultiLine);
     }
+    private bool ParseFields()
+    {
+        if (!double.TryParse(minXField.text, out ActiveWFS.BBox.MinX))
+            return false;
+
+        if (!double.TryParse(maxXField.text, out ActiveWFS.BBox.MaxX))
+            return false;
+
+        if (!double.TryParse(minYField.text, out ActiveWFS.BBox.MinY))
+            return false;
+
+        if (!double.TryParse(maxYField.text, out ActiveWFS.BBox.MaxY))
+            return false;
+
+        return true;
+    }
 
     private void SetBoundsFromDoubleArray(double[] boundsArray)
     {
-        if (ActiveWFS == null)
-            return;
-
-        ActiveWFS.BBox.MinX = boundsArray[0];
-        ActiveWFS.BBox.MinY = boundsArray[1];
-        ActiveWFS.BBox.MaxX = boundsArray[2];
-        ActiveWFS.BBox.MaxY = boundsArray[3];
+        minXField.text = boundsArray[0].ToString();
+        minYField.text = boundsArray[1].ToString();
+        maxXField.text = boundsArray[2].ToString();
+        maxYField.text = boundsArray[3].ToString();
     }
 
     public void CreateWFS(string baseUrl)
@@ -94,6 +114,9 @@ public class WFSHandler : MonoBehaviour
     }
     public void GetFeature()
     {
+        if (!ParseFields())
+            return;
+
         ActiveWFS.TypeName = activeFeature.FeatureName;
         Debug.Log(ActiveWFS.GetFeatures());
         StartCoroutine(GetWebString(ActiveWFS.GetFeatures(), (string s) => StartCoroutine(HandleFeatureJSON(new GeoJSON(s)))));
@@ -129,21 +152,24 @@ public class WFSHandler : MonoBehaviour
         if (geoJSON.FindFirstFeature())
         {
             Debug.Log("Hadn't found first feature! Doing it now!");
-            EvaluateGeoType(geoJSON);
 
-            WFSFeatureData featureData = new WFSFeatureData();
+            featureData = new WFSFeatureData();
             featureData.TransferDictionary(geoJSON.GetProperties());
             activeFeature.AddNewFeatureData(featureData);
+
+            EvaluateGeoType(geoJSON);
+
 
         }
         while (geoJSON.GotoNextFeature())
         {
             Debug.Log("Evaluating next feature!");
-            EvaluateGeoType(geoJSON);
 
-            WFSFeatureData featureData = new WFSFeatureData();
+            featureData = new WFSFeatureData();
             featureData.TransferDictionary(geoJSON.GetProperties());
             activeFeature.AddNewFeatureData(featureData);
+
+            EvaluateGeoType(geoJSON);
 
             if ((DateTime.UtcNow - dateTime).Milliseconds > coroutineRunTime)
             {
@@ -280,7 +306,7 @@ public class WFSHandler : MonoBehaviour
         //Destroy(SpawnParent.gameObject);
         //SpawnParent = new GameObject().transform;
         //SpawnParent.name = "WFS_ObjectParent";
-        Instantiate(visualizer, pointCoord + Vector3.up * 100, Quaternion.identity, SpawnParent);
+        GameObject wfsPointObject = Instantiate(visualizer, pointCoord + Vector3.up * 100, Quaternion.identity, SpawnParent);
     }
     private void TestMultiPoints(List<Vector3> pointCoords)
     {
@@ -289,7 +315,7 @@ public class WFSHandler : MonoBehaviour
         //SpawnParent.name = "WFS_ObjectParent";
         foreach (Vector3 position in pointCoords)
         {
-            Instantiate(visualizer, position + Vector3.up * 100, Quaternion.identity, SpawnParent);
+            GameObject wfsPointObject = Instantiate(visualizer, position + Vector3.up * 100, Quaternion.identity, SpawnParent);
         }
     }
 
