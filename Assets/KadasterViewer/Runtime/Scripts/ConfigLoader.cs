@@ -26,7 +26,7 @@ namespace KadasterViewer {
 
         [SerializeField,Tooltip("Relative to StreamingAssets")] private string configPath = "/config.json";
 
-        [Header("Optional")]
+        [Header("Optional variables")]
         [SerializeField] GameObject[] enableAfterLoading;
         [SerializeField] GameObject[] disableAfterLoading;
 
@@ -68,6 +68,7 @@ namespace KadasterViewer {
                 newTileSet.transform.SetParent(this.transform);
                 var tileSetReader = newTileSet.AddComponent<Read3DTileset>();
                 tileSetReader.tilesetUrl = tileset.url;
+                tileSetReader.maxPixelError = tileset.maxPixelError;
             }
         }
 

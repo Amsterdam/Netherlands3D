@@ -21,11 +21,9 @@ public class Tile : IDisposable
     TileStatus status = TileStatus.unloaded;
 
     private Bounds bounds;
-    public bool dirtyBounds = true;
     public Bounds Bounds 
     { 
         get {
-            if (dirtyBounds) CalculateBounds();
             return bounds;
         } 
         set => bounds = value; 
@@ -90,7 +88,7 @@ public class Tile : IDisposable
         return Camera.main.InView(Bounds);
     }
 
-    private void CalculateBounds()
+    public void CalculateBounds()
     {
         //TODO: Direct conversion WGS84toUnity
         //Array order: west, south, east, north, minimum height, maximum height
@@ -105,8 +103,6 @@ public class Tile : IDisposable
         newBounds.Encapsulate(unityMax);
 
         Bounds = newBounds;
-
-        dirtyBounds = false;
     }
 
     public void Dispose()

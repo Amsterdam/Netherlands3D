@@ -1,6 +1,7 @@
 ﻿using Netherlands3D.B3DM;
 using System;
 using UnityEngine;
+using UnityEngine.Networking;
 
 [System.Serializable]
 public class Content : MonoBehaviour, IDisposable

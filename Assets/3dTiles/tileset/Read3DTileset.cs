@@ -14,6 +14,8 @@ public class Read3DTileset : MonoBehaviour
 
     public Tile root;
     public double[] transformValues;
+    private Vector3ECEF positionECEF;
+
     TilingMethod tilingMethod = TilingMethod.explicitTiling;
 
     public ImplicitTilingSettings implicitTilingSettings;
@@ -31,12 +33,30 @@ public class Read3DTileset : MonoBehaviour
         absolutePath = tilesetUrl.Replace("tileset.json", "");
         StartCoroutine(LoadTileset());
 
-        CoordConvert.relativeCenterChanged.AddListener(RecalculateUnityBounds);
+        //CoordConvert.relativeCenterChanged.AddListener(RelativeCenterChanged);
     }
 
-    private void RecalculateUnityBounds(Vector3 newCenter, Quaternion newRotation)
+    private void RelativeCenterChanged(Vector3 newCenter, Quaternion newRotation)
     {
+        //Point set up from new origin
+        RotateSetToUp();
+
         //Flag all calculated bounds to be recalculated when tile bounds is requested
+        RecalculateAllTileBounds(root);
+    }
+
+    /// <summary>
+    /// Recursive recalculation of tile bounds
+    /// </summary>
+    /// <param name="tile">Starting tile</param>
+    private void RecalculateAllTileBounds(Tile tile)
+    {
+        tile.CalculateBounds();
+
+        foreach (var child in tile.children)
+        {
+            RecalculateAllTileBounds(child);
+        } 
     }
 
     IEnumerator LoadTileset()
@@ -56,30 +76,6 @@ public class Read3DTileset : MonoBehaviour
             ReadTileset(rootnode);
         }
         
-    }
-
-    [ContextMenu("Load all content")]
-    private void LoadAll()
-    {
-        StartCoroutine(LoadAllTileContent());
-    }
-    private IEnumerator LoadAllTileContent()
-    {
-        yield return new WaitForEndOfFrame();
-        yield return LoadContentInChildren(root);
-    }
-
-    private IEnumerator LoadContentInChildren(Tile tile)
-    {
-        foreach (var child in tile.children)
-        {
-            if(child.hascontent)
-            {
-                LoadChildContent(child);
-            }
-            yield return new WaitForEndOfFrame();
-            yield return LoadContentInChildren(child);
-        }
     }
 
     private void LoadChildContent(Tile child)
@@ -108,25 +104,14 @@ public class Read3DTileset : MonoBehaviour
         }
 
         //setup location and rotation
-        Vector3ECEF positionECEF = new Vector3ECEF(transformValues[12], transformValues[13], transformValues[14]);
+        positionECEF = new Vector3ECEF(transformValues[12], transformValues[13], transformValues[14]);
+        RotateSetToUp();
+    }
+
+    private void RotateSetToUp()
+    {
         transform.position = CoordConvert.ECEFToUnity(positionECEF);
         transform.rotation = CoordConvert.ecefRotionToUp();
-
-        //Add automatic follower
-        gameObject.AddComponent<MovingOriginFollower>();
-
-        //Vector3WGS positionWGS = CoordConvert.ECEFtoWGS84(positionECEF);
-
-        //positionWGS = ConvertEcef.Coord.ecef_to_geo(new Vector3RD(positionECEF.X, positionECEF.Y, positionECEF.Z));
-        //Vector3 position = new Vector3((float)(positionECEF.Y - CoordConvert.relativeCEnterECEF.Y), (float)(positionECEF.Z - CoordConvert.relativeCEnterECEF.Z), (float)(-positionECEF.X + CoordConvert.relativeCEnterECEF.X));
-        //Vector3 position = new Vector3(-(float)(positionECEF.X - CoordConvert.relativeCEnterECEF.X), (float)(positionECEF.Z - CoordConvert.relativeCEnterECEF.Z), -(float)(positionECEF.Y - CoordConvert.relativeCEnterECEF.Y));
-
-
-        //Vector3 rotation = CoordConvert.RotationToUnityUP(CoordConvert.UnitytoWGS84(Vector3.zero));
-
-        //Vector3 newposition = Quaternion.Euler(rotation)*position;
-        //transform.position = position;
-        //transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
     }
 
     private void ReadImplicitTiling(JSONNode rootnode)
@@ -216,14 +201,41 @@ public class Read3DTileset : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Screen-space error component calculation
+    /// </summary>
     public void SetSSEComponent()
     {
         sseComponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * Camera.main.fieldOfView / 2));
-
-        // multiply with Geomettric Error and
-        // divide by distance to camera
-        // to get the screenspaceError in pixels;
     }
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// Editor only methods for loading all tiles from context menu
+    /// </summary>
+    [ContextMenu("Load all content")]
+    private void LoadAll()
+    {
+        StartCoroutine(LoadAllTileContent());
+    }
+    private IEnumerator LoadAllTileContent()
+    {
+        yield return new WaitForEndOfFrame();
+        yield return LoadContentInChildren(root);
+    }
+    private IEnumerator LoadContentInChildren(Tile tile)
+    {
+        foreach (var child in tile.children)
+        {
+            if (child.hascontent)
+            {
+                LoadChildContent(child);
+            }
+            yield return new WaitForEndOfFrame();
+            yield return LoadContentInChildren(child);
+        }
+    }
+#endif 
 }
 
 public enum TilingMethod

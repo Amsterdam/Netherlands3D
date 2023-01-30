@@ -51,6 +51,9 @@ namespace Netherlands3D.B3DM
         {
             using UnityWebRequest webRequest = UnityWebRequest.Get(url);
 
+            var customCertificateHandler = new CustomCertificateValidation();
+            webRequest.certificateHandler = customCertificateHandler; //Not safe; but solves breaking curl error
+
             yield return webRequest.SendWebRequest();
 
             if (webRequest.result != UnityWebRequest.Result.Success)
@@ -167,5 +170,13 @@ namespace Netherlands3D.B3DM
             stats += stat + "\n\n";
             if (logStat) logStat.Invoke(stats);
         }
+    }
+}
+
+public class CustomCertificateValidation : CertificateHandler
+{
+    protected override bool ValidateCertificate(byte[] certificateData)
+    {
+        return true;
     }
 }
