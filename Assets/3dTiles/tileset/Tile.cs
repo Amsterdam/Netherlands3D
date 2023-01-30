@@ -20,6 +20,7 @@ public class Tile : IDisposable
 
     TileStatus status = TileStatus.unloaded;
 
+    private bool boundsAvailable = false;
     private Bounds bounds;
     public Bounds Bounds 
     { 
@@ -85,12 +86,13 @@ public class Tile : IDisposable
 
     public bool IsInViewFrustrum()
     {
+        if (!boundsAvailable) CalculateBounds();
+
         return Camera.main.InView(Bounds);
     }
 
     public void CalculateBounds()
     {
-        //TODO: Direct conversion WGS84toUnity
         //Array order: west, south, east, north, minimum height, maximum height
         var ecefMin = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[0] * 180.0f) / Mathf.PI, (boundingVolume.values[1] * 180.0f) / Mathf.PI, boundingVolume.values[4]));
         var ecefMax = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[2] * 180.0f) / Mathf.PI, (boundingVolume.values[3] * 180.0f) / Mathf.PI, boundingVolume.values[5]));
@@ -103,6 +105,8 @@ public class Tile : IDisposable
         newBounds.Encapsulate(unityMax);
 
         Bounds = newBounds;
+
+        boundsAvailable = true;
     }
 
     public void Dispose()

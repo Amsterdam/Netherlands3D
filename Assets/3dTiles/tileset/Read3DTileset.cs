@@ -33,7 +33,7 @@ public class Read3DTileset : MonoBehaviour
         absolutePath = tilesetUrl.Replace("tileset.json", "");
         StartCoroutine(LoadTileset());
 
-        //CoordConvert.relativeCenterChanged.AddListener(RelativeCenterChanged);
+        CoordConvert.relativeCenterChanged.AddListener(RelativeCenterChanged);
     }
 
     private void RelativeCenterChanged(Vector3 newCenter, Quaternion newRotation)
