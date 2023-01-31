@@ -33,13 +33,13 @@ public class Read3DTileset : MonoBehaviour
         absolutePath = tilesetUrl.Replace("tileset.json", "");
         StartCoroutine(LoadTileset());
 
-        CoordConvert.relativeCenterChanged.AddListener(RelativeCenterChanged);
+        CoordConvert.relativeOriginChanged.AddListener(RelativeCenterChanged);
     }
 
-    private void RelativeCenterChanged(Vector3 newCenter, Quaternion newRotation)
+    private void RelativeCenterChanged(Vector3 cameraOffset)
     {
         //Point set up from new origin
-        RotateSetToUp();
+        AlignWithUnityWorld();
 
         //Flag all calculated bounds to be recalculated when tile bounds is requested
         RecalculateAllTileBounds(root);
@@ -51,6 +51,8 @@ public class Read3DTileset : MonoBehaviour
     /// <param name="tile">Starting tile</param>
     private void RecalculateAllTileBounds(Tile tile)
     {
+        if (tile == null) return;
+
         tile.CalculateBounds();
 
         foreach (var child in tile.children)
@@ -105,10 +107,10 @@ public class Read3DTileset : MonoBehaviour
 
         //setup location and rotation
         positionECEF = new Vector3ECEF(transformValues[12], transformValues[13], transformValues[14]);
-        RotateSetToUp();
+        AlignWithUnityWorld();
     }
 
-    private void RotateSetToUp()
+    private void AlignWithUnityWorld()
     {
         transform.position = CoordConvert.ECEFToUnity(positionECEF);
         transform.rotation = CoordConvert.ecefRotionToUp();
