@@ -4,12 +4,12 @@ using UnityEngine;
 
 public abstract class MessageElement
 {
-    protected string elementName;
+    public string ElementName { get; protected set; }
     public MessageElement(string elementName)
     {
-        this.elementName = elementName;
+        ElementName = elementName;
     }
-    public abstract GameObject GetElement();
-    public abstract System.Type GetMessageType();
+    //public abstract GameObject GetElement();
+    //public abstract System.Type GetMessageType();
 
 }

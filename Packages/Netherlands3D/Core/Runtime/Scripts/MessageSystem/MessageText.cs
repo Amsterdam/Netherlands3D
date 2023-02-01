@@ -1,21 +1,27 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class MessageText : MessageElement
 {
-    private string textMessage;
-    public MessageText(string message, string elementName) : base(elementName)
-    {
-        textMessage = message;
-    }
-    public override GameObject GetElement()
-    {
-        return GameObject.Instantiate(new GameObject(elementName, typeof(Text)));
-    }
+    public string Message { get; private set; }
+    public float FontSize { get; private set; }
+    public Color TextColor { get; private set; }
 
-    public override Type GetMessageType()
+    public MessageText(string message, float size, Color textColor, string elementName) : base(elementName)
     {
-        return typeof(Text);
+        TextColor = textColor;
+        FontSize = size;
+        Message = message;
     }
+    //public override GameObject GetElement()
+    //{
+    //    return txt.gameObject;
+    //}
+
+    //public override Type GetMessageType()
+    //{
+    //    return txt.GetType();
+    //}
 }

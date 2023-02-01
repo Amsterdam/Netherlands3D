@@ -6,22 +6,20 @@ using UnityEngine.UI;
 
 public class MessageButton : MessageElement
 {
-    private Action function;
+    public Action ButtonFunction { get; private set; }
     public MessageButton(Action buttonFunction, string elementName) : base(elementName)
     {
-        function = buttonFunction;
+        ButtonFunction = buttonFunction;
     }
 
-    public override GameObject GetElement()
-    {
-        Button btn = GameObject.Instantiate(new GameObject(elementName, typeof(Button))).GetComponent<Button>();
-        btn.onClick.AddListener(function.Invoke);
-        return btn.gameObject;
-    }
+    //public override GameObject GetElement()
+    //{
+    //    return btn.gameObject;
+    //}
 
-    public override Type GetMessageType()
-    {
-        return typeof(Button);
-    }
+    //public override Type GetMessageType()
+    //{
+    //    return btn.GetType();
+    //}
 
 }
