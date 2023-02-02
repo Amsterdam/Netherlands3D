@@ -175,11 +175,12 @@ public class Read3DTileset : MonoBehaviour
     private IEnumerator LoadInView()
     {
         yield return new WaitForEndOfFrame();
+        var currentMainCameraTransform = Camera.main.transform;
 
         while (true)
         {
             SetSSEComponent();
-            LoadInViewRecursively(root, Camera.main.transform.position);
+            LoadInViewRecursively(root, currentMainCameraTransform.position);
 
             yield return new WaitForEndOfFrame();
         }
