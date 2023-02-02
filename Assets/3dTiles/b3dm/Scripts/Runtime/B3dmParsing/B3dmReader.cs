@@ -9,30 +9,12 @@ namespace B3dm.Tile
         public static B3dm ReadB3dm(BinaryReader reader)
         {
             var b3dmHeader = new B3dmHeader(reader);
-
-            var featureTableJsonBuffer = new byte[b3dmHeader.FeatureTableJsonByteLength];
-            reader.Read(featureTableJsonBuffer, 0, b3dmHeader.FeatureTableJsonByteLength);
-            var featureTableJson = Encoding.UTF8.GetString(featureTableJsonBuffer);
-
-            var featureTableBytesBuffer = new byte[b3dmHeader.FeatureTableBinaryByteLength];
-            reader.Read(featureTableBytesBuffer, 0, b3dmHeader.FeatureTableBinaryByteLength);
-            var featureTableBytes = new byte[b3dmHeader.FeatureTableBinaryByteLength];
-            Buffer.BlockCopy(featureTableBytesBuffer, 0, featureTableBytes, 0, b3dmHeader.FeatureTableBinaryByteLength);
-
-            var batchTableJsonBuffer = new byte[b3dmHeader.BatchTableJsonByteLength];
-            reader.Read(batchTableJsonBuffer, 0, b3dmHeader.BatchTableJsonByteLength);
-            var batchTableJson = Encoding.UTF8.GetString(batchTableJsonBuffer);
-
-            var batchTableBytesBuffer = new byte[b3dmHeader.BatchTableBinaryByteLength];
-            reader.Read(batchTableBytesBuffer, 0, b3dmHeader.BatchTableBinaryByteLength);
-            var batchTableBytes = new byte[b3dmHeader.BatchTableBinaryByteLength];
-            Buffer.BlockCopy(batchTableBytesBuffer, 0, batchTableBytes, 0, b3dmHeader.BatchTableBinaryByteLength);
-
+            var featureTableJson = Encoding.UTF8.GetString(reader.ReadBytes(b3dmHeader.FeatureTableJsonByteLength));
+            var featureTableBytes = reader.ReadBytes(b3dmHeader.FeatureTableBinaryByteLength);
+            var batchTableJson = Encoding.UTF8.GetString(reader.ReadBytes(b3dmHeader.BatchTableJsonByteLength));
+            var batchTableBytes = reader.ReadBytes(b3dmHeader.BatchTableBinaryByteLength);
             var glbLength = b3dmHeader.ByteLength - b3dmHeader.Length;
-            var glbBuffer = new byte[glbLength];
-            reader.Read(glbBuffer, 0, glbLength);
-            var glbBytes = new byte[glbLength];
-            Buffer.BlockCopy(glbBuffer, 0, glbBytes, 0, glbLength);
+            var glbBuffer = reader.ReadBytes(glbLength);
 
             var b3dm = new B3dm {
                 B3dmHeader = b3dmHeader,
