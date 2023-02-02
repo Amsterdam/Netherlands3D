@@ -190,7 +190,7 @@ public class Read3DTileset : MonoBehaviour
     {
         foreach (var child in tile.children)
         {
-            var closestPointOnBounds = tile.Bounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
+            var closestPointOnBounds = child.Bounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
             var pixelError = (sseComponent * child.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
 
             if (pixelError > maxPixelError && child.IsInViewFrustrum(currentCamera))
