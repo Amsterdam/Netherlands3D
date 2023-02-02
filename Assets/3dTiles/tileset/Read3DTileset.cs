@@ -174,15 +174,13 @@ public class Read3DTileset : MonoBehaviour
     /// </summary>
     private IEnumerator LoadInView()
     {
-        yield return new WaitForEndOfFrame();
         var currentMainCamera = Camera.main;
 
+        yield return new WaitUntil(() => root != null);
         while (true)
         {
             SetSSEComponent(currentMainCamera);
             yield return LoadInViewRecursively(root, currentMainCamera);
-
-            yield return new WaitForEndOfFrame();
         }
     }
 
