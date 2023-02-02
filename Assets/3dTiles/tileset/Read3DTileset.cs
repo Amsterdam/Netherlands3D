@@ -215,7 +215,7 @@ public class Read3DTileset : MonoBehaviour
             
             if (pixelError > maxPixelError && tile.IsInViewFrustrum(currentCamera))
             {
-                //Check for children ( and if closest child can refine ). Closest child should have same closest point as parent on bounds.
+                //Check for children ( and if closest child can refine ). Closest child would have same closest point as parent on bounds, so simply divide pixelError by 2
                 var canRefineToChildren = tile.children.Count > 0 && (pixelError / 2.0f > maxPixelError);
                 if (canRefineToChildren)
                 {
