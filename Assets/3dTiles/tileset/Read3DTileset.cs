@@ -28,6 +28,8 @@ public class Read3DTileset : MonoBehaviour
     public int maxPixelError = 5;
     private float sseComponent = -1;
 
+    private List<Tile> contentLoadedTiles =new List<Tile>();
+
     void Start()
     {
         absolutePath = tilesetUrl.Replace("tileset.json", "");
@@ -180,7 +182,27 @@ public class Read3DTileset : MonoBehaviour
         while (true)
         {
             SetSSEComponent(currentMainCamera);
-            yield return LoadInViewRecursively(root, currentMainCamera);
+
+            DisposeTilesOutsideView(currentMainCamera);
+
+            yield return LoadInViewRecursively(root, currentMainCamera); 
+        }
+    }
+
+    private void DisposeTilesOutsideView(Camera currentMainCamera)
+    {
+        //Clean up list op previously loaded tiles outside of view
+        for (int i = contentLoadedTiles.Count - 1; i >= 0; i--)
+        {
+            var child = contentLoadedTiles[i];
+            var closestPointOnBounds = child.Bounds.ClosestPoint(currentMainCamera.transform.position); //Returns original point when inside the bounds
+            var pixelError = (sseComponent * child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
+
+            if (pixelError <= maxPixelError || !child.IsInViewFrustrum(currentMainCamera))
+            {
+                contentLoadedTiles[i].Dispose();
+                contentLoadedTiles.RemoveAt(i);
+            }
         }
     }
 
@@ -188,20 +210,25 @@ public class Read3DTileset : MonoBehaviour
     {
         foreach (var child in tile.children)
         {
-            yield return new WaitForEndOfFrame(); //Max 1 child per frame
-
             var closestPointOnBounds = child.Bounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
             var pixelError = (sseComponent * child.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
 
-            if (child.hascontent && pixelError > maxPixelError && child.IsInViewFrustrum(currentCamera))
+            if (pixelError > maxPixelError && child.IsInViewFrustrum(currentCamera))
             {
-                LoadChildContent(child);
+                if (child.hascontent)
+                {
+                    LoadChildContent(child);
+                    contentLoadedTiles.Add(child);
+                }
+                else 
+                {
+                    yield return LoadInViewRecursively(child, currentCamera);
+                }
             }
             else if (child.geometricError <= sseComponent && child.content)
             {
                 child.Dispose();
             }
-            yield return LoadInViewRecursively(child, currentCamera);
         }
     }
 
