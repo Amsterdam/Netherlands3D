@@ -206,28 +206,30 @@ public class Read3DTileset : MonoBehaviour
         }
     }
 
-    private IEnumerator LoadInViewRecursively(Tile tile, Camera currentCamera)
+    private IEnumerator LoadInViewRecursively(Tile parentTile, Camera currentCamera)
     {
-        foreach (var child in tile.children)
+        foreach (var tile in parentTile.children)
         {
-            var closestPointOnBounds = child.Bounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
-            var pixelError = (sseComponent * child.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
-
-            if (pixelError > maxPixelError && child.IsInViewFrustrum(currentCamera))
+            var closestPointOnBounds = tile.Bounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
+            var pixelError = (sseComponent * tile.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
+            
+            if (pixelError > maxPixelError && tile.IsInViewFrustrum(currentCamera))
             {
-                if (child.hascontent)
+                //Check for children ( and if closest child can refine ). Closest child should have same closest point as parent on bounds.
+                var canRefineToChildren = tile.children.Count > 0 && (pixelError / 2.0f > maxPixelError);
+                if (canRefineToChildren)
                 {
-                    LoadChildContent(child);
-                    contentLoadedTiles.Add(child);
+                    yield return LoadInViewRecursively(tile, currentCamera);
                 }
-                else 
+                else if (tile.hascontent && !canRefineToChildren)
                 {
-                    yield return LoadInViewRecursively(child, currentCamera);
+                    LoadChildContent(tile);
+                    contentLoadedTiles.Add(tile);
                 }
             }
-            else if (child.geometricError <= sseComponent && child.content)
+            else if (tile.geometricError <= sseComponent && tile.content)
             {
-                child.Dispose();
+                tile.Dispose();
             }
         }
     }
