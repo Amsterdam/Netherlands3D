@@ -180,20 +180,22 @@ public class Read3DTileset : MonoBehaviour
         while (true)
         {
             SetSSEComponent(currentMainCamera);
-            LoadInViewRecursively(root, currentMainCamera);
+            yield return LoadInViewRecursively(root, currentMainCamera);
 
             yield return new WaitForEndOfFrame();
         }
     }
 
-    private void LoadInViewRecursively(Tile tile, Camera currentCamera)
+    private IEnumerator LoadInViewRecursively(Tile tile, Camera currentCamera)
     {
         foreach (var child in tile.children)
         {
+            yield return new WaitForEndOfFrame(); //Max 1 child per frame
+
             var closestPointOnBounds = child.Bounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
             var pixelError = (sseComponent * child.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
 
-            if (pixelError > maxPixelError && child.IsInViewFrustrum(currentCamera))
+            if (child.hascontent && pixelError > maxPixelError && child.IsInViewFrustrum(currentCamera))
             {
                 LoadChildContent(child);
             }
@@ -201,7 +203,7 @@ public class Read3DTileset : MonoBehaviour
             {
                 child.Dispose();
             }
-            LoadInViewRecursively(child, currentCamera);
+            yield return LoadInViewRecursively(child, currentCamera);
         }
     }
 

@@ -52,5 +52,20 @@ namespace B3dm.Tile
                 return b3dm;
             }
         }
+
+        public static byte[] ReadB3dmGlbContentOnly(MemoryStream stream)
+        {
+            using (var reader = new BinaryReader(stream))
+            {
+                //Read the header to determine our length and offset
+                var b3dmHeader = new B3dmHeader(reader);
+
+                byte[] buffer = new byte[b3dmHeader.ByteLength - b3dmHeader.Length];
+                stream.Position = b3dmHeader.Length;
+                stream.Read(buffer);
+
+                return buffer;
+            }
+        }
     }
 }

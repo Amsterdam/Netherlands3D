@@ -64,12 +64,12 @@ namespace Netherlands3D.B3DM
             else
             {
                 byte[] bytes = webRequest.downloadHandler.data;
+                var memory = new ReadOnlyMemory<byte>(bytes);
 
                 if (Path.GetExtension(url).Equals(".b3dm"))
                 {
                     var memoryStream = new MemoryStream(bytes);
-                    var b3dm = B3dmReader.ReadB3dm(memoryStream);
-                    bytes = new MemoryStream(b3dm.GlbData).ToArray();
+                    bytes = B3dmReader.ReadB3dmGlbContentOnly(memoryStream);
                 }
 
                 yield return ParseFromBytes(bytes, url, callback);
@@ -116,7 +116,7 @@ namespace Netherlands3D.B3DM
             var settings = new ImportSettings();
             settings.AnimationMethod = AnimationMethod.None;
 
-            var success = await gltf.Load(glbBuffer, new System.Uri(sourcePath), settings);
+            var success = await gltf.Load(glbBuffer, new Uri(sourcePath), settings);
 
             if (success)
             {

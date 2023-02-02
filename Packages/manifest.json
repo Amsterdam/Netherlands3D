@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "com.atteneder.gltfast": "https://github.com/atteneder/glTFast.git",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.collab-proxy": "1.17.7",
     "com.unity.ide.rider": "3.0.18",
