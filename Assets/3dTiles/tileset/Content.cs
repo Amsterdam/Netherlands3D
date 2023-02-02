@@ -1,6 +1,7 @@
 ﻿using Netherlands3D.B3DM;
 using System;
 using UnityEngine;
+using UnityEngine.Networking;
 
 [System.Serializable]
 public class Content : MonoBehaviour, IDisposable
@@ -10,12 +11,43 @@ public class Content : MonoBehaviour, IDisposable
     public GameObject contentGameObject;
     private Coroutine runningContentRequest;
 
+    private Tile parentTile;
+    public Tile ParentTile { get => parentTile; set => parentTile = value; }
+
     public enum ContentLoadState{
         NOTLOADED,
         LOADING,
         READY,
     }
     public ContentLoadState state = ContentLoadState.NOTLOADED;
+
+    /// <summary>
+    /// Draw wire cube in editor with bounds and color coded state
+    /// </summary>
+    private void OnDrawGizmosSelected()
+    {
+        if (ParentTile == null) return;
+
+        Color color = Color.white;
+        switch (state)
+        {
+            case ContentLoadState.NOTLOADED:
+                color = Color.red;
+                break;
+            case ContentLoadState.LOADING:
+                color = Color.yellow;
+                break;
+            case ContentLoadState.READY:
+                color = Color.green;
+                break;
+            default:
+                break;
+        }
+
+        Gizmos.color = color;
+        var parentTileBounds = ParentTile.Bounds;
+        Gizmos.DrawWireCube(parentTileBounds.center, parentTileBounds.size);
+    }
 
     /// <summary>
     /// Load the content from an url
@@ -34,6 +66,8 @@ public class Content : MonoBehaviour, IDisposable
         {
             this.contentGameObject = contentGameObject;
             this.contentGameObject.transform.SetParent(this.gameObject.transform, true);
+            this.contentGameObject.transform.localRotation = Quaternion.identity;
+            this.contentGameObject.transform.localPosition = Vector3.zero;
         }
         else
         {
@@ -52,8 +86,26 @@ public class Content : MonoBehaviour, IDisposable
             StopCoroutine(runningContentRequest);
 
         if (contentGameObject)
-            Destroy(contentGameObject);
+        {
+            //TODO: Make sure GLTFast cleans up its internal stuff like textures, animations etc. It has a Dispose but might be shared lists
+            //For now we do mats and meshes manualy.
 
+            //Materials
+            var renderers = contentGameObject.GetComponentsInChildren<Renderer>();
+            foreach(var renderer in renderers)
+            {
+                var materials = renderer.sharedMaterials;
+                foreach (var mat in materials)
+                    Destroy(mat);
+            }
+
+            //Meshes
+            var meshFilters = contentGameObject.GetComponentsInChildren<MeshFilter>();
+            foreach (var meshFilter in meshFilters)
+                Destroy(meshFilter.sharedMesh);
+
+            Destroy(contentGameObject);
+        }
         Destroy(this);
     }
 }

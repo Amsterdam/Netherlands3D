@@ -5,37 +5,38 @@ using UnityEngine;
 
 public class MovingOriginFollower : MonoBehaviour
 {
-    private Vector3RD initialRDCoordinate = new Vector3RD();
+    private Vector3ECEF ecefPosition;
 
     void Start()
     {
-        StartCoroutine(StoreCurrentRD());
+        StartCoroutine(DelayListeners());
+    }
+
+    private void SaveOrigin()
+    {
+        ecefPosition = CoordConvert.UnityToECEF(transform.position);
     }
 
     /// <summary>
     /// Store current Unity coordinate as late as possible.
     /// This way any other systems placing this object have finished their possible manipulations
     /// </summary>
-    IEnumerator StoreCurrentRD()
+    IEnumerator DelayListeners()
     {
         yield return new WaitForEndOfFrame();
 
-        //Store RD coordinate
-        initialRDCoordinate = CoordConvert.UnitytoRD(this.transform.position);
-
-        CoordConvert.relativeCenterChanged.AddListener(MoveToNewRD);
+        CoordConvert.prepareForOriginShift.AddListener(SaveOrigin);
+        CoordConvert.relativeOriginChanged.AddListener(MoveToNewOrigin);
     }
 
     private void OnDestroy()
     {
-        CoordConvert.relativeCenterChanged.RemoveListener(MoveToNewRD);
+        CoordConvert.relativeOriginChanged.RemoveListener(MoveToNewOrigin);
     }
 
-    private void MoveToNewRD(Vector3 position, Quaternion rotation)
+    private void MoveToNewOrigin(Vector3 offset)
     {
-        this.transform.position = CoordConvert.RDtoUnity(initialRDCoordinate);
+        transform.position = CoordConvert.ECEFToUnity(ecefPosition);
 
-        //Optional TODO: Hide/disable object if too far from RD coordinates
-        //TODO: Rotation
     }
 }

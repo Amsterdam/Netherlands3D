@@ -51,6 +51,9 @@ namespace Netherlands3D.Core
 
             CoordConvert.zeroGroundLevelY = zeroGroundLevelY;
             CoordConvert.relativeCenterRD = relativeCenterRD;
+            CoordConvert.ecefIsSet = false;
+
+            Vector3WGS origin_wgs = CoordConvert.UnitytoWGS84(Vector3.zero);
 
             MovingOrigin = movingOrigin;
         }
@@ -60,12 +63,10 @@ namespace Netherlands3D.Core
             while (MovingOrigin)
             {
                 var offset = Camera.main.transform.position;
+                offset.y = 0;
                 if (offset.magnitude > maxCameraDistanceFromOrigin)
                 {
-                    var newRDOrigin = CoordConvert.UnitytoRD(offset);
-                    CoordConvert.relativeCenterRD = new Vector2RD(newRDOrigin.x, newRDOrigin.y);
-
-                    Camera.main.transform.position -= new Vector3(offset.x,0, offset.z);
+                    CoordConvert.MoveAndRotateWorld(offset);
                 }
                 yield return new WaitForEndOfFrame();
             }

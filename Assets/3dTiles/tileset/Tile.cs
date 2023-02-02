@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Netherlands3D.Core;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,8 +20,15 @@ public class Tile : IDisposable
 
     TileStatus status = TileStatus.unloaded;
 
-    Bounds bounds;
-    bool boundsIsDefined = false;
+    private bool boundsAvailable = false;
+    private Bounds bounds;
+    public Bounds Bounds 
+    { 
+        get {
+            return bounds;
+        } 
+        set => bounds = value; 
+    }
 
     public Vector3 EulerRotationToVertical()
     {
@@ -78,14 +86,27 @@ public class Tile : IDisposable
 
     public bool IsInViewFrustrum()
     {
-        return Camera.main.InView(bounds);
+        if (!boundsAvailable) CalculateBounds();
+
+        return Camera.main.InView(Bounds);
     }
 
-    public void DefineBounds()
+    public void CalculateBounds()
     {
-        bounds = new Bounds();
+        //Array order: west, south, east, north, minimum height, maximum height
+        var ecefMin = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[0] * 180.0f) / Mathf.PI, (boundingVolume.values[1] * 180.0f) / Mathf.PI, boundingVolume.values[4]));
+        var ecefMax = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[2] * 180.0f) / Mathf.PI, (boundingVolume.values[3] * 180.0f) / Mathf.PI, boundingVolume.values[5]));
 
-        boundsIsDefined = true;
+        var unityMin = CoordConvert.ECEFToUnity(ecefMin);
+        var unityMax = CoordConvert.ECEFToUnity(ecefMax);
+
+        var newBounds = new Bounds();
+        newBounds.center = unityMin;
+        newBounds.Encapsulate(unityMax);
+
+        Bounds = newBounds;
+
+        boundsAvailable = true;
     }
 
     public void Dispose()

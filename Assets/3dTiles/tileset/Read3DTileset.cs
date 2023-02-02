@@ -6,12 +6,16 @@ using UnityEngine.Networking;
 using System;
 using Netherlands3D.Core;
 
+[RequireComponent(typeof(ReadSubtree))]
 public class Read3DTileset : MonoBehaviour
 {
     public string tilesetUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json";
+    private string absolutePath = "";
 
     public Tile root;
     public double[] transformValues;
+    private Vector3ECEF positionECEF;
+
     TilingMethod tilingMethod = TilingMethod.explicitTiling;
 
     public ImplicitTilingSettings implicitTilingSettings;
@@ -21,18 +25,41 @@ public class Read3DTileset : MonoBehaviour
 
     public GameObject cubePrefab;
 
+    public int maxPixelError = 5;
+    private float sseComponent = -1;
+
     void Start()
     {
+        absolutePath = tilesetUrl.Replace("tileset.json", "");
         StartCoroutine(LoadTileset());
 
-        CoordConvert.relativeCenterChanged.AddListener(CenterChanged);
+        CoordConvert.relativeOriginChanged.AddListener(RelativeCenterChanged);
     }
 
-    private void CenterChanged(Vector3 positionOffset, Quaternion rotationOffset)
+    private void RelativeCenterChanged(Vector3 cameraOffset)
     {
-        //
+        //Point set up from new origin
+        AlignWithUnityWorld();
+
+        //Flag all calculated bounds to be recalculated when tile bounds is requested
+        RecalculateAllTileBounds(root);
     }
 
+    /// <summary>
+    /// Recursive recalculation of tile bounds
+    /// </summary>
+    /// <param name="tile">Starting tile</param>
+    private void RecalculateAllTileBounds(Tile tile)
+    {
+        if (tile == null) return;
+
+        tile.CalculateBounds();
+
+        foreach (var child in tile.children)
+        {
+            RecalculateAllTileBounds(child);
+        } 
+    }
 
     IEnumerator LoadTileset()
     {
@@ -50,34 +77,17 @@ public class Read3DTileset : MonoBehaviour
             JSONNode rootnode = JSON.Parse(jsonstring)["root"];
             ReadTileset(rootnode);
         }
+        
     }
 
-    [ContextMenu("Load all content")]
-    private void LoadAll()
+    private void LoadChildContent(Tile child)
     {
-        StartCoroutine(LoadAllTileContent());
-    }
-
-    private IEnumerator LoadAllTileContent()
-    {
-        yield return new WaitForEndOfFrame();
-        yield return LoadContentInChildren(root);
-    }
-
-    private IEnumerator LoadContentInChildren(Tile tile)
-    {
-        var absolutePath = tilesetUrl.Replace("tileset.json","");
-
-        foreach (var child in tile.children)
+        if(!child.content)
         {
-            if(child.hascontent)
-            {
-                child.content = gameObject.AddComponent<Content>();
-                child.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", child.X.ToString()).Replace("{x}", child.Y.ToString()).Replace("{y}", child.Z.ToString());
-                child.content.Load();
-            }
-            yield return new WaitForEndOfFrame();
-            yield return LoadContentInChildren(child);
+            child.content = gameObject.AddComponent<Content>();
+            child.content.ParentTile = child;
+            child.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", child.X.ToString()).Replace("{x}", child.Y.ToString()).Replace("{y}", child.Z.ToString());
+            child.content.Load();
         }
     }
 
@@ -94,6 +104,16 @@ public class Read3DTileset : MonoBehaviour
         {
             ReadImplicitTiling(rootnode);
         }
+
+        //setup location and rotation
+        positionECEF = new Vector3ECEF(transformValues[12], transformValues[13], transformValues[14]);
+        AlignWithUnityWorld();
+    }
+
+    private void AlignWithUnityWorld()
+    {
+        transform.position = CoordConvert.ECEFToUnity(positionECEF);
+        transform.rotation = CoordConvert.ecefRotionToUp();
     }
 
     private void ReadImplicitTiling(JSONNode rootnode)
@@ -138,22 +158,86 @@ public class Read3DTileset : MonoBehaviour
                             .Replace("{level}", "0")
                             .Replace("{x}", "0")
                             .Replace("{y}", "0");
-        
+
+        Debug.Log("Load subtree: " + subtreeURL);
         subtreeReader.DownloadSubtree(subtreeURL, implicitTilingSettings, ReturnTiles);
     }
 
     public void ReturnTiles(Tile rootTile)
     {
         root = rootTile;
+        StartCoroutine(LoadInView());
     }
 
+    /// <summary>
+    /// Check what tiles should be loaded/unloaded based on view
+    /// </summary>
+    private IEnumerator LoadInView()
+    {
+        yield return new WaitForEndOfFrame();
+
+        while (true)
+        {
+            SetSSEComponent();
+            LoadInViewRecursively(root, Camera.main.transform.position);
+
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    private void LoadInViewRecursively(Tile tile, Vector3 cameraPosition)
+    {
+        foreach (var child in tile.children)
+        {
+            var pixelError = (sseComponent * child.geometricError) / Vector3.Distance(cameraPosition, tile.Bounds.ClosestPoint(cameraPosition));
+
+            if (pixelError > maxPixelError && child.IsInViewFrustrum())
+            {
+                LoadChildContent(child);
+            }
+            else if (child.geometricError <= sseComponent && child.content)
+            {
+                child.Dispose();
+            }
+            LoadInViewRecursively(child, cameraPosition);
+        }
+    }
+
+    /// <summary>
+    /// Screen-space error component calculation
+    /// </summary>
     public void SetSSEComponent()
     {
-        float sseComponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * Camera.main.fieldOfView / 2));
-        // multiply with Geomettric Error and
-        // divide by distance to camera
-        // to get the screenspaceError in pixels;
+        sseComponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * Camera.main.fieldOfView / 2));
     }
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// Editor only methods for loading all tiles from context menu
+    /// </summary>
+    [ContextMenu("Load all content")]
+    private void LoadAll()
+    {
+        StartCoroutine(LoadAllTileContent());
+    }
+    private IEnumerator LoadAllTileContent()
+    {
+        yield return new WaitForEndOfFrame();
+        yield return LoadContentInChildren(root);
+    }
+    private IEnumerator LoadContentInChildren(Tile tile)
+    {
+        foreach (var child in tile.children)
+        {
+            if (child.hascontent)
+            {
+                LoadChildContent(child);
+            }
+            yield return new WaitForEndOfFrame();
+            yield return LoadContentInChildren(child);
+        }
+    }
+#endif 
 }
 
 public enum TilingMethod
