@@ -144,11 +144,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 290
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -290
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
       propertyPath: m_LocalRotation.w
@@ -293,7 +293,7 @@ MonoBehaviour:
     y: 487000
   setInvariantCultureInfo: 1
   movingOrigin: 1
-  maxCameraDistanceFromOrigin: 300
+  maxCameraDistanceFromOrigin: 10000
 --- !u!4 &692306092
 Transform:
   m_ObjectHideFlags: 0

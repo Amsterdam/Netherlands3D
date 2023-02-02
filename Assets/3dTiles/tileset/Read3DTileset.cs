@@ -175,24 +175,25 @@ public class Read3DTileset : MonoBehaviour
     private IEnumerator LoadInView()
     {
         yield return new WaitForEndOfFrame();
-        var currentMainCameraTransform = Camera.main.transform;
+        var currentMainCamera = Camera.main;
 
         while (true)
         {
-            SetSSEComponent();
-            LoadInViewRecursively(root, currentMainCameraTransform.position);
+            SetSSEComponent(currentMainCamera);
+            LoadInViewRecursively(root, currentMainCamera);
 
             yield return new WaitForEndOfFrame();
         }
     }
 
-    private void LoadInViewRecursively(Tile tile, Vector3 cameraPosition)
+    private void LoadInViewRecursively(Tile tile, Camera currentCamera)
     {
         foreach (var child in tile.children)
         {
-            var pixelError = (sseComponent * child.geometricError) / Vector3.Distance(cameraPosition, tile.Bounds.ClosestPoint(cameraPosition));
+            var closestPointOnBounds = tile.Bounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
+            var pixelError = (sseComponent * child.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
 
-            if (pixelError > maxPixelError && child.IsInViewFrustrum())
+            if (pixelError > maxPixelError && child.IsInViewFrustrum(currentCamera))
             {
                 LoadChildContent(child);
             }
@@ -200,16 +201,16 @@ public class Read3DTileset : MonoBehaviour
             {
                 child.Dispose();
             }
-            LoadInViewRecursively(child, cameraPosition);
+            LoadInViewRecursively(child, currentCamera);
         }
     }
 
     /// <summary>
     /// Screen-space error component calculation
     /// </summary>
-    public void SetSSEComponent()
+    public void SetSSEComponent(Camera currentCamera)
     {
-        sseComponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * Camera.main.fieldOfView / 2));
+        sseComponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * currentCamera.fieldOfView / 2));
     }
 
 #if UNITY_EDITOR

@@ -84,11 +84,11 @@ public class Tile : IDisposable
         loaded
     }
 
-    public bool IsInViewFrustrum()
+    public bool IsInViewFrustrum(Camera ofCamera)
     {
         if (!boundsAvailable) CalculateBounds();
 
-        return Camera.main.InView(Bounds);
+        return ofCamera.InView(Bounds);
     }
 
     public void CalculateBounds()
