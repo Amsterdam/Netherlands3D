@@ -75,7 +75,6 @@ namespace Netherlands3D.TileSystem
 					newLayer.Datasets.Add(
 						new DataSet()
 						{
-							lod = i,
 							maximumDistance = lod.drawDistance,
 							path = lod.sourcePath
 						}
