@@ -9,7 +9,7 @@ public class MessageSystem : MonoBehaviour
     public static MessageSystem Instance;
     [SerializeField] private LayoutGroup messageGroup;
 
-    [SerializeField] private TextMeshProUGUI textPrefab;
+    [SerializeField] private TMP_Text textPrefab;
     [SerializeField] private TMP_InputField inputFieldPrefab;
     [SerializeField] private Button buttonPrefab;
 
@@ -34,7 +34,7 @@ public class MessageSystem : MonoBehaviour
             switch (element)
             {
                 case MessageText:
-                    TextMeshProUGUI txt = Instantiate(textPrefab, messageGroup.transform);
+                    TMP_Text txt = Instantiate(textPrefab, messageGroup.transform);
                     MessageText mText = (MessageText)element;
                     txt.text = mText.Message;
                     txt.fontSize = mText.FontSize;
@@ -46,7 +46,7 @@ public class MessageSystem : MonoBehaviour
                     MessageInputField mField = (MessageInputField)element;
                     if(mField.OnSubmitFunction != null)
                     {
-                        field.onSelect.AddListener(mField.OnSubmitFunction);
+                        field.onSelect.AddListener((string s) => mField.OnSubmitFunction(s));
                     }
                     field.text = mField.Placeholder;
                     field.name = mField.ElementName;
