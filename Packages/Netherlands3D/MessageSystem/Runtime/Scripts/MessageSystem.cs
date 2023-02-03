@@ -62,7 +62,6 @@ public class MessageSystem : MonoBehaviour
                         "Either add it to the cases or remove it!");
 
             }
-            //element.GetElement().transform.SetParent(messageGroup.transform);
         }
     }
     public void CloseMessage()

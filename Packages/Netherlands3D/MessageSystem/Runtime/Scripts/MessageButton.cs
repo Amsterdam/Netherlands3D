@@ -11,15 +11,4 @@ public class MessageButton : MessageElement
     {
         ButtonFunction = buttonFunction;
     }
-
-    //public override GameObject GetElement()
-    //{
-    //    return btn.gameObject;
-    //}
-
-    //public override Type GetMessageType()
-    //{
-    //    return btn.GetType();
-    //}
-
 }

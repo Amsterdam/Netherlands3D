@@ -1,7 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class MessageText : MessageElement
 {
@@ -15,13 +12,4 @@ public class MessageText : MessageElement
         FontSize = size;
         Message = message;
     }
-    //public override GameObject GetElement()
-    //{
-    //    return txt.gameObject;
-    //}
-
-    //public override Type GetMessageType()
-    //{
-    //    return txt.GetType();
-    //}
 }

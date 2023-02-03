@@ -1,9 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
 
 public class MessageInputField : MessageElement
 {
@@ -14,13 +9,4 @@ public class MessageInputField : MessageElement
         Placeholder = placeholder;
         OnSubmitFunction = onSubmitFunction;
     }
-    //public override GameObject GetElement()
-    //{
-    //    return field.gameObject;
-    //}
-
-    //public override Type GetMessageType()
-    //{
-    //    return field.GetType();   
-    //}
 }

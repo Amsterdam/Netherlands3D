@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public abstract class MessageElement
 {
@@ -9,7 +6,5 @@ public abstract class MessageElement
     {
         ElementName = elementName;
     }
-    //public abstract GameObject GetElement();
-    //public abstract System.Type GetMessageType();
 
 }
