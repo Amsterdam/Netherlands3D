@@ -1,6 +1,7 @@
 ﻿using Netherlands3D.B3DM;
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Networking;
 
 [System.Serializable]
@@ -14,12 +15,22 @@ public class Content : MonoBehaviour, IDisposable
     private Tile parentTile;
     public Tile ParentTile { get => parentTile; set => parentTile = value; }
 
+    public UnityEvent stateChanged = new UnityEvent();
+
     public enum ContentLoadState{
         NOTLOADED,
         LOADING,
         READY,
     }
-    public ContentLoadState state = ContentLoadState.NOTLOADED;
+    private ContentLoadState state = ContentLoadState.NOTLOADED;
+    public ContentLoadState State { 
+        get => state;
+        set
+        {
+            state = value;
+            stateChanged.Invoke();
+        }
+    }
 
     /// <summary>
     /// Draw wire cube in editor with bounds and color coded state
@@ -29,7 +40,7 @@ public class Content : MonoBehaviour, IDisposable
         if (ParentTile == null) return;
 
         Color color = Color.white;
-        switch (state)
+        switch (State)
         {
             case ContentLoadState.NOTLOADED:
                 color = Color.red;
@@ -54,14 +65,14 @@ public class Content : MonoBehaviour, IDisposable
     /// </summary>
     public Coroutine Load()
     {
-        state = ContentLoadState.LOADING;
+        State = ContentLoadState.LOADING;
         runningContentRequest = StartCoroutine(ImportB3DMGltf.ImportBinFromURL(uri, GotContent));
         return runningContentRequest;
     }
 
     private void GotContent(GameObject contentGameObject)
     {
-        state = ContentLoadState.READY;
+        State = ContentLoadState.READY;
         if (contentGameObject != null)
         {
             this.contentGameObject = contentGameObject;
@@ -80,7 +91,9 @@ public class Content : MonoBehaviour, IDisposable
     /// </summary>
     public void Dispose()
     {
-        state = ContentLoadState.NOTLOADED;
+        State = ContentLoadState.NOTLOADED;
+
+        stateChanged.RemoveAllListeners();
 
         if (runningContentRequest != null)
             StopCoroutine(runningContentRequest);

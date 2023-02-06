@@ -13,7 +13,6 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using Netherlands3D.Events;
-using GluonGui.Dialog;
 
 /// <summary>
 /// Convert coordinates between Unity, WGS84 and RD(EPSG7415)
