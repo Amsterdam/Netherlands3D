@@ -98,6 +98,11 @@
       "displayName": "WebGL template example",
       "description": "A WebGL template example to use for Netherlands3D WebGL projects with unityInstance reference and responsive full browser window behaviour.",
       "path": "WebGL/Samples~/WebGL"
+    },
+    {
+	"displayName": "Message System",
+      "description": "A simple message system to quickly put up message on screen through code.",
+      "path": "MessageSystem/Samples~/"
     }
   ],
   "hideInEditor": false,
