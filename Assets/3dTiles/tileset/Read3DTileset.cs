@@ -90,7 +90,7 @@ namespace Netherlands3D.Core.Tiles
             {
                 if (tilePrioritiser != null)
                 {
-                    tilePrioritiser.RemoveTileContent(tile);
+                    tilePrioritiser.LoadTileContent(tile);
                 }
                 else
                 {

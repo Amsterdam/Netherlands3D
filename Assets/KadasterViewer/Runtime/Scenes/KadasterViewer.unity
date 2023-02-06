@@ -292,8 +292,8 @@ MonoBehaviour:
     x: 121000
     y: 487000
   setInvariantCultureInfo: 1
-  movingOrigin: 1
-  maxCameraDistanceFromOrigin: 10000
+  movingOrigin: 0
+  maxCameraDistanceFromOrigin: 5000
 --- !u!4 &692306092
 Transform:
   m_ObjectHideFlags: 0

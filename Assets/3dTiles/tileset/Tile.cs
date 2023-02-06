@@ -13,14 +13,15 @@ public class Tile : IDisposable
 
     public Tile parent;
     public List<Tile> children = new List<Tile>();
-    
+
     public double[] transform;
     public float geometricError;
     public string refine;
     public BoundingVolume boundingVolume;
     public Content content;
 
-    TileStatus status = TileStatus.unloaded;
+    public TileStatus status = TileStatus.unloaded;
+    public float priority = 0;
 
     private bool boundsAvailable = false;
     private Bounds bounds;
@@ -80,7 +81,7 @@ public class Tile : IDisposable
         return maxDepth;
     }
 
-    enum TileStatus
+    public enum TileStatus
     {
         unloaded,
         loaded
