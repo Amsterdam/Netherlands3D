@@ -11,9 +11,15 @@ namespace Netherlands3D.Core.Tiles
     /// </summary>
     public class WebTilePrioritiser : TilePrioritiser
     {
+        [Header("Web limitations")]
         [SerializeField] private int maxSimultaneousDownloads = 6;
 
+        [Header("Distance priority score")]
         [SerializeField] private float distanceScore = 10;
+        [SerializeField] private float maxDistance = 10;
+        [SerializeField] private float minDistance = 10;
+
+        [Header("Center of screen score")]
         [SerializeField] private float screenCenterScore = 10;
         [SerializeField] AnimationCurve screenCenterWeight;
 
