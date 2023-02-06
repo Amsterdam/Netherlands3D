@@ -6,296 +6,320 @@ using UnityEngine.Networking;
 using System;
 using Netherlands3D.Core;
 
-[RequireComponent(typeof(ReadSubtree))]
-public class Read3DTileset : MonoBehaviour
+namespace Netherlands3D.Core.Tiles
 {
-    public string tilesetUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json";
-    private string absolutePath = "";
-
-    public Tile root;
-    public double[] transformValues;
-    private Vector3ECEF positionECEF;
-
-    TilingMethod tilingMethod = TilingMethod.explicitTiling;
-
-    public ImplicitTilingSettings implicitTilingSettings;
-
-    public int tileCount;
-    public int nestingDepth;
-
-    public GameObject cubePrefab;
-
-    public int maxPixelError = 5;
-    private float sseComponent = -1;
-
-    private List<Tile> contentLoadedTiles =new List<Tile>();
-
-    void Start()
+    [RequireComponent(typeof(ReadSubtree))]
+    public class Read3DTileset : MonoBehaviour
     {
-        absolutePath = tilesetUrl.Replace("tileset.json", "");
-        StartCoroutine(LoadTileset());
+        public string tilesetUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json";
+        private string absolutePath = "";
 
-        CoordConvert.relativeOriginChanged.AddListener(RelativeCenterChanged);
-    }
+        public Tile root;
+        public double[] transformValues;
+        private Vector3ECEF positionECEF;
 
-    private void RelativeCenterChanged(Vector3 cameraOffset)
-    {
-        //Point set up from new origin
-        AlignWithUnityWorld();
+        TilingMethod tilingMethod = TilingMethod.explicitTiling;
 
-        //Flag all calculated bounds to be recalculated when tile bounds is requested
-        RecalculateAllTileBounds(root);
-    }
+        public ImplicitTilingSettings implicitTilingSettings;
 
-    /// <summary>
-    /// Recursive recalculation of tile bounds
-    /// </summary>
-    /// <param name="tile">Starting tile</param>
-    private void RecalculateAllTileBounds(Tile tile)
-    {
-        if (tile == null) return;
+        public int tileCount;
+        public int nestingDepth;
 
-        tile.CalculateBounds();
+        public int maxPixelError = 5;
+        private float sseComponent = -1;
 
-        foreach (var child in tile.children)
+        private List<Tile> contentLoadedTiles = new List<Tile>();
+
+        private TilePrioritiser tilePrioritiser = null;
+
+        void Start()
         {
-            RecalculateAllTileBounds(child);
-        } 
-    }
+            tilePrioritiser = GetComponent<TilePrioritiser>();
 
-    IEnumerator LoadTileset()
-    {
-        UnityWebRequest www = UnityWebRequest.Get(tilesetUrl);
-        yield return www.SendWebRequest();
+            absolutePath = tilesetUrl.Replace("tileset.json", "");
+            StartCoroutine(LoadTileset());
 
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.Log(www.error);
-        }
-        else
-        {
-            string jsonstring = www.downloadHandler.text;
-
-            JSONNode rootnode = JSON.Parse(jsonstring)["root"];
-            ReadTileset(rootnode);
-        }
-        
-    }
-
-    private void LoadChildContent(Tile child)
-    {
-        if(!child.content)
-        {
-            child.content = gameObject.AddComponent<Content>();
-            child.content.ParentTile = child;
-            child.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", child.X.ToString()).Replace("{x}", child.Y.ToString()).Replace("{y}", child.Z.ToString());
-            child.content.Load();
-        }
-    }
-
-    private void ReadTileset(JSONNode rootnode)
-    {
-        JSONNode transformNode = rootnode["transform"];
-        transformValues = new double[16];
-        for (int i = 0; i < 16; i++)
-        {
-            transformValues[i] = transformNode[i].AsDouble;
-        }
-        JSONNode implicitTilingNode = rootnode["implicitTiling"];
-        if (implicitTilingNode != null)
-        {
-            ReadImplicitTiling(rootnode);
+            CoordConvert.relativeOriginChanged.AddListener(RelativeCenterChanged);
         }
 
-        //setup location and rotation
-        positionECEF = new Vector3ECEF(transformValues[12], transformValues[13], transformValues[14]);
-        AlignWithUnityWorld();
-    }
-
-    private void AlignWithUnityWorld()
-    {
-        transform.position = CoordConvert.ECEFToUnity(positionECEF);
-        transform.rotation = CoordConvert.ecefRotionToUp();
-    }
-
-    private void ReadImplicitTiling(JSONNode rootnode)
-    {
-        tilingMethod = TilingMethod.implicitTiling;
-        implicitTilingSettings = new ImplicitTilingSettings();
-        string refine = rootnode["refine"].Value;
-        switch (refine)
+        private void RelativeCenterChanged(Vector3 cameraOffset)
         {
-            case "REPLACE":
-                implicitTilingSettings.refinementtype = refinementType.Replace;
-                break;
-            case "ADD":
-                implicitTilingSettings.refinementtype = refinementType.Add;
-                break;
-            default:
-                break;
+            //Point set up from new origin
+            AlignWithUnityWorld();
+
+            //Flag all calculated bounds to be recalculated when tile bounds is requested
+            RecalculateAllTileBounds(root);
         }
-        implicitTilingSettings.geometricError = rootnode["geometricError"].AsFloat;
-        implicitTilingSettings.boundingRegion = new double[6];
-        for (int i = 0; i < 6; i++)
+
+        /// <summary>
+        /// Recursive recalculation of tile bounds
+        /// </summary>
+        /// <param name="tile">Starting tile</param>
+        private void RecalculateAllTileBounds(Tile tile)
         {
-            implicitTilingSettings.boundingRegion[i] = rootnode["boundingVolume"]["region"][i].AsDouble;
-        }
-        implicitTilingSettings.contentUri = rootnode["content"]["uri"].Value;
-        JSONNode implicitTilingNode = rootnode["implicitTiling"];
-        string subdivisionScheme = implicitTilingNode["subsivisionScheme"].Value;
-        switch (subdivisionScheme)
-        {
-            case "QUADTREE":
-                implicitTilingSettings.subdivisionScheme = Subdivisionscheme.Quadtree;
-                break;
-            default:
-                implicitTilingSettings.subdivisionScheme = Subdivisionscheme.Octree;
-                break;
-        }
-        implicitTilingSettings.subtreeLevels = implicitTilingNode["subtreeLevels"];
-        implicitTilingSettings.subtreeUri = implicitTilingNode["subtrees"]["uri"].Value;
+            if (tile == null) return;
 
-        ReadSubtree subtreeReader = GetComponent<ReadSubtree>();
-        string subtreeURL = tilesetUrl.Replace("tileset.json", implicitTilingSettings.subtreeUri)
-                            .Replace("{level}", "0")
-                            .Replace("{x}", "0")
-                            .Replace("{y}", "0");
+            tile.CalculateBounds();
 
-        Debug.Log("Load subtree: " + subtreeURL);
-        subtreeReader.DownloadSubtree(subtreeURL, implicitTilingSettings, ReturnTiles);
-    }
-
-    public void ReturnTiles(Tile rootTile)
-    {
-        root = rootTile;
-        StartCoroutine(LoadInView());
-    }
-
-    /// <summary>
-    /// Check what tiles should be loaded/unloaded based on view
-    /// </summary>
-    private IEnumerator LoadInView()
-    {
-        var currentMainCamera = Camera.main;
-
-        yield return new WaitUntil(() => root != null);
-        while (true)
-        {
-            SetSSEComponent(currentMainCamera);
-
-            DisposeTilesOutsideView(currentMainCamera);
-
-            yield return LoadInViewRecursively(root, currentMainCamera); 
-        }
-    }
-
-    private void DisposeTilesOutsideView(Camera currentMainCamera)
-    {
-        //Clean up list op previously loaded tiles outside of view
-        for (int i = contentLoadedTiles.Count - 1; i >= 0; i--)
-        {
-            var child = contentLoadedTiles[i];
-            var closestPointOnBounds = child.Bounds.ClosestPoint(currentMainCamera.transform.position); //Returns original point when inside the bounds
-            var pixelError = (sseComponent * child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
-
-            if (pixelError <= maxPixelError || !child.IsInViewFrustrum(currentMainCamera))
+            foreach (var child in tile.children)
             {
-                contentLoadedTiles[i].Dispose();
-                contentLoadedTiles.RemoveAt(i);
+                RecalculateAllTileBounds(child);
             }
         }
-    }
 
-    private IEnumerator LoadInViewRecursively(Tile parentTile, Camera currentCamera)
-    {
-        foreach (var tile in parentTile.children)
+        IEnumerator LoadTileset()
         {
-            var closestPointOnBounds = tile.Bounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
-            var pixelError = (sseComponent * tile.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
-            
-            if (pixelError > maxPixelError && tile.IsInViewFrustrum(currentCamera))
+            UnityWebRequest www = UnityWebRequest.Get(tilesetUrl);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
             {
-                //Check for children ( and if closest child can refine ). Closest child would have same closest point as parent on bounds, so simply divide pixelError by 2
-                var canRefineToChildren = tile.children.Count > 0 && (pixelError / 2.0f > maxPixelError);
-                if (canRefineToChildren)
+                Debug.Log(www.error);
+            }
+            else
+            {
+                string jsonstring = www.downloadHandler.text;
+                JSONNode rootnode = JSON.Parse(jsonstring)["root"];
+                ReadTileset(rootnode);
+            }
+        }
+
+        private void LoadTileContent(Tile tile)
+        {
+            if (!tile.content)
+            {
+                if (tilePrioritiser != null)
                 {
-                    yield return LoadInViewRecursively(tile, currentCamera);
+                    tilePrioritiser.RemoveTileContent(tile);
                 }
-                else if (tile.hascontent && !canRefineToChildren)
+                else
                 {
-                    LoadChildContent(tile);
-                    contentLoadedTiles.Add(tile);
+                    tile.content = gameObject.AddComponent<Content>();
+                    tile.content.ParentTile = tile;
+                    tile.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", tile.X.ToString()).Replace("{x}", tile.Y.ToString()).Replace("{y}", tile.Z.ToString());
+                    tile.content.Load();
                 }
             }
-            else if (tile.geometricError <= sseComponent && tile.content)
+        }
+
+        private void DisposeTileContent(Tile tile)
+        {
+            if (tile.hascontent && tile.content)
             {
-                tile.Dispose();
+                if (tilePrioritiser != null)
+                {
+                    tilePrioritiser.RemoveTileContent(tile);
+                }
+                else
+                {
+                    tile.content.Dispose();
+                }
             }
         }
-    }
 
-    /// <summary>
-    /// Screen-space error component calculation
-    /// </summary>
-    public void SetSSEComponent(Camera currentCamera)
-    {
-        sseComponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * currentCamera.fieldOfView / 2));
-    }
+        private void ReadTileset(JSONNode rootnode)
+        {
+            JSONNode transformNode = rootnode["transform"];
+            transformValues = new double[16];
+            for (int i = 0; i < 16; i++)
+            {
+                transformValues[i] = transformNode[i].AsDouble;
+            }
+            JSONNode implicitTilingNode = rootnode["implicitTiling"];
+            if (implicitTilingNode != null)
+            {
+                ReadImplicitTiling(rootnode);
+            }
+
+            //setup location and rotation
+            positionECEF = new Vector3ECEF(transformValues[12], transformValues[13], transformValues[14]);
+            AlignWithUnityWorld();
+        }
+
+        private void AlignWithUnityWorld()
+        {
+            transform.position = CoordConvert.ECEFToUnity(positionECEF);
+            transform.rotation = CoordConvert.ecefRotionToUp();
+        }
+
+        private void ReadImplicitTiling(JSONNode rootnode)
+        {
+            tilingMethod = TilingMethod.implicitTiling;
+            implicitTilingSettings = new ImplicitTilingSettings();
+            string refine = rootnode["refine"].Value;
+            switch (refine)
+            {
+                case "REPLACE":
+                    implicitTilingSettings.refinementtype = refinementType.Replace;
+                    break;
+                case "ADD":
+                    implicitTilingSettings.refinementtype = refinementType.Add;
+                    break;
+                default:
+                    break;
+            }
+            implicitTilingSettings.geometricError = rootnode["geometricError"].AsFloat;
+            implicitTilingSettings.boundingRegion = new double[6];
+            for (int i = 0; i < 6; i++)
+            {
+                implicitTilingSettings.boundingRegion[i] = rootnode["boundingVolume"]["region"][i].AsDouble;
+            }
+            implicitTilingSettings.contentUri = rootnode["content"]["uri"].Value;
+            JSONNode implicitTilingNode = rootnode["implicitTiling"];
+            string subdivisionScheme = implicitTilingNode["subsivisionScheme"].Value;
+            switch (subdivisionScheme)
+            {
+                case "QUADTREE":
+                    implicitTilingSettings.subdivisionScheme = Subdivisionscheme.Quadtree;
+                    break;
+                default:
+                    implicitTilingSettings.subdivisionScheme = Subdivisionscheme.Octree;
+                    break;
+            }
+            implicitTilingSettings.subtreeLevels = implicitTilingNode["subtreeLevels"];
+            implicitTilingSettings.subtreeUri = implicitTilingNode["subtrees"]["uri"].Value;
+
+            ReadSubtree subtreeReader = GetComponent<ReadSubtree>();
+            string subtreeURL = tilesetUrl.Replace("tileset.json", implicitTilingSettings.subtreeUri)
+                                .Replace("{level}", "0")
+                                .Replace("{x}", "0")
+                                .Replace("{y}", "0");
+
+            Debug.Log("Load subtree: " + subtreeURL);
+            subtreeReader.DownloadSubtree(subtreeURL, implicitTilingSettings, ReturnTiles);
+        }
+
+        public void ReturnTiles(Tile rootTile)
+        {
+            root = rootTile;
+            StartCoroutine(LoadInView());
+        }
+
+        /// <summary>
+        /// Check what tiles should be loaded/unloaded based on view
+        /// </summary>
+        private IEnumerator LoadInView()
+        {
+            var currentMainCamera = Camera.main;
+
+            yield return new WaitUntil(() => root != null);
+            while (true)
+            {
+                SetSSEComponent(currentMainCamera);
+                DisposeTilesOutsideView(currentMainCamera);
+
+                yield return LoadInViewRecursively(root, currentMainCamera);
+            }
+        }
+
+        private void DisposeTilesOutsideView(Camera currentMainCamera)
+        {
+            //Clean up list op previously loaded tiles outside of view
+            for (int i = contentLoadedTiles.Count - 1; i >= 0; i--)
+            {
+                var child = contentLoadedTiles[i];
+                var closestPointOnBounds = child.Bounds.ClosestPoint(currentMainCamera.transform.position); //Returns original point when inside the bounds
+                var pixelError = (sseComponent * child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
+
+                if (pixelError <= maxPixelError || !child.IsInViewFrustrum(currentMainCamera))
+                {
+                    DisposeTileContent(child);
+                    contentLoadedTiles.RemoveAt(i);
+                }
+            }
+        }
+
+        private IEnumerator LoadInViewRecursively(Tile parentTile, Camera currentCamera)
+        {
+            foreach (var tile in parentTile.children)
+            {
+                var closestPointOnBounds = tile.Bounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
+                var pixelError = (sseComponent * tile.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
+
+                if (pixelError > maxPixelError && tile.IsInViewFrustrum(currentCamera))
+                {
+                    //Check for children ( and if closest child can refine ). Closest child would have same closest point as parent on bounds, so simply divide pixelError by 2
+                    var canRefineToChildren = tile.children.Count > 0 && (pixelError / 2.0f > maxPixelError);
+                    if (canRefineToChildren)
+                    {
+                        yield return LoadInViewRecursively(tile, currentCamera);
+                    }
+                    else if (tile.hascontent && !canRefineToChildren)
+                    {
+                        LoadTileContent(tile);
+                        contentLoadedTiles.Add(tile);
+                    }
+                }
+                else if (tile.geometricError <= sseComponent && tile.content)
+                {
+                    tile.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Screen-space error component calculation
+        /// </summary>
+        public void SetSSEComponent(Camera currentCamera)
+        {
+            sseComponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * currentCamera.fieldOfView / 2));
+        }
 
 #if UNITY_EDITOR
-    /// <summary>
-    /// Editor only methods for loading all tiles from context menu
-    /// </summary>
-    [ContextMenu("Load all content")]
-    private void LoadAll()
-    {
-        StartCoroutine(LoadAllTileContent());
-    }
-    private IEnumerator LoadAllTileContent()
-    {
-        yield return new WaitForEndOfFrame();
-        yield return LoadContentInChildren(root);
-    }
-    private IEnumerator LoadContentInChildren(Tile tile)
-    {
-        foreach (var child in tile.children)
+        /// <summary>
+        /// Editor only methods for loading all tiles from context menu
+        /// </summary>
+        [ContextMenu("Load all content")]
+        private void LoadAll()
         {
-            if (child.hascontent)
-            {
-                LoadChildContent(child);
-            }
-            yield return new WaitForEndOfFrame();
-            yield return LoadContentInChildren(child);
+            StartCoroutine(LoadAllTileContent());
         }
+        private IEnumerator LoadAllTileContent()
+        {
+            yield return new WaitForEndOfFrame();
+            yield return LoadContentInChildren(root);
+        }
+        private IEnumerator LoadContentInChildren(Tile tile)
+        {
+            foreach (var child in tile.children)
+            {
+                if (child.hascontent)
+                {
+                    LoadTileContent(child);
+                }
+                yield return new WaitForEndOfFrame();
+                yield return LoadContentInChildren(child);
+            }
+        }
+#endif
     }
-#endif 
-}
 
-public enum TilingMethod
-{
-    explicitTiling,
-    implicitTiling
-}
+    public enum TilingMethod
+    {
+        explicitTiling,
+        implicitTiling
+    }
 
-public enum refinementType
-{
-    Replace,
-    Add
-}
-public enum Subdivisionscheme
-{
-    Quadtree,
-    Octree
-}
+    public enum refinementType
+    {
+        Replace,
+        Add
+    }
+    public enum Subdivisionscheme
+    {
+        Quadtree,
+        Octree
+    }
 
-[System.Serializable]
-public class ImplicitTilingSettings
-{
-    public refinementType refinementtype;
-    public Subdivisionscheme subdivisionScheme;
-    public int subtreeLevels;
-    public string subtreeUri;
-    public string contentUri;
-    public float geometricError;
-    public double[] boundingRegion;
+    [System.Serializable]
+    public class ImplicitTilingSettings
+    {
+        public refinementType refinementtype;
+        public Subdivisionscheme subdivisionScheme;
+        public int subtreeLevels;
+        public string subtreeUri;
+        public string contentUri;
+        public float geometricError;
+        public double[] boundingRegion;
+    }
 }

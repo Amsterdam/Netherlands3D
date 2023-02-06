@@ -10,6 +10,8 @@ public class Tile : IDisposable
     public int Y;
     public int Z;
     public bool hascontent;
+
+    public Tile parent;
     public List<Tile> children = new List<Tile>();
     
     public double[] transform;
