@@ -24,14 +24,17 @@ namespace Netherlands3D.Core.Tiles
 
         private Camera currentCamera;
 
+        private int lastFramePrioritiesCalculated = 0;
 
         public override void Add(Tile tile)
         {
-            tile.content.stateChanged.AddListener(CalculatePriorities);
+            if (!PrioritisedTiles.Contains(tile))
+            {
+                PrioritisedTiles.Add(tile);
 
-            PrioritisedTiles.Add(tile);
-
-            CalculatePriorities();
+                CalculatePriorities();
+                Prioritise();
+            }
         }
 
         public override void Remove(Tile tile)
@@ -40,14 +43,23 @@ namespace Netherlands3D.Core.Tiles
             if (PrioritisedTiles.Contains(tile))
                 PrioritisedTiles.Remove(tile);
 
-            CalculatePriorities();
-
             tile.Dispose();
+
+            CalculatePriorities();
+            Prioritise();
         }
 
+        /// <summary>
+        /// Calculates the priority for the added tiles
+        /// </summary>
         public override void CalculatePriorities()
         {
-            foreach(var tile in PrioritisedTiles)
+            if (lastFramePrioritiesCalculated == Time.frameCount) {
+                return;
+            }
+            lastFramePrioritiesCalculated = Time.frameCount;
+
+            foreach (var tile in PrioritisedTiles)
             {
                 var priorityScore = 0.0f;
                 priorityScore += DistanceScore(tile.Bounds.center, 100, 5000, distanceScore);
@@ -57,8 +69,6 @@ namespace Netherlands3D.Core.Tiles
             }
 
             PrioritisedTiles = PrioritisedTiles.OrderBy(obj => obj.priority).ToList();
-
-            Prioritise();
         }
 
         /// <summary>
@@ -78,33 +88,24 @@ namespace Netherlands3D.Core.Tiles
                 if (interuptToMakeRoom > 0 && tile.content.State == Content.ContentLoadState.LOADING)
                 {
                     interuptToMakeRoom--;
-                    tile.content.Dispose();
+                    tile.Dispose();
                 }
-                else if(tile.content.State == Content.ContentLoadState.NOTLOADED)
+                else if(tile.content && tile.content.State == Content.ContentLoadState.NOTLOADED)
                 {
                     downloadAvailable--;
                     tile.content.Load();
-                }
-                else if (tile.content.State == Content.ContentLoadState.READY)
-                {
-                    //Keep already loaded tiles
-                    //This is the place to introduce max tiles in memory limits clean up
+
+                    tile.content.doneLoading.AddListener(TileCompletedLoading);
                 }
             }
+        }
 
-            for (int i = 0; i < PrioritisedTiles.Count; i++)
-            {
-                var tile = PrioritisedTiles[i];
-                if(tile.content.State == Content.ContentLoadState.NOTLOADED)
-                {
-                    downloadAvailable--;
-                    tile.content.Load();
-                }
-                else if(tile.content.State == Content.ContentLoadState.READY)
-                {
-
-                }
-            }
+        /// <summary>
+        /// If a tile completed loading, recalcule priorities
+        /// </summary>
+        private void TileCompletedLoading()
+        {
+            CalculatePriorities();
         }
 
         /// <summary>

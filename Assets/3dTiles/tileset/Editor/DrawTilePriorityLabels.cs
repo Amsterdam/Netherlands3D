@@ -18,7 +18,7 @@ class DrawTilePriorityLabels : Editor
 
         foreach(var tile in tilePrioritiser.PrioritisedTiles)
         {
-            Handles.Label(tile.Bounds.center, $"{tile.X},{tile.Y},{tile.Z}\npriority:{tile.priority}\ncontent status:{tile.content.State}");
+            Handles.Label(tile.Bounds.center, $"{tile.priority}");
         }
     }
 }

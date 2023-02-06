@@ -15,7 +15,7 @@ public class Content : MonoBehaviour, IDisposable
     private Tile parentTile;
     public Tile ParentTile { get => parentTile; set => parentTile = value; }
 
-    public UnityEvent stateChanged = new UnityEvent();
+    public UnityEvent doneLoading = new UnityEvent();
 
     public enum ContentLoadState{
         NOTLOADED,
@@ -28,7 +28,6 @@ public class Content : MonoBehaviour, IDisposable
         set
         {
             state = value;
-            stateChanged.Invoke();
         }
     }
 
@@ -84,6 +83,8 @@ public class Content : MonoBehaviour, IDisposable
         {
             Debug.LogWarning("Could not load GameObject");
         }
+
+        doneLoading.Invoke();
     }
 
     /// <summary>
@@ -91,9 +92,9 @@ public class Content : MonoBehaviour, IDisposable
     /// </summary>
     public void Dispose()
     {
-        State = ContentLoadState.NOTLOADED;
+        doneLoading.RemoveAllListeners();
 
-        stateChanged.RemoveAllListeners();
+        State = ContentLoadState.NOTLOADED;
 
         if (runningContentRequest != null)
             StopCoroutine(runningContentRequest);

@@ -30,8 +30,7 @@ namespace Netherlands3D.Core.Tiles
 
         private List<Tile> contentLoadedTiles = new List<Tile>();
 
-        private TilePrioritiser tilePrioritiser = null;
-
+        [SerializeField] private TilePrioritiser tilePrioritiser;
         private Camera currentCamera;
 
         private void OnEnable()
