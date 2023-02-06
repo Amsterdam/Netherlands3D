@@ -32,9 +32,25 @@ namespace Netherlands3D.Core.Tiles
 
         private TilePrioritiser tilePrioritiser = null;
 
+        private Camera currentCamera;
+
+        private void OnEnable()
+        {
+            currentCamera = Camera.main;
+        }
+
+        /// <summary>
+        /// Optional injection of tile prioritiser system
+        /// </summary>
+        /// <param name="tilePrioritiser">Prioritising system with TilePrioritiser base class</param>
+        public void SetTilePrioritiser(TilePrioritiser tilePrioritiser)
+        {
+            this.tilePrioritiser = tilePrioritiser;
+        }
+
         void Start()
         {
-            tilePrioritiser = GetComponent<TilePrioritiser>();
+            if(tilePrioritiser) tilePrioritiser.SetCamera(currentCamera);
 
             absolutePath = tilesetUrl.Replace("tileset.json", "");
             StartCoroutine(LoadTileset());
@@ -88,15 +104,16 @@ namespace Netherlands3D.Core.Tiles
         {
             if (!tile.content)
             {
+                tile.content = gameObject.AddComponent<Content>();
+                tile.content.ParentTile = tile;
+                tile.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", tile.X.ToString()).Replace("{x}", tile.Y.ToString()).Replace("{y}", tile.Z.ToString());
+
                 if (tilePrioritiser != null)
                 {
-                    tilePrioritiser.LoadTileContent(tile);
+                    tilePrioritiser.Add(tile);
                 }
                 else
                 {
-                    tile.content = gameObject.AddComponent<Content>();
-                    tile.content.ParentTile = tile;
-                    tile.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", tile.X.ToString()).Replace("{x}", tile.Y.ToString()).Replace("{y}", tile.Z.ToString());
                     tile.content.Load();
                 }
             }
@@ -108,7 +125,7 @@ namespace Netherlands3D.Core.Tiles
             {
                 if (tilePrioritiser != null)
                 {
-                    tilePrioritiser.RemoveTileContent(tile);
+                    tilePrioritiser.Remove(tile);
                 }
                 else
                 {
@@ -200,15 +217,15 @@ namespace Netherlands3D.Core.Tiles
         /// </summary>
         private IEnumerator LoadInView()
         {
-            var currentMainCamera = Camera.main;
+            currentCamera = Camera.main;
 
             yield return new WaitUntil(() => root != null);
             while (true)
             {
-                SetSSEComponent(currentMainCamera);
-                DisposeTilesOutsideView(currentMainCamera);
+                SetSSEComponent(currentCamera);
+                DisposeTilesOutsideView(currentCamera);
 
-                yield return LoadInViewRecursively(root, currentMainCamera);
+                yield return LoadInViewRecursively(root, currentCamera);
             }
         }
 

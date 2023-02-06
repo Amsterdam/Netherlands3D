@@ -91,9 +91,9 @@ public class Content : MonoBehaviour, IDisposable
     /// </summary>
     public void Dispose()
     {
-        stateChanged.RemoveAllListeners();
-
         State = ContentLoadState.NOTLOADED;
+
+        stateChanged.RemoveAllListeners();
 
         if (runningContentRequest != null)
             StopCoroutine(runningContentRequest);
