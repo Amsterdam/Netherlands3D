@@ -15,7 +15,7 @@ namespace Netherlands3D.Core.Tiles
         [SerializeField] private int maxSimultaneousDownloads = 6;
 
         [Header("Screen space error priority")]
-        [SerializeField] private float screenSpaceErrorScore = 10;
+        [SerializeField] private float screenSpaceErrorScoreMultiplier = 10;
 
         [Header("Center of screen priority")]
         [SerializeField] private float screenCenterScore = 10;
@@ -29,13 +29,21 @@ namespace Netherlands3D.Core.Tiles
         private Camera currentCamera;
 
         private int lastFramePrioritiesCalculated = 0;
+        public bool showPriorityNumbers = false;
 
         public override void RequestUpdate(Tile tile)
         {
             tile.requestedUpdate = true;
+            tile.content.doneDownloading.AddListener(TileFinishedDownload);
 
             PrioritisedTiles.Add(tile);
 
+            CalculatePriorities();
+            Prioritise();
+        }
+
+        private void TileFinishedDownload()
+        {
             CalculatePriorities();
             Prioritise();
         }
@@ -66,7 +74,7 @@ namespace Netherlands3D.Core.Tiles
             foreach (var tile in PrioritisedTiles)
             {
                 var priorityScore = 0.0f;
-                priorityScore += DistanceScore(tile);
+                //priorityScore += DistanceScore(tile);
                 priorityScore += InViewCenterScore(tile.Bounds.center, screenCenterScore);
 
                 tile.priority = priorityScore;
@@ -83,23 +91,38 @@ namespace Netherlands3D.Core.Tiles
         private void Prioritise()
         {
             int downloadAvailable = maxSimultaneousDownloads;
-            int interuptToMakeRoom = PrioritisedTiles.Count - maxSimultaneousDownloads;
+            int interuptToMakeRoom = 0;
+
+            //Determine how many downloads need to be interupted to make room for highest priority downloads
+            for (int i = 0; i < PrioritisedTiles.Count; i++)
+            {
+                if (i > maxSimultaneousDownloads) break;
+
+                var tile = PrioritisedTiles[i];
+                if (tile.content.State == Content.ContentLoadState.NOTLOADING)
+                {
+                    interuptToMakeRoom++;
+                }
+                else if(tile.content.State == Content.ContentLoadState.DOWNLOADING)
+                {
+                    downloadAvailable--;
+                }
+            }
 
             //Starting from lowest priority, abort any running downloads to make room for top of priority list
             for (int i = PrioritisedTiles.Count - 1; i >= 0; i--)
             {
                 var tile = PrioritisedTiles[i];
-                if (interuptToMakeRoom > 0 && tile.content.State == Content.ContentLoadState.LOADING)
+                if (interuptToMakeRoom > 0 && tile.content.State == Content.ContentLoadState.DOWNLOADING)
                 {
                     interuptToMakeRoom--;
                     tile.Dispose();
                 }
-                else if(tile.content && tile.content.State == Content.ContentLoadState.NOTLOADED)
+                else if(downloadAvailable > 0 && tile.content && tile.content.State == Content.ContentLoadState.NOTLOADING)
                 {
                     downloadAvailable--;
                     tile.content.Load();
-
-                    tile.content.doneLoading.AddListener(TileCompletedLoading);
+                    tile.content.doneDownloading.AddListener(TileCompletedLoading);
                 }
             }
         }
@@ -135,7 +158,7 @@ namespace Netherlands3D.Core.Tiles
         /// <returns></returns>
         public float DistanceScore(Tile tile)
         {
-            return tile.screenSpaceError * screenSpaceErrorScore;
+            return tile.screenSpaceError * screenSpaceErrorScoreMultiplier;
         }
 
         public override void SetCamera(Camera currentMainCamera)

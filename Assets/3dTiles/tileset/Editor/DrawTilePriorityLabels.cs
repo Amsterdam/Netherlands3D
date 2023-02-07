@@ -9,7 +9,7 @@ class DrawTilePriorityLabels : Editor
     void OnSceneGUI()
     {
         WebTilePrioritiser tilePrioritiser = (WebTilePrioritiser)target;
-        if (tilePrioritiser == null)
+        if (tilePrioritiser == null || !tilePrioritiser.showPriorityNumbers)
         {
             return;
         }

@@ -61,10 +61,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSimultaneousDownloads: 6
-  distanceScore: 10
-  maxDistance: 5000
-  minDistance: 200
-  screenCenterScore: 10
+  screenSpaceErrorScore: 1
+  screenCenterScore: 1000
   screenCenterWeight:
     serializedVersion: 2
     m_Curve:
@@ -89,3 +87,5 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  prioritisedTiles: []
+  showPriorityNumbers: 0

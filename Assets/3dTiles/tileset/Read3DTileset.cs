@@ -35,6 +35,10 @@ namespace Netherlands3D.Core.Tiles
 
         [SerializeField] private TilePrioritiser tilePrioritiser;
         private Camera currentCamera;
+        private Vector3 lastCameraPosition;
+        private Quaternion lastCameraRotation;
+        private Vector3 currentCameraPosition;
+        private Quaternion currentCameraRotation;
 
         private void OnEnable()
         {
@@ -216,15 +220,22 @@ namespace Netherlands3D.Core.Tiles
         /// </summary>
         private IEnumerator LoadInView()
         {
-            currentCamera = Camera.main;
-
             yield return new WaitUntil(() => root != null);
             while (true)
             {
-                SetSSEComponent(currentCamera);
-                DisposeTilesOutsideView(currentCamera);
+                //If camera changed, recalculate what tiles are be in view
+                currentCamera.transform.GetPositionAndRotation(out currentCameraPosition, out currentCameraRotation);
+                if (lastCameraPosition != currentCameraPosition || lastCameraRotation != currentCameraRotation)
+                {
+                    currentCamera.transform.GetPositionAndRotation(out lastCameraPosition, out lastCameraRotation);                 
 
-                yield return LoadInViewRecursively(root, currentCamera);
+                    SetSSEComponent(currentCamera);
+                    DisposeTilesOutsideView(currentCamera);
+
+                    yield return LoadInViewRecursively(root, currentCamera);
+                }
+
+                yield return new WaitForEndOfFrame();
             }
         }
 
@@ -317,11 +328,10 @@ namespace Netherlands3D.Core.Tiles
 
         private IEnumerator DownloadTileSet()
         {
+            //Main tileset json
             UnityWebRequest www = UnityWebRequest.Get(tilesetUrl);
             yield return www.SendWebRequest();
-
-            var folder = EditorUtility.SaveFolderPanel("Save dataset to folder", "", "");
-
+            var folder = EditorUtility.SaveFolderPanel("Save tileset to folder", "", "");
             if (www.result != UnityWebRequest.Result.Success)
             {
                 Debug.Log(www.error);
@@ -329,10 +339,33 @@ namespace Netherlands3D.Core.Tiles
             else
             {
                 string jsonstring = www.downloadHandler.text;
-                File.WriteAllText(folder + "/dataset.json", jsonstring);
+                File.WriteAllText(folder + "/tileset.json", jsonstring);
             }
 
-            yield return DownloadContent(root, folder);
+            //Content
+            //yield return DownloadContent(root, folder);
+
+            //Subtree(s)
+            var subtreePath = implicitTilingSettings.subtreeUri.Replace("{level}", "0")
+                                                               .Replace("{x}", "0")
+                                                               .Replace("{y}", "0");
+
+            string subtreeURL = tilesetUrl.Replace("tileset.json", subtreePath);
+
+            www = UnityWebRequest.Get(subtreeURL);
+            yield return www.SendWebRequest();
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                var data = www.downloadHandler.data;
+
+                var newFile = new FileInfo(folder + "/" + subtreePath);
+                newFile.Directory.Create();
+                File.WriteAllBytes(folder + "/" + subtreePath, data);
+            }
 
             Debug.Log("<color=green>All done!</color>");
         }

@@ -15,14 +15,14 @@ public class Content : MonoBehaviour, IDisposable
     private Tile parentTile;
     public Tile ParentTile { get => parentTile; set => parentTile = value; }
 
-    public UnityEvent doneLoading = new UnityEvent();
+    public UnityEvent doneDownloading = new UnityEvent();
 
     public enum ContentLoadState{
-        NOTLOADED,
-        LOADING,
-        READY,
+        NOTLOADING,
+        DOWNLOADING,
+        DOWNLOADED,
     }
-    private ContentLoadState state = ContentLoadState.NOTLOADED;
+    private ContentLoadState state = ContentLoadState.NOTLOADING;
     public ContentLoadState State { 
         get => state;
         set
@@ -41,13 +41,13 @@ public class Content : MonoBehaviour, IDisposable
         Color color = Color.white;
         switch (State)
         {
-            case ContentLoadState.NOTLOADED:
+            case ContentLoadState.NOTLOADING:
                 color = Color.red;
                 break;
-            case ContentLoadState.LOADING:
+            case ContentLoadState.DOWNLOADING:
                 color = Color.yellow;
                 break;
-            case ContentLoadState.READY:
+            case ContentLoadState.DOWNLOADED:
                 color = Color.green;
                 break;
             default:
@@ -57,6 +57,9 @@ public class Content : MonoBehaviour, IDisposable
         Gizmos.color = color;
         var parentTileBounds = ParentTile.Bounds;
         Gizmos.DrawWireCube(parentTileBounds.center, parentTileBounds.size);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(parentTileBounds.center, parentTileBounds.center+(ParentTile.priority * Vector3.up));
     }
 
     /// <summary>
@@ -64,14 +67,14 @@ public class Content : MonoBehaviour, IDisposable
     /// </summary>
     public Coroutine Load()
     {
-        State = ContentLoadState.LOADING;
+        State = ContentLoadState.DOWNLOADING;
         runningContentRequest = StartCoroutine(ImportB3DMGltf.ImportBinFromURL(uri, GotContent));
         return runningContentRequest;
     }
 
     private void GotContent(GameObject contentGameObject)
     {
-        State = ContentLoadState.READY;
+        State = ContentLoadState.DOWNLOADED;
         if (contentGameObject != null)
         {
             this.contentGameObject = contentGameObject;
@@ -84,7 +87,7 @@ public class Content : MonoBehaviour, IDisposable
             Debug.LogWarning("Could not load GameObject");
         }
 
-        doneLoading.Invoke();
+        doneDownloading.Invoke();
     }
 
     /// <summary>
@@ -92,9 +95,9 @@ public class Content : MonoBehaviour, IDisposable
     /// </summary>
     public void Dispose()
     {
-        doneLoading.RemoveAllListeners();
+        doneDownloading.RemoveAllListeners();
 
-        State = ContentLoadState.NOTLOADED;
+        State = ContentLoadState.NOTLOADING;
 
         if (runningContentRequest != null)
             StopCoroutine(runningContentRequest);
