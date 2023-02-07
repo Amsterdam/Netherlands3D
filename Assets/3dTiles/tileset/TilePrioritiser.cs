@@ -10,8 +10,8 @@ namespace Netherlands3D.Core.Tiles
     public abstract class TilePrioritiser : MonoBehaviour
     {
         public abstract void CalculatePriorities();
-        public abstract void Add(Tile tile);
-        public abstract void Remove(Tile tile);
+        public abstract void RequestUpdate(Tile tile);
+        public abstract void RequestDispose(Tile tile);
         public abstract void SetCamera(Camera currentMainCamera);
     }
 }

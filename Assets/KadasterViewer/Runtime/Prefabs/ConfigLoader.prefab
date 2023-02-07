@@ -61,6 +61,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSimultaneousDownloads: 6
+  distanceScore: 10
+  maxDistance: 5000
+  minDistance: 200
+  screenCenterScore: 10
   screenCenterWeight:
     serializedVersion: 2
     m_Curve:
@@ -76,11 +80,11 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: -0.023010522
+      outSlope: -0.023010522
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.604638
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2

@@ -14,49 +14,47 @@ namespace Netherlands3D.Core.Tiles
         [Header("Web limitations")]
         [SerializeField] private int maxSimultaneousDownloads = 6;
 
-        [Header("Distance priority score")]
-        [SerializeField] private float distanceScore = 10;
-        [SerializeField] private float maxDistance = 10;
-        [SerializeField] private float minDistance = 10;
+        [Header("Screen space error priority")]
+        [SerializeField] private float screenSpaceErrorScore = 10;
 
-        [Header("Center of screen score")]
+        [Header("Center of screen priority")]
         [SerializeField] private float screenCenterScore = 10;
         [SerializeField] AnimationCurve screenCenterWeight;
 
         private Vector2 viewCenter = new Vector2(0.5f, 0.5f);
 
-        private List<Tile> prioritisedTiles = new List<Tile>();
+        [SerializeField] private List<Tile> prioritisedTiles = new List<Tile>();
         public List<Tile> PrioritisedTiles { get => prioritisedTiles; private set => prioritisedTiles = value; }
 
         private Camera currentCamera;
 
         private int lastFramePrioritiesCalculated = 0;
 
-        public override void Add(Tile tile)
+        public override void RequestUpdate(Tile tile)
         {
-            if (!PrioritisedTiles.Contains(tile))
-            {
-                PrioritisedTiles.Add(tile);
+            tile.requestedUpdate = true;
 
-                CalculatePriorities();
-                Prioritise();
-            }
-        }
-
-        public override void Remove(Tile tile)
-        {
-            //Clean up as fast as possible, directly dispose
-            if (PrioritisedTiles.Contains(tile))
-                PrioritisedTiles.Remove(tile);
-
-            tile.Dispose();
+            PrioritisedTiles.Add(tile);
 
             CalculatePriorities();
             Prioritise();
         }
 
+        public override void RequestDispose(Tile tile)
+        {
+            //Clean up as fast as possible, directly dispose
+            if (tile.requestedUpdate)
+                PrioritisedTiles.Remove(tile);
+
+            tile.Dispose();
+            tile.requestedUpdate = false;
+ 
+            CalculatePriorities();
+            Prioritise();
+        }
+
         /// <summary>
-        /// Calculates the priority for the added tiles
+        /// Calculates the priority list for the added tiles
         /// </summary>
         public override void CalculatePriorities()
         {
@@ -68,13 +66,13 @@ namespace Netherlands3D.Core.Tiles
             foreach (var tile in PrioritisedTiles)
             {
                 var priorityScore = 0.0f;
-                priorityScore += DistanceScore(tile.Bounds.center, 100, 5000, distanceScore);
+                priorityScore += DistanceScore(tile);
                 priorityScore += InViewCenterScore(tile.Bounds.center, screenCenterScore);
 
                 tile.priority = priorityScore;
             }
 
-            PrioritisedTiles = PrioritisedTiles.OrderBy(obj => obj.priority).ToList();
+            PrioritisedTiles = PrioritisedTiles.OrderByDescending(obj => obj.priority).ToList();
         }
 
         /// <summary>
@@ -135,12 +133,9 @@ namespace Netherlands3D.Core.Tiles
         /// <param name="maxDistance">The distance where score becomes 0</param>
         /// <param name="maxScore">Max score for closest object</param>
         /// <returns></returns>
-        public float DistanceScore(Vector3 position, float minDistance, float maxDistance, float maxScore)
+        public float DistanceScore(Tile tile)
         {
-            var distance = Vector3.Distance(currentCamera.transform.position, position);
-            var distanceScore = maxScore - (Mathf.InverseLerp(distance, minDistance, maxDistance) * maxScore);
-
-            return distanceScore;
+            return tile.screenSpaceError * screenSpaceErrorScore;
         }
 
         public override void SetCamera(Camera currentMainCamera)

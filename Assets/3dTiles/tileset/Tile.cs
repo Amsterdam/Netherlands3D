@@ -16,15 +16,18 @@ public class Tile : IDisposable
 
     public double[] transform;
     public float geometricError;
+    public float screenSpaceError;
+
     public string refine;
     public BoundingVolume boundingVolume;
     public Content content;
 
-    public TileStatus status = TileStatus.unloaded;
     public float priority = 0;
 
     private bool boundsAvailable = false;
     private Bounds bounds;
+    public bool requestedUpdate = false;
+
     public Bounds Bounds 
     { 
         get {
