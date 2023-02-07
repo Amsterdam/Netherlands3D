@@ -97,10 +97,14 @@ public class Content : MonoBehaviour, IDisposable
     {
         doneDownloading.RemoveAllListeners();
 
+        //Direct abort of downloads
+        if(State == ContentLoadState.DOWNLOADING)
+        {
+            runningWebRequest.Abort();
+            StopCoroutine(runningContentRequest);
+        }
         State = ContentLoadState.NOTLOADING;
 
-        runningWebRequest.Abort();
-        StopCoroutine(runningContentRequest);
 
         if (contentGameObject)
         {
