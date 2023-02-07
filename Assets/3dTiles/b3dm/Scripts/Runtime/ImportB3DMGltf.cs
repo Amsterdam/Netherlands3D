@@ -39,17 +39,17 @@ namespace Netherlands3D.B3DM
 
         private void LoadFromURL()
         {
-            StartCoroutine(ImportBinFromURL(url, null));
+            StartCoroutine(ImportBinFromURL(url, null, new UnityWebRequest()));
         }
 
         private void LoadFromURL(string url, Action<GameObject> callback)
         {
-            StartCoroutine(ImportBinFromURL(url, callback));
+            StartCoroutine(ImportBinFromURL(url, callback, new UnityWebRequest()));
         }
 
-        public static IEnumerator ImportBinFromURL(string url, Action<GameObject> callback)
+        public static IEnumerator ImportBinFromURL(string url, Action<GameObject> callback, UnityWebRequest webRequest)
         {
-            using UnityWebRequest webRequest = UnityWebRequest.Get(url);
+            webRequest = UnityWebRequest.Get(url);
 
             var customCertificateHandler = new CustomCertificateValidation();
             webRequest.certificateHandler = customCertificateHandler; //Not safe; but solves breaking curl error

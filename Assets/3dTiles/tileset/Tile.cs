@@ -29,7 +29,6 @@ public class Tile : IDisposable
     
     public bool requestedUpdate = false;
 
-
     public Bounds Bounds 
     { 
         get {

@@ -10,6 +10,8 @@ public class Content : MonoBehaviour, IDisposable
     public string uri = "";
 
     public GameObject contentGameObject;
+
+    private UnityWebRequest runningWebRequest;
     private Coroutine runningContentRequest;
 
     private Tile parentTile;
@@ -65,11 +67,13 @@ public class Content : MonoBehaviour, IDisposable
     /// <summary>
     /// Load the content from an url
     /// </summary>
-    public Coroutine Load()
+    public void Load()
     {
         State = ContentLoadState.DOWNLOADING;
-        runningContentRequest = StartCoroutine(ImportB3DMGltf.ImportBinFromURL(uri, GotContent));
-        return runningContentRequest;
+        runningWebRequest = new UnityWebRequest();
+        runningContentRequest = StartCoroutine(
+            ImportB3DMGltf.ImportBinFromURL(uri, GotContent, runningWebRequest)
+        );
     }
 
     private void GotContent(GameObject contentGameObject)
@@ -81,10 +85,6 @@ public class Content : MonoBehaviour, IDisposable
             this.contentGameObject.transform.SetParent(this.gameObject.transform, true);
             this.contentGameObject.transform.localRotation = Quaternion.identity;
             this.contentGameObject.transform.localPosition = Vector3.zero;
-        }
-        else
-        {
-            Debug.LogWarning("Could not load GameObject");
         }
 
         doneDownloading.Invoke();
@@ -99,8 +99,8 @@ public class Content : MonoBehaviour, IDisposable
 
         State = ContentLoadState.NOTLOADING;
 
-        if (runningContentRequest != null)
-            StopCoroutine(runningContentRequest);
+        runningWebRequest.Abort();
+        StopCoroutine(runningContentRequest);
 
         if (contentGameObject)
         {
