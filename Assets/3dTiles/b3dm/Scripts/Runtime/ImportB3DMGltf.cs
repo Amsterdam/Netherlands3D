@@ -42,12 +42,7 @@ namespace Netherlands3D.B3DM
             StartCoroutine(ImportBinFromURL(url, null, new UnityWebRequest()));
         }
 
-        private void LoadFromURL(string url, Action<GameObject> callback)
-        {
-            StartCoroutine(ImportBinFromURL(url, callback, new UnityWebRequest()));
-        }
-
-        public static IEnumerator ImportBinFromURL(string url, Action<GameObject> callback, UnityWebRequest webRequest)
+        public static IEnumerator ImportBinFromURL(string url, Action<GltfImport> callbackGltf, UnityWebRequest webRequest)
         {
             webRequest = UnityWebRequest.Get(url);
 
@@ -59,7 +54,7 @@ namespace Netherlands3D.B3DM
             if (webRequest.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogWarning(url + " -> " +webRequest.error);
-                callback.Invoke(null);
+                callbackGltf.Invoke(null);
             }
             else
             {
@@ -72,8 +67,10 @@ namespace Netherlands3D.B3DM
                     bytes = B3dmReader.ReadB3dmGlbContentOnly(memoryStream);
                 }
 
-                yield return ParseFromBytes(bytes, url, callback);
+                yield return ParseFromBytes(bytes, url, callbackGltf);
             }
+
+            webRequest.Dispose();
         }
 
         public async void ImportBinFromFile(string filepath)
@@ -109,7 +106,7 @@ namespace Netherlands3D.B3DM
             await ParseFromBytes(bytes, filepath, null);
         }
 
-        private static async Task ParseFromBytes(byte[] glbBuffer, string sourcePath, Action<GameObject> callback)
+        private static async Task ParseFromBytes(byte[] glbBuffer, string sourcePath, Action<GltfImport> callbackGltf)
         {
             //Use our parser (in this case GLTFFast to read the binary data and instantiate the Unity objects in the scene)
             var gltf = new GltfImport();
@@ -120,19 +117,13 @@ namespace Netherlands3D.B3DM
 
             if (success)
             {
-                var gameObject = new GameObject("glTFScenes");
-                var scenes = gltf.SceneCount;
-                for (int i = 0; i < scenes; i++)
-                {
-                    await gltf.InstantiateSceneAsync(gameObject.transform, i);
-                }
-
-                callback?.Invoke(gameObject);
+                callbackGltf?.Invoke(gltf);
             }
             else
             {
                 Debug.LogError("Loading glTF failed!");
-                callback?.Invoke(null);
+                callbackGltf?.Invoke(null);
+                gltf.Dispose();
             }
         }
 

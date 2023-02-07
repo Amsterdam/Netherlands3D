@@ -1,4 +1,5 @@
-﻿using Netherlands3D.B3DM;
+﻿using GLTFast;
+using Netherlands3D.B3DM;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,6 +19,8 @@ public class Content : MonoBehaviour, IDisposable
     public Tile ParentTile { get => parentTile; set => parentTile = value; }
 
     public UnityEvent doneDownloading = new UnityEvent();
+
+    private GltfImport gltf;
 
     public enum ContentLoadState{
         NOTLOADING,
@@ -72,19 +75,30 @@ public class Content : MonoBehaviour, IDisposable
         State = ContentLoadState.DOWNLOADING;
         runningWebRequest = new UnityWebRequest();
         runningContentRequest = StartCoroutine(
-            ImportB3DMGltf.ImportBinFromURL(uri, GotContent, runningWebRequest)
+            ImportB3DMGltf.ImportBinFromURL(uri, GotGltfContent, runningWebRequest)
         );
     }
 
-    private void GotContent(GameObject contentGameObject)
+    /// <summary>
+    /// After parsing gltf content spawn gltf scenes
+    /// </summary>
+    private async void GotGltfContent(GltfImport gltf)
     {
         State = ContentLoadState.DOWNLOADED;
-        if (contentGameObject != null)
+        if (gltf != null)
         {
-            this.contentGameObject = contentGameObject;
+            this.gltf = gltf;
+
+            var scenes = gltf.SceneCount;
+            var gameObject = new GameObject($"{parentTile.X},{parentTile.Y},{parentTile.Z} gltf scenes:{scenes}");
+            for (int i = 0; i < scenes; i++)
+            {
+                await gltf.InstantiateSceneAsync(gameObject.transform, i);
+            }
+
+            this.contentGameObject = gameObject;
             this.contentGameObject.transform.SetParent(this.gameObject.transform, true);
-            this.contentGameObject.transform.localRotation = Quaternion.identity;
-            this.contentGameObject.transform.localPosition = Vector3.zero;
+            this.contentGameObject.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         }
 
         doneDownloading.Invoke();
@@ -105,26 +119,9 @@ public class Content : MonoBehaviour, IDisposable
         }
         State = ContentLoadState.NOTLOADING;
 
-
         if (contentGameObject)
         {
-            //TODO: Make sure GLTFast cleans up its internal stuff like textures, animations etc. It has a Dispose but might be shared lists
-            //For now we do mats and meshes manualy.
-
-            //Materials
-            var renderers = contentGameObject.GetComponentsInChildren<Renderer>();
-            foreach(var renderer in renderers)
-            {
-                var materials = renderer.sharedMaterials;
-                foreach (var mat in materials)
-                    Destroy(mat);
-            }
-
-            //Meshes
-            var meshFilters = contentGameObject.GetComponentsInChildren<MeshFilter>();
-            foreach (var meshFilter in meshFilters)
-                Destroy(meshFilter.sharedMesh);
-
+            gltf.Dispose();
             Destroy(contentGameObject);
         }
         Destroy(this);
