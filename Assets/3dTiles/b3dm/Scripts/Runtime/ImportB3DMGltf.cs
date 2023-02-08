@@ -87,7 +87,6 @@ namespace Netherlands3D.B3DM
                 //Retrieve the glb from the b3dm
                 var b3dmFileStream = File.OpenRead(filepath);
                 var b3dm = B3dmReader.ReadB3dm(b3dmFileStream);
-
                 bytes = new MemoryStream(b3dm.GlbData).ToArray();
 
 #if UNITY_EDITOR

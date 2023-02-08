@@ -66,8 +66,8 @@ MonoBehaviour:
   gamepadRotateSpeed: 50
   gamepadMoveSpeed: 10
   maxPointerDistance: 10000
-  maxCameraHeight: 1500
-  minCameraHeight: -500
+  maxCameraHeight: 3000
+  minCameraHeight: 0
   useRotationLimits: 1
   horizontalInput: {fileID: 11400000, guid: 47fdda6b64fb95e49b5a0ad3df35497e, type: 2}
   verticalInput: {fileID: 11400000, guid: 962e73377a6e8f44aa81cda26eaf96e2, type: 2}
