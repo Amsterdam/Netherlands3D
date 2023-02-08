@@ -125,7 +125,7 @@ namespace Netherlands3D.Core.Tiles
             }
         }
 
-        private void DisposeDirectly(Tile tile)
+        private void RequestDispose(Tile tile)
         {
             if (tilePrioritiser != null)
             {
@@ -251,7 +251,7 @@ namespace Netherlands3D.Core.Tiles
                 child.screenSpaceError = screenSpaceError;
                 if (screenSpaceError <= maxPixelError || !child.IsInViewFrustrum(currentMainCamera))
                 {
-                    DisposeDirectly(child);
+                    RequestDispose(child);
                     visibleTiles.RemoveAt(i);
                 }
             }
@@ -268,7 +268,7 @@ namespace Netherlands3D.Core.Tiles
 
                 if (tile.geometricError <= sseComponent && tile.content)
                 {
-                    DisposeDirectly(tile);
+                    RequestDispose(tile);
                 }
                 else if (pixelError > maxPixelError && tile.IsInViewFrustrum(currentCamera))
                 {
