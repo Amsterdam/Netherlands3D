@@ -39,8 +39,8 @@ namespace Netherlands3D.Core
                 movingOrigin = value;
             }
         }
-        private Coroutine runningCameraDistanceCheck;
 
+        private Coroutine runningCameraDistanceCheck;
 
         void Awake()
         {

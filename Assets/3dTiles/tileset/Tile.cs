@@ -25,11 +25,11 @@ public class Tile : IDisposable
     public float priority = 0;
 
     private bool boundsAvailable = false;
-    private Bounds bounds;
+    private Bounds bounds = new Bounds();
     
     public bool requestedUpdate = false;
 
-    public Bounds Bounds 
+    public Bounds ContentBounds 
     { 
         get {
             return bounds;
@@ -95,7 +95,7 @@ public class Tile : IDisposable
     {
         if (!boundsAvailable) CalculateBounds();
 
-        return ofCamera.InView(Bounds);
+        return ofCamera.InView(ContentBounds);
     }
 
     public void CalculateBounds()
@@ -107,11 +107,9 @@ public class Tile : IDisposable
         var unityMin = CoordConvert.ECEFToUnity(ecefMin);
         var unityMax = CoordConvert.ECEFToUnity(ecefMax);
 
-        var newBounds = new Bounds();
-        newBounds.center = unityMin;
-        newBounds.Encapsulate(unityMax);
-
-        Bounds = newBounds;
+        bounds.size = Vector3.zero;
+        bounds.center = unityMin;
+        bounds.Encapsulate(unityMax);
 
         boundsAvailable = true;
     }

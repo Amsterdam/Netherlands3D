@@ -125,7 +125,7 @@ namespace Netherlands3D.Core.Tiles
             }
         }
 
-        private void RequestDispose(Tile tile)
+        private void DisposeDirectly(Tile tile)
         {
             if (tilePrioritiser != null)
             {
@@ -233,6 +233,8 @@ namespace Netherlands3D.Core.Tiles
                     DisposeTilesOutsideView(currentCamera);
 
                     yield return LoadInViewRecursively(root, currentCamera);
+
+
                 }
 
                 yield return new WaitForEndOfFrame();
@@ -245,13 +247,13 @@ namespace Netherlands3D.Core.Tiles
             for (int i = visibleTiles.Count - 1; i >= 0; i--)
             {
                 var child = visibleTiles[i];
-                var closestPointOnBounds = child.Bounds.ClosestPoint(currentMainCamera.transform.position); //Returns original point when inside the bounds
+                var closestPointOnBounds = child.ContentBounds.ClosestPoint(currentMainCamera.transform.position); //Returns original point when inside the bounds
 
                 var screenSpaceError = (sseComponent * child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
                 child.screenSpaceError = screenSpaceError;
                 if (screenSpaceError <= maxPixelError || !child.IsInViewFrustrum(currentMainCamera))
                 {
-                    RequestDispose(child);
+                    DisposeDirectly(child);
                     visibleTiles.RemoveAt(i);
                 }
             }
@@ -261,7 +263,9 @@ namespace Netherlands3D.Core.Tiles
         {
             foreach (var tile in parentTile.children)
             {
-                var closestPointOnBounds = tile.Bounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
+                if (visibleTiles.Contains(tile)) continue;
+
+                var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
                 var pixelError = (sseComponent * tile.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
 
                 if (pixelError > maxPixelError && tile.IsInViewFrustrum(currentCamera))

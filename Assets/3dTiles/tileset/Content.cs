@@ -60,7 +60,7 @@ public class Content : MonoBehaviour, IDisposable
         }
 
         Gizmos.color = color;
-        var parentTileBounds = ParentTile.Bounds;
+        var parentTileBounds = ParentTile.ContentBounds;
         Gizmos.DrawWireCube(parentTileBounds.center, parentTileBounds.size);
 
         Gizmos.color = Color.blue;

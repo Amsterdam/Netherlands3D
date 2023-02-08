@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Ookii.Dialogs;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -28,37 +29,41 @@ namespace Netherlands3D.Core.Tiles
 
         private Camera currentCamera;
 
-        private int lastFramePrioritiesCalculated = 0;
+        private bool requirePriorityCheck = false;
         public bool showPriorityNumbers = false;
+
+        /// <summary>
+        /// If a tile completed loading, recalcule priorities
+        /// </summary>
+        private void TileCompletedLoading()
+        {
+            requirePriorityCheck = true;
+        }
 
         public override void RequestUpdate(Tile tile)
         {
+            requirePriorityCheck = true;
+
             tile.requestedUpdate = true;
-            tile.content.doneDownloading.AddListener(TileFinishedDownload);
-
             PrioritisedTiles.Add(tile);
-
-            CalculatePriorities();
-            Prioritise();
-        }
-
-        private void TileFinishedDownload()
-        {
-            CalculatePriorities();
-            Prioritise();
         }
 
         public override void RequestDispose(Tile tile)
         {
-            //Clean up as fast as possible, directly dispose
-            if (tile.requestedUpdate)
-                PrioritisedTiles.Remove(tile);
+            PrioritisedTiles.Remove(tile);
+
+            requirePriorityCheck = true;
 
             tile.Dispose();
             tile.requestedUpdate = false;
- 
-            CalculatePriorities();
-            Prioritise();
+        }
+
+        private void Update()
+        {
+            if(requirePriorityCheck)
+            {
+                CalculatePriorities();
+            }
         }
 
         /// <summary>
@@ -66,21 +71,18 @@ namespace Netherlands3D.Core.Tiles
         /// </summary>
         public override void CalculatePriorities()
         {
-            if (lastFramePrioritiesCalculated == Time.frameCount) {
-                return;
-            }
-            lastFramePrioritiesCalculated = Time.frameCount;
-
             foreach (var tile in PrioritisedTiles)
             {
                 var priorityScore = 0.0f;
                 //priorityScore += DistanceScore(tile);
-                priorityScore += InViewCenterScore(tile.Bounds.center, screenCenterScore);
+                priorityScore += InViewCenterScore(tile.ContentBounds.center, screenCenterScore);
 
                 tile.priority = priorityScore;
             }
 
             PrioritisedTiles = PrioritisedTiles.OrderByDescending(obj => obj.priority).ToList();
+
+            Apply();
         }
 
         /// <summary>
@@ -88,26 +90,9 @@ namespace Netherlands3D.Core.Tiles
         /// by interupting tiles that fall outside the max downloads and
         /// did not start loading yet.
         /// </summary>
-        private void Prioritise()
+        private void Apply()
         {
             int downloadAvailable = maxSimultaneousDownloads;
-            int interuptToMakeRoom = 0;
-
-            //Determine how many downloads need to be interupted to make room for highest priority downloads
-            for (int i = 0; i < PrioritisedTiles.Count; i++)
-            {
-                if (i > maxSimultaneousDownloads) break;
-
-                var tile = PrioritisedTiles[i];
-                if (tile.content.State == Content.ContentLoadState.NOTLOADING)
-                {
-                    interuptToMakeRoom++;
-                }
-                else if(tile.content.State == Content.ContentLoadState.DOWNLOADING)
-                {
-                    downloadAvailable--;
-                }
-            }
 
             //Starting from lowest priority, abort any running downloads to make room for top of priority list
             for (int i = PrioritisedTiles.Count - 1; i >= 0; i--)
@@ -125,14 +110,6 @@ namespace Netherlands3D.Core.Tiles
                     tile.content.doneDownloading.AddListener(TileCompletedLoading);
                 }
             }
-        }
-
-        /// <summary>
-        /// If a tile completed loading, recalcule priorities
-        /// </summary>
-        private void TileCompletedLoading()
-        {
-            CalculatePriorities();
         }
 
         /// <summary>
