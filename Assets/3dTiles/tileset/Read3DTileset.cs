@@ -268,7 +268,7 @@ namespace Netherlands3D.Core.Tiles
 
                 if (tile.geometricError <= sseComponent && tile.content)
                 {
-                    tile.Dispose();
+                    DisposeDirectly(tile);
                 }
                 else if (pixelError > maxPixelError && tile.IsInViewFrustrum(currentCamera))
                 {

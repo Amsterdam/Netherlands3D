@@ -43,8 +43,6 @@ public class Tile : IDisposable
         float posY = (float)(transform[13] / 1000); // measured from earth-center to 90degrees east at equator
         float posZ = (float)(transform[14] / 1000); // measured from earth-center to nothpole
 
-        Vector3 baseDirection = new Vector3(posX, posY, posZ);
-
         float angleX = -Mathf.Rad2Deg * Mathf.Atan(posY / posZ);
         float angleY = -Mathf.Rad2Deg * Mathf.Atan(posX / posZ);
         float angleZ = -Mathf.Rad2Deg * Mathf.Atan(posY / posX);

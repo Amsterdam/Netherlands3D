@@ -31,6 +31,8 @@ namespace Netherlands3D.Core.Tiles
         private bool requirePriorityCheck = false;
         public bool showPriorityNumbers = false;
 
+        [SerializeField] private int downloadAvailable = 0;
+
         /// <summary>
         /// If a tile completed loading, recalcule priorities
         /// </summary>
@@ -90,13 +92,15 @@ namespace Netherlands3D.Core.Tiles
         /// </summary>
         private void Apply()
         {
-            int downloadAvailable = maxSimultaneousDownloads;
+            downloadAvailable = maxSimultaneousDownloads - PrioritisedTiles.Count(tile => tile.content.State == Content.ContentLoadState.DOWNLOADING);
 
             //Starting from lowest priority, abort any running downloads to make room for top of priority list
             for (int i = 0; i < PrioritisedTiles.Count; i++)
             {
+                if (downloadAvailable <= 0) break;
+
                 var tile = PrioritisedTiles[i];
-                if (downloadAvailable > 0 && tile.content && tile.content.State == Content.ContentLoadState.NOTLOADING)
+                if (tile.content && tile.content.State == Content.ContentLoadState.NOTLOADING)
                 {
                     downloadAvailable--;
                     tile.content.Load();

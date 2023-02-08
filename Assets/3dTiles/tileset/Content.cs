@@ -84,6 +84,8 @@ public class Content : MonoBehaviour, IDisposable
     /// </summary>
     private async void GotGltfContent(GltfImport gltf)
     {
+        if (this == null) return;
+
         State = ContentLoadState.DOWNLOADED;
         if (gltf != null)
         {
@@ -127,6 +129,3 @@ public class Content : MonoBehaviour, IDisposable
         Destroy(this);
     }
 }
-
-
-

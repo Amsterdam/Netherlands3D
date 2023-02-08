@@ -62,7 +62,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSimultaneousDownloads: 6
   screenSpaceErrorScoreMultiplier: 1
-  screenCenterScore: 1000
+  screenCenterScore: 2000
   screenCenterWeight:
     serializedVersion: 2
     m_Curve:
@@ -89,3 +89,4 @@ MonoBehaviour:
     m_RotationOrder: 4
   prioritisedTiles: []
   showPriorityNumbers: 0
+  downloadAvailable: 0
