@@ -30,6 +30,8 @@ namespace Netherlands3D.B3DM
         [SerializeField] private bool debug = false;
         [SerializeField] private bool writeGlbNextToB3dm;
 
+        private static readonly CustomCertificateValidation customCertificateHandler = new CustomCertificateValidation();
+
         private void Awake()
         {
             if(binTilePath) binTilePath.started.AddListener(ImportBinFromFile);
@@ -45,8 +47,6 @@ namespace Netherlands3D.B3DM
         public static IEnumerator ImportBinFromURL(string url, Action<GltfImport> callbackGltf, UnityWebRequest webRequest)
         {
             webRequest = UnityWebRequest.Get(url);
-
-            var customCertificateHandler = new CustomCertificateValidation();
             webRequest.certificateHandler = customCertificateHandler; //Not safe; but solves breaking curl error
 
             yield return webRequest.SendWebRequest();
@@ -59,7 +59,6 @@ namespace Netherlands3D.B3DM
             else
             {
                 byte[] bytes = webRequest.downloadHandler.data;
-                var memory = new ReadOnlyMemory<byte>(bytes);
 
                 if (Path.GetExtension(url).Equals(".b3dm"))
                 {
