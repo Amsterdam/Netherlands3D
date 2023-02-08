@@ -31,6 +31,8 @@ namespace Netherlands3D.B3DM
         [SerializeField] private bool writeGlbNextToB3dm;
 
         private static readonly CustomCertificateValidation customCertificateHandler = new CustomCertificateValidation();
+        private static readonly ImportSettings importSettings = new ImportSettings() { AnimationMethod = AnimationMethod.None };
+
 
         private void Awake()
         {
@@ -109,10 +111,7 @@ namespace Netherlands3D.B3DM
         {
             //Use our parser (in this case GLTFFast to read the binary data and instantiate the Unity objects in the scene)
             var gltf = new GltfImport();
-            var settings = new ImportSettings();
-            settings.AnimationMethod = AnimationMethod.None;
-
-            var success = await gltf.Load(glbBuffer, new Uri(sourcePath), settings);
+            var success = await gltf.Load(glbBuffer, new Uri(sourcePath), importSettings);
 
             if (success)
             {
