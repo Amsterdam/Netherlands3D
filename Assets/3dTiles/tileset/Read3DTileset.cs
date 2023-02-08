@@ -233,11 +233,9 @@ namespace Netherlands3D.Core.Tiles
                     DisposeTilesOutsideView(currentCamera);
 
                     yield return LoadInViewRecursively(root, currentCamera);
-
-
                 }
 
-                yield return new WaitForEndOfFrame();
+                yield return null;
             }
         }
 
@@ -268,7 +266,11 @@ namespace Netherlands3D.Core.Tiles
                 var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
                 var pixelError = (sseComponent * tile.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
 
-                if (pixelError > maxPixelError && tile.IsInViewFrustrum(currentCamera))
+                if (tile.geometricError <= sseComponent && tile.content)
+                {
+                    tile.Dispose();
+                }
+                else if (pixelError > maxPixelError && tile.IsInViewFrustrum(currentCamera))
                 {
                     //Check for children ( and if closest child can refine ). Closest child would have same closest point as parent on bounds, so simply divide pixelError by 2
                     var canRefineToChildren = tile.children.Count > 0 && (pixelError / 2.0f > maxPixelError);
@@ -282,10 +284,7 @@ namespace Netherlands3D.Core.Tiles
                         visibleTiles.Add(tile);
                     }
                 }
-                else if (tile.geometricError <= sseComponent && tile.content)
-                {
-                    tile.Dispose();
-                }
+                
             }
         }
 

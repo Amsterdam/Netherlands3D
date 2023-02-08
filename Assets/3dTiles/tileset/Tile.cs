@@ -22,7 +22,7 @@ public class Tile : IDisposable
     public BoundingVolume boundingVolume;
     public Content content;
 
-    public float priority = 0;
+    public int priority = 0;
 
     private bool boundsAvailable = false;
     private Bounds bounds = new Bounds();

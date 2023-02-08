@@ -774,6 +774,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4428085048782309644, guid: 3d7c728c6572b814b8b4eda83a222613, type: 3}
+      propertyPath: screenCenterScore
+      value: 2000
+      objectReference: {fileID: 0}
     - target: {fileID: 6826521633573672048, guid: 3d7c728c6572b814b8b4eda83a222613, type: 3}
       propertyPath: m_RootOrder
       value: 2

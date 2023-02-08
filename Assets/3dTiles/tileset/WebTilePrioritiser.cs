@@ -1,5 +1,4 @@
-﻿using Ookii.Dialogs;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -58,7 +57,7 @@ namespace Netherlands3D.Core.Tiles
             tile.requestedUpdate = false;
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             if(requirePriorityCheck)
             {
@@ -74,14 +73,13 @@ namespace Netherlands3D.Core.Tiles
             foreach (var tile in PrioritisedTiles)
             {
                 var priorityScore = 0.0f;
-                //priorityScore += DistanceScore(tile);
+                priorityScore += DistanceScore(tile);
                 priorityScore += InViewCenterScore(tile.ContentBounds.center, screenCenterScore);
 
-                tile.priority = priorityScore;
+                tile.priority = (int)priorityScore;
             }
 
-            PrioritisedTiles = PrioritisedTiles.OrderByDescending(obj => obj.priority).ToList();
-
+            PrioritisedTiles.Sort((obj1, obj2) => obj2.priority.CompareTo(obj1.priority));
             Apply();
         }
 
@@ -95,15 +93,10 @@ namespace Netherlands3D.Core.Tiles
             int downloadAvailable = maxSimultaneousDownloads;
 
             //Starting from lowest priority, abort any running downloads to make room for top of priority list
-            for (int i = PrioritisedTiles.Count - 1; i >= 0; i--)
+            for (int i = 0; i < PrioritisedTiles.Count; i++)
             {
                 var tile = PrioritisedTiles[i];
-                if (interuptToMakeRoom > 0 && tile.content.State == Content.ContentLoadState.DOWNLOADING)
-                {
-                    interuptToMakeRoom--;
-                    tile.Dispose();
-                }
-                else if(downloadAvailable > 0 && tile.content && tile.content.State == Content.ContentLoadState.NOTLOADING)
+                if (downloadAvailable > 0 && tile.content && tile.content.State == Content.ContentLoadState.NOTLOADING)
                 {
                     downloadAvailable--;
                     tile.content.Load();

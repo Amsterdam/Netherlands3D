@@ -61,7 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSimultaneousDownloads: 6
-  screenSpaceErrorScore: 1
+  screenSpaceErrorScoreMultiplier: 1
   screenCenterScore: 1000
   screenCenterWeight:
     serializedVersion: 2
