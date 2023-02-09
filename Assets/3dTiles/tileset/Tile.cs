@@ -16,16 +16,20 @@ public class Tile : IDisposable
 
     public double[] transform;
     public float geometricError;
+    public float screenSpaceError;
+
     public string refine;
     public BoundingVolume boundingVolume;
     public Content content;
 
-    public TileStatus status = TileStatus.unloaded;
-    public float priority = 0;
+    public int priority = 0;
 
     private bool boundsAvailable = false;
-    private Bounds bounds;
-    public Bounds Bounds 
+    private Bounds bounds = new Bounds();
+    
+    public bool requestedUpdate = false;
+
+    public Bounds ContentBounds 
     { 
         get {
             return bounds;
@@ -38,8 +42,6 @@ public class Tile : IDisposable
         float posX = (float)(transform[12] / 1000); // measured for earth-center to prime meridian (greenwich)
         float posY = (float)(transform[13] / 1000); // measured from earth-center to 90degrees east at equator
         float posZ = (float)(transform[14] / 1000); // measured from earth-center to nothpole
-
-        Vector3 baseDirection = new Vector3(posX, posY, posZ);
 
         float angleX = -Mathf.Rad2Deg * Mathf.Atan(posY / posZ);
         float angleY = -Mathf.Rad2Deg * Mathf.Atan(posX / posZ);
@@ -91,7 +93,7 @@ public class Tile : IDisposable
     {
         if (!boundsAvailable) CalculateBounds();
 
-        return ofCamera.InView(Bounds);
+        return ofCamera.InView(ContentBounds);
     }
 
     public void CalculateBounds()
@@ -103,11 +105,9 @@ public class Tile : IDisposable
         var unityMin = CoordConvert.ECEFToUnity(ecefMin);
         var unityMax = CoordConvert.ECEFToUnity(ecefMax);
 
-        var newBounds = new Bounds();
-        newBounds.center = unityMin;
-        newBounds.Encapsulate(unityMax);
-
-        Bounds = newBounds;
+        bounds.size = Vector3.zero;
+        bounds.center = unityMin;
+        bounds.Encapsulate(unityMax);
 
         boundsAvailable = true;
     }

@@ -30,6 +30,10 @@ namespace Netherlands3D.B3DM
         [SerializeField] private bool debug = false;
         [SerializeField] private bool writeGlbNextToB3dm;
 
+        private static readonly CustomCertificateValidation customCertificateHandler = new CustomCertificateValidation();
+        private static readonly ImportSettings importSettings = new ImportSettings() { AnimationMethod = AnimationMethod.None };
+
+
         private void Awake()
         {
             if(binTilePath) binTilePath.started.AddListener(ImportBinFromFile);
@@ -39,19 +43,12 @@ namespace Netherlands3D.B3DM
 
         private void LoadFromURL()
         {
-            StartCoroutine(ImportBinFromURL(url, null));
+            StartCoroutine(ImportBinFromURL(url, null, new UnityWebRequest()));
         }
 
-        private void LoadFromURL(string url, Action<GameObject> callback)
+        public static IEnumerator ImportBinFromURL(string url, Action<GltfImport> callbackGltf, UnityWebRequest webRequest)
         {
-            StartCoroutine(ImportBinFromURL(url, callback));
-        }
-
-        public static IEnumerator ImportBinFromURL(string url, Action<GameObject> callback)
-        {
-            using UnityWebRequest webRequest = UnityWebRequest.Get(url);
-
-            var customCertificateHandler = new CustomCertificateValidation();
+            webRequest = UnityWebRequest.Get(url);
             webRequest.certificateHandler = customCertificateHandler; //Not safe; but solves breaking curl error
 
             yield return webRequest.SendWebRequest();
@@ -59,7 +56,7 @@ namespace Netherlands3D.B3DM
             if (webRequest.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogWarning(url + " -> " +webRequest.error);
-                callback.Invoke(null);
+                callbackGltf.Invoke(null);
             }
             else
             {
@@ -72,8 +69,10 @@ namespace Netherlands3D.B3DM
                     bytes = B3dmReader.ReadB3dmGlbContentOnly(memoryStream);
                 }
 
-                yield return ParseFromBytes(bytes, url, callback);
+                yield return ParseFromBytes(bytes, url, callbackGltf);
             }
+
+            webRequest.Dispose();
         }
 
         public async void ImportBinFromFile(string filepath)
@@ -89,7 +88,6 @@ namespace Netherlands3D.B3DM
                 //Retrieve the glb from the b3dm
                 var b3dmFileStream = File.OpenRead(filepath);
                 var b3dm = B3dmReader.ReadB3dm(b3dmFileStream);
-
                 bytes = new MemoryStream(b3dm.GlbData).ToArray();
 
 #if UNITY_EDITOR
@@ -109,30 +107,21 @@ namespace Netherlands3D.B3DM
             await ParseFromBytes(bytes, filepath, null);
         }
 
-        private static async Task ParseFromBytes(byte[] glbBuffer, string sourcePath, Action<GameObject> callback)
+        private static async Task ParseFromBytes(byte[] glbBuffer, string sourcePath, Action<GltfImport> callbackGltf)
         {
             //Use our parser (in this case GLTFFast to read the binary data and instantiate the Unity objects in the scene)
             var gltf = new GltfImport();
-            var settings = new ImportSettings();
-            settings.AnimationMethod = AnimationMethod.None;
-
-            var success = await gltf.Load(glbBuffer, new Uri(sourcePath), settings);
+            var success = await gltf.Load(glbBuffer, new Uri(sourcePath), importSettings);
 
             if (success)
             {
-                var gameObject = new GameObject("glTFScenes");
-                var scenes = gltf.SceneCount;
-                for (int i = 0; i < scenes; i++)
-                {
-                    await gltf.InstantiateSceneAsync(gameObject.transform, i);
-                }
-
-                callback?.Invoke(gameObject);
+                callbackGltf?.Invoke(gltf);
             }
             else
             {
                 Debug.LogError("Loading glTF failed!");
-                callback?.Invoke(null);
+                callbackGltf?.Invoke(null);
+                gltf.Dispose();
             }
         }
 

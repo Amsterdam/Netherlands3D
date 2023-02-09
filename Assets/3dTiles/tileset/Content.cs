@@ -1,4 +1,5 @@
-﻿using Netherlands3D.B3DM;
+﻿using GLTFast;
+using Netherlands3D.B3DM;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,25 +11,28 @@ public class Content : MonoBehaviour, IDisposable
     public string uri = "";
 
     public GameObject contentGameObject;
+
+    private UnityWebRequest runningWebRequest;
     private Coroutine runningContentRequest;
 
     private Tile parentTile;
     public Tile ParentTile { get => parentTile; set => parentTile = value; }
 
-    public UnityEvent stateChanged = new UnityEvent();
+    public UnityEvent doneDownloading = new UnityEvent();
+
+    private GltfImport gltf;
 
     public enum ContentLoadState{
-        NOTLOADED,
-        LOADING,
-        READY,
+        NOTLOADING,
+        DOWNLOADING,
+        DOWNLOADED,
     }
-    private ContentLoadState state = ContentLoadState.NOTLOADED;
+    private ContentLoadState state = ContentLoadState.NOTLOADING;
     public ContentLoadState State { 
         get => state;
         set
         {
             state = value;
-            stateChanged.Invoke();
         }
     }
 
@@ -42,13 +46,13 @@ public class Content : MonoBehaviour, IDisposable
         Color color = Color.white;
         switch (State)
         {
-            case ContentLoadState.NOTLOADED:
+            case ContentLoadState.NOTLOADING:
                 color = Color.red;
                 break;
-            case ContentLoadState.LOADING:
+            case ContentLoadState.DOWNLOADING:
                 color = Color.yellow;
                 break;
-            case ContentLoadState.READY:
+            case ContentLoadState.DOWNLOADED:
                 color = Color.green;
                 break;
             default:
@@ -56,34 +60,50 @@ public class Content : MonoBehaviour, IDisposable
         }
 
         Gizmos.color = color;
-        var parentTileBounds = ParentTile.Bounds;
+        var parentTileBounds = ParentTile.ContentBounds;
         Gizmos.DrawWireCube(parentTileBounds.center, parentTileBounds.size);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(parentTileBounds.center, parentTileBounds.center+(ParentTile.priority * Vector3.up));
     }
 
     /// <summary>
     /// Load the content from an url
     /// </summary>
-    public Coroutine Load()
+    public void Load()
     {
-        State = ContentLoadState.LOADING;
-        runningContentRequest = StartCoroutine(ImportB3DMGltf.ImportBinFromURL(uri, GotContent));
-        return runningContentRequest;
+        State = ContentLoadState.DOWNLOADING;
+        runningWebRequest = new UnityWebRequest();
+        runningContentRequest = StartCoroutine(
+            ImportB3DMGltf.ImportBinFromURL(uri, GotGltfContent, runningWebRequest)
+        );
     }
 
-    private void GotContent(GameObject contentGameObject)
+    /// <summary>
+    /// After parsing gltf content spawn gltf scenes
+    /// </summary>
+    private async void GotGltfContent(GltfImport gltf)
     {
-        State = ContentLoadState.READY;
-        if (contentGameObject != null)
+        if (this == null) return;
+
+        State = ContentLoadState.DOWNLOADED;
+        if (gltf != null)
         {
-            this.contentGameObject = contentGameObject;
+            this.gltf = gltf;
+
+            var scenes = gltf.SceneCount;
+            var gameObject = new GameObject($"{parentTile.X},{parentTile.Y},{parentTile.Z} gltf scenes:{scenes}");
+            for (int i = 0; i < scenes; i++)
+            {
+                await gltf.InstantiateSceneAsync(gameObject.transform, i);
+            }
+
+            this.contentGameObject = gameObject;
             this.contentGameObject.transform.SetParent(this.gameObject.transform, true);
-            this.contentGameObject.transform.localRotation = Quaternion.identity;
-            this.contentGameObject.transform.localPosition = Vector3.zero;
+            this.contentGameObject.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         }
-        else
-        {
-            Debug.LogWarning("Could not load GameObject");
-        }
+
+        doneDownloading.Invoke();
     }
 
     /// <summary>
@@ -91,37 +111,21 @@ public class Content : MonoBehaviour, IDisposable
     /// </summary>
     public void Dispose()
     {
-        State = ContentLoadState.NOTLOADED;
+        doneDownloading.RemoveAllListeners();
 
-        stateChanged.RemoveAllListeners();
-
-        if (runningContentRequest != null)
+        //Direct abort of downloads
+        if(State == ContentLoadState.DOWNLOADING)
+        {
+            runningWebRequest.Abort();
             StopCoroutine(runningContentRequest);
+        }
+        State = ContentLoadState.NOTLOADING;
 
         if (contentGameObject)
         {
-            //TODO: Make sure GLTFast cleans up its internal stuff like textures, animations etc. It has a Dispose but might be shared lists
-            //For now we do mats and meshes manualy.
-
-            //Materials
-            var renderers = contentGameObject.GetComponentsInChildren<Renderer>();
-            foreach(var renderer in renderers)
-            {
-                var materials = renderer.sharedMaterials;
-                foreach (var mat in materials)
-                    Destroy(mat);
-            }
-
-            //Meshes
-            var meshFilters = contentGameObject.GetComponentsInChildren<MeshFilter>();
-            foreach (var meshFilter in meshFilters)
-                Destroy(meshFilter.sharedMesh);
-
+            gltf.Dispose();
             Destroy(contentGameObject);
         }
         Destroy(this);
     }
 }
-
-
-

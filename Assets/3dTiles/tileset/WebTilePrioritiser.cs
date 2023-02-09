@@ -11,54 +11,78 @@ namespace Netherlands3D.Core.Tiles
     /// </summary>
     public class WebTilePrioritiser : TilePrioritiser
     {
+        [Header("Web limitations")]
         [SerializeField] private int maxSimultaneousDownloads = 6;
 
-        [SerializeField] private float distanceScore = 10;
+        [Header("Screen space error priority")]
+        [SerializeField] private float screenSpaceErrorScoreMultiplier = 10;
+
+        [Header("Center of screen priority")]
         [SerializeField] private float screenCenterScore = 10;
         [SerializeField] AnimationCurve screenCenterWeight;
 
         private Vector2 viewCenter = new Vector2(0.5f, 0.5f);
 
-        private List<Tile> prioritisedTiles = new List<Tile>();
+        [SerializeField] private List<Tile> prioritisedTiles = new List<Tile>();
         public List<Tile> PrioritisedTiles { get => prioritisedTiles; private set => prioritisedTiles = value; }
 
         private Camera currentCamera;
 
+        private bool requirePriorityCheck = false;
+        public bool showPriorityNumbers = false;
 
-        public override void Add(Tile tile)
+        [SerializeField] private int downloadAvailable = 0;
+
+        /// <summary>
+        /// If a tile completed loading, recalcule priorities
+        /// </summary>
+        private void TileCompletedLoading()
         {
-            tile.content.stateChanged.AddListener(CalculatePriorities);
-
-            PrioritisedTiles.Add(tile);
-
-            CalculatePriorities();
+            requirePriorityCheck = true;
         }
 
-        public override void Remove(Tile tile)
+        public override void RequestUpdate(Tile tile)
         {
-            //Clean up as fast as possible, directly dispose
-            if (PrioritisedTiles.Contains(tile))
-                PrioritisedTiles.Remove(tile);
+            requirePriorityCheck = true;
 
-            CalculatePriorities();
+            tile.requestedUpdate = true;
+            PrioritisedTiles.Add(tile);
+        }
+
+        public override void RequestDispose(Tile tile)
+        {
+            PrioritisedTiles.Remove(tile);
+
+            requirePriorityCheck = true;
 
             tile.Dispose();
+            tile.requestedUpdate = false;
         }
 
+        private void LateUpdate()
+        {
+            if(requirePriorityCheck)
+            {
+                CalculatePriorities();
+            }
+        }
+
+        /// <summary>
+        /// Calculates the priority list for the added tiles
+        /// </summary>
         public override void CalculatePriorities()
         {
-            foreach(var tile in PrioritisedTiles)
+            foreach (var tile in PrioritisedTiles)
             {
                 var priorityScore = 0.0f;
-                priorityScore += DistanceScore(tile.Bounds.center, 100, 5000, distanceScore);
-                priorityScore += InViewCenterScore(tile.Bounds.center, screenCenterScore);
+                priorityScore += DistanceScore(tile);
+                priorityScore += InViewCenterScore(tile.ContentBounds.center, screenCenterScore);
 
-                tile.priority = priorityScore;
+                tile.priority = (int)priorityScore;
             }
 
-            PrioritisedTiles = PrioritisedTiles.OrderBy(obj => obj.priority).ToList();
-
-            Prioritise();
+            PrioritisedTiles.Sort((obj1, obj2) => obj2.priority.CompareTo(obj1.priority));
+            Apply();
         }
 
         /// <summary>
@@ -66,43 +90,21 @@ namespace Netherlands3D.Core.Tiles
         /// by interupting tiles that fall outside the max downloads and
         /// did not start loading yet.
         /// </summary>
-        private void Prioritise()
+        private void Apply()
         {
-            int downloadAvailable = maxSimultaneousDownloads;
-            int interuptToMakeRoom = PrioritisedTiles.Count - maxSimultaneousDownloads;
+            downloadAvailable = maxSimultaneousDownloads - PrioritisedTiles.Count(tile => tile.content.State == Content.ContentLoadState.DOWNLOADING);
 
             //Starting from lowest priority, abort any running downloads to make room for top of priority list
-            for (int i = PrioritisedTiles.Count - 1; i >= 0; i--)
-            {
-                var tile = PrioritisedTiles[i];
-                if (interuptToMakeRoom > 0 && tile.content.State == Content.ContentLoadState.LOADING)
-                {
-                    interuptToMakeRoom--;
-                    tile.content.Dispose();
-                }
-                else if(tile.content.State == Content.ContentLoadState.NOTLOADED)
-                {
-                    downloadAvailable--;
-                    tile.content.Load();
-                }
-                else if (tile.content.State == Content.ContentLoadState.READY)
-                {
-                    //Keep already loaded tiles
-                    //This is the place to introduce max tiles in memory limits clean up
-                }
-            }
-
             for (int i = 0; i < PrioritisedTiles.Count; i++)
             {
+                if (downloadAvailable <= 0) break;
+
                 var tile = PrioritisedTiles[i];
-                if(tile.content.State == Content.ContentLoadState.NOTLOADED)
+                if (tile.content && tile.content.State == Content.ContentLoadState.NOTLOADING)
                 {
                     downloadAvailable--;
                     tile.content.Load();
-                }
-                else if(tile.content.State == Content.ContentLoadState.READY)
-                {
-
+                    tile.content.doneDownloading.AddListener(TileCompletedLoading);
                 }
             }
         }
@@ -128,12 +130,9 @@ namespace Netherlands3D.Core.Tiles
         /// <param name="maxDistance">The distance where score becomes 0</param>
         /// <param name="maxScore">Max score for closest object</param>
         /// <returns></returns>
-        public float DistanceScore(Vector3 position, float minDistance, float maxDistance, float maxScore)
+        public float DistanceScore(Tile tile)
         {
-            var distance = Vector3.Distance(currentCamera.transform.position, position);
-            var distanceScore = maxScore - (Mathf.InverseLerp(distance, minDistance, maxDistance) * maxScore);
-
-            return distanceScore;
+            return tile.screenSpaceError * screenSpaceErrorScoreMultiplier;
         }
 
         public override void SetCamera(Camera currentMainCamera)

@@ -68,6 +68,7 @@ namespace KadasterViewer {
                 var newTileSet = new GameObject(tileset.url);
                 newTileSet.transform.SetParent(this.transform);
                 var tileSetReader = newTileSet.AddComponent<Read3DTileset>();
+                tileSetReader.SetTilePrioritiser(GetComponent<TilePrioritiser>());
                 tileSetReader.tilesetUrl = tileset.url;
                 tileSetReader.maxPixelError = tileset.maxPixelError;
             }

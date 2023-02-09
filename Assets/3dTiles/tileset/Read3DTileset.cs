@@ -5,7 +5,10 @@ using SimpleJSON;
 using UnityEngine.Networking;
 using System;
 using Netherlands3D.Core;
-
+using System.IO;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 namespace Netherlands3D.Core.Tiles
 {
     [RequireComponent(typeof(ReadSubtree))]
@@ -28,11 +31,14 @@ namespace Netherlands3D.Core.Tiles
         public int maxPixelError = 5;
         private float sseComponent = -1;
 
-        private List<Tile> contentLoadedTiles = new List<Tile>();
+        private List<Tile> visibleTiles = new List<Tile>();
 
-        private TilePrioritiser tilePrioritiser = null;
-
+        [SerializeField] private TilePrioritiser tilePrioritiser;
         private Camera currentCamera;
+        private Vector3 lastCameraPosition;
+        private Quaternion lastCameraRotation;
+        private Vector3 currentCameraPosition;
+        private Quaternion currentCameraRotation;
 
         private void OnEnable()
         {
@@ -100,7 +106,7 @@ namespace Netherlands3D.Core.Tiles
             }
         }
 
-        private void LoadTileContent(Tile tile)
+        private void RequestUpdate(Tile tile)
         {
             if (!tile.content)
             {
@@ -108,9 +114,9 @@ namespace Netherlands3D.Core.Tiles
                 tile.content.ParentTile = tile;
                 tile.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", tile.X.ToString()).Replace("{x}", tile.Y.ToString()).Replace("{y}", tile.Z.ToString());
 
-                if (tilePrioritiser != null)
+                if (tilePrioritiser != null && !tile.requestedUpdate)
                 {
-                    tilePrioritiser.Add(tile);
+                    tilePrioritiser.RequestUpdate(tile);
                 }
                 else
                 {
@@ -119,18 +125,15 @@ namespace Netherlands3D.Core.Tiles
             }
         }
 
-        private void DisposeTileContent(Tile tile)
+        private void RequestDispose(Tile tile)
         {
-            if (tile.hascontent && tile.content)
+            if (tilePrioritiser != null)
             {
-                if (tilePrioritiser != null)
-                {
-                    tilePrioritiser.Remove(tile);
-                }
-                else
-                {
-                    tile.content.Dispose();
-                }
+                tilePrioritiser.RequestDispose(tile);
+            }
+            else
+            {
+                tile.content.Dispose();
             }
         }
 
@@ -167,10 +170,10 @@ namespace Netherlands3D.Core.Tiles
             switch (refine)
             {
                 case "REPLACE":
-                    implicitTilingSettings.refinementtype = refinementType.Replace;
+                    implicitTilingSettings.refinementtype = RefinementType.Replace;
                     break;
                 case "ADD":
-                    implicitTilingSettings.refinementtype = refinementType.Add;
+                    implicitTilingSettings.refinementtype = RefinementType.Add;
                     break;
                 default:
                     break;
@@ -187,10 +190,10 @@ namespace Netherlands3D.Core.Tiles
             switch (subdivisionScheme)
             {
                 case "QUADTREE":
-                    implicitTilingSettings.subdivisionScheme = Subdivisionscheme.Quadtree;
+                    implicitTilingSettings.subdivisionScheme = SubdivisionScheme.Quadtree;
                     break;
                 default:
-                    implicitTilingSettings.subdivisionScheme = Subdivisionscheme.Octree;
+                    implicitTilingSettings.subdivisionScheme = SubdivisionScheme.Octree;
                     break;
             }
             implicitTilingSettings.subtreeLevels = implicitTilingNode["subtreeLevels"];
@@ -217,31 +220,39 @@ namespace Netherlands3D.Core.Tiles
         /// </summary>
         private IEnumerator LoadInView()
         {
-            currentCamera = Camera.main;
-
             yield return new WaitUntil(() => root != null);
             while (true)
             {
-                SetSSEComponent(currentCamera);
-                DisposeTilesOutsideView(currentCamera);
+                //If camera changed, recalculate what tiles are be in view
+                currentCamera.transform.GetPositionAndRotation(out currentCameraPosition, out currentCameraRotation);
+                if (lastCameraPosition != currentCameraPosition || lastCameraRotation != currentCameraRotation)
+                {
+                    currentCamera.transform.GetPositionAndRotation(out lastCameraPosition, out lastCameraRotation);                 
 
-                yield return LoadInViewRecursively(root, currentCamera);
+                    SetSSEComponent(currentCamera);
+                    DisposeTilesOutsideView(currentCamera);
+
+                    yield return LoadInViewRecursively(root, currentCamera);
+                }
+
+                yield return null;
             }
         }
 
         private void DisposeTilesOutsideView(Camera currentMainCamera)
         {
             //Clean up list op previously loaded tiles outside of view
-            for (int i = contentLoadedTiles.Count - 1; i >= 0; i--)
+            for (int i = visibleTiles.Count - 1; i >= 0; i--)
             {
-                var child = contentLoadedTiles[i];
-                var closestPointOnBounds = child.Bounds.ClosestPoint(currentMainCamera.transform.position); //Returns original point when inside the bounds
-                var pixelError = (sseComponent * child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
+                var child = visibleTiles[i];
+                var closestPointOnBounds = child.ContentBounds.ClosestPoint(currentMainCamera.transform.position); //Returns original point when inside the bounds
 
-                if (pixelError <= maxPixelError || !child.IsInViewFrustrum(currentMainCamera))
+                var screenSpaceError = (sseComponent * child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
+                child.screenSpaceError = screenSpaceError;
+                if (screenSpaceError <= maxPixelError || !child.IsInViewFrustrum(currentMainCamera))
                 {
-                    DisposeTileContent(child);
-                    contentLoadedTiles.RemoveAt(i);
+                    RequestDispose(child);
+                    visibleTiles.RemoveAt(i);
                 }
             }
         }
@@ -250,10 +261,16 @@ namespace Netherlands3D.Core.Tiles
         {
             foreach (var tile in parentTile.children)
             {
-                var closestPointOnBounds = tile.Bounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
+                if (visibleTiles.Contains(tile)) continue;
+
+                var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
                 var pixelError = (sseComponent * tile.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
 
-                if (pixelError > maxPixelError && tile.IsInViewFrustrum(currentCamera))
+                if (tile.geometricError <= sseComponent && tile.content)
+                {
+                    RequestDispose(tile);
+                }
+                else if (pixelError > maxPixelError && tile.IsInViewFrustrum(currentCamera))
                 {
                     //Check for children ( and if closest child can refine ). Closest child would have same closest point as parent on bounds, so simply divide pixelError by 2
                     var canRefineToChildren = tile.children.Count > 0 && (pixelError / 2.0f > maxPixelError);
@@ -263,14 +280,11 @@ namespace Netherlands3D.Core.Tiles
                     }
                     else if (tile.hascontent && !canRefineToChildren)
                     {
-                        LoadTileContent(tile);
-                        contentLoadedTiles.Add(tile);
+                        RequestUpdate(tile);
+                        visibleTiles.Add(tile);
                     }
                 }
-                else if (tile.geometricError <= sseComponent && tile.content)
-                {
-                    tile.Dispose();
-                }
+                
             }
         }
 
@@ -302,13 +316,96 @@ namespace Netherlands3D.Core.Tiles
             {
                 if (child.hascontent)
                 {
-                    LoadTileContent(child);
+                    RequestUpdate(child);
                 }
                 yield return new WaitForEndOfFrame();
                 yield return LoadContentInChildren(child);
             }
         }
+
+        [ContextMenu("Download entire dataset")]
+        public void DownloadEntireDataset()
+        {
+            StartCoroutine(DownloadTileSet());
+        }
+
+        private IEnumerator DownloadTileSet()
+        {
+            //Main tileset json
+            UnityWebRequest www = UnityWebRequest.Get(tilesetUrl);
+            yield return www.SendWebRequest();
+            var folder = EditorUtility.SaveFolderPanel("Save tileset to folder", "", "");
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                string jsonstring = www.downloadHandler.text;
+                File.WriteAllText(folder + "/tileset.json", jsonstring);
+            }
+
+            //Content
+            //yield return DownloadContent(root, folder);
+
+            //Subtree(s)
+            var subtreePath = implicitTilingSettings.subtreeUri.Replace("{level}", "0")
+                                                               .Replace("{x}", "0")
+                                                               .Replace("{y}", "0");
+
+            string subtreeURL = tilesetUrl.Replace("tileset.json", subtreePath);
+
+            www = UnityWebRequest.Get(subtreeURL);
+            yield return www.SendWebRequest();
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                var data = www.downloadHandler.data;
+
+                var newFile = new FileInfo(folder + "/" + subtreePath);
+                newFile.Directory.Create();
+                File.WriteAllBytes(folder + "/" + subtreePath, data);
+            }
+
+            Debug.Log("<color=green>All done!</color>");
+        }
+
+        private IEnumerator DownloadContent(Tile parentTile, string folder)
+        {
+            foreach (var tile in parentTile.children)
+            {
+                if (tile.hascontent)
+                {
+                    var tileContentPath = implicitTilingSettings.contentUri.Replace("{level}", tile.X.ToString()).Replace("{x}", tile.Y.ToString()).Replace("{y}", tile.Z.ToString());
+                    var contentUrl = absolutePath + tileContentPath;
+                    UnityWebRequest www = UnityWebRequest.Get(contentUrl);
+                    yield return www.SendWebRequest();
+
+                    if (www.result != UnityWebRequest.Result.Success)
+                    {
+                        Debug.Log(www.error);
+                    }
+                    else
+                    {
+                        var data = www.downloadHandler.data;
+                        var localContentPath = folder + "/" + tileContentPath;
+                        Debug.Log("Saving " + localContentPath);
+
+                        var newFile = new FileInfo(localContentPath);
+                        newFile.Directory.Create();
+
+                        File.WriteAllBytes(localContentPath, data);
+                    }
+                }
+                yield return new WaitForEndOfFrame();
+                yield return DownloadContent(tile, folder);
+            }
+        }
 #endif
+
     }
 
     public enum TilingMethod
@@ -317,12 +414,12 @@ namespace Netherlands3D.Core.Tiles
         implicitTiling
     }
 
-    public enum refinementType
+    public enum RefinementType
     {
         Replace,
         Add
     }
-    public enum Subdivisionscheme
+    public enum SubdivisionScheme
     {
         Quadtree,
         Octree
@@ -331,8 +428,8 @@ namespace Netherlands3D.Core.Tiles
     [System.Serializable]
     public class ImplicitTilingSettings
     {
-        public refinementType refinementtype;
-        public Subdivisionscheme subdivisionScheme;
+        public RefinementType refinementtype;
+        public SubdivisionScheme subdivisionScheme;
         public int subtreeLevels;
         public string subtreeUri;
         public string contentUri;
