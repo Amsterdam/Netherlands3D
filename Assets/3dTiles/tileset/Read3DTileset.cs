@@ -39,6 +39,7 @@ namespace Netherlands3D.Core.Tiles
         private Quaternion lastCameraRotation;
         private Vector3 currentCameraPosition;
         private Quaternion currentCameraRotation;
+        private float lastCameraAngle = 60;
 
         private void OnEnable()
         {
@@ -225,9 +226,11 @@ namespace Netherlands3D.Core.Tiles
             {
                 //If camera changed, recalculate what tiles are be in view
                 currentCamera.transform.GetPositionAndRotation(out currentCameraPosition, out currentCameraRotation);
-                if (lastCameraPosition != currentCameraPosition || lastCameraRotation != currentCameraRotation)
+
+                if (CameraChanged())
                 {
-                    currentCamera.transform.GetPositionAndRotation(out lastCameraPosition, out lastCameraRotation);                 
+                    lastCameraAngle = (currentCamera.orthographic ? currentCamera.orthographicSize : currentCamera.fieldOfView);
+                    currentCamera.transform.GetPositionAndRotation(out lastCameraPosition, out lastCameraRotation);
 
                     SetSSEComponent(currentCamera);
                     DisposeTilesOutsideView(currentCamera);
@@ -237,6 +240,18 @@ namespace Netherlands3D.Core.Tiles
 
                 yield return null;
             }
+        }
+
+        /// <summary>
+        /// Returns if current camera changed in position/rotation/fov or size in the last frame
+        /// </summary>
+        private bool CameraChanged()
+        {
+            return 
+                (currentCamera.orthographic == true && lastCameraAngle != currentCamera.orthographicSize) || 
+                (currentCamera.orthographic == false && lastCameraAngle != currentCamera.fieldOfView) || 
+                lastCameraPosition != currentCameraPosition || 
+                lastCameraRotation != currentCameraRotation;
         }
 
         private void DisposeTilesOutsideView(Camera currentMainCamera)
@@ -293,7 +308,18 @@ namespace Netherlands3D.Core.Tiles
         /// </summary>
         public void SetSSEComponent(Camera currentCamera)
         {
-            sseComponent = Screen.height / (2 * Mathf.Tan(Mathf.Deg2Rad * currentCamera.fieldOfView / 2));
+            if (currentCamera.orthographic)
+            {
+                sseComponent = Screen.height / currentCamera.orthographicSize;
+                Debug.Log(sseComponent);
+            }
+            else
+            {
+                var coverage = 2 * Mathf.Tan((Mathf.Deg2Rad * currentCamera.fieldOfView) / 2);
+                sseComponent = Screen.height / coverage;
+
+                Debug.Log(sseComponent);
+            }
         }
 
 #if UNITY_EDITOR
