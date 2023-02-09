@@ -61,6 +61,7 @@ namespace Netherlands3D.B3DM
             else
             {
                 byte[] bytes = webRequest.downloadHandler.data;
+                var memory = new ReadOnlyMemory<byte>(bytes);
 
                 if (Path.GetExtension(url).Equals(".b3dm"))
                 {
