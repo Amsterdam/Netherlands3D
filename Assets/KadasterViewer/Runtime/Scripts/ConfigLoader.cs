@@ -21,7 +21,7 @@ namespace KadasterViewer {
             public class TileSet
             {
                 public string url = "";
-                public int maxPixelError = 5;
+                public int maximumScreenSpaceError = 5;
             }
         }
 
@@ -72,7 +72,7 @@ namespace KadasterViewer {
                 var tileSetReader = newTileSet.AddComponent<Read3DTileset>();
                 tileSetReader.SetTilePrioritiser(tilePrioritiser);
                 tileSetReader.tilesetUrl = tileset.url;
-                tileSetReader.maxPixelError = tileset.maxPixelError;
+                tileSetReader.maximumScreenSpaceError = tileset.maximumScreenSpaceError;
             }
         }
 

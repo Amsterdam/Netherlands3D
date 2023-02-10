@@ -28,7 +28,7 @@ namespace Netherlands3D.Core.Tiles
         public int tileCount;
         public int nestingDepth;
 
-        public int maxPixelError = 5;
+        public int maximumScreenSpaceError = 5;
         private float sseComponent = -1;
 
         private List<Tile> visibleTiles = new List<Tile>();
@@ -262,9 +262,9 @@ namespace Netherlands3D.Core.Tiles
                 var child = visibleTiles[i];
                 var closestPointOnBounds = child.ContentBounds.ClosestPoint(currentMainCamera.transform.position); //Returns original point when inside the bounds
 
-                var screenSpaceError = (sseComponent * child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
-                child.screenSpaceError = screenSpaceError;
-                if (screenSpaceError <= maxPixelError || !child.IsInViewFrustrum(currentMainCamera))
+                var tileScreenSpaceError = (sseComponent * child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
+                child.screenSpaceError = tileScreenSpaceError;
+                if (tileScreenSpaceError <= maximumScreenSpaceError || !child.IsInViewFrustrum(currentMainCamera))
                 {
                     RequestDispose(child);
                     visibleTiles.RemoveAt(i);
@@ -279,16 +279,16 @@ namespace Netherlands3D.Core.Tiles
                 if (visibleTiles.Contains(tile)) continue;
 
                 var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
-                var pixelError = (sseComponent * tile.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
+                var tileScreenSpaceError = (sseComponent * tile.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
 
                 if (tile.geometricError <= sseComponent && tile.content)
                 {
                     RequestDispose(tile);
                 }
-                else if (pixelError > maxPixelError && tile.IsInViewFrustrum(currentCamera))
+                else if (tileScreenSpaceError > maximumScreenSpaceError && tile.IsInViewFrustrum(currentCamera))
                 {
                     //Check for children ( and if closest child can refine ). Closest child would have same closest point as parent on bounds, so simply divide pixelError by 2
-                    var canRefineToChildren = tile.children.Count > 0 && (pixelError / 2.0f > maxPixelError);
+                    var canRefineToChildren = tile.children.Count > 0 && (tileScreenSpaceError / 2.0f > maximumScreenSpaceError);
                     if (canRefineToChildren)
                     {
                         yield return LoadInViewRecursively(tile, currentCamera);
