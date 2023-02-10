@@ -311,14 +311,11 @@ namespace Netherlands3D.Core.Tiles
             if (currentCamera.orthographic)
             {
                 sseComponent = Screen.height / currentCamera.orthographicSize;
-                Debug.Log(sseComponent);
             }
             else
             {
                 var coverage = 2 * Mathf.Tan((Mathf.Deg2Rad * currentCamera.fieldOfView) / 2);
                 sseComponent = Screen.height / coverage;
-
-                Debug.Log(sseComponent);
             }
         }
 
