@@ -371,9 +371,6 @@ namespace Netherlands3D.Core.Tiles
                 File.WriteAllText(folder + "/tileset.json", jsonstring);
             }
 
-            //Content
-            //yield return DownloadContent(root, folder);
-
             //Subtree(s)
             var subtreePath = implicitTilingSettings.subtreeUri.Replace("{level}", "0")
                                                                .Replace("{x}", "0")
