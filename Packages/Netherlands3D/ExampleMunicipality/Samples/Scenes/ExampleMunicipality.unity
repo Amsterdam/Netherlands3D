@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.15872963, g: 0.18300784, b: 0.20019649, a: 1}
+  m_IndirectSpecularColor: {r: 0.15731631, g: 0.1806647, b: 0.19589436, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2572,13 +2572,13 @@ MonoBehaviour:
   Datasets:
   - Description: 
     geoLOD: 
-    path: project/Lelystad/Data/3DBag/Buildings-{x}_{y}.1.2-data.bin
+    path: project/Lelystad/Data/3DBag/Buildings-{x}_{y}.1.2.bin
     maximumDistance: 6000
     maximumDistanceSquared: 36000000
     enabled: 1
   - Description: 
     geoLOD: 
-    path: project/Lelystad/Data/3DBag/Buildings-{x}_{y}.2.2-data.bin
+    path: project/Lelystad/Data/3DBag/Buildings-{x}_{y}.2.2.bin
     maximumDistance: 3000
     maximumDistanceSquared: 9000000
     enabled: 1
@@ -9241,7 +9241,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7539193514918957478}
-  m_LocalRotation: {x: -0.023509271, y: 0.8581751, z: -0.03945852, w: -0.51129824}
+  m_LocalRotation: {x: -0.022181926, y: 0.8560071, z: -0.036857426, w: -0.51517123}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -9402,7 +9402,7 @@ MonoBehaviour:
   dateTimeKind: 2
   jumpToCurrentTimeAtStart: 1
   hour: 17
-  minutes: 9
+  minutes: 12
   seconds: 38
   day: 13
   month: 2
