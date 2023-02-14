@@ -118,6 +118,7 @@ namespace Netherlands3D.T3DPipeline
             }
 
             //metadata
+            var explicitGeographicalExtentsSet = false;
             if (Metadata.Count > 0)
             {
                 var coordinateSystemNode = Metadata["referenceSystem"];
@@ -126,11 +127,13 @@ namespace Netherlands3D.T3DPipeline
                 var geographicalExtent = Metadata["geographicalExtent"];
                 if (geographicalExtent.Count > 0)
                 {
+                    explicitGeographicalExtentsSet = true;
                     MinExtent = new Vector3Double(geographicalExtent[0].AsDouble, geographicalExtent[1].AsDouble, geographicalExtent[2].AsDouble);
                     MaxExtent = new Vector3Double(geographicalExtent[3].AsDouble, geographicalExtent[4].AsDouble, geographicalExtent[5].AsDouble);
                 }
             }
-            else if (parsedVertices.Count > 0)
+
+            if (!explicitGeographicalExtentsSet)
             {
                 var minX = parsedVertices.Min(v => v.x);
                 var minY = parsedVertices.Min(v => v.y);
