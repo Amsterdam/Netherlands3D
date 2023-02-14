@@ -1,6 +1,9 @@
-﻿using Netherlands3D.B3DM;
+﻿using GLTFast;
+using Netherlands3D.B3DM;
 using System;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Networking;
 
 [System.Serializable]
 public class Content : MonoBehaviour, IDisposable
@@ -8,39 +11,99 @@ public class Content : MonoBehaviour, IDisposable
     public string uri = "";
 
     public GameObject contentGameObject;
+
+    private UnityWebRequest runningWebRequest;
     private Coroutine runningContentRequest;
 
+    private Tile parentTile;
+    public Tile ParentTile { get => parentTile; set => parentTile = value; }
+
+    public UnityEvent doneDownloading = new UnityEvent();
+
+    private GltfImport gltf;
+
     public enum ContentLoadState{
-        NOTLOADED,
-        LOADING,
-        READY,
+        NOTLOADING,
+        DOWNLOADING,
+        DOWNLOADED,
     }
-    public ContentLoadState state = ContentLoadState.NOTLOADED;
+    private ContentLoadState state = ContentLoadState.NOTLOADING;
+    public ContentLoadState State { 
+        get => state;
+        set
+        {
+            state = value;
+        }
+    }
+
+    /// <summary>
+    /// Draw wire cube in editor with bounds and color coded state
+    /// </summary>
+    private void OnDrawGizmosSelected()
+    {
+        if (ParentTile == null) return;
+
+        Color color = Color.white;
+        switch (State)
+        {
+            case ContentLoadState.NOTLOADING:
+                color = Color.red;
+                break;
+            case ContentLoadState.DOWNLOADING:
+                color = Color.yellow;
+                break;
+            case ContentLoadState.DOWNLOADED:
+                color = Color.green;
+                break;
+            default:
+                break;
+        }
+
+        Gizmos.color = color;
+        var parentTileBounds = ParentTile.ContentBounds;
+        Gizmos.DrawWireCube(parentTileBounds.center, parentTileBounds.size);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(parentTileBounds.center, parentTileBounds.center+(ParentTile.priority * Vector3.up));
+    }
 
     /// <summary>
     /// Load the content from an url
     /// </summary>
-    public Coroutine Load()
+    public void Load()
     {
-        state = ContentLoadState.LOADING;
-        runningContentRequest = StartCoroutine(ImportB3DMGltf.ImportBinFromURL(uri, GotContent));
-        return runningContentRequest;
+        State = ContentLoadState.DOWNLOADING;
+        runningWebRequest = new UnityWebRequest();
+        runningContentRequest = StartCoroutine(
+            ImportB3DMGltf.ImportBinFromURL(uri, GotGltfContent, runningWebRequest)
+        );
     }
 
-    private void GotContent(GameObject contentGameObject)
+    /// <summary>
+    /// After parsing gltf content spawn gltf scenes
+    /// </summary>
+    private async void GotGltfContent(GltfImport gltf)
     {
-        state = ContentLoadState.READY;
-        if (contentGameObject != null)
+        if (this == null) return;
+
+        State = ContentLoadState.DOWNLOADED;
+        if (gltf != null)
         {
-            this.contentGameObject = contentGameObject;
+            this.gltf = gltf;
+
+            var scenes = gltf.SceneCount;
+            var gameObject = new GameObject($"{parentTile.X},{parentTile.Y},{parentTile.Z} gltf scenes:{scenes}");
+            for (int i = 0; i < scenes; i++)
+            {
+                await gltf.InstantiateSceneAsync(gameObject.transform, i);
+            }
+
+            this.contentGameObject = gameObject;
             this.contentGameObject.transform.SetParent(this.gameObject.transform, true);
-            this.contentGameObject.transform.localRotation = Quaternion.identity;
-            this.contentGameObject.transform.localPosition = Vector3.zero;
+            this.contentGameObject.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         }
-        else
-        {
-            Debug.LogWarning("Could not load GameObject");
-        }
+
+        doneDownloading.Invoke();
     }
 
     /// <summary>
@@ -48,17 +111,21 @@ public class Content : MonoBehaviour, IDisposable
     /// </summary>
     public void Dispose()
     {
-        state = ContentLoadState.NOTLOADED;
+        doneDownloading.RemoveAllListeners();
 
-        if (runningContentRequest != null)
+        //Direct abort of downloads
+        if(State == ContentLoadState.DOWNLOADING)
+        {
+            runningWebRequest.Abort();
             StopCoroutine(runningContentRequest);
+        }
+        State = ContentLoadState.NOTLOADING;
 
         if (contentGameObject)
+        {
+            gltf.Dispose();
             Destroy(contentGameObject);
-
+        }
         Destroy(this);
     }
 }
-
-
-

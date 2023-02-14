@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Netherlands3D.Core;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,26 +10,38 @@ public class Tile : IDisposable
     public int Y;
     public int Z;
     public bool hascontent;
+
+    public Tile parent;
     public List<Tile> children = new List<Tile>();
-    
+
     public double[] transform;
     public float geometricError;
+    public float screenSpaceError;
+
     public string refine;
     public BoundingVolume boundingVolume;
     public Content content;
 
-    TileStatus status = TileStatus.unloaded;
+    public int priority = 0;
 
-    Bounds bounds;
-    bool boundsIsDefined = false;
+    private bool boundsAvailable = false;
+    private Bounds bounds = new Bounds();
+    
+    public bool requestedUpdate = false;
+
+    public Bounds ContentBounds 
+    { 
+        get {
+            return bounds;
+        } 
+        set => bounds = value; 
+    }
 
     public Vector3 EulerRotationToVertical()
     {
         float posX = (float)(transform[12] / 1000); // measured for earth-center to prime meridian (greenwich)
         float posY = (float)(transform[13] / 1000); // measured from earth-center to 90degrees east at equator
         float posZ = (float)(transform[14] / 1000); // measured from earth-center to nothpole
-
-        Vector3 baseDirection = new Vector3(posX, posY, posZ);
 
         float angleX = -Mathf.Rad2Deg * Mathf.Atan(posY / posZ);
         float angleY = -Mathf.Rad2Deg * Mathf.Atan(posX / posZ);
@@ -70,22 +83,33 @@ public class Tile : IDisposable
         return maxDepth;
     }
 
-    enum TileStatus
+    public enum TileStatus
     {
         unloaded,
         loaded
     }
 
-    public bool IsInViewFrustrum()
+    public bool IsInViewFrustrum(Camera ofCamera)
     {
-        return Camera.main.InView(bounds);
+        if (!boundsAvailable) CalculateBounds();
+
+        return ofCamera.InView(ContentBounds);
     }
 
-    public void DefineBounds()
+    public void CalculateBounds()
     {
-        bounds = new Bounds();
+        //Array order: west, south, east, north, minimum height, maximum height
+        var ecefMin = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[0] * 180.0f) / Mathf.PI, (boundingVolume.values[1] * 180.0f) / Mathf.PI, boundingVolume.values[4]));
+        var ecefMax = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[2] * 180.0f) / Mathf.PI, (boundingVolume.values[3] * 180.0f) / Mathf.PI, boundingVolume.values[5]));
 
-        boundsIsDefined = true;
+        var unityMin = CoordConvert.ECEFToUnity(ecefMin);
+        var unityMax = CoordConvert.ECEFToUnity(ecefMax);
+
+        bounds.size = Vector3.zero;
+        bounds.center = unityMin;
+        bounds.Encapsulate(unityMax);
+
+        boundsAvailable = true;
     }
 
     public void Dispose()

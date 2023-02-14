@@ -406,6 +406,11 @@ public class FreeCamera : MonoBehaviour
         CalculateSpeed();
         zoomTarget = GetWorldPoint();
         var direction = zoomTarget - this.transform.position;
+
+        //Make sure we always have a direction. Even when the zoompoint is on the camera.
+        if (Vector3.Distance(zoomTarget,this.transform.position) < 0.01f)
+            direction = this.transform.forward;
+
         var targetIsBehind = Vector3.Dot(this.transform.forward, direction) < 0;
         if (targetIsBehind) direction = -direction;
 
