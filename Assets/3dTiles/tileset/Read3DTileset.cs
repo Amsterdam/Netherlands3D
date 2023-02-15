@@ -113,7 +113,14 @@ namespace Netherlands3D.Core.Tiles
             {
                 tile.content = gameObject.AddComponent<Content>();
                 tile.content.ParentTile = tile;
-                tile.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", tile.X.ToString()).Replace("{x}", tile.Y.ToString()).Replace("{y}", tile.Z.ToString());
+                if (tilingMethod == TilingMethod.implicitTiling)
+                {
+                    tile.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", tile.X.ToString()).Replace("{x}", tile.Y.ToString()).Replace("{y}", tile.Z.ToString());
+                }
+                else
+                {
+                    tile.content.uri = absolutePath + tile.contentUri;
+                }
 
                 if (tilePrioritiser != null && !tile.requestedUpdate)
                 {
@@ -140,21 +147,74 @@ namespace Netherlands3D.Core.Tiles
 
         private void ReadTileset(JSONNode rootnode)
         {
+            
+            transformValues = new double[16] {1.0, 0.0, 0.0, 0.0,0.0, 1.0, 0.0, 0.0,0.0, 0.0, 1.0, 0.0,0.0, 0.0, 0.0, 1.0 };
             JSONNode transformNode = rootnode["transform"];
-            transformValues = new double[16];
-            for (int i = 0; i < 16; i++)
+            if (transformNode!=null)
             {
-                transformValues[i] = transformNode[i].AsDouble;
+                for (int i = 0; i < 16; i++)
+                {
+                    transformValues[i] = transformNode[i].AsDouble;
+                }
             }
+            
             JSONNode implicitTilingNode = rootnode["implicitTiling"];
             if (implicitTilingNode != null)
             {
-                ReadImplicitTiling(rootnode);
+                tilingMethod = TilingMethod.implicitTiling;
+                
             }
 
             //setup location and rotation
             positionECEF = new Vector3ECEF(transformValues[12], transformValues[13], transformValues[14]);
             AlignWithUnityWorld();
+            switch (tilingMethod)
+            {
+                case TilingMethod.explicitTiling:
+                    root = readExplicitNode(rootnode);
+                    StartCoroutine(LoadInView());
+                    break;
+                case TilingMethod.implicitTiling:
+                    ReadImplicitTiling(rootnode);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private Tile readExplicitNode(JSONNode node)
+        {
+            Tile tile = new Tile();
+            tile.transform =new double[16] { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
+            tile.boundingVolume = new BoundingVolume();
+            tile.boundingVolume.boundingVolumeType = BoundingVolumeType.Region;
+            tile.boundingVolume.values = new double[6];
+            JSONNode regionNode = node["boundingVolume"]["region"];
+            for (int i = 0; i < 6; i++)
+            {
+                tile.boundingVolume.values[i] = regionNode[i].AsDouble;
+            }
+            tile.CalculateBounds();
+            tile.geometricError = node["geometricError"].AsFloat;
+            tile.refine = node["refine"].Value;
+            JSONNode childrenNode = node["children"];
+            tile.children = new List<Tile>();
+            if (childrenNode!=null)
+            {
+                for (int i = 0; i < childrenNode.Count; i++)
+                {
+                    tile.children.Add(readExplicitNode(childrenNode[i]));
+                }
+            }
+            JSONNode contentNode = node["content"];
+            if (contentNode!=null)
+            {
+                tile.hascontent = true;
+                
+                tile.contentUri = contentNode["uri"].Value;
+            }
+
+            return tile;
         }
 
         private void AlignWithUnityWorld()
@@ -165,7 +225,6 @@ namespace Netherlands3D.Core.Tiles
 
         private void ReadImplicitTiling(JSONNode rootnode)
         {
-            tilingMethod = TilingMethod.implicitTiling;
             implicitTilingSettings = new ImplicitTilingSettings();
             string refine = rootnode["refine"].Value;
             switch (refine)
@@ -199,6 +258,7 @@ namespace Netherlands3D.Core.Tiles
             }
             implicitTilingSettings.subtreeLevels = implicitTilingNode["subtreeLevels"];
             implicitTilingSettings.subtreeUri = implicitTilingNode["subtrees"]["uri"].Value;
+
 
             ReadSubtree subtreeReader = GetComponent<ReadSubtree>();
             string subtreeURL = tilesetUrl.Replace("tileset.json", implicitTilingSettings.subtreeUri)
@@ -280,7 +340,7 @@ namespace Netherlands3D.Core.Tiles
 
                 var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
                 var tileScreenSpaceError = (sseComponent * tile.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
-
+                tile.screenSpaceError = tileScreenSpaceError;
                 if (tile.geometricError <= sseComponent && tile.content)
                 {
                     RequestDispose(tile);

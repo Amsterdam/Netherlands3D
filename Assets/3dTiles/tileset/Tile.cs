@@ -20,6 +20,7 @@ public class Tile : IDisposable
 
     public string refine;
     public BoundingVolume boundingVolume;
+    public string contentUri;
     public Content content;
 
     public int priority = 0;

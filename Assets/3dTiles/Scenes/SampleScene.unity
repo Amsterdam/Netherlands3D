@@ -123,6 +123,80 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &252195312
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 252195314}
+  - component: {fileID: 252195313}
+  m_Layer: 0
+  m_Name: tileprioritiser
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &252195313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 252195312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff92e6a69b9d234cbb60c523eaff631, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxSimultaneousDownloads: 20
+  screenSpaceErrorScoreMultiplier: 1
+  screenCenterScore: 10
+  screenCenterWeight:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  prioritisedTiles: []
+  showPriorityNumbers: 0
+  downloadAvailable: 0
+--- !u!4 &252195314
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 252195312}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.1357288, y: -0.85292387, z: -1.9549656}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &290402928
 GameObject:
   m_ObjectHideFlags: 0
@@ -362,13 +436,14 @@ GameObject:
   - component: {fileID: 788951360}
   - component: {fileID: 788951359}
   - component: {fileID: 788951358}
+  - component: {fileID: 788951361}
   m_Layer: 0
   m_Name: read tileset buildings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &788951358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -403,11 +478,15 @@ MonoBehaviour:
     children: []
     transform: []
     geometricError: 0
+    screenSpaceError: 0
     refine: 
     boundingVolume:
       boundingVolumeType: 0
       values: []
+    contentUri: 
     content: {fileID: 0}
+    priority: 0
+    requestedUpdate: 0
   transformValues: []
   implicitTilingSettings:
     refinementtype: 0
@@ -419,7 +498,8 @@ MonoBehaviour:
     boundingRegion: []
   tileCount: 0
   nestingDepth: 0
-  cubePrefab: {fileID: 290402928}
+  maximumScreenSpaceError: 30
+  tilePrioritiser: {fileID: 252195313}
 --- !u!4 &788951360
 Transform:
   m_ObjectHideFlags: 0
@@ -435,6 +515,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &788951361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788951357}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8603a397411fa394b9d3e4a24df1dd7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &805777383
 GameObject:
   m_ObjectHideFlags: 0
@@ -571,31 +663,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1286.6284
+      value: -4100.3384
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1500
+      value: 468.18484
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -623.9302
+      value: -6142.382
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.64020354
+      value: 0.004759883
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.52355856
+      value: 0.0005912296
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.43517154
+      value: -0.992323
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.35588145
+      value: 0.12358032
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -632,7 +724,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1070083287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -667,11 +759,15 @@ MonoBehaviour:
     children: []
     transform: []
     geometricError: 0
+    screenSpaceError: 0
     refine: 
     boundingVolume:
       boundingVolumeType: 0
       values: []
+    contentUri: 
     content: {fileID: 0}
+    priority: 0
+    requestedUpdate: 0
   transformValues: []
   implicitTilingSettings:
     refinementtype: 0
@@ -683,7 +779,8 @@ MonoBehaviour:
     boundingRegion: []
   tileCount: 0
   nestingDepth: 0
-  cubePrefab: {fileID: 290402928}
+  maximumScreenSpaceError: 30
+  tilePrioritiser: {fileID: 252195313}
 --- !u!4 &1070083289
 Transform:
   m_ObjectHideFlags: 0
@@ -716,7 +813,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1239146267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -738,11 +835,15 @@ MonoBehaviour:
     children: []
     transform: []
     geometricError: 0
+    screenSpaceError: 0
     refine: 
     boundingVolume:
       boundingVolumeType: 0
       values: []
+    contentUri: 
     content: {fileID: 0}
+    priority: 0
+    requestedUpdate: 0
   transformValues: []
   implicitTilingSettings:
     refinementtype: 0
@@ -754,7 +855,8 @@ MonoBehaviour:
     boundingRegion: []
   tileCount: 0
   nestingDepth: 0
-  cubePrefab: {fileID: 290402928}
+  maximumScreenSpaceError: 200
+  tilePrioritiser: {fileID: 252195313}
 --- !u!4 &1239146268
 Transform:
   m_ObjectHideFlags: 0
@@ -952,9 +1054,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   zeroGroundLevelY: 0
   relativeCenterRD:
-    x: 121000
-    y: 487000
+    x: 80000
+    y: 453000
   setInvariantCultureInfo: 1
+  movingOrigin: 0
+  maxCameraDistanceFromOrigin: 2000
 --- !u!4 &1660549378
 Transform:
   m_ObjectHideFlags: 0
@@ -969,6 +1073,108 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1784026235
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1784026239}
+  - component: {fileID: 1784026238}
+  - component: {fileID: 1784026237}
+  - component: {fileID: 1784026236}
+  m_Layer: 0
+  m_Name: read tileset buildings (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1784026236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784026235}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8603a397411fa394b9d3e4a24df1dd7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1784026237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784026235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b5ff742a37465440ade3029dfbbbc9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  subtreeUrl: https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/subtrees/0_0_0.subtree
+--- !u!114 &1784026238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784026235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b632da76a49ee5745b7fb140e0689838, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilesetUrl: file://C:/Users/mvang/Downloads/tilesets3dgi/tilesets/buildings/tileset.json
+  root:
+    X: 0
+    Y: 0
+    Z: 0
+    hascontent: 0
+    children: []
+    transform: []
+    geometricError: 0
+    screenSpaceError: 0
+    refine: 
+    boundingVolume:
+      boundingVolumeType: 0
+      values: []
+    contentUri: 
+    content: {fileID: 0}
+    priority: 0
+    requestedUpdate: 0
+  transformValues: []
+  implicitTilingSettings:
+    refinementtype: 0
+    subdivisionScheme: 0
+    subtreeLevels: 0
+    subtreeUri: 
+    contentUri: 
+    geometricError: 0
+    boundingRegion: []
+  tileCount: 0
+  nestingDepth: 0
+  maximumScreenSpaceError: 5
+  tilePrioritiser: {fileID: 0}
+--- !u!4 &1784026239
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784026235}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &33835187302912205
 MonoBehaviour:
