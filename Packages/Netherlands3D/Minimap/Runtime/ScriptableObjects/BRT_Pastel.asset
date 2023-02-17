@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: BRT_Pastel
   m_EditorClassIdentifier: 
   ServiceUrl: https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0?layer=pastel&style=default&tilematrixset=EPSG%3A28992&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fpng&TileMatrix=EPSG%3A28992%3A{zoom}&TileCol={x}&TileRow={y}
-  TileMatrixSet: {fileID: 11400000, guid: 3f0ddbc85fd52cb4db3c81ed530f3919, type: 2}
+  TileMatrixSet: {fileID: 11400000, guid: f4751bcf7e3add54ab87dd2a5e395c91, type: 2}

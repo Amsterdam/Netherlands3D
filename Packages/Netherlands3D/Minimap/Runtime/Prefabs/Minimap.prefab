@@ -538,7 +538,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   centerPointerInView: 1
-  layerStartIndex: 6
+  layerStartIndex: 7
   topRight:
     x: 169068
     y: 511043
