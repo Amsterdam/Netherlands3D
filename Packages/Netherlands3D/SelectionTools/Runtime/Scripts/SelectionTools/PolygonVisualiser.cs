@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Netherlands3D.Events
+namespace Netherlands3D.SelectionTools
 {
     /// <summary>
     /// Use countour lists as input to draw solidified 2D shapes in the 3D world
