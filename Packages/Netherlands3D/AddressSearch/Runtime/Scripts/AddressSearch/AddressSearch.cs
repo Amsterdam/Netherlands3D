@@ -18,8 +18,6 @@ public class AddressSearch : MonoBehaviour
 
     [Header("Listen to events")]
     [SerializeField]
-    private BoolEvent searchSelected;
-    [SerializeField]
     private TriggerEvent clearInput;
 
 
@@ -52,7 +50,6 @@ public class AddressSearch : MonoBehaviour
         searchInputField = GetComponent<TMP_InputField>();
         searchInputField.onValueChanged.AddListener(delegate { GetSuggestions(searchInputField.text); });
 
-        if (searchSelected) searchSelected.started.AddListener(delegate { searchInputField.Select(); });
         if (clearInput) clearInput.started.AddListener(ClearInput);
     }
 
@@ -238,7 +235,7 @@ public class AddressSearch : MonoBehaviour
                 var JSONobj = SimpleJSON.JSON.Parse(jsonStringResult);
                 var BAGID = JSONobj["features"][0]["properties"]["pandidentificatie"];
 
-                Debug.Log("Bag ID: " + BAGID);
+                Debug.Log("BAG ID: " + BAGID);
 
                 List<string> bagIDs = new List<string>();
                 bagIDs.Add(BAGID);
