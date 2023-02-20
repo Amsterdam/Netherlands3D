@@ -221,6 +221,7 @@ namespace Netherlands3D.Minimap
 			targetObject.transform.localPosition = DeterminePositionOnMap(targetPosition);
 		}
 
+
 		/// <summary>
 		/// The zoomlevel of the viewer. Not to be confused with the map identifier.
 		/// The viewer starts at zoom level 0, our map identifier can start at a different identifier.

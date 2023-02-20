@@ -142,7 +142,7 @@
                     "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard&Mouse",
                     "action": "Modifier",
                     "isComposite": false,
                     "isPartOfComposite": false

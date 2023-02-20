@@ -55,8 +55,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 713a30b12e4a47e4595f7a546c9c4440, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  longitude: 4.89707
-  latitude: 52.377956
   dateTimeKind: 2
   jumpToCurrentTimeAtStart: 0
   hour: 13
@@ -370,7 +368,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7539193515803747146}
-  m_LocalRotation: {x: -0.010299134, y: 0.9728092, z: -0.2271353, w: -0.044110678}
+  m_LocalRotation: {x: 0.0042509623, y: 0.7727574, z: -0.6346662, w: 0.0051758904}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
