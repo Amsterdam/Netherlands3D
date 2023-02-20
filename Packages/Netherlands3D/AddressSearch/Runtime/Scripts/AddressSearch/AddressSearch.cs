@@ -20,7 +20,7 @@ public class AddressSearch : MonoBehaviour
     [SerializeField]
     private BoolEvent searchSelected;
     [SerializeField]
-    private TriggerEvent clearResults;
+    private TriggerEvent clearInput;
 
 
     [Header("Invoke events")]
@@ -53,11 +53,12 @@ public class AddressSearch : MonoBehaviour
         searchInputField.onValueChanged.AddListener(delegate { GetSuggestions(searchInputField.text); });
 
         if (searchSelected) searchSelected.started.AddListener(delegate { searchInputField.Select(); });
-        if (clearResults) clearResults.started.AddListener(ClearInput);
+        if (clearInput) clearInput.started.AddListener(ClearInput);
     }
 
     public void ClearInput()
     {
+        ClearSearchResults();
         searchInputField.text = "";
         GetSuggestions(searchInputField.text);
         searchInputField.Select();
