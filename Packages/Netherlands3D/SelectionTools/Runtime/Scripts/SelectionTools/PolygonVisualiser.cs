@@ -72,7 +72,7 @@ namespace Netherlands3D.SelectionTools
         void Awake()
         {
             if (setDrawingObjectName) setDrawingObjectName.started.AddListener(SetName);
-            if (drawPolygonEvent) drawPolygonEvent.started.AddListener(CreatePolygon);
+            if (drawPolygonEvent) drawPolygonEvent.started.AddListener(CreatePolygons);
             if (drawSinglePolygonEvent) drawSinglePolygonEvent.started.AddListener(CreateSinglePolygon);
             if (setExtrusionHeightEvent) setExtrusionHeightEvent.started.AddListener(SetExtrusionHeight);
         }
@@ -87,19 +87,19 @@ namespace Netherlands3D.SelectionTools
             newDrawingObjectName = drawingObjectName;
         }
 
-        private void CreateSinglePolygon(List<Vector3> contour)
+        public void CreateSinglePolygon(List<Vector3> contour)
         {
             var contours = new List<IList<Vector3>> { contour };
-            CreatePolygon(contours);
+            CreatePolygons(contours);
         }
 
-        private void CreatePolygon(List<IList<Vector3>> contours)
+        public void CreatePolygons(List<IList<Vector3>> contours)
         {
-            CreateAndReturnPolygon(contours);
+            CreateAndReturnPolygons(contours);
         }
 
         //Treat first contour as outer contour, and extra contours as holes
-        public GameObject CreateAndReturnPolygon(List<IList<Vector3>> contours)
+        public GameObject CreateAndReturnPolygons(List<IList<Vector3>> contours)
         {
             if (polygonCount >= maxPolygons) return null;
             polygonCount++;
