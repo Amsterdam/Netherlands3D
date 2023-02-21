@@ -35,9 +35,11 @@ namespace Netherlands3D.SelectionTools
         [SerializeField]
         private Color lineColour = Color.white;
 
+        private List<GameObject> polygonVisualisationObjects = new List<GameObject>();
+
         private void OnEnable()
         {
-            if (drawPolygonEvent) drawPolygonEvent.started.AddListener(CreatePolygon);
+            if (drawPolygonEvent) drawPolygonEvent.started.AddListener(CreatePolygons);
             if (drawSinglePolygonEvent) drawSinglePolygonEvent.started.AddListener(CreateSinglePolygon);
         }
 
@@ -47,15 +49,24 @@ namespace Netherlands3D.SelectionTools
             if (drawSinglePolygonEvent) drawSinglePolygonEvent.started.RemoveAllListeners();
         }
 
-        private void CreateSinglePolygon(List<Vector3> contour)
+        public void CreateSinglePolygon(List<Vector3> contour)
         {
             var contours = new List<IList<Vector3>> { contour };
-            CreatePolygon(contours);
+            CreatePolygons(contours);
         }
 
-        private void CreatePolygon(List<IList<Vector3>> contours)
+        public void CreatePolygons(List<IList<Vector3>> contours)
         {
-            CreateAndReturnPolygons(contours);
+            polygonVisualisationObjects.AddRange(CreateAndReturnPolygons(contours));
+        }
+
+        public void DestroyVisualisationObjects()
+        {
+            for (int i = polygonVisualisationObjects.Count - 1; i >= 0; i--)
+            {
+                Destroy(polygonVisualisationObjects[i]);
+            }
+            polygonVisualisationObjects = new List<GameObject>();
         }
 
         /// <summary>
