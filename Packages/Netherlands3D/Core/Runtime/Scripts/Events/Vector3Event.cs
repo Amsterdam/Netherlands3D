@@ -28,7 +28,7 @@ namespace Netherlands3D.Events
 	[System.Serializable]
 	public class Vector3Event : EventContainer<Vector3ValueUnityEvent, Vector3> 
 	{
-		public override void Invoke(Vector3 vector3Content)
+		public override void InvokeStarted(Vector3 vector3Content)
 		{
             started.Invoke(vector3Content);
 		}

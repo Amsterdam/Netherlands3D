@@ -11,7 +11,7 @@ namespace Netherlands3D.Events
 	[System.Serializable]
 	public class DateTimeEvent : EventContainer<DateTimeUnityEvent, DateTime>
     {
-		public override void Invoke(DateTime dateTimeContent)
+		public override void InvokeStarted(DateTime dateTimeContent)
 		{
             started.Invoke(dateTimeContent);
 		}

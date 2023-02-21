@@ -27,7 +27,7 @@ namespace Netherlands3D.Events
 	[System.Serializable]
 	public class ColorEvent : EventContainer<ColorValueUnityEvent, Color> 
 	{
-		public override void Invoke(Color colorContent)
+		public override void InvokeStarted(Color colorContent)
 		{
             started.Invoke(colorContent);
 		}

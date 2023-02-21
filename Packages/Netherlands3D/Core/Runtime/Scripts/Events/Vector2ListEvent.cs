@@ -31,7 +31,7 @@ namespace Netherlands3D.Events
         [SerializeField]
         private bool sendAsCopy = true;
 
-		public override void Invoke(List<Vector2> listVector2Content)
+		public override void InvokeStarted(List<Vector2> listVector2Content)
 		{
             if (sendAsCopy)
             {

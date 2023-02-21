@@ -27,7 +27,7 @@ namespace Netherlands3D.Events
 	[System.Serializable]
 	public class GameObjectEvent : EventContainer<GameObjectValueUnityEvent, GameObject> 
 	{
-		public override void Invoke(GameObject gameObjectContent)
+		public override void InvokeStarted(GameObject gameObjectContent)
 		{
             started.Invoke(gameObjectContent);
 		}

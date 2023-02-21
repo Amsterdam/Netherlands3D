@@ -30,7 +30,7 @@ namespace Netherlands3D.Events
         [SerializeField]
         private bool sendAsCopy = false;
 
-        public override void Invoke(Material materialContent)
+        public override void InvokeStarted(Material materialContent)
         {
             if (sendAsCopy)
             {

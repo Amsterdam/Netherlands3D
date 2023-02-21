@@ -31,7 +31,7 @@ namespace Netherlands3D.Events
         [SerializeField]
         private bool sendAsCopy = true;
 
-        public override void Invoke(List<string> listStringContent)
+        public override void InvokeStarted(List<string> listStringContent)
 		{
             if (sendAsCopy)
             {

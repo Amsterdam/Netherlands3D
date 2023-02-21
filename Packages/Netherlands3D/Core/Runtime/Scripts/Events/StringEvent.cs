@@ -27,7 +27,7 @@ namespace Netherlands3D.Events
 	[System.Serializable]
 	public class StringEvent : EventContainer<StringUnityEvent, string> 
 	{ 
-		public override void Invoke(string stringContent)
+		public override void InvokeStarted(string stringContent)
 		{
             started.Invoke(stringContent);
 		}

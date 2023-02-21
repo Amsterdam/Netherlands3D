@@ -21,7 +21,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [System.Serializable]
-public abstract class EventContainer<T0,T1> : ScriptableObject where T0 : UnityEvent<T1>
+public abstract class EventContainer<T0, T1> : ScriptableObject where T0 : UnityEvent<T1>
 {
     public string eventName;
     public string description;
@@ -39,7 +39,14 @@ public abstract class EventContainer<T0,T1> : ScriptableObject where T0 : UnityE
             eventName = this.name;
     }
 
-    public abstract void Invoke(T1 payload);
+    [Obsolete("Invoke is deprecated, please use InvokeStarted instead.")]
+    public void Invoke(T1 payload)
+    {
+        InvokeStarted(payload);
+    }
+
+    public abstract void InvokeStarted(T1 payload);
+
     public void InvokeReceived()
     {
         received.Invoke();

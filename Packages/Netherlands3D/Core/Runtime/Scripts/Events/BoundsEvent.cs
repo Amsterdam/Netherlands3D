@@ -27,7 +27,7 @@ namespace Netherlands3D.Events
 	[System.Serializable]
 	public class BoundsEvent : EventContainer<BoundsValueUnityEvent, Bounds> 
 	{
-		public override void Invoke(Bounds boundsContent)
+		public override void InvokeStarted(Bounds boundsContent)
 		{
 			started.Invoke(boundsContent);
 		}

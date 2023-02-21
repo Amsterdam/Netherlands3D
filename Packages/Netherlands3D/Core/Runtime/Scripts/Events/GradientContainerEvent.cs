@@ -28,7 +28,7 @@ namespace Netherlands3D.Events
 	[System.Serializable]
 	public class GradientContainerEvent : EventContainer<GradientContainerUnityEvent, GradientContainer> 
 	{
-		public override void Invoke(GradientContainer gradientContainerContent)
+		public override void InvokeStarted(GradientContainer gradientContainerContent)
 		{
             started.Invoke(gradientContainerContent);
 		}

@@ -41,7 +41,13 @@ namespace Netherlands3D.Events
                 eventName = this.name;
         }
 
+        [Obsolete("Invoke is deprecated, please use InvokeStarted instead.")]
         public void Invoke()
+        {
+            InvokeStarted();
+        }
+
+        public void InvokeStarted()
         {
             started.Invoke();
         }
@@ -100,4 +106,4 @@ namespace Netherlands3D.Events
             cancelled.RemoveAllListeners();
         }
     }
-    }
+}

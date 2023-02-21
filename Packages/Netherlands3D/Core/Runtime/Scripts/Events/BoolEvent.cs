@@ -27,7 +27,7 @@ namespace Netherlands3D.Events
 	[System.Serializable]
 	public class BoolEvent : EventContainer<BoolValueUnityEvent, bool>
 	{
-		public override void Invoke(bool boolContent)
+		public override void InvokeStarted(bool boolContent)
 		{
 			started.Invoke(boolContent);
 		}
