@@ -15,13 +15,8 @@ namespace Netherlands3D
         private InputAction pointerPositionAction;
 
         [Header("Invoke events")]
-        [SerializeField]
-        private Vector3Event clickOnScreenPosition;
-        [SerializeField]
-        private Vector3Event secondaryClickOnScreenPosition;
-
-        private float lastClickDown = 0;
-        private float clickTime = 0.5f; //seconds
+        [SerializeField] private Vector3Event clickOnScreenPosition;
+        [SerializeField] private Vector3Event secondaryClickOnScreenPosition;
 
         private void Awake()
         {
