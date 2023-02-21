@@ -51,12 +51,12 @@ public abstract class EventContainer<T0,T1> : ScriptableObject where T0 : UnityE
 
     public void AddListenerStarted(UnityAction<T1> action)
     {
-        AddListenerStarted(action);
+        started.AddListener(action);
     }
 
     public void RemoveListenerStarted(UnityAction<T1> action)
     {
-        RemoveListenerStarted(action);
+        started.RemoveListener(action);
     }
 
     public void RemoveAllListenersStarted()

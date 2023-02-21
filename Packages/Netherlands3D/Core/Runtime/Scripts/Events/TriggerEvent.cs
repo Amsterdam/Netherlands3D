@@ -57,12 +57,12 @@ namespace Netherlands3D.Events
 
         public void AddListenerStarted(UnityAction action)
         {
-            AddListenerStarted(action);
+            started.AddListener(action);
         }
 
         public void RemoveListenerStarted(UnityAction action)
         {
-            RemoveListenerStarted(action);
+            started.RemoveListener(action);
         }
 
         public void RemoveAllListenersStarted()
