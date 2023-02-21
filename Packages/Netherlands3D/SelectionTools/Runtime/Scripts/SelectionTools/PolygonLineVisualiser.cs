@@ -62,7 +62,7 @@ namespace Netherlands3D.SelectionTools
 
         public void DestroyVisualisationObjects()
         {
-            for (int i = polygonVisualisationObjects.Count; i >= 0; i--)
+            for (int i = polygonVisualisationObjects.Count - 1; i >= 0; i--)
             {
                 Destroy(polygonVisualisationObjects[i]);
             }
