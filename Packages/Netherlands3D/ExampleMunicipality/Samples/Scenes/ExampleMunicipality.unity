@@ -2059,19 +2059,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.049730763
+      value: -0.049732387
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.011532511
+      value: -0.011532885
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.97287935
+      value: 0.97287923
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.22560968
+      value: -0.2256096
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
@@ -2875,10 +2875,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1024, y: 768}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
