@@ -9,7 +9,7 @@ using UnityEngine.Events;
 
 public class ScriptableObjectEditor : Editor
 {
-    [MenuItem("Assets/Log ScriptableObject references")]
+    [MenuItem("Assets/Netherlands3D/Log ScriptableObject references")]
     public static void CountReferences()
     {
         ScriptableObject[] instances = GetAllInstances<ScriptableObject>();
@@ -22,7 +22,7 @@ public class ScriptableObjectEditor : Editor
         }
     }
 
-    [MenuItem("Assets/Log ScriptableObject references", true)]
+    [MenuItem("Assets/Netherlands3D/Log ScriptableObject references", true)]
     public static bool ValidateCountReferences()
     {
         return Selection.activeObject != null;
