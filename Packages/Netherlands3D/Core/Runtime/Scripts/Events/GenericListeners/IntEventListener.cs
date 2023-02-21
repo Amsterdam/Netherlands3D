@@ -17,7 +17,7 @@ public class IntEventListener : MonoBehaviour
     {
         if (onEvent)
         {
-            onEvent.started.AddListener(Invoke);
+            onEvent.AddListenerStarted(Invoke);
         }
     }
 

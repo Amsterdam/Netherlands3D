@@ -41,9 +41,9 @@ namespace Netherlands3D.ProfileRendering
 
         void Awake()
         {
-            onReceiveLayerLines.started.AddListener(AddSVGLine);
-            onReceiveLayerColor.started.AddListener(SetStrokeColor);
-            onReadyForExport.started.AddListener(FinishSVGDocument);
+            onReceiveLayerLines.AddListenerStarted(AddSVGLine);
+            onReceiveLayerColor.AddListenerStarted(SetStrokeColor);
+            onReadyForExport.AddListenerStarted(FinishSVGDocument);
         }
 
         private void FinishSVGDocument()

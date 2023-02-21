@@ -32,7 +32,7 @@ namespace Netherlands3D.SelectionTools
         void Awake()
         {
             text = GetComponent<TextMeshProUGUI>();
-            boundingBoxEvent.started.AddListener(DrawBoundsAsText);
+            boundingBoxEvent.AddListenerStarted(DrawBoundsAsText);
         }
 
         private void DrawBoundsAsText(double[] bbox)

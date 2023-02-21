@@ -71,10 +71,10 @@ namespace Netherlands3D.Events
 
         void Awake()
         {
-            if (setDrawingObjectName) setDrawingObjectName.started.AddListener(SetName);
-            if (drawPolygonEvent) drawPolygonEvent.started.AddListener(CreatePolygon);
-            if (drawSinglePolygonEvent) drawSinglePolygonEvent.started.AddListener(CreateSinglePolygon);
-            if (setExtrusionHeightEvent) setExtrusionHeightEvent.started.AddListener(SetExtrusionHeight);
+            if (setDrawingObjectName) setDrawingObjectName.AddListenerStarted(SetName);
+            if (drawPolygonEvent) drawPolygonEvent.AddListenerStarted(CreatePolygon);
+            if (drawSinglePolygonEvent) drawSinglePolygonEvent.AddListenerStarted(CreateSinglePolygon);
+            if (setExtrusionHeightEvent) setExtrusionHeightEvent.AddListenerStarted(SetExtrusionHeight);
         }
 
 		public void SetExtrusionHeight(float extrusionHeight)

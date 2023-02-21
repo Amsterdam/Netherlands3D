@@ -26,11 +26,22 @@ namespace Netherlands3D.Events
 
 	[CreateAssetMenu(fileName = "StringListEvent", menuName = "EventContainers/StringListEvent", order = 0)]
 	[System.Serializable]
-	public class StringListEvent : EventContainer<StringListUnityEvent> 
+	public class StringListEvent : EventContainer<StringListUnityEvent, List<string>> 
 	{
-		public void Invoke(List<string> listStringContent)
+        [SerializeField]
+        private bool sendAsCopy = true;
+
+        public override void Invoke(List<string> listStringContent)
 		{
-			started.Invoke(listStringContent);
-		}
+            if (sendAsCopy)
+            {
+                var copy = new List<string>(listStringContent);
+                started.Invoke(copy);
+            }
+            else
+            {
+                started.Invoke(listStringContent);
+            }
+        }
 	}
 }

@@ -177,7 +177,7 @@ public class GetGeoJSONFloatValues : MonoBehaviour
 
 					featuresFoundInPage++;
 				}
-				filteredIdsAndFloats.started.Invoke(stringAndFloat);
+				filteredIdsAndFloats.Invoke(stringAndFloat);
 
 				if (featuresFoundInPage < count)
 				{

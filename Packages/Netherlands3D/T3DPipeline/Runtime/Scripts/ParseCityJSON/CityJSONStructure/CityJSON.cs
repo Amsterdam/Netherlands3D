@@ -50,12 +50,12 @@ namespace Netherlands3D.T3DPipeline
 
         private void OnEnable()
         {
-            onCityJSONReceived.started.AddListener(ParseCityJSON);
+            onCityJSONReceived.AddListenerStarted(ParseCityJSON);
         }
 
         private void OnDisable()
         {
-            onCityJSONReceived.started.RemoveAllListeners();
+            onCityJSONReceived.RemoveAllListenersStarted();
         }
 
         public void ParseCityJSON(string cityJson)

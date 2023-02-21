@@ -73,10 +73,10 @@ namespace Netherlands3D.TileSystem
             TilesWithInteractedSubObjects = new List<string>();
 
             if (onColoringSubobjects)
-                onColoringSubobjects.started.AddListener(DisableWhileColoring);
+                onColoringSubobjects.AddListenerStarted(DisableWhileColoring);
 
             if (clickedOnPosition)
-                clickedOnPosition.started.AddListener(ShootRayAtPosition);
+                clickedOnPosition.AddListenerStarted(ShootRayAtPosition);
 
             containerLayer = gameObject.GetComponent<BinaryMeshLayer>();
         }
@@ -243,7 +243,7 @@ namespace Netherlands3D.TileSystem
 
             HighlightSelectedWithColor(selectionVertexColor);
 
-            selectedIdsOnClick.started.Invoke(SelectedIDs);
+            selectedIdsOnClick.Invoke(SelectedIDs);
         }
 
         /// <summary>

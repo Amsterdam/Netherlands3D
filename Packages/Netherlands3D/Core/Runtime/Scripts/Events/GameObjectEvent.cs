@@ -25,11 +25,11 @@ namespace Netherlands3D.Events
 
 	[CreateAssetMenu(fileName = "GameObjectEvent", menuName = "EventContainers/GameObjectEvent", order = 0)]
 	[System.Serializable]
-	public class GameObjectEvent : EventContainer<GameObjectValueUnityEvent> 
+	public class GameObjectEvent : EventContainer<GameObjectValueUnityEvent, GameObject> 
 	{
-		public void Invoke(GameObject gameObjectContent)
+		public override void Invoke(GameObject gameObjectContent)
 		{
-			started.Invoke(gameObjectContent);
+            started.Invoke(gameObjectContent);
 		}
 	}
 }

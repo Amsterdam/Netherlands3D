@@ -25,11 +25,11 @@ namespace Netherlands3D.Events
 
 	[CreateAssetMenu(fileName = "IntEvent", menuName = "EventContainers/IntEvent", order = 0)]
 	[System.Serializable]
-	public class IntEvent : EventContainer<IntValueUnityEvent>
+	public class IntEvent : EventContainer<IntValueUnityEvent, int>
 	{
-		public void Invoke(int intContent)
+		public override void Invoke(int intContent)
 		{
-			started.Invoke(intContent);
+            started.Invoke(intContent);
 		}
 	}
 }

@@ -150,7 +150,7 @@ namespace Netherlands3D.SelectionTools
         private void OnDisable()
         {
             autoDrawPolygon = false;
-            blockCameraDrag.started.Invoke(false);
+            blockCameraDrag.Invoke(false);
             polygonSelectionActionMap.Disable();
         }
 
@@ -165,12 +165,12 @@ namespace Netherlands3D.SelectionTools
             if (!autoDrawPolygon && clickAction.IsPressed() && modifierAction.IsPressed())
             {
                 autoDrawPolygon = true;
-                blockCameraDrag.started.Invoke(true);
+                blockCameraDrag.Invoke(true);
             }
             else if (autoDrawPolygon && !clickAction.IsPressed())
             {
                 autoDrawPolygon = false;
-                blockCameraDrag.started.Invoke(false);
+                blockCameraDrag.Invoke(false);
             }
 
             if (!requireReleaseBeforeRedraw && autoDrawPolygon)
@@ -552,7 +552,7 @@ namespace Netherlands3D.SelectionTools
 
             if (positions.Count > 1 && lineHasChanged)
             {
-                lineHasChanged.started.Invoke(positions);
+                lineHasChanged.Invoke(positions);
             }
         }
 
@@ -588,7 +588,7 @@ namespace Netherlands3D.SelectionTools
             }
 
             if(positions.Count > 1)
-                selectedPolygonArea.started.Invoke(positions);
+                selectedPolygonArea.Invoke(positions);
         }
 
         private bool PolygonIsClockwise(List<Vector3> points)

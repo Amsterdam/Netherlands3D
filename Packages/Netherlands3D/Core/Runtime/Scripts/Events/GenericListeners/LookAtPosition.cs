@@ -17,7 +17,7 @@ namespace Netherlands3D.Events.GenericListeners
         {
             if (lookAtPosition)
             {
-                lookAtPosition.started.AddListener(LookAt);
+                lookAtPosition.AddListenerStarted(LookAt);
             }
         }
 

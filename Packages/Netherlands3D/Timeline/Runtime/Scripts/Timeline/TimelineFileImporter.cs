@@ -22,12 +22,12 @@ namespace Netherlands3D.Timeline
 
         private void OnEnable()
         {
-            fileImported.started.AddListener(x => StartCoroutine(OnFilesImported(x)));
+            fileImported.AddListenerStarted(x => StartCoroutine(OnFilesImported(x)));
         }
 
         private void OnDisable()
         {
-            fileImported.started.RemoveListener(x => StartCoroutine(OnFilesImported(x)));
+            fileImported.RemoveListenerStarted(x => StartCoroutine(OnFilesImported(x)));
         }
 
         /// <summary>

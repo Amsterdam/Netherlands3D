@@ -26,11 +26,26 @@ namespace Netherlands3D.Events
 
 	[CreateAssetMenu(fileName = "Vector3ListsEvent", menuName = "EventContainers/Vector3ListsEvent", order = 0)]
 	[System.Serializable]
-	public class Vector3ListsEvent : EventContainer<Vector3ListsUnityEvent> 
+	public class Vector3ListsEvent : EventContainer<Vector3ListsUnityEvent, List<IList<Vector3>> >
 	{
-		public void Invoke(List<IList<Vector3>> listListsVector3Content)
+        [SerializeField]
+        private bool sendAsCopy = true;
+
+        public override void Invoke(List<IList<Vector3>> listListsVector3Content)
 		{
-			started.Invoke(listListsVector3Content);
-		}
+            if (sendAsCopy)
+            {
+                var copy = new List<IList<Vector3>>();
+                foreach(var list in listListsVector3Content)
+                {
+                    copy.Add(new List<Vector3>(list));
+                }
+                started.Invoke(copy);
+            }
+            else
+            {
+                started.Invoke(listListsVector3Content);
+            }
+        }
 	}
 }

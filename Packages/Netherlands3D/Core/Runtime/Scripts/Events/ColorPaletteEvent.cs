@@ -26,11 +26,11 @@ namespace Netherlands3D.Events
 
 	[CreateAssetMenu(fileName = "ColorPaletteEvent", menuName = "EventContainers/ColorPaletteEvent", order = 0)]
 	[System.Serializable]
-	public class ColorPaletteEvent : EventContainer<ColorPaletteUnityEvent> 
+	public class ColorPaletteEvent : EventContainer<ColorPaletteUnityEvent, ColorPalette> 
 	{
-		public void Invoke(ColorPalette colorPaletteContent)
+		public override void Invoke(ColorPalette colorPaletteContent)
 		{
-			started.Invoke(colorPaletteContent);
+            started.Invoke(colorPaletteContent);
 		}
 	}
 }

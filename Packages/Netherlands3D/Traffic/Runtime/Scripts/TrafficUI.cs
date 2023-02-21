@@ -61,13 +61,13 @@ namespace Netherlands3D.Traffic.VISSIM
         private void OnEnable()
         {
             dataDatabase.OnAddData.AddListener(OnAddData);
-            sso.eventSimulationSpeedChanged.started.AddListener(OnSimulationSpeedChange);
+            sso.eventSimulationSpeedChanged.AddListenerStarted(OnSimulationSpeedChange);
         }
 
         private void OnDisable()
         {
             dataDatabase.OnAddData.RemoveListener(OnAddData);
-            sso.eventSimulationSpeedChanged.started.RemoveListener(OnSimulationSpeedChange);
+            sso.eventSimulationSpeedChanged.RemoveListenerStarted(OnSimulationSpeedChange);
         }
 
         private void Start()

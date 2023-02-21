@@ -52,31 +52,31 @@ namespace Netherlands3D.Geoservice
             tileHandler = FindObjectOfType(typeof(TileSystem.TileHandler)) as TileSystem.TileHandler;
             if (OnWMSUrlDefined_String)
             {
-                OnWMSUrlDefined_String.started.AddListener(CreateWMS_Layer);
+                OnWMSUrlDefined_String.AddListenerStarted(CreateWMS_Layer);
             }
             if (ShowWMSOnBuildings)
             {
-                ShowWMSOnBuildings.started.AddListener(showWMSOnBuildings);
+                ShowWMSOnBuildings.AddListenerStarted(showWMSOnBuildings);
             }
             if (ShowWMSOnTerrain)
             {
-                ShowWMSOnTerrain.started.AddListener(showWMSOnTerrain);
+                ShowWMSOnTerrain.AddListenerStarted(showWMSOnTerrain);
             }
             if (ShowWMSOnBuildingsAndTerrain)
             {
-                ShowWMSOnBuildingsAndTerrain.started.AddListener(showWMSOnBuildingsAndTerrain);
+                ShowWMSOnBuildingsAndTerrain.AddListenerStarted(showWMSOnBuildingsAndTerrain);
             }
             if (UnloadWMSService)
             {
-                UnloadWMSService.started.AddListener(UnloadLayer);
+                UnloadWMSService.AddListenerStarted(UnloadLayer);
             }
             if (AleenOpMaaiveld_Bool)
             {
-                AleenOpMaaiveld_Bool.started.AddListener(ShowOnlyOnTerrain);
+                AleenOpMaaiveld_Bool.AddListenerStarted(ShowOnlyOnTerrain);
             }
             if (ShowLayer_Bool)
             {
-                ShowLayer_Bool.started.AddListener(ShowLayer);
+                ShowLayer_Bool.AddListenerStarted(ShowLayer);
             }
         }
         /// <summary>

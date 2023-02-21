@@ -32,13 +32,13 @@ namespace Netherlands3D.ProfileRendering
             //We render manualy using renderCamera.Render();
             renderCamera.enabled = false;
 
-            onReceiveCuttingLine.started.AddListener(Align);
+            onReceiveCuttingLine.AddListenerStarted(Align);
 
             if (onReveiceHeightRange)
-                onReveiceHeightRange.started.AddListener((value) => heightRange = value);
+                onReveiceHeightRange.AddListenerStarted((value) => heightRange = value);
 
             if (onReveiceHeightRange)
-                onReveiceHeightRange.started.AddListener((value) => heightOffset = value);
+                onReveiceHeightRange.AddListenerStarted((value) => heightOffset = value);
         }
 
         private void Align(List<Vector3> linePoints)

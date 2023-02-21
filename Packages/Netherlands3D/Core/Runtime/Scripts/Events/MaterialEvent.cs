@@ -20,16 +20,27 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class MaterialValueUnityEvent : UnityEvent<Material> { }
+    [System.Serializable]
+    public class MaterialValueUnityEvent : UnityEvent<Material> { }
 
-	[CreateAssetMenu(fileName = "MaterialEvent", menuName = "EventContainers/MaterialEvent", order = 0)]
-	[System.Serializable]
-	public class MaterialEvent : EventContainer<MaterialValueUnityEvent> 
-	{
-		public void Invoke(Material gameObjectContent)
-		{
-			started.Invoke(gameObjectContent);
-		}
-	}
+    [CreateAssetMenu(fileName = "MaterialEvent", menuName = "EventContainers/MaterialEvent", order = 0)]
+    [System.Serializable]
+    public class MaterialEvent : EventContainer<MaterialValueUnityEvent, Material>
+    {
+        [SerializeField]
+        private bool sendAsCopy = false;
+
+        public override void Invoke(Material materialContent)
+        {
+            if (sendAsCopy)
+            {
+                Material copy = new Material(materialContent);
+                started.Invoke(copy);
+            }
+            else
+            {
+                started.Invoke(materialContent);
+            }
+        }
+    }
 }

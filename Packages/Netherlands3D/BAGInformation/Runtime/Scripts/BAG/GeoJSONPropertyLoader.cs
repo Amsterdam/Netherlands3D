@@ -53,7 +53,7 @@ namespace Netherlands3D.BAGInformation
 
 		void Start()
 		{
-			loadPropertiesForIDs.started.AddListener(DownloadGeoJSONProperties);
+			loadPropertiesForIDs.AddListenerStarted(DownloadGeoJSONProperties);
 		}
 
 		private void OnValidate()

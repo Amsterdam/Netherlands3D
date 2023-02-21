@@ -42,7 +42,7 @@ namespace Netherlands3D.Interface
             {
                 targetContainer = this.transform;
             }
-            onReceivedKeyValuePair.started.AddListener(DrawKeyValuePair);
+            onReceivedKeyValuePair.AddListenerStarted(DrawKeyValuePair);
         }
 
         private void DrawKeyValuePair(List<string> keyValuePair)

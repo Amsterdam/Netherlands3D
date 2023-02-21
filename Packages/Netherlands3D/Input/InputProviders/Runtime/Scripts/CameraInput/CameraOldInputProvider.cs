@@ -34,16 +34,16 @@ public class CameraOldInputProvider : BaseCameraInputProvider
         var rotate = Input.GetMouseButton(2) || (dragging && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)));
         var firstPerson = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
 
-        draggingModifier.started.Invoke(dragging);
-        rotateModifier.started.Invoke(rotate);
-        firstPersonModifier.started.Invoke(firstPerson);
+        draggingModifier.Invoke(dragging);
+        rotateModifier.Invoke(rotate);
+        firstPersonModifier.Invoke(firstPerson);
 
         //Always send position of main pointer, and calculate its delta
         Vector2 pointer = Input.mousePosition;
-        pointerPosition.started.Invoke(pointer);
+        pointerPosition.Invoke(pointer);
         var pointerDelta = (pointer - previousPointerPosition);
         previousPointerPosition = pointer;
-        lookInput.started.Invoke(pointerDelta);
+        lookInput.Invoke(pointerDelta);
 
         //Transform inputs 
         var moveValue = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
@@ -53,20 +53,20 @@ public class CameraOldInputProvider : BaseCameraInputProvider
 
         if (moveValue.magnitude>0)
         {
-            horizontalInput.started.Invoke(moveValue.x);
-            verticalInput.started.Invoke(moveValue.y);
+            horizontalInput.Invoke(moveValue.x);
+            verticalInput.Invoke(moveValue.y);
         }
         if (zoomValue.magnitude > 0)
         {
-            zoomInput.started.Invoke(zoomValue.y);
+            zoomInput.Invoke(zoomValue.y);
         }
         if (upPressed)
         {
-            upDownInput.started.Invoke(1);
+            upDownInput.Invoke(1);
         }
         else if(downPressed)
         {
-            upDownInput.started.Invoke(-1);
+            upDownInput.Invoke(-1);
         }
     }
 #endif

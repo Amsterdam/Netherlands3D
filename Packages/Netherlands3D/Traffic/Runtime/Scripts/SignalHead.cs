@@ -34,7 +34,7 @@ namespace Netherlands3D.Traffic.VISSIM
         {
             if(data != null)
             {
-                sso.eventSimulationTimeChanged.started.RemoveListener(OnSimulationTimeChanged);
+                sso.eventSimulationTimeChanged.RemoveListenerStarted(OnSimulationTimeChanged);
             }
         }
 
@@ -47,7 +47,7 @@ namespace Netherlands3D.Traffic.VISSIM
             name = "Signal Head " + data.groupID;
 
             // Add listeners
-            sso.eventSimulationTimeChanged.started.AddListener(OnSimulationTimeChanged);
+            sso.eventSimulationTimeChanged.AddListenerStarted(OnSimulationTimeChanged);
         }
 
         private void OnSimulationTimeChanged(float value)
