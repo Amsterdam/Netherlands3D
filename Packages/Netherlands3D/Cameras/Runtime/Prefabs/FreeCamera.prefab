@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1107191816428015818}
   - component: {fileID: 6567033620470696027}
   - component: {fileID: 262063079913678507}
+  - component: {fileID: 942284140123242531}
   m_Layer: 0
   m_Name: FreeCamera
   m_TagString: MainCamera
@@ -205,3 +206,19 @@ MonoBehaviour:
   minShadowDistance: 100
   maxShadowDistance: 4000
   referenceTransform: {fileID: 0}
+--- !u!114 &942284140123242531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1107191816428015814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c49b4cc203aa6414fae5c798d1d0e7d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_MaxRayIntersections: 0

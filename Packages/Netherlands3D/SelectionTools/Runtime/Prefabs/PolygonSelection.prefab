@@ -444,14 +444,14 @@ MonoBehaviour:
   snapToStart: 1
   requireClosedPolygon: 1
   closeLoopAtStart: 1
-  createHandles: 0
+  createHandles: 1
   maxPoints: 1000
   minPointsToCloseLoop: 3
   minPointDistance: 2
   minDistanceBetweenAutoPoints: 1
   minDirectionThresholdForAutoPoints: 0.9
   windingOrder: 1
-  doubleClickToCloseLoop: 1
+  doubleClickToCloseLoop: 0
   doubleClickTimer: 0.5
   doubleClickDistance: 10
   displayLineUntilRedraw: 1
