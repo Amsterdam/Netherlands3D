@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Container for extension functions for the System.Collections.Generic.IList{T} and System.Collections.IList
@@ -72,11 +73,6 @@ public static class IListInsertIntoSortedListExtensions
 		InsertIntoSortedList(list, value, (a, b) => a.CompareTo(b));
 	}
 
-
-
-
-
-
 	public static void InsertIntoSortedList(
 		this IList list,
 		object value,
@@ -108,9 +104,7 @@ public static class IListInsertIntoSortedListExtensions
 		}
 		list.Insert(startIndex, value);
 	}
-
-
-
+	
 	/// <summary>
 	/// Insert a value into an IList that is presumed to be already sorted such that sort ordering is preserved
 	/// </summary>
@@ -147,4 +141,15 @@ public static class IListInsertIntoSortedListExtensions
 		}
 		list.Insert(startIndex, value);
 	}
+
+    public static List<Vector3> ToVector3List(this List<Vector2> input, float height = 0)
+    {
+        var list = new List<Vector3>();
+        for (int i = 0; i < input.Count; i++)
+        {
+            var p = input[i];
+            list.Add(new(p.x, height, p.y));
+        }
+        return list;
+    }
 }
