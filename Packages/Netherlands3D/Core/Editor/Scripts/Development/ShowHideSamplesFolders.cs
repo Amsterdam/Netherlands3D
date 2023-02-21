@@ -84,7 +84,6 @@ namespace Netherlands3D.Development
                         Directory.Move(folder, newFolderPath);
                         Debug.Log($"{folder} -> {newFolderPath}");
                     }
-
                 }
                 else
                 {

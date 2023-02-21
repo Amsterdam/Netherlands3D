@@ -455,6 +455,7 @@ MonoBehaviour:
   doubleClickTimer: 0.5
   doubleClickDistance: 10
   displayLineUntilRedraw: 1
+  clearOnEnable: 1
   polygonLineRenderer: {fileID: 6195754652070294115}
   previewLineRenderer: {fileID: 1350614595420863712}
   pointerRepresentation: {fileID: 965432690250480436}
