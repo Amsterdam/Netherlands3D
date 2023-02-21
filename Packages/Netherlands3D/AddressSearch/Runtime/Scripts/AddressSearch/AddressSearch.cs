@@ -64,7 +64,6 @@ public class AddressSearch : MonoBehaviour
     public void GetSuggestions(string textInput = "")
     {
         var inputNotEmpty = (textInput != "");
-
         StopAllCoroutines();
 
         if (inputNotEmpty)
@@ -81,6 +80,7 @@ public class AddressSearch : MonoBehaviour
         }
         else
         {
+            ClearSearchResults();
             toggleClearButton.started.Invoke(false);
         }
     }
