@@ -2228,12 +2228,16 @@ MonoBehaviour:
   lookInput: {fileID: 11400000, guid: 60a5d5ae948894a4b81ce19239f5fb71, type: 2}
   flyInput: {fileID: 11400000, guid: edd75d8dd8d10e6469004c04033ef7ee, type: 2}
   rotateInput: {fileID: 11400000, guid: 8176c5b23598cef4ab3ba31f324603c0, type: 2}
-  blockCameraDrag: {fileID: 11400000, guid: 56b3294f83498344c90113609a2d83db, type: 2}
   zoomToPointerInput: {fileID: 11400000, guid: 1ed3a4566e400a645b226800ef524917, type: 2}
   pointerPosition: {fileID: 11400000, guid: e0761ef641ca8fe458adf20b533a9f89, type: 2}
   dragModifier: {fileID: 11400000, guid: 8d6fa7b43c0e19d478efb3e4bde47f75, type: 2}
   rotateModifier: {fileID: 11400000, guid: 61a4ba0ce1e595d458619e2b56009ce9, type: 2}
   firstPersonModifier: {fileID: 11400000, guid: 78ca7e79ff1e06c4db8fffc011f68a8b, type: 2}
+  blockCameraDrag: {fileID: 11400000, guid: 56b3294f83498344c90113609a2d83db, type: 2}
+  ortographicEnabled: {fileID: 0}
+  focusOnObject: {fileID: 0}
+  focusAngle: 45
+  focusDistanceMultiplier: 2
 --- !u!4 &1245365337
 Transform:
   m_ObjectHideFlags: 0
