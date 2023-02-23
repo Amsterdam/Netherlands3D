@@ -47,7 +47,7 @@ namespace Netherlands3D.ProfileRendering
             onReadyForExport.started.AddListener(FinishSVGDocument);
         }
 
-        private void FinishSVGDocument()
+        public void FinishSVGDocument()
         {
            Destroy(coordinateSystem.gameObject);
            StartCoroutine(CompleteAndSave());
@@ -69,7 +69,7 @@ namespace Netherlands3D.ProfileRendering
             SaveFile();
         }
 
-        private void AddSVGLine(List<Vector3> lines)
+        public void AddSVGLine(List<Vector3> lines)
         {
             if (lines.Count < 2) return;
 
@@ -99,7 +99,7 @@ namespace Netherlands3D.ProfileRendering
             else if (linePoint.y >= maxY) maxY = linePoint.y;
         }
 
-        private void SetStrokeColor(Color color)
+        public void SetStrokeColor(Color color)
         {
             if (useMaterialColorForLines)
             {
