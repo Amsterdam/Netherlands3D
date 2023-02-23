@@ -39,14 +39,14 @@ namespace Netherlands3D.SelectionTools
 
         private void OnEnable()
         {
-            if (drawPolygonEvent) drawPolygonEvent.started.AddListener(CreatePolygons);
-            if (drawSinglePolygonEvent) drawSinglePolygonEvent.started.AddListener(CreateSinglePolygon);
+            if (drawPolygonEvent) drawPolygonEvent.AddListenerStarted(CreatePolygons);
+            if (drawSinglePolygonEvent) drawSinglePolygonEvent.AddListenerStarted(CreateSinglePolygon);
         }
 
         private void OnDisable()
         {
-            if (drawPolygonEvent) drawPolygonEvent.started.RemoveAllListeners();
-            if (drawSinglePolygonEvent) drawSinglePolygonEvent.started.RemoveAllListeners();
+            if (drawPolygonEvent) drawPolygonEvent.RemoveAllListenersStarted();
+            if (drawSinglePolygonEvent) drawSinglePolygonEvent.RemoveAllListenersStarted();
         }
 
         public void CreateSinglePolygon(List<Vector3> contour)
