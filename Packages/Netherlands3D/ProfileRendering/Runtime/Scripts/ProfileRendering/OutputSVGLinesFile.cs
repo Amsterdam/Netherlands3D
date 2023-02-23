@@ -29,9 +29,10 @@ namespace Netherlands3D.ProfileRendering
         [SerializeField] private float strokeWidth = 0.1f;
 
         [SerializeField] private float documentHeight = 300;
+        [SerializeField] private bool useMaterialColorForLines = false;
 
         private StringBuilder svgStringBuilder;
-        private string hexStrokeColor = "#FFFFFF";
+        private string hexStrokeColor = "#000000";
         private Transform coordinateSystem;
 
         private float minX = float.MaxValue;
@@ -100,7 +101,14 @@ namespace Netherlands3D.ProfileRendering
 
         private void SetStrokeColor(Color color)
         {
-            hexStrokeColor = $"#{ColorUtility.ToHtmlStringRGB(color)}";
+            if (useMaterialColorForLines)
+            {
+                hexStrokeColor = $"#{ColorUtility.ToHtmlStringRGB(color)}";
+            }
+            else
+            {
+                hexStrokeColor = "#000000";
+            }
         }
 
         private void CreateCoordinateSystem(List<UnityEngine.Vector3> lines)
