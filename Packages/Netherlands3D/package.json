@@ -20,6 +20,11 @@
   "changelogURL": "https://github.com/Amsterdam/Netherlands3D/blob/main/CHANGELOG.md",
   "samples": [
     {
+      "displayName": "Address Search",
+      "description": "Example of a search input field which can be used to search for an address in a selected city",
+      "path": "AddressSearch/Samples~/AddressSearch"
+    },
+    {
       "displayName": "Cameras",
       "description": "Example of a camera based on the one used in 3DAmsterdam and 3DUtrecht, with dragging, scroll zooming etc.",
       "path": "Cameras/Samples~/Cameras"
