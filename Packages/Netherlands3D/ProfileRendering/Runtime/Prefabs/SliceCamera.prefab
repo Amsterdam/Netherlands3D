@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6314881068883014198}
   - component: {fileID: 1588652091334072171}
   - component: {fileID: 4031305844489570884}
-  - component: {fileID: 9155436042563942743}
   m_Layer: 0
   m_Name: Fill
   m_TagString: Untagged
@@ -84,20 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &9155436042563942743
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3476634434144147658}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &4968407319315594457
 GameObject:
   m_ObjectHideFlags: 0
@@ -309,6 +294,6 @@ MonoBehaviour:
   heightOffset: 0
   renderTexture: {fileID: 8400000, guid: 69c519a8b00254245b3d67e3f2dce9e1, type: 2}
   cuttingLine: {fileID: 4968407319315594453}
-  onReceiveCuttingLine: {fileID: 11400000, guid: 777e7bc0e0d3e4c4496e3278d9b50a7c, type: 2}
+  onReceiveCuttingLine: {fileID: 11400000, guid: 77f9110b380db7e4085386da1f665dd3, type: 2}
   onReveiceHeightRange: {fileID: 0}
   onReveiceHeightOffset: {fileID: 0}
