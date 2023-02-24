@@ -619,9 +619,9 @@ namespace Netherlands3D.SelectionTools
                 MoveAllHandlesToPoint();
             }
 
-            if (invokeNewPolygonEvent && positions.Count > 1)
+            if (createdNewPolygonArea && invokeNewPolygonEvent && positions.Count > 1)
                 createdNewPolygonArea.started.Invoke(positions);
-            else if (positions.Count > 1 && editedPolygonArea)
+            else if (editedPolygonArea && positions.Count > 1 && editedPolygonArea)
                 editedPolygonArea.started.Invoke(positions);
         }
 
