@@ -298,8 +298,7 @@ namespace Netherlands3D.Traffic.VISSIM
 
         private void OnValidate()
         {
-            if(Application.isPlaying)
-                UpdateEntitiesRealtime = updateEntitiesRealtime;
+            UpdateEntitiesRealtime = updateEntitiesRealtime;
         }
     }
 }
