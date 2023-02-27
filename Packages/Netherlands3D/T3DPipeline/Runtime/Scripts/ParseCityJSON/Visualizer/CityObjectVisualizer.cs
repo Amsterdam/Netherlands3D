@@ -231,10 +231,12 @@ namespace Netherlands3D.T3DPipeline
         }
 
         //Different boundary objects need to be parsed into meshes in different ways because of the different depths of the boundary arrays. We need to go as deep as needed to create meshes from surfaces.
-        private static List<BoundaryMesh> BoundariesToMeshes(CityBoundary boundary, CoordinateSystem coordinateSystem)
+        protected virtual List<BoundaryMesh> BoundariesToMeshes(CityBoundary boundary, CoordinateSystem coordinateSystem)
         {
-            if (boundary is CityMultiPoint || boundary is CityMultiLineString) //todo these boundary types are not supported as meshes
-                return new List<BoundaryMesh>();
+            if (boundary is CityMultiPoint) 
+                throw new NotSupportedException("Boundary of type " + typeof(CityMultiPoint) + "is not supported by this Visualiser script since it contains no mesh data. Use MultiPointVisualiser instead and assign an object to use as visualization of the points");
+            if(boundary is CityMultiLineString) //todo this boundary type is not supported at all
+                throw new NotSupportedException("Boundary of type " + typeof(CityMultiLineString) + "is currently not supported.");
             if (boundary is CitySurface)
                 return BoundariesToMeshes(boundary as CitySurface, coordinateSystem);
             if (boundary is CityMultiOrCompositeSurface)
@@ -312,7 +314,7 @@ namespace Netherlands3D.T3DPipeline
         }
 
         // convert the list of Vector3Doubles to a list of Vector3s and convert the coordinates to unity in the process.
-        private static List<Vector3> GetConvertedPolygonVertices(CityPolygon polygon, CoordinateSystem coordinateSystem)
+        public static List<Vector3> GetConvertedPolygonVertices(CityPolygon polygon, CoordinateSystem coordinateSystem)
         {
             List<Vector3> convertedPolygon = new List<Vector3>();
             foreach (var vert in polygon.Vertices)

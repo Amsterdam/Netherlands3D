@@ -18,7 +18,7 @@ namespace Netherlands3D.Core
         {
             if (onEvent)
             {
-                onEvent.started.AddListener(Invoke);
+                onEvent.AddListenerStarted(Invoke);
             }
         }
 

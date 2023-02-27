@@ -3,6 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace Netherlands3D.Core
@@ -51,6 +54,12 @@ namespace Netherlands3D.Core
 
             CoordConvert.zeroGroundLevelY = zeroGroundLevelY;
             CoordConvert.relativeCenterRD = relativeCenterRD;
+        }
+
+        private void OnValidate()
+        {
+            CoordConvert.zeroGroundLevelY = zeroGroundLevelY;
+            CoordConvert.relativeCenterRD = relativeCenterRD;
             CoordConvert.ecefIsSet = false;
 
             Vector3WGS origin_wgs = CoordConvert.UnitytoWGS84(Vector3.zero);
@@ -71,5 +80,16 @@ namespace Netherlands3D.Core
                 yield return new WaitForEndOfFrame();
             }
         }
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Draw the RD origin in our viewport center
+        /// </summary>
+        void OnDrawGizmosSelected()
+        {
+            Handles.color = Color.yellow;
+            Handles.Label(Vector3.zero, $"    RD: {CoordConvert.relativeCenterRD.x},{CoordConvert.relativeCenterRD.y}");
+        }
+#endif
     }
 }

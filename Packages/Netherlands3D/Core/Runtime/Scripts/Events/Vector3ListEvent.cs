@@ -24,13 +24,24 @@ namespace Netherlands3D.Events
 	[System.Serializable]
 	public class Vector3ListValueUnityEvent : UnityEvent<List<Vector3>> { }
 
-	[CreateAssetMenu(fileName = "Vector3ListEvent", menuName = "EventContainers/Vector3ListEvent", order = 0)]
-	[System.Serializable]
-	public class Vector3ListEvent : EventContainer<Vector3ListValueUnityEvent>
-	{
-		public void Invoke(List<Vector3> listVector3Content)
-		{
-			started.Invoke(listVector3Content);
-		}
-	}
+    [CreateAssetMenu(fileName = "Vector3ListEvent", menuName = "EventContainers/Vector3ListEvent", order = 0)]
+    [System.Serializable]
+    public class Vector3ListEvent : EventContainer<Vector3ListValueUnityEvent, List<Vector3>>
+    {
+        [SerializeField]
+        private bool sendAsCopy = true;
+
+        public override void InvokeStarted(List<Vector3> listVector3Content)
+        {
+            if (sendAsCopy)
+            {
+                var copy = new List<Vector3>(listVector3Content);
+                started.Invoke(copy);
+            }
+            else
+            {
+                started.Invoke(listVector3Content);
+            }
+        }
+    }
 }

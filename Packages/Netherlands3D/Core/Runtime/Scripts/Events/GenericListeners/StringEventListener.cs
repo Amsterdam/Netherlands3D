@@ -17,7 +17,7 @@ public class StringEventListener : MonoBehaviour
     {
         if (onEvent)
         {
-            onEvent.started.AddListener(Invoke);
+            onEvent.AddListenerStarted(Invoke);
         }
     }
 

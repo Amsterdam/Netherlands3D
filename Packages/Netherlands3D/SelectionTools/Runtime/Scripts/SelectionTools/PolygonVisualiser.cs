@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Netherlands3D.Events
+namespace Netherlands3D.SelectionTools
 {
     /// <summary>
     /// Use countour lists as input to draw solidified 2D shapes in the 3D world
@@ -71,10 +71,10 @@ namespace Netherlands3D.Events
 
         void Awake()
         {
-            if (setDrawingObjectName) setDrawingObjectName.started.AddListener(SetName);
-            if (drawPolygonEvent) drawPolygonEvent.started.AddListener(CreatePolygon);
-            if (drawSinglePolygonEvent) drawSinglePolygonEvent.started.AddListener(CreateSinglePolygon);
-            if (setExtrusionHeightEvent) setExtrusionHeightEvent.started.AddListener(SetExtrusionHeight);
+            if (setDrawingObjectName) setDrawingObjectName.AddListenerStarted(SetName);
+            if (drawPolygonEvent) drawPolygonEvent.AddListenerStarted(CreatePolygons);
+            if (drawSinglePolygonEvent) drawSinglePolygonEvent.AddListenerStarted(CreateSinglePolygon);
+            if (setExtrusionHeightEvent) setExtrusionHeightEvent.AddListenerStarted(SetExtrusionHeight);
         }
 
 		public void SetExtrusionHeight(float extrusionHeight)
@@ -87,19 +87,19 @@ namespace Netherlands3D.Events
             newDrawingObjectName = drawingObjectName;
         }
 
-        private void CreateSinglePolygon(List<Vector3> contour)
+        public void CreateSinglePolygon(List<Vector3> contour)
         {
             var contours = new List<IList<Vector3>> { contour };
-            CreatePolygon(contours);
+            CreatePolygons(contours);
         }
 
-        private void CreatePolygon(List<IList<Vector3>> contours)
+        public void CreatePolygons(List<IList<Vector3>> contours)
         {
-            CreateAndReturnPolygon(contours);
+            CreateAndReturnPolygons(contours);
         }
 
         //Treat first contour as outer contour, and extra contours as holes
-        public GameObject CreateAndReturnPolygon(List<IList<Vector3>> contours)
+        public GameObject CreateAndReturnPolygons(List<IList<Vector3>> contours)
         {
             if (polygonCount >= maxPolygons) return null;
             polygonCount++;

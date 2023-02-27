@@ -25,11 +25,11 @@ namespace Netherlands3D.Events
 
 	[CreateAssetMenu(fileName = "Vector4Event", menuName = "EventContainers/Vector4Event", order = 0)]
 	[System.Serializable]
-	public class Vector4Event : EventContainer<Vector4ValueUnityEvent> 
+	public class Vector4Event : EventContainer<Vector4ValueUnityEvent, Vector4> 
 	{
-		public void Invoke(Vector4 vector4Content)
+		public override void InvokeStarted(Vector4 vector4Content)
 		{
-			started.Invoke(vector4Content);
+            started.Invoke(vector4Content);
 		}
 	}
 }

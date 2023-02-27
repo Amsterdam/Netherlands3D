@@ -83,5 +83,16 @@ public static class ArrayExtention
             }
         }
     }
+
+    public static List<Vector3> ToVector3List(this Vector2[] input, float height = 0)
+    {
+        var list = new List<Vector3>();
+        for (int i = 0; i < input.Length; i++)
+        {
+            var p = input[i];
+            list.Add(new(p.x, height, p.y));
+        }
+        return list;
+    }
 }
 

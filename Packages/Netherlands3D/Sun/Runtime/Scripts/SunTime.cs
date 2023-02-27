@@ -18,18 +18,14 @@
 using System;
 using UnityEngine;
 using Netherlands3D.Events;
+using Netherlands3D.Core;
 
 namespace Netherlands3D.Sun
 {
     [ExecuteInEditMode]
     public class SunTime : MonoBehaviour
     {
-        [Header("Location")]
-
-        [SerializeField]
         private float longitude;
-
-        [SerializeField]
         private float latitude;
 
         [Header("Time")]
@@ -85,17 +81,25 @@ namespace Netherlands3D.Sun
 
         private void Start()
         {
+            GetLocation();
+
             if (jumpToCurrentTimeAtStart)
-			{
-				ResetToNow();
-			}
+            {
+                ResetToNow();
+            }
             else
             {
                 Apply();
             }
         }
 
-       
+        private void GetLocation()
+        {
+            var rdSceneCenter = CoordConvert.relativeCenterRD;
+            var wgs84SceneCenter = CoordConvert.RDtoWGS84(rdSceneCenter.x, rdSceneCenter.y);
+            longitude = (float)wgs84SceneCenter.lon;
+            latitude = (float)wgs84SceneCenter.lat;
+        }
 
         private void Update()
         {

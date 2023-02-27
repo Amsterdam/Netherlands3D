@@ -64,7 +64,7 @@ namespace Netherlands3D.Geoservice
         void Start()
         {
             //add listener
-            if (displayServerdataEvent != null) displayServerdataEvent.started.AddListener(showData);
+            if (displayServerdataEvent != null) displayServerdataEvent.AddListenerStarted(showData);
 
         }
         private void showData()
@@ -128,12 +128,12 @@ namespace Netherlands3D.Geoservice
         {
             if (onLayerSelected != null)
             {
-                onLayerSelected.started.Invoke(serverData.layer[layerIndex].styles[styleIndex].imageURL);
+                onLayerSelected.Invoke(serverData.layer[layerIndex].styles[styleIndex].imageURL);
 
             }
             if (onLegendSelected != null)
             {
-                onLegendSelected.started.Invoke(serverData.layer[layerIndex].styles[styleIndex].LegendURL);
+                onLegendSelected.Invoke(serverData.layer[layerIndex].styles[styleIndex].LegendURL);
 
             }
         }

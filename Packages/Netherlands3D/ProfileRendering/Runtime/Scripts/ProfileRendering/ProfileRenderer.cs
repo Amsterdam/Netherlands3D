@@ -17,9 +17,6 @@ namespace Netherlands3D.ProfileRendering
         [Header("Listen to")]
         [SerializeField] private Vector3ListEvent onReceiveCuttingLine;
 
-        [SerializeField] private FloatEvent onReveiceHeightRange;
-        [SerializeField] private FloatEvent onReveiceHeightOffset;
-
         private Camera renderCamera;
 
         private List<Vector3> linePoints;
@@ -31,14 +28,16 @@ namespace Netherlands3D.ProfileRendering
             renderCamera.targetTexture = renderTexture;
             //We render manualy using renderCamera.Render();
             renderCamera.enabled = false;
+        }
 
-            onReceiveCuttingLine.started.AddListener(Align);
+        private void OnEnable()
+        {
+            onReceiveCuttingLine.AddListenerStarted(Align);
+        }
 
-            if (onReveiceHeightRange)
-                onReveiceHeightRange.started.AddListener((value) => heightRange = value);
-
-            if (onReveiceHeightRange)
-                onReveiceHeightRange.started.AddListener((value) => heightOffset = value);
+        private void OnDisable()
+        {
+            onReceiveCuttingLine.RemoveListenerStarted(Align);
         }
 
         private void Align(List<Vector3> linePoints)

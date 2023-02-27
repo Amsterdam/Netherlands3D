@@ -34,12 +34,12 @@ namespace Netherlands3D.Traffic.VISSIM
 
         private void OnEnable()
         {
-            eventFilesImported.started.AddListener(Load);
+            eventFilesImported.AddListenerStarted(Load);
         }
 
         private void OnDisable()
         {
-            eventFilesImported.started.RemoveListener(Load);
+            eventFilesImported.RemoveListenerStarted(Load);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Netherlands3D.Traffic.VISSIM
 
             // Loading event
             int fileIndex = 1;
-            eventLoadingProgress.started.Invoke(0.001f);
+            eventLoadingProgress.Invoke(0.001f);
             yield return new WaitForEndOfFrame();
 
             // Check if there are multiple files
@@ -119,12 +119,12 @@ namespace Netherlands3D.Traffic.VISSIM
                         break;
                 }
 
-                eventLoadingProgress.started.Invoke(fileIndex / paths.Length);
+                eventLoadingProgress.Invoke(fileIndex / paths.Length);
                 yield return new WaitForEndOfFrame();
                 fileIndex++;
             }
 
-            eventClearDatabase.started.Invoke(true);
+            eventClearDatabase.Invoke(true);
             sw.Stop();
             if(showDebugLog) UnityEngine.Debug.Log(string.Format("[Traffic File Importer] Loaded {0} file(s) in {1}ms", paths.Length - failedFiles, sw.ElapsedMilliseconds));
             yield break;

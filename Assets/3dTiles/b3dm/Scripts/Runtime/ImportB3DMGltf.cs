@@ -36,9 +36,9 @@ namespace Netherlands3D.B3DM
 
         private void Awake()
         {
-            if(binTilePath) binTilePath.started.AddListener(ImportBinFromFile);
-            if (changeUrl) changeUrl.started.AddListener((newUrl) => { url = newUrl; });
-            if (loadFromURL) loadFromURL.started.AddListener(LoadFromURL);
+            if(binTilePath) binTilePath.AddStartedListener(ImportBinFromFile);
+            if (changeUrl) changeUrl.AddStartedListener((newUrl) => { url = newUrl; });
+            if (loadFromURL) loadFromURL.AddStartedListener(LoadFromURL);
         }
 
         private void LoadFromURL()

@@ -17,7 +17,7 @@ namespace Netherlands3D.Events.GenericListeners
         {
             if (onEvent)
             {
-                onEvent.started.AddListener(Invoke);
+                onEvent.AddListenerStarted(Invoke);
             }
         }
 

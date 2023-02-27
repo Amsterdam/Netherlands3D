@@ -33,29 +33,34 @@ namespace Netherlands3D.T3DPipeline
 
         private Dictionary<string, JSONNode> extensionNodes = new Dictionary<string, JSONNode>();
 
-        [Tooltip("event that provides a CityJSON to this class.")]
-        [SerializeField]
-        private StringEvent onCityJSONReceived;
         [Tooltip("A cityObject will be created as a GameObject with a CityObject script. This field can hold a prefab with multiple extra scripts (such as CityObjectVisualizer) to be created instead. This prefab must have a CityObject script attached.")]
         [SerializeField]
         private GameObject cityObjectPrefab;
         [SerializeField]
         [Tooltip("If checked the CityJSON parsed by this script will set the relative center of the RD coordinate system to the center of this CityJSON")]
         private bool useAsRelativeRDCenter;
-        [Tooltip("event that is called when the CityJSON is parsed")]
+
+        [Header("Optional events")]
+        [Tooltip("Event that provides a CityJSON to parse. If not assigned call ParseCityJSON() directly to start parsing")]
+        [SerializeField]
+        private StringEvent onCityJSONReceived;
+        [Tooltip("Event that is called when the CityJSON is parsed")]
         [SerializeField]
         private TriggerEvent onAllCityObjectsProcessed;
+        [Tooltip("If assigned it will call this event instead of Asserting the type field is \"CityJSON\"")]
         [SerializeField]
         private BoolEvent isCityJSONType; //if assigned it will call this event instead of Asserting the type field is "CityJSON"
 
         private void OnEnable()
         {
-            onCityJSONReceived.started.AddListener(ParseCityJSON);
+            if (onCityJSONReceived)
+                onCityJSONReceived.AddListenerStarted(ParseCityJSON);
         }
 
         private void OnDisable()
         {
-            onCityJSONReceived.started.RemoveAllListeners();
+            if (onCityJSONReceived)
+                onCityJSONReceived.RemoveAllListenersStarted();
         }
 
         public void ParseCityJSON(string cityJson)
@@ -118,6 +123,7 @@ namespace Netherlands3D.T3DPipeline
             }
 
             //metadata
+            var explicitGeographicalExtentsSet = false;
             if (Metadata.Count > 0)
             {
                 var coordinateSystemNode = Metadata["referenceSystem"];
@@ -126,11 +132,13 @@ namespace Netherlands3D.T3DPipeline
                 var geographicalExtent = Metadata["geographicalExtent"];
                 if (geographicalExtent.Count > 0)
                 {
+                    explicitGeographicalExtentsSet = true;
                     MinExtent = new Vector3Double(geographicalExtent[0].AsDouble, geographicalExtent[1].AsDouble, geographicalExtent[2].AsDouble);
                     MaxExtent = new Vector3Double(geographicalExtent[3].AsDouble, geographicalExtent[4].AsDouble, geographicalExtent[5].AsDouble);
                 }
             }
-            else if (parsedVertices.Count > 0)
+
+            if (!explicitGeographicalExtentsSet)
             {
                 var minX = parsedVertices.Min(v => v.x);
                 var minY = parsedVertices.Min(v => v.y);

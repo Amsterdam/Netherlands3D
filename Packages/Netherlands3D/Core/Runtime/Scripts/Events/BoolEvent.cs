@@ -25,9 +25,9 @@ namespace Netherlands3D.Events
 
 	[CreateAssetMenu(fileName = "BoolEvent", menuName = "EventContainers/BoolEvent", order = 0)]
 	[System.Serializable]
-	public class BoolEvent : EventContainer<BoolValueUnityEvent>
+	public class BoolEvent : EventContainer<BoolValueUnityEvent, bool>
 	{
-		public void Invoke(bool boolContent)
+		public override void InvokeStarted(bool boolContent)
 		{
 			started.Invoke(boolContent);
 		}
