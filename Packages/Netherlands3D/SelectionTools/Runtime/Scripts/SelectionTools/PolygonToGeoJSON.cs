@@ -18,7 +18,7 @@ public class PolygonToGeoJSON : MonoBehaviour
 
     void Awake()
     {
-        gotPolygon.started.AddListener(GotPolygon);
+        gotPolygon.AddListenerStarted(GotPolygon);
     }
 
     private void GotPolygon(List<Vector3> polygon)

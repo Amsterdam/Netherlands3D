@@ -26,11 +26,11 @@ namespace Netherlands3D.Events
 
 	[CreateAssetMenu(fileName = "GradientContainerEvent", menuName = "EventContainers/GradientContainerEvent", order = 0)]
 	[System.Serializable]
-	public class GradientContainerEvent : EventContainer<GradientContainerUnityEvent> 
+	public class GradientContainerEvent : EventContainer<GradientContainerUnityEvent, GradientContainer> 
 	{
-		public void Invoke(GradientContainer gradientContainerContent)
+		public override void InvokeStarted(GradientContainer gradientContainerContent)
 		{
-			started.Invoke(gradientContainerContent);
+            started.Invoke(gradientContainerContent);
 		}
 	}
 }

@@ -15,6 +15,7 @@
 *  implied. See the License for the specific language governing
 *  permissions and limitations under the License.
 */
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -22,10 +23,87 @@ namespace Netherlands3D.Events
 {
     [CreateAssetMenu(fileName = "TriggerEvent", menuName = "EventContainers/TriggerEvent", order = 0)]
     [System.Serializable]
-    public class TriggerEvent : EventContainer<UnityEvent> {
+    public class TriggerEvent : ScriptableObject
+    {
+        public string eventName;
+        public string description;
+
+        [HideInInspector]
+        protected UnityEvent started;
+        [HideInInspector]
+        protected UnityEvent received;
+        [HideInInspector]
+        protected UnityEvent cancelled;
+
+        private void OnValidate()
+        {
+            if (eventName == "")
+                eventName = this.name;
+        }
+
+        [Obsolete("Invoke is deprecated, please use InvokeStarted instead.")]
         public void Invoke()
         {
+            InvokeStarted();
+        }
+
+        public void InvokeStarted()
+        {
             started.Invoke();
+        }
+
+        public void InvokeReceived()
+        {
+            received.Invoke();
+        }
+        public void InvokeCancelled()
+        {
+            cancelled.Invoke();
+        }
+
+        public void AddListenerStarted(UnityAction action)
+        {
+            started.AddListener(action);
+        }
+
+        public void RemoveListenerStarted(UnityAction action)
+        {
+            started.RemoveListener(action);
+        }
+
+        public void RemoveAllListenersStarted()
+        {
+            started.RemoveAllListeners();
+        }
+
+        public void AddListenerReceived(UnityAction action)
+        {
+            received.AddListener(action);
+        }
+
+        public void RemoveListenerReceived(UnityAction action)
+        {
+            received.RemoveListener(action);
+        }
+
+        public void RemoveAllListenersReceived()
+        {
+            received.RemoveAllListeners();
+        }
+
+        public void AddListenerCancelled(UnityAction action)
+        {
+            cancelled.AddListener(action);
+        }
+
+        public void RemoveListenerCancelled(UnityAction action)
+        {
+            cancelled.RemoveListener(action);
+        }
+
+        public void RemoveAllListenersCancelled()
+        {
+            cancelled.RemoveAllListeners();
         }
     }
 }

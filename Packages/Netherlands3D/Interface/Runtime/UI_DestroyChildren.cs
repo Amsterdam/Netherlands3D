@@ -35,7 +35,7 @@ namespace Netherlands3D.Interface
 
 		private void Awake()
 		{
-			destroyChildren.started.AddListener(DestroyChildren);
+			destroyChildren.AddListenerStarted(DestroyChildren);
 		}
 
 		private void DestroyChildren(bool destroy)

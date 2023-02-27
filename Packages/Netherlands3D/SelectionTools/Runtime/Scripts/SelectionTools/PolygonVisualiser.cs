@@ -71,10 +71,10 @@ namespace Netherlands3D.SelectionTools
 
         void Awake()
         {
-            if (setDrawingObjectName) setDrawingObjectName.started.AddListener(SetName);
-            if (drawPolygonEvent) drawPolygonEvent.started.AddListener(CreatePolygons);
-            if (drawSinglePolygonEvent) drawSinglePolygonEvent.started.AddListener(CreateSinglePolygon);
-            if (setExtrusionHeightEvent) setExtrusionHeightEvent.started.AddListener(SetExtrusionHeight);
+            if (setDrawingObjectName) setDrawingObjectName.AddListenerStarted(SetName);
+            if (drawPolygonEvent) drawPolygonEvent.AddListenerStarted(CreatePolygons);
+            if (drawSinglePolygonEvent) drawSinglePolygonEvent.AddListenerStarted(CreateSinglePolygon);
+            if (setExtrusionHeightEvent) setExtrusionHeightEvent.AddListenerStarted(SetExtrusionHeight);
         }
 
 		public void SetExtrusionHeight(float extrusionHeight)

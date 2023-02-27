@@ -57,27 +57,27 @@ public class CsvToColors : MonoBehaviour
 	{
 		if (parseCSVFile)
 		{
-			parseCSVFile.started.AddListener(ParseData);
+			parseCSVFile.AddListenerStarted(ParseData);
 		}
 		if (onSetIDColumn)
 		{
-			onSetIDColumn.started.AddListener(SetIDColumn);
+			onSetIDColumn.AddListenerStarted(SetIDColumn);
 		}
 		if (onSetColorColumn)
 		{
-			onSetColorColumn.started.AddListener(SetColorColumn);
+			onSetColorColumn.AddListenerStarted(SetColorColumn);
 		}
 		if (onSetHEXColorMode)
 		{
-			onSetHEXColorMode.started.AddListener(SetHexColorMode);
+			onSetHEXColorMode.AddListenerStarted(SetHexColorMode);
 		}
 		if (onSetInterpolateColorMode)
 		{
-			onSetInterpolateColorMode.started.AddListener(SetInterpolateColorMode);
+			onSetInterpolateColorMode.AddListenerStarted(SetInterpolateColorMode);
 		}
 		if (onSetGradient)
 		{
-			onSetGradient.started.AddListener(SwapGradient);
+			onSetGradient.AddListenerStarted(SwapGradient);
 		}
 	}
 
@@ -155,7 +155,7 @@ public class CsvToColors : MonoBehaviour
                         idColors.Add(id, color);
                     }
                 }
-                parsedIdsAndColors.started.Invoke(idColors);
+                parsedIdsAndColors.Invoke(idColors);
             }
             
         }

@@ -102,7 +102,7 @@ namespace Netherlands3D.SelectionTools
         {
             drawingArea = false;
             selectionBlock.SetActive(false);
-            blockCameraDragging.started.Invoke(false);
+            blockCameraDragging.Invoke(false);
             areaSelectionActionMap.Disable();
         }
 
@@ -115,12 +115,12 @@ namespace Netherlands3D.SelectionTools
             if (!drawingArea && clickAction.IsPressed() && modifierAction.IsPressed())
             {
                 drawingArea = true;
-                blockCameraDragging.started.Invoke(true);
+                blockCameraDragging.Invoke(true);
             }
             else if (drawingArea && !clickAction.IsPressed())
             {
                 drawingArea = false;
-                blockCameraDragging.started.Invoke(false);
+                blockCameraDragging.Invoke(false);
             }
 
             if (drawingArea)
@@ -159,7 +159,7 @@ namespace Netherlands3D.SelectionTools
         {
             Debug.Log($"Make selection.");
             var bounds = boundsMeshRenderer.bounds;
-            selectedAreaBounds.started.Invoke(bounds);
+            selectedAreaBounds.Invoke(bounds);
         }
 
         /// <summary>

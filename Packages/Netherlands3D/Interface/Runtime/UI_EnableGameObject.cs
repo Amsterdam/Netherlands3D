@@ -34,7 +34,7 @@ namespace Netherlands3D.Interface
 
 		private void Awake()
 		{
-			enableGameObject.started.AddListener(EnableGameObject);
+			enableGameObject.AddListenerStarted(EnableGameObject);
 		}
 
 		private void EnableGameObject(bool enable)

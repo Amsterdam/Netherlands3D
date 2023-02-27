@@ -25,9 +25,9 @@ namespace Netherlands3D.Events
 
 	[CreateAssetMenu(fileName = "BoundsEvent", menuName = "EventContainers/BoundsEvent", order = 0)]
 	[System.Serializable]
-	public class BoundsEvent : EventContainer<BoundsValueUnityEvent> 
+	public class BoundsEvent : EventContainer<BoundsValueUnityEvent, Bounds> 
 	{
-		public void Invoke(Bounds boundsContent)
+		public override void InvokeStarted(Bounds boundsContent)
 		{
 			started.Invoke(boundsContent);
 		}

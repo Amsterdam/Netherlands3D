@@ -12,12 +12,12 @@ public class AnnotationMarker : MonoBehaviour
 
     private void OnEnable()
     {
-        onAnnotationSubmitted.started.AddListener(DeactivateMarker);
+        onAnnotationSubmitted.AddListenerStarted(DeactivateMarker);
     }
 
     private void OnDisable()
     {
-        onAnnotationSubmitted.started.RemoveListener(DeactivateMarker);
+        onAnnotationSubmitted.RemoveListenerStarted(DeactivateMarker);
     }
 
     //public virtual void ActivateMarker(GameObject activatedAnnotationMarker)

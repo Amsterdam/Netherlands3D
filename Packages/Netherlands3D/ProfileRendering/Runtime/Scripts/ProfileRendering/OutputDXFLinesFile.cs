@@ -36,10 +36,10 @@ namespace Netherlands3D.ProfileRendering
 
         void Awake()
         {
-            onReceiveLayerName.started.AddListener(AddDXFLayer);
-            onReceiveLayerLines.started.AddListener(AddDXFLayerLines);
-            onReceiveLayerColor.started.AddListener(SetDXFLayerColor);
-            onReadyForExport.started.AddListener(FinishDXFDocument);
+            onReceiveLayerName.AddListenerStarted(AddDXFLayer);
+            onReceiveLayerLines.AddListenerStarted(AddDXFLayerLines);
+            onReceiveLayerColor.AddListenerStarted(SetDXFLayerColor);
+            onReadyForExport.AddListenerStarted(FinishDXFDocument);
         }
 
         private void ConfigBaseDocument()
