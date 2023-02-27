@@ -9,17 +9,10 @@ namespace Netherlands3D.Core
 {
     public class BoolEventListener : MonoBehaviour
     {
-        [SerializeField]
-        private BoolEvent onEvent;
-
-        [SerializeField]
-        private BoolValueUnityEvent onTriggered;
-
-        [SerializeField]
-        private BoolValueUnityEvent onTrue;
-
-        [SerializeField]
-        private BoolValueUnityEvent onFalse;
+        [SerializeField] private BoolEvent onEvent;
+        [SerializeField] private BoolValueUnityEvent onTriggered;
+        [SerializeField] private BoolValueUnityEvent onTrue;
+        [SerializeField] private BoolValueUnityEvent onFalse;
 
         void Awake()
         { 

@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+<<<<<<< HEAD:Assets/PolygonSelection/Events/BlockCameraDrag.asset.meta
+guid: 007cc40d489e1ef44857ad3377a33220
+=======
+guid: 4d1ca83f1f3585141a0bff951d91025b
+>>>>>>> 9d9a0f902d2dc4aed06b45b94fd4365ff0dfeda8:Packages/Netherlands3D/Cameras/Samples~/Cameras/Events/FreeCamera/LockCameraDragging.asset.meta
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
