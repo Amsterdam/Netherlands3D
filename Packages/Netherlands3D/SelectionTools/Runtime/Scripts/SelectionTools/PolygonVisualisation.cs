@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Netherlands3D.Events;
 using Poly2Tri;
 using UnityEngine;
@@ -10,7 +11,20 @@ namespace Netherlands3D.SelectionTools
 {
     public class PolygonVisualisation : MonoBehaviour, IPointerClickHandler
     {
-        public List<IList<Vector3>> Polygons;
+        private List<IList<Vector3>> polygons;
+        public ReadOnlyCollection<ReadOnlyCollection<Vector3>> Polygons
+        {
+            get
+            {
+                List<ReadOnlyCollection<Vector3>> roPolygons = new List<ReadOnlyCollection<Vector3>>();
+                foreach(var polygon in polygons)
+                {
+                    var p = (List<Vector3>)polygon;
+                    roPolygons.Add(p.AsReadOnly());
+                }
+                return roPolygons.AsReadOnly();
+            }
+        }
 
         [Header("Events")]
         [SerializeField]
@@ -20,10 +34,10 @@ namespace Netherlands3D.SelectionTools
 
 
         //[Header("Mesh")]
-        float extrusionHeight;
-        bool addBottom;
-        bool reverseWindingOrder;
-        Vector2 uvCoordinate;
+        private float extrusionHeight;
+        private bool addBottom;
+        private bool createInwardMesh;
+        private Vector2 uvCoordinate;
 
         //[Header("Line")]
         private List<LineRenderer> lineRenderers = new List<LineRenderer>();
@@ -39,13 +53,6 @@ namespace Netherlands3D.SelectionTools
             {
                 drawLine = value;
                 EnableLineRenderers(value);
-                //if (lineRenderers != null && drawLine)
-                //{
-                //    lineRenderers = CreateLineRenderers();
-                //    EnableLineRenderers(true);
-                //}
-                //else if (lineRenderers == null && !drawLine)
-                //    EnableLineRenderers(false);
             }
         }
         private Material lineMaterial;
@@ -81,7 +88,7 @@ namespace Netherlands3D.SelectionTools
 
         private void EnableLineRenderers(bool enable)
         {
-            foreach(var line in lineRenderers)
+            foreach (var line in lineRenderers)
             {
                 line.gameObject.SetActive(enable);
             }
@@ -99,19 +106,19 @@ namespace Netherlands3D.SelectionTools
         public void UpdateLineRenderers()
         {
             DestroyLineRenderers();
-            lineRenderers = CreateLineRenderers(Polygons);
+            lineRenderers = CreateLineRenderers(polygons);
         }
 
         /// <summary>
         /// Sets a reference of the polygon to be visualised
         /// </summary>
         /// <param name="polygon"></param>
-        public void Initialize(List<IList<Vector3>> sourcePolygons, float extrusionHeight, bool addBottom, bool reverseWindingOrder, Vector3ListEvent reselectVisualisedPolygon, Vector3ListEvent onPolygonEdited, Material lineMaterial, Color lineColor, Vector2 uvCoordinate = new Vector2())
+        public void Initialize(List<IList<Vector3>> sourcePolygons, float extrusionHeight, bool addBottom, bool createInwardMesh, Vector3ListEvent reselectVisualisedPolygon, Vector3ListEvent onPolygonEdited, Material lineMaterial, Color lineColor, Vector2 uvCoordinate = new Vector2())
         {
-            Polygons = sourcePolygons;
+            polygons = sourcePolygons;
             this.extrusionHeight = extrusionHeight;
             this.addBottom = addBottom;
-            this.reverseWindingOrder = reverseWindingOrder;
+            this.createInwardMesh = createInwardMesh;
             this.uvCoordinate = uvCoordinate;
             this.reselectVisualisedPolygon = reselectVisualisedPolygon;
             this.onPolygonEdited = onPolygonEdited;
@@ -120,7 +127,7 @@ namespace Netherlands3D.SelectionTools
 
             //if (updateVisualisation)
             //{
-                UpdateVisualisation(sourcePolygons);
+            UpdateVisualisation(sourcePolygons);
             //}
 
             ReselectPolygon();
@@ -133,9 +140,25 @@ namespace Netherlands3D.SelectionTools
 
         public void UpdateVisualisation(List<IList<Vector3>> newPolygon)
         {
-            Polygons = newPolygon;
-            var mesh = CreatepolygonMesh(Polygons, extrusionHeight, addBottom, reverseWindingOrder, uvCoordinate);
+            polygons = newPolygon;
+
+            var clockwise = PolygonCalculator.PolygonIsClockwise(newPolygon[0] as List<Vector3>);
+
+            if (!(clockwise ^ createInwardMesh)) //exor (clockwise && inward) || (!clockwise && !inward)
+            {
+                foreach (var contour in newPolygon)
+                {
+                    var list = (List<Vector3>)contour;
+                    list.Reverse();
+                }
+            }
+
+            var mesh = CreatePolygonMesh(polygons, extrusionHeight, addBottom, uvCoordinate);
             GetComponent<MeshFilter>().mesh = mesh;
+
+            var mc = GetComponent<MeshCollider>();
+            if (mc)
+                mc.sharedMesh = mesh;
 
             UpdateLineRenderers();
         }
@@ -148,17 +171,16 @@ namespace Netherlands3D.SelectionTools
         private void ReselectPolygon()
         {
             onPolygonEdited.RemoveAllListenersStarted();
-            reselectVisualisedPolygon.InvokeStarted(Polygons[0] as List<Vector3>);
+            reselectVisualisedPolygon.InvokeStarted(polygons[0] as List<Vector3>);
             onPolygonEdited.AddListenerStarted(UpdateVisualisation);
         }
 
-        public static Mesh CreatepolygonMesh(List<IList<Vector3>> contours, float extrusionHeight, bool addBottom, bool reverseWindingOrder = false, Vector2 uvCoordinate = new Vector2())
+        public static Mesh CreatePolygonMesh(List<IList<Vector3>> contours, float extrusionHeight, bool addBottom, Vector2 uvCoordinate = new Vector2())
         {
             var polygon = new Poly2Mesh.Polygon();
             var outerContour = (List<Vector3>)contours[0];
 
             if (outerContour.Count < 3) return null;
-            if (reverseWindingOrder) outerContour.Reverse();
             polygon.outside = outerContour;
 
             for (int i = 0; i < polygon.outside.Count; i++)
@@ -175,7 +197,6 @@ namespace Netherlands3D.SelectionTools
 
                     if (holeContour.Count > 2)
                     {
-                        if (reverseWindingOrder) holeContour.Reverse();
                         polygon.holes.Add(holeContour);
                     }
                 }

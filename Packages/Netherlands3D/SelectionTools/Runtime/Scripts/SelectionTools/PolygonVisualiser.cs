@@ -55,7 +55,8 @@ namespace Netherlands3D.SelectionTools
         private int maxPolygons = 10000;
         private int polygonCount = 0;
 
-
+        [SerializeField]
+        private bool createInwardMesh;
         [SerializeField]
         private bool addBottom = false;
         [SerializeField]
@@ -115,8 +116,7 @@ namespace Netherlands3D.SelectionTools
             if (polygonCount >= maxPolygons) return null;
             polygonCount++;
 
-            var reverseWindingOrder = !PolygonCalculator.PolygonIsClockwise(contours[0] as List<Vector3>);
-            Mesh newPolygonMesh = PolygonVisualisation.CreatepolygonMesh(contours, extrusionHeight, addBottom, reverseWindingOrder, uvCoordinate);
+            Mesh newPolygonMesh = PolygonVisualisation.CreatePolygonMesh(contours, extrusionHeight, addBottom, uvCoordinate);
             if (newPolygonMesh == null)
                 return null;
 
@@ -125,9 +125,7 @@ namespace Netherlands3D.SelectionTools
             //Do not bother setting object name outside of Editor untill we need it.
             newPolygonObject.name = newDrawingObjectName;
 #endif
-            var meshFilter = newPolygonObject.AddComponent<MeshFilter>();
-            meshFilter.sharedMesh = newPolygonMesh;
-
+            var meshFilter = newPolygonObject.AddComponent<MeshFilter>(); //mesh is created by the PolygonVisualisation script
             var meshRenderer = newPolygonObject.AddComponent<MeshRenderer>();
             meshRenderer.material = defaultMaterial;
             meshRenderer.receiveShadows = receiveShadows;
@@ -136,7 +134,7 @@ namespace Netherlands3D.SelectionTools
                 newPolygonObject.AddComponent<MeshCollider>().sharedMesh = newPolygonMesh;
 
             var polygonVisualisation = newPolygonObject.AddComponent<PolygonVisualisation>();
-            polygonVisualisation.Initialize(contours, extrusionHeight, addBottom, reverseWindingOrder, polygonReselected, polygonEdited, lineMaterial, lineColor, uvCoordinate);
+            polygonVisualisation.Initialize(contours, extrusionHeight, addBottom, createInwardMesh, polygonReselected, polygonEdited, lineMaterial, lineColor, uvCoordinate);
 
             newPolygonObject.transform.SetParent(this.transform);
             newPolygonObject.transform.Translate(0, extrusionHeight, 0);

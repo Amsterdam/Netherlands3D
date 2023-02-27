@@ -157,8 +157,15 @@ namespace Netherlands3D.SelectionTools
         private void ReselectPolygon(List<Vector3> points)
         {
             ClearPolygon(true);
-            foreach (var point in points)
+            for (int i = 0; i < points.Count; i++)
             {
+                Vector3 point = points[i];
+                if(i == points.Count - 1)
+                {
+                    if (point == points[0])
+                        continue;
+                }
+
                 AddPoint(point, false);
             }
             CloseLoop(false);
