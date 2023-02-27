@@ -155,7 +155,7 @@ public class CsvToColors : MonoBehaviour
                         idColors.Add(id, color);
                     }
                 }
-                parsedIdsAndColors.Invoke(idColors);
+                parsedIdsAndColors.InvokeStarted(idColors);
             }
             
         }

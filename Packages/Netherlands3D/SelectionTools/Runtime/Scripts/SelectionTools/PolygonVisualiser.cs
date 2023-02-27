@@ -157,7 +157,7 @@ namespace Netherlands3D.SelectionTools
             newPolygonObject.transform.SetParent(this.transform);
             newPolygonObject.transform.Translate(0, extrusionHeight, 0);
 
-            if (createdPolygonGameObject) createdPolygonGameObject.Invoke(newPolygonObject);
+            if (createdPolygonGameObject) createdPolygonGameObject.InvokeStarted(newPolygonObject);
             return newPolygonObject;
         }
 

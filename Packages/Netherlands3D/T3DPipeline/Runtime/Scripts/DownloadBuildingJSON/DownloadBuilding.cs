@@ -67,7 +67,7 @@ namespace Netherlands3D.T3DPipeline
                 {
                     var cityJsonBag = uwr.downloadHandler.text;
                     print(cityJsonBag);
-                    CityJsonBagReceived.Invoke(cityJsonBag);
+                    CityJsonBagReceived.InvokeStarted(cityJsonBag);
                     callback?.Invoke(cityJsonBag);
                 }
             }
