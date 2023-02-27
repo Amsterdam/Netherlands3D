@@ -16,10 +16,12 @@
 *  permissions and limitations under the License.
 */
 using Netherlands3D.Events;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Netherlands3D.SelectionTools
 {
@@ -37,7 +39,13 @@ namespace Netherlands3D.SelectionTools
         private StringEvent setDrawingObjectName;
         [SerializeField]
         private FloatEvent setExtrusionHeightEvent;
+        [SerializeField]
+        private Vector3ListEvent polygonEdited;
 
+        [SerializeField]
+        private string newDrawingObjectName = "";
+
+        [Header("Mesh")]
         [SerializeField]
         private Material defaultMaterial;
 
@@ -46,10 +54,9 @@ namespace Netherlands3D.SelectionTools
 
         private int maxPolygons = 10000;
         private int polygonCount = 0;
-        
-        [SerializeField]
-        private string newDrawingObjectName = "";
 
+        [SerializeField]
+        private bool createInwardMesh;
         [SerializeField]
         private bool addBottom = false;
         [SerializeField]
@@ -60,14 +67,19 @@ namespace Netherlands3D.SelectionTools
         private Vector2 uvCoordinate = Vector2.zero;
 
         [SerializeField]
-        private bool reverseWindingOrder = true;
-
-        [SerializeField]
         private bool addColliders = false;
+
+        [Header("Line")]
+        [SerializeField]
+        private Material lineMaterial;
+        [SerializeField]
+        private Color lineColor = Color.white;
 
         [Header("Invoke events")]
         [SerializeField]
         GameObjectEvent createdPolygonGameObject;
+        [SerializeField]
+        Vector3ListEvent polygonReselected;
 
         void Awake()
         {
@@ -77,8 +89,8 @@ namespace Netherlands3D.SelectionTools
             if (setExtrusionHeightEvent) setExtrusionHeightEvent.AddListenerStarted(SetExtrusionHeight);
         }
 
-		public void SetExtrusionHeight(float extrusionHeight)
-		{
+        public void SetExtrusionHeight(float extrusionHeight)
+        {
             this.extrusionHeight = extrusionHeight;
         }
 
@@ -104,49 +116,16 @@ namespace Netherlands3D.SelectionTools
             if (polygonCount >= maxPolygons) return null;
             polygonCount++;
 
-            var polygon = new Poly2Mesh.Polygon();
-            var outerContour = (List<Vector3>)contours[0];
-
-            if (outerContour.Count < 3) return null;
-            if (reverseWindingOrder) outerContour.Reverse();
-
-            polygon.outside = outerContour;
-
-            for (int i = 0; i < polygon.outside.Count; i++)
-            {
-                polygon.outside[i] = new Vector3(polygon.outside[i].x, polygon.outside[i].y, polygon.outside[i].z);
-            }
-
-            if (contours.Count > 1)
-            {
-                for (int i = 1; i < contours.Count; i++)
-                {
-                    var holeContour = (List<Vector3>)contours[i];
-                    FixSequentialDoubles(holeContour);
-                    
-                    if (holeContour.Count > 2)
-                    {
-                        if (reverseWindingOrder) holeContour.Reverse();
-                        polygon.holes.Add(holeContour);
-                    }
-                }
-            }
-            var newPolygonMesh = Poly2Mesh.CreateMesh(polygon, extrusionHeight, addBottom);
-            if (newPolygonMesh) newPolygonMesh.RecalculateNormals();
-
-            if (setUVCoordinates)
-            {
-                SetUVCoordinates(newPolygonMesh);
-            }
+            Mesh newPolygonMesh = PolygonVisualisation.CreatePolygonMesh(contours, extrusionHeight, addBottom, uvCoordinate);
+            if (newPolygonMesh == null)
+                return null;
 
             var newPolygonObject = new GameObject();
 #if UNITY_EDITOR
             //Do not bother setting object name outside of Editor untill we need it.
             newPolygonObject.name = newDrawingObjectName;
 #endif
-            var meshFilter = newPolygonObject.AddComponent<MeshFilter>();
-            meshFilter.sharedMesh = newPolygonMesh;
-
+            var meshFilter = newPolygonObject.AddComponent<MeshFilter>(); //mesh is created by the PolygonVisualisation script
             var meshRenderer = newPolygonObject.AddComponent<MeshRenderer>();
             meshRenderer.material = defaultMaterial;
             meshRenderer.receiveShadows = receiveShadows;
@@ -154,40 +133,14 @@ namespace Netherlands3D.SelectionTools
             if (addColliders)
                 newPolygonObject.AddComponent<MeshCollider>().sharedMesh = newPolygonMesh;
 
+            var polygonVisualisation = newPolygonObject.AddComponent<PolygonVisualisation>();
+            polygonVisualisation.Initialize(contours, extrusionHeight, addBottom, createInwardMesh, polygonReselected, polygonEdited, lineMaterial, lineColor, uvCoordinate);
+
             newPolygonObject.transform.SetParent(this.transform);
             newPolygonObject.transform.Translate(0, extrusionHeight, 0);
 
             if (createdPolygonGameObject) createdPolygonGameObject.InvokeStarted(newPolygonObject);
             return newPolygonObject;
         }
-
-        /// <summary>
-        /// Poly2Mesh has problems with polygons that have points in the same position.
-        /// Lets move them a bit.
-        /// </summary>
-        /// <param name="contour"></param>
-        private static void FixSequentialDoubles(List<Vector3> contour)
-        {
-            var removedSomeDoubles = false;
-            for (int i = contour.Count - 2; i >= 0; i--)
-            {
-                if (contour[i] == contour[i + 1])
-                {
-                    contour.RemoveAt(i+1);
-                    removedSomeDoubles = true;
-                }
-            }
-            if (removedSomeDoubles) Debug.Log("Removed some doubles");
-        }
-
-        private void SetUVCoordinates(Mesh newPolygonMesh)
-		{
-			var uvs = new Vector2[newPolygonMesh.vertexCount];
-			for (int i = 0; i < uvs.Length; i++)
-			{
-				uvs[i] = uvCoordinate;
-			}
-			newPolygonMesh.uv = uvs;
-		}
-	}
+    }
 }
