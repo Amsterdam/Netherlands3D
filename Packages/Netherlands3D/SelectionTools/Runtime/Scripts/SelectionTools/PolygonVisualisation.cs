@@ -17,7 +17,7 @@ namespace Netherlands3D.SelectionTools
             get
             {
                 List<ReadOnlyCollection<Vector3>> roPolygons = new List<ReadOnlyCollection<Vector3>>();
-                foreach(var polygon in polygons)
+                foreach (var polygon in polygons)
                 {
                     var p = (List<Vector3>)polygon;
                     roPolygons.Add(p.AsReadOnly());
@@ -31,7 +31,6 @@ namespace Netherlands3D.SelectionTools
         private Vector3ListEvent reselectVisualisedPolygon;
         [SerializeField]
         private Vector3ListEvent onPolygonEdited;
-
 
         //[Header("Mesh")]
         private float extrusionHeight;
@@ -170,9 +169,14 @@ namespace Netherlands3D.SelectionTools
 
         private void ReselectPolygon()
         {
-            onPolygonEdited.RemoveAllListenersStarted();
-            reselectVisualisedPolygon.InvokeStarted(polygons[0] as List<Vector3>);
-            onPolygonEdited.AddListenerStarted(UpdateVisualisation);
+            if (onPolygonEdited)
+                onPolygonEdited.RemoveAllListenersStarted();
+
+            if (reselectVisualisedPolygon)
+                reselectVisualisedPolygon.InvokeStarted(polygons[0] as List<Vector3>);
+
+            if (onPolygonEdited)
+                onPolygonEdited.AddListenerStarted(UpdateVisualisation);
         }
 
         public static Mesh CreatePolygonMesh(List<IList<Vector3>> contours, float extrusionHeight, bool addBottom, Vector2 uvCoordinate = new Vector2())
