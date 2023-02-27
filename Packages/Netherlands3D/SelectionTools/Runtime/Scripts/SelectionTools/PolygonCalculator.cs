@@ -80,5 +80,16 @@ namespace Netherlands3D.SelectionTools
 
             return ((aCROSSbp >= 0.0f) && (bCROSScp >= 0.0f) && (cCROSSap >= 0.0f));
         }
+
+        public static bool PolygonIsClockwise(List<Vector3> points)
+        {
+            double sum = 0;
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                sum += (points[i + 1].x - points[i].x) * (points[i + 1].z + points[i].z);
+            }
+            bool isClockwise = (sum > 0) ? true : false;
+            return isClockwise;
+        }
     }
 }

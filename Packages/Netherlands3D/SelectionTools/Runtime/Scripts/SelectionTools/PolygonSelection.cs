@@ -402,6 +402,7 @@ namespace Netherlands3D.SelectionTools
             closedLoop = false;
             previewLineCrossed = false;
             positions.Clear();
+
             lastNormal = Vector3.zero;
             previewLineRenderer.enabled = false;
 
@@ -605,7 +606,7 @@ namespace Netherlands3D.SelectionTools
             if (!displayLineUntilRedraw)
                 polygonLineRenderer.enabled = false;
 
-            var polygonIsClockwise = PolygonIsClockwise(positions);
+            var polygonIsClockwise = PolygonCalculator.PolygonIsClockwise(positions);
             if ((windingOrder == WindingOrder.COUNTERCLOCKWISE && polygonIsClockwise) || (windingOrder == WindingOrder.CLOCKWISE && !polygonIsClockwise))
             {
                 Debug.Log($"Forcing to {windingOrder}");
@@ -617,18 +618,6 @@ namespace Netherlands3D.SelectionTools
                 createdNewPolygonArea.InvokeStarted(positions);
             else if (positions.Count > 1 && editedPolygonArea)
                 editedPolygonArea.InvokeStarted(positions);
-        }
-
-        private bool PolygonIsClockwise(List<Vector3> points)
-        {
-            bool isClockwise = false;
-            double sum = 0;
-            for (int i = 0; i < points.Count - 1; i++)
-            {
-                sum += (points[i + 1].x - points[i].x) * (points[i + 1].z + points[i].z);
-            }
-            isClockwise = (sum > 0) ? true : false;
-            return isClockwise;
         }
 
         /// <summary>

@@ -29,6 +29,9 @@ namespace Netherlands3D.SelectionTools
         private Vector3ListsEvent drawPolygonEvent;
         [SerializeField]
         private Vector3ListEvent drawSinglePolygonEvent;
+        [SerializeField]
+        private Vector3ListEvent polygonEdited;
+
         [Header("Line Settings:")]
         [SerializeField]
         private Material lineMaterial;
@@ -97,7 +100,7 @@ namespace Netherlands3D.SelectionTools
             lineRenderer.startColor = lineColour;
             lineRenderer.endColor = lineColour;
 
-            SetEndPointIfNeeded(contour);
+            lineRenderer.loop = true;
 
             lineRenderer.positionCount = contour.Count;
             lineRenderer.SetPositions(contour.ToArray()); //does not work for some reason
@@ -109,15 +112,15 @@ namespace Netherlands3D.SelectionTools
         /// duplicates the first point at the end if needed to draw a closed loop.
         /// </summary>
         /// <param name="contour"></param>
-        private void SetEndPointIfNeeded(List<Vector3> contour)
-        {
-            if (contour.Count < 2)
-                return;
+        //private void SetEndPointIfNeeded(List<Vector3> contour)
+        //{
+        //    if (contour.Count < 2)
+        //        return;
 
-            if (contour[0] == contour[contour.Count - 1])
-                return;
+        //    if (contour[0] == contour[contour.Count - 1])
+        //        return;
 
-            contour.Add(contour[0]);
-        }
+        //    contour.Add(contour[0]);
+        //}
     }
 }
