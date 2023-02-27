@@ -121,6 +121,8 @@ namespace Netherlands3D.SelectionTools
                 return null;
 
             var newPolygonObject = new GameObject();
+            newPolygonObject.transform.SetParent(transform);
+
 #if UNITY_EDITOR
             //Do not bother setting object name outside of Editor untill we need it.
             newPolygonObject.name = newDrawingObjectName;
