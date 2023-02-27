@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2283770630542403666
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2283770630542403664}
+  - component: {fileID: 2283770630542403665}
+  - component: {fileID: 5990456967231122250}
+  - component: {fileID: 7488398122176675898}
+  m_Layer: 0
+  m_Name: BuildingSelection
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2283770630542403664
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2283770630542403666}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2283770630542403665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2283770630542403666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 671edf7e95eb48945a664eb2234fbdb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputActionAsset: {fileID: -944628639613478452, guid: c62fb5dd0e99d7c4d8da0a9e86f1b111, type: 3}
+  clickOnScreenPosition: {fileID: 11400000, guid: 1a3fcaa9dcfd1924385e66fd0012b8ba, type: 2}
+  secondaryClickOnScreenPosition: {fileID: 11400000, guid: 1a3fcaa9dcfd1924385e66fd0012b8ba, type: 2}
+--- !u!114 &5990456967231122250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2283770630542403666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a67bdb7ff645f4988eaa086a0e818f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idReplacementString: '{BagID}'
+  geoJsonRequestURL: https://service.pdok.nl/lv/bag/wfs/v2_0?SERVICE=WFS&VERSION=2.0.0&outputFormat=geojson&REQUEST=GetFeature&typeName=bag:pand&count=100&outputFormat=xml&srsName=EPSG:28992&filter=%3cFilter%3e%3cPropertyIsEqualTo%3e%3cPropertyName%3eidentificatie%3c/PropertyName%3e%3cLiteral%3e{BagID}%3c/Literal%3e%3c/PropertyIsEqualTo%3e%3c/Filter%3e
+  removeFromID: NL.IMBAG.Pand.
+  loadPropertiesForIDs: {fileID: 11400000, guid: 9fccc0f026026d04bbc9a12ffd985622, type: 2}
+  loadedFeatureWithProperties: {fileID: 11400000, guid: 8d8a8db5fe1e6da4fa2248bdbdedf17d, type: 2}
+  loadedPropertyKeyValue: {fileID: 11400000, guid: 2aa18d5f4ce6d344f93a206facb7e21c, type: 2}
+--- !u!114 &7488398122176675898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2283770630542403666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a67bdb7ff645f4988eaa086a0e818f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idReplacementString: '{BagID}'
+  geoJsonRequestURL: https://service.pdok.nl/lv/bag/wfs/v2_0?service=wfs&request=getFeature&version=2.0.0&outputFormat=geojson&typeName=bag:verblijfsobject&filter=%3CFilter%3E%3CPropertyIsEqualTo%3E%3CPropertyName%3Epandidentificatie%3C/PropertyName%3E%3CLiteral%3E{BagID}%3C/Literal%3E%3C/PropertyIsEqualTo%3E%3C/Filter%3E
+  removeFromID: NL.IMBAG.Pand.
+  loadPropertiesForIDs: {fileID: 11400000, guid: 9fccc0f026026d04bbc9a12ffd985622, type: 2}
+  loadedFeatureWithProperties: {fileID: 11400000, guid: 871911ea9de7afe4f9860aaeac123d71, type: 2}
+  loadedPropertyKeyValue: {fileID: 11400000, guid: eb10f103ecdaafe4a8b7c7f5a84c5ac6, type: 2}

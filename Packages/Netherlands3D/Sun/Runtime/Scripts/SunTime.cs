@@ -18,18 +18,14 @@
 using System;
 using UnityEngine;
 using Netherlands3D.Events;
+using Netherlands3D.Core;
 
 namespace Netherlands3D.Sun
 {
     [ExecuteInEditMode]
     public class SunTime : MonoBehaviour
     {
-        [Header("Location")]
-
-        [SerializeField]
         private float longitude;
-
-        [SerializeField]
         private float latitude;
 
         [Header("Time")]
@@ -85,17 +81,25 @@ namespace Netherlands3D.Sun
 
         private void Start()
         {
+            GetLocation();
+
             if (jumpToCurrentTimeAtStart)
-			{
-				ResetToNow();
-			}
+            {
+                ResetToNow();
+            }
             else
             {
                 Apply();
             }
         }
 
-       
+        private void GetLocation()
+        {
+            var rdSceneCenter = CoordConvert.relativeCenterRD;
+            var wgs84SceneCenter = CoordConvert.RDtoWGS84(rdSceneCenter.x, rdSceneCenter.y);
+            longitude = (float)wgs84SceneCenter.lon;
+            latitude = (float)wgs84SceneCenter.lat;
+        }
 
         private void Update()
         {
@@ -105,7 +109,7 @@ namespace Netherlands3D.Sun
             if (frameStep==0) {
                 if(dateTimeUpdate != null)
                 {
-                    dateTimeUpdate.Invoke(time);
+                    dateTimeUpdate.InvokeStarted(time);
                 }
                 SetPosition();
             }
@@ -189,7 +193,7 @@ namespace Netherlands3D.Sun
             timeSpeed = Math.Clamp(timeSpeed * multiplicationFactor, 1, 10000);
             if(sendAnimationSpeed != null)
             {
-                sendAnimationSpeed.Invoke(timeSpeed);
+                sendAnimationSpeed.InvokeStarted(timeSpeed);
             }
         }
 		public void ResetToNow()
@@ -207,7 +211,7 @@ namespace Netherlands3D.Sun
         {
             if(singleTriggerDateTimeEvent != null)
             {
-                singleTriggerDateTimeEvent.Invoke(time);
+                singleTriggerDateTimeEvent.InvokeStarted(time);
             }
         }
 

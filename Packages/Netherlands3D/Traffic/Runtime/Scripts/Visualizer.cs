@@ -18,7 +18,7 @@ namespace Netherlands3D.Traffic.VISSIM
             set
             {
                 updateEntitiesRealtime = value;
-                sso.eventUpdateRealtime.Invoke(value);
+                sso.eventUpdateRealtime.InvokeStarted(value);
             }
         }
 

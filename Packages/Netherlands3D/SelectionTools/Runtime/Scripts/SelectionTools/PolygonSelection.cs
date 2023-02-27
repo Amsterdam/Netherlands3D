@@ -67,6 +67,7 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] private float doubleClickTimer = 0.5f;
         [SerializeField] private float doubleClickDistance = 10.0f;
         [SerializeField] private bool displayLineUntilRedraw = true;
+        [SerializeField] private bool clearOnEnable = false;
 
         private InputAction pointerAction;
         private InputAction tapAction;
@@ -148,7 +149,12 @@ namespace Netherlands3D.SelectionTools
 
         private void OnEnable()
         {
-            polygonSelectionActionMap.Enable();
+                if (clearOnEnable)
+                {
+                    ClearPolygon(true);
+                }
+
+                polygonSelectionActionMap.Enable();
 
             if (polygonReselectionInput)
                 polygonReselectionInput.AddListenerStarted(ReselectPolygon);

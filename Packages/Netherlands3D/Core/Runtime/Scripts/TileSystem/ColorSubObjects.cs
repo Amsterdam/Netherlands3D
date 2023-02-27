@@ -58,7 +58,7 @@ namespace Netherlands3D.TileSystem
             if (onReceiveIdsAndColors)
             {
                 onReceiveIdsAndColors.AddListenerStarted(SetIDsAndColors);
-                if (onEnableDrawingColors) onEnableDrawingColors.Invoke(true);
+                if (onEnableDrawingColors) onEnableDrawingColors.InvokeStarted(true);
                 this.enabled = true;
             }
 
@@ -69,7 +69,7 @@ namespace Netherlands3D.TileSystem
                 //If we can receive ids+floats, add listeners to determine the min and max of the range
                 if (onReceiveMinRange) onReceiveMinRange.AddListenerStarted(SetMinRange);
                 if (onReceiveMaxRange) onReceiveMaxRange.AddListenerStarted(SetMaxRange);
-                if (onEnableDrawingColors) onEnableDrawingColors.Invoke(true);
+                if (onEnableDrawingColors) onEnableDrawingColors.InvokeStarted(true);
                 this.enabled = true;
             }
 
@@ -80,7 +80,7 @@ namespace Netherlands3D.TileSystem
                 //If we can receive ids+floats, add listeners to determine the min and max of the range
                 if (onReceiveMinRange) onReceiveMinRange.AddListenerStarted(SetMinRange);
                 if (onReceiveMaxRange) onReceiveMaxRange.AddListenerStarted(SetMaxRange);
-                if (onEnableDrawingColors) onEnableDrawingColors.Invoke(true);
+                if (onEnableDrawingColors) onEnableDrawingColors.InvokeStarted(true);
                 this.enabled = true;
             }
 
@@ -100,7 +100,7 @@ namespace Netherlands3D.TileSystem
             if (disableOnStart)
             {
                 this.enabled = false;
-                if(onEnableDrawingColors) onEnableDrawingColors.Invoke(false);
+                if(onEnableDrawingColors) onEnableDrawingColors.InvokeStarted(false);
             }
         }
 

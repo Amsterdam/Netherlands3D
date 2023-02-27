@@ -29,9 +29,10 @@ namespace Netherlands3D.ProfileRendering
         [SerializeField] private float strokeWidth = 0.1f;
 
         [SerializeField] private float documentHeight = 300;
+        [SerializeField] private bool useMaterialColorForLines = false;
 
         private StringBuilder svgStringBuilder;
-        private string hexStrokeColor = "#FFFFFF";
+        private string hexStrokeColor = "#000000";
         private Transform coordinateSystem;
 
         private float minX = float.MaxValue;
@@ -41,12 +42,17 @@ namespace Netherlands3D.ProfileRendering
 
         void Awake()
         {
-            onReceiveLayerLines.AddListenerStarted(AddSVGLine);
-            onReceiveLayerColor.AddListenerStarted(SetStrokeColor);
-            onReadyForExport.AddListenerStarted(FinishSVGDocument);
+            if(onReceiveLayerLines)
+                onReceiveLayerLines.AddListenerStarted(AddSVGLine);
+
+            if(onReceiveLayerColor)
+                onReceiveLayerColor.AddListenerStarted(SetStrokeColor);
+
+            if(onReadyForExport)
+                onReadyForExport.AddListenerStarted(FinishSVGDocument);
         }
 
-        private void FinishSVGDocument()
+        public void FinishSVGDocument()
         {
            Destroy(coordinateSystem.gameObject);
            StartCoroutine(CompleteAndSave());
@@ -63,12 +69,12 @@ namespace Netherlands3D.ProfileRendering
             minY = float.MaxValue;
             maxY = float.MinValue;
 
-            if (outputProgress) outputProgress.Invoke(1.0f);
+            if (outputProgress) outputProgress.InvokeStarted(1.0f);
             yield return new WaitForEndOfFrame();
             SaveFile();
         }
 
-        private void AddSVGLine(List<Vector3> lines)
+        public void AddSVGLine(List<Vector3> lines)
         {
             if (lines.Count < 2) return;
 
@@ -98,9 +104,16 @@ namespace Netherlands3D.ProfileRendering
             else if (linePoint.y >= maxY) maxY = linePoint.y;
         }
 
-        private void SetStrokeColor(Color color)
+        public void SetStrokeColor(Color color)
         {
-            hexStrokeColor = $"#{ColorUtility.ToHtmlStringRGB(color)}";
+            if (useMaterialColorForLines)
+            {
+                hexStrokeColor = $"#{ColorUtility.ToHtmlStringRGB(color)}";
+            }
+            else
+            {
+                hexStrokeColor = "#000000";
+            }
         }
 
         private void CreateCoordinateSystem(List<UnityEngine.Vector3> lines)

@@ -15,13 +15,8 @@ namespace Netherlands3D
         private InputAction pointerPositionAction;
 
         [Header("Invoke events")]
-        [SerializeField]
-        private Vector3Event clickOnScreenPosition;
-        [SerializeField]
-        private Vector3Event secondaryClickOnScreenPosition;
-
-        private float lastClickDown = 0;
-        private float clickTime = 0.5f; //seconds
+        [SerializeField] private Vector3Event clickOnScreenPosition;
+        [SerializeField] private Vector3Event secondaryClickOnScreenPosition;
 
         private void Awake()
         {
@@ -49,7 +44,7 @@ namespace Netherlands3D
             {
                 var currentPointerPosition = pointerPositionAction.ReadValue<Vector2>();
                 Debug.Log($"Click at :{currentPointerPosition}");
-                clickOnScreenPosition.Invoke(currentPointerPosition);
+                clickOnScreenPosition.InvokeStarted(currentPointerPosition);
             }
         }
 
@@ -59,7 +54,7 @@ namespace Netherlands3D
             {
                 var currentPointerPosition = pointerPositionAction.ReadValue<Vector2>();
                 Debug.Log($"Secondary click at :{currentPointerPosition}");
-                secondaryClickOnScreenPosition.Invoke(currentPointerPosition);
+                secondaryClickOnScreenPosition.InvokeStarted(currentPointerPosition);
             }
         }
 

@@ -15,6 +15,6 @@ public class TestCityJSONInput : MonoBehaviour
     protected void Start()
     {
         print(testJson.text);
-        cityJSONReceived.Invoke(testJson.text);
+        cityJSONReceived.InvokeStarted(testJson.text);
     }
 }
