@@ -49,8 +49,8 @@ private void MyListener(bool boolValue)
 }
 ```
 
-
-
+Most reference type EventContainers have an option 'Send As Copy' that you can optionaly disable in the Inspector.
+You may use this if you want to use the payload as a reference instead of creating a copy.
 If you are missing a basic payload type, feel free to add it to the package and create a pull request.
 
 ## Code convention
