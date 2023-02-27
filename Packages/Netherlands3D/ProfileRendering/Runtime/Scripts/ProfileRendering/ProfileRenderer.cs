@@ -32,12 +32,12 @@ namespace Netherlands3D.ProfileRendering
 
         private void OnEnable()
         {
-            onReceiveCuttingLine.started.AddListener(Align);
+            onReceiveCuttingLine.AddListenerStarted(Align);
         }
 
         private void OnDisable()
         {
-            onReceiveCuttingLine.started.RemoveListener(Align);
+            onReceiveCuttingLine.RemoveListenerStarted(Align);
         }
 
         private void Align(List<Vector3> linePoints)

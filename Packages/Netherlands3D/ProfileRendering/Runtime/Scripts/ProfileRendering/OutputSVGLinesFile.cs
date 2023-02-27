@@ -42,9 +42,14 @@ namespace Netherlands3D.ProfileRendering
 
         void Awake()
         {
-            onReceiveLayerLines.AddListenerStarted(AddSVGLine);
-            onReceiveLayerColor.AddListenerStarted(SetStrokeColor);
-            onReadyForExport.AddListenerStarted(FinishSVGDocument);
+            if(onReceiveLayerLines)
+                onReceiveLayerLines.AddListenerStarted(AddSVGLine);
+
+            if(onReceiveLayerColor)
+                onReceiveLayerColor.AddListenerStarted(SetStrokeColor);
+
+            if(onReadyForExport)
+                onReadyForExport.AddListenerStarted(FinishSVGDocument);
         }
 
         public void FinishSVGDocument()
@@ -64,7 +69,7 @@ namespace Netherlands3D.ProfileRendering
             minY = float.MaxValue;
             maxY = float.MinValue;
 
-            if (outputProgress) outputProgress.Invoke(1.0f);
+            if (outputProgress) outputProgress.InvokeStarted(1.0f);
             yield return new WaitForEndOfFrame();
             SaveFile();
         }

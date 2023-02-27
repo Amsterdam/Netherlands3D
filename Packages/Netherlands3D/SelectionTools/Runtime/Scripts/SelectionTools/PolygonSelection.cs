@@ -620,9 +620,9 @@ namespace Netherlands3D.SelectionTools
             }
 
             if (createdNewPolygonArea && invokeNewPolygonEvent && positions.Count > 1)
-                createdNewPolygonArea.started.Invoke(positions);
+                createdNewPolygonArea.InvokeStarted(positions);
             else if (editedPolygonArea && positions.Count > 1 && editedPolygonArea)
-                editedPolygonArea.started.Invoke(positions);
+                editedPolygonArea.InvokeStarted(positions);
         }
 
         private bool PolygonIsClockwise(List<Vector3> points)

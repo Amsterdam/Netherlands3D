@@ -12,7 +12,7 @@ namespace Netherlands3D.Events.EventUtilities
 
         void Awake()
         {
-            onEvent.started.AddListener(Invoke);
+            onEvent.AddListenerStarted(Invoke);
 
             if(disableAtLateStart)
                 gameObject.AddComponent<DisableAtStart>();
