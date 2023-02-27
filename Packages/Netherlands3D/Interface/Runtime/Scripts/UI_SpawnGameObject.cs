@@ -41,7 +41,7 @@ namespace Netherlands3D.Interface
 			{
 				targetContainer = this.transform;
 			}
-			onSpawnGameObject.started.AddListener(Spawn);
+			onSpawnGameObject.AddListenerStarted(Spawn);
 		}
 
 		private void Spawn()

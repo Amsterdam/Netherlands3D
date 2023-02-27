@@ -36,17 +36,17 @@ namespace Netherlands3D.T3DPipeline
         private void OnEnable()
         {
             if (onUserNameChanged)
-                onUserNameChanged.started.AddListener(SetUserName);
+                onUserNameChanged.AddListenerStarted(SetUserName);
             if (onBagIdChanged)
-                onBagIdChanged.started.AddListener(SetBagId);
+                onBagIdChanged.AddListenerStarted(SetBagId);
         }
 
         private void OnDisable()
         {
             if (onUserNameChanged)
-                onUserNameChanged.started.RemoveAllListeners();
+                onUserNameChanged.RemoveAllListenersStarted();
             if (onBagIdChanged)
-                onBagIdChanged.started.RemoveAllListeners();
+                onBagIdChanged.RemoveAllListenersStarted();
         }
 
         public void SetUserName(string newName)

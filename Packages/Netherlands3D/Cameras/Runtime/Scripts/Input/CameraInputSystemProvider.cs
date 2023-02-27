@@ -72,13 +72,13 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         var rotate = rotateModifierAction.IsPressed();
         var firstPerson = firstPersonModifierAction.IsPressed();
 
-        draggingModifier.started.Invoke(dragging);
-        rotateModifier.started.Invoke(rotate);
-        firstPersonModifier.started.Invoke(firstPerson);
+        draggingModifier.Invoke(dragging);
+        rotateModifier.Invoke(rotate);
+        firstPersonModifier.Invoke(firstPerson);
 
         //Always send position of main pointer
         var pointer = pointerAction.ReadValue<Vector2>();
-        pointerPosition.started.Invoke(pointer);
+        pointerPosition.Invoke(pointer);
 
         //Transform inputs 
         var moveValue = moveAction.ReadValue<Vector2>();
@@ -89,33 +89,33 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         var upPressed = upAction.IsPressed();
         var downPressed = downAction.IsPressed();
 
-        lookInput.started.Invoke(lookValue);
+        lookInput.Invoke(lookValue);
 
         if (moveValue.magnitude>0)
         {
-            horizontalInput.started.Invoke(moveValue.x);
-            verticalInput.started.Invoke(moveValue.y);
+            horizontalInput.Invoke(moveValue.x);
+            verticalInput.Invoke(moveValue.y);
         }
         if(flyValue.magnitude>0)
         {
-            flyInput.started.Invoke(flyValue);
+            flyInput.Invoke(flyValue);
 		}
         if (zoomValue.magnitude > 0)
         {
-            zoomInput.started.Invoke(zoomValue.y);
+            zoomInput.Invoke(zoomValue.y);
         }
         if (rotateValue.magnitude > 0)
         {
-            rotateInput.started.Invoke(rotateValue);
+            rotateInput.Invoke(rotateValue);
         }
 
         if (upPressed)
         {
-            upDownInput.started.Invoke(1);
+            upDownInput.Invoke(1);
         }
         else if(downPressed)
         {
-            upDownInput.started.Invoke(-1);
+            upDownInput.Invoke(-1);
         }
     }
 

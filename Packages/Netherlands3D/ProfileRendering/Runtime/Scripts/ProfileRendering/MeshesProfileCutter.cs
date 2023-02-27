@@ -39,8 +39,8 @@ namespace Netherlands3D.ProfileRendering
 
         void Awake()
         {
-            onReceiveCuttingLine.started.AddListener(SetLine);
-            onCutMeshes.started.AddListener(CutMeshes);
+            onReceiveCuttingLine.AddListenerStarted(SetLine);
+            onCutMeshes.AddListenerStarted(CutMeshes);
 
             triangleIntersectionLine.Capacity = 2;
         }

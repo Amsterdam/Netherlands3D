@@ -108,10 +108,10 @@ namespace Netherlands3D.Traffic
 
             // So
             this.so = so;
-            this.so.eventUpdateRealtime.started.AddListener(OnUpdateRealtimeChanged);
-            this.so.eventSimulationTimeChanged.started.AddListener(OnSimulationTimeChanged);
-            this.so.eventSimulationSpeedChanged.started.AddListener(OnSimulationSpeedChanged);
-            this.so.eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
+            this.so.eventUpdateRealtime.AddListenerStarted(OnUpdateRealtimeChanged);
+            this.so.eventSimulationTimeChanged.AddListenerStarted(OnSimulationTimeChanged);
+            this.so.eventSimulationSpeedChanged.AddListenerStarted(OnSimulationSpeedChanged);
+            this.so.eventSimulationStateChanged.AddListenerStarted(OnSimulationStateChanged);
 
             // Layer masks
             this.layerMask = layerMask;
@@ -159,10 +159,10 @@ namespace Netherlands3D.Traffic
         {
             if(data != null)
             {
-                so.eventUpdateRealtime.started.RemoveListener(OnUpdateRealtimeChanged);
-                so.eventSimulationTimeChanged.started.RemoveListener(OnSimulationTimeChanged);
-                so.eventSimulationSpeedChanged.started.RemoveListener(OnSimulationSpeedChanged);
-                so.eventSimulationStateChanged.started.RemoveListener(OnSimulationStateChanged);
+                so.eventUpdateRealtime.RemoveListenerStarted(OnUpdateRealtimeChanged);
+                so.eventSimulationTimeChanged.RemoveListenerStarted(OnSimulationTimeChanged);
+                so.eventSimulationSpeedChanged.RemoveListenerStarted(OnSimulationSpeedChanged);
+                so.eventSimulationStateChanged.RemoveListenerStarted(OnSimulationStateChanged);
             }
         }
 

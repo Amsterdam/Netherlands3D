@@ -16,7 +16,7 @@ namespace Netherlands3D.Events
                 if (GUILayout.Button("Invoke"))
                 {
                     var eventContainer = (TriggerEvent)target;
-                    eventContainer.started.Invoke();
+                    eventContainer.Invoke();
                     Debug.Log($"Invoked {eventContainer.name}");
                 }
             }

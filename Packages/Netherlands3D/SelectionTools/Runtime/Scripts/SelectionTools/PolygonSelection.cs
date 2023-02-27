@@ -157,7 +157,7 @@ namespace Netherlands3D.SelectionTools
             polygonSelectionActionMap.Enable();
 
             if (polygonReselectionInput)
-                polygonReselectionInput.started.AddListener(ReselectPolygon);
+                polygonReselectionInput.AddListenerStarted(ReselectPolygon);
         }
 
         private void ReselectPolygon(List<Vector3> points)
@@ -173,7 +173,7 @@ namespace Netherlands3D.SelectionTools
         private void OnDisable()
         {
             autoDrawPolygon = false;
-            blockCameraDrag.started.Invoke(false);
+            blockCameraDrag.InvokeStarted(false);
             polygonSelectionActionMap.Disable();
         }
 
@@ -188,12 +188,12 @@ namespace Netherlands3D.SelectionTools
             if (!autoDrawPolygon && clickAction.IsPressed() && modifierAction.IsPressed())
             {
                 autoDrawPolygon = true;
-                blockCameraDrag.started.Invoke(true);
+                blockCameraDrag.InvokeStarted(true);
             }
             else if (autoDrawPolygon && !clickAction.IsPressed())
             {
                 autoDrawPolygon = false;
-                blockCameraDrag.started.Invoke(false);
+                blockCameraDrag.InvokeStarted(false);
             }
 
             if (!requireReleaseBeforeRedraw && autoDrawPolygon)
@@ -580,7 +580,7 @@ namespace Netherlands3D.SelectionTools
 
             if (positions.Count > 1 && previewLineHasChanged)
             {
-                previewLineHasChanged.started.Invoke(positions);
+                previewLineHasChanged.InvokeStarted(positions);
             }
         }
 
