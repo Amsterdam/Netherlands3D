@@ -81,7 +81,7 @@ namespace Netherlands3D.T3DPipeline
             var isCityJSON = type == "CityJSON";
             if (isCityJSONType)
             {
-                isCityJSONType.Invoke(isCityJSON);
+                isCityJSONType.InvokeStarted(isCityJSON);
                 if (!isCityJSON)
                     return;
             }

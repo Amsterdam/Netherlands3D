@@ -62,16 +62,16 @@ namespace Netherlands3D.BIMPlanning
         public bool ObjReady
         {
             get => objReady;
-            set { objReady = value; if(onObjReady) onObjReady.Invoke(objReady); }
+            set { objReady = value; if(onObjReady) onObjReady.InvokeStarted(objReady); }
         }
         public bool CsvReady
         {
             get => csvReady;
-            set { csvReady = value; if (onCsvReady) onCsvReady.Invoke(csvReady); }
+            set { csvReady = value; if (onCsvReady) onCsvReady.InvokeStarted(csvReady); }
         }
         public bool MtlReady { 
             get => mtlReady; 
-            set { mtlReady = value; if (onMtlReady) onMtlReady.Invoke(mtlReady); }
+            set { mtlReady = value; if (onMtlReady) onMtlReady.InvokeStarted(mtlReady); }
         }
 
         public void StartImport()
@@ -80,7 +80,7 @@ namespace Netherlands3D.BIMPlanning
 
             ObjReady = false;
             MtlReady = false;
-            onReadyForImports.Invoke(false);
+            onReadyForImports.InvokeStarted(false);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace Netherlands3D.BIMPlanning
                 }
             }
 
-            onReadyForImports.Invoke(ObjReady && CsvReady);
+            onReadyForImports.InvokeStarted(ObjReady && CsvReady);
         }
 
         private void OnCSVileSelected(string value)
@@ -153,7 +153,7 @@ namespace Netherlands3D.BIMPlanning
                 }
             }
 
-            onReadyForImports.Invoke(ObjReady && CsvReady);
+            onReadyForImports.InvokeStarted(ObjReady && CsvReady);
         }
 
         private void AddImporters()
@@ -181,7 +181,7 @@ namespace Netherlands3D.BIMPlanning
                 CsvReady = true;
             }
 
-            onCsvVerified.Invoke(csvReady);
+            onCsvVerified.InvokeStarted(csvReady);
         }
 
         /// <summary>

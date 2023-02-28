@@ -35,7 +35,7 @@ public class UI_FillDropdownWithNumbers : MonoBehaviour
     {
         if(onSelectedNumberValue && int.TryParse(dropdown.options[dropdownItemIndex].text,out int parsedValue))
         {
-            onSelectedNumberValue.Invoke(parsedValue);
+            onSelectedNumberValue.InvokeStarted(parsedValue);
         }
     }
 

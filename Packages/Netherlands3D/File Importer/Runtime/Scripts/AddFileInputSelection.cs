@@ -121,7 +121,7 @@ namespace Netherlands3D.JavascriptConnection
                 string newFilePath = System.IO.Path.Combine(Application.persistentDataPath, filename);
                 System.IO.File.Copy(filePath, newFilePath, true);
                 UnityEngine.Debug.Log("[File Importer-unityEditor] Import file from file path: " + filename);
-                eventFileLoaderFileImported.Invoke(newFilePath);
+                eventFileLoaderFileImported.InvokeStarted(newFilePath);
             }
         }
 #endif
@@ -130,7 +130,7 @@ namespace Netherlands3D.JavascriptConnection
         public void SendResults(string filePaths)
         {
             Debug.Log("button received: " + filePaths);
-            eventFileLoaderFileImported.Invoke(filePaths);
+            eventFileLoaderFileImported.InvokeStarted(filePaths);
         }
 
 #if UNITY_EDITOR

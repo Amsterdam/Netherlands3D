@@ -19,7 +19,7 @@ namespace Netherlands3D.T3DPipeline
         public virtual void OnPointerClick(PointerEventData eventData)
         {
             var pos = eventData.pointerCurrentRaycast.worldPosition;
-            objectClicked.Invoke(pos);
+            objectClicked.InvokeStarted(pos);
         }
     }
 }

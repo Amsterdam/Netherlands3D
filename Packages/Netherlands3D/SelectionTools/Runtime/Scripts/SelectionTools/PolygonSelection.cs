@@ -149,12 +149,12 @@ namespace Netherlands3D.SelectionTools
 
         private void OnEnable()
         {
-            if (clearOnEnable)
-            {
-                ClearPolygon(true);
-            }
+                if (clearOnEnable)
+                {
+                    ClearPolygon(true);
+                }
 
-            polygonSelectionActionMap.Enable();
+                polygonSelectionActionMap.Enable();
 
             if (polygonReselectionInput)
                 polygonReselectionInput.AddListenerStarted(ReselectPolygon);
@@ -163,8 +163,15 @@ namespace Netherlands3D.SelectionTools
         private void ReselectPolygon(List<Vector3> points)
         {
             ClearPolygon(true);
-            foreach (var point in points)
+            for (int i = 0; i < points.Count; i++)
             {
+                Vector3 point = points[i];
+                if(i == points.Count - 1)
+                {
+                    if (point == points[0])
+                        continue;
+                }
+
                 AddPoint(point, false);
             }
             CloseLoop(false);
@@ -408,6 +415,7 @@ namespace Netherlands3D.SelectionTools
             closedLoop = false;
             previewLineCrossed = false;
             positions.Clear();
+
             lastNormal = Vector3.zero;
             previewLineRenderer.enabled = false;
 
@@ -611,7 +619,7 @@ namespace Netherlands3D.SelectionTools
             if (!displayLineUntilRedraw)
                 polygonLineRenderer.enabled = false;
 
-            var polygonIsClockwise = PolygonIsClockwise(positions);
+            var polygonIsClockwise = PolygonCalculator.PolygonIsClockwise(positions);
             if ((windingOrder == WindingOrder.COUNTERCLOCKWISE && polygonIsClockwise) || (windingOrder == WindingOrder.CLOCKWISE && !polygonIsClockwise))
             {
                 Debug.Log($"Forcing to {windingOrder}");
@@ -619,22 +627,10 @@ namespace Netherlands3D.SelectionTools
                 MoveAllHandlesToPoint();
             }
 
-            if (createdNewPolygonArea && invokeNewPolygonEvent && positions.Count > 1)
+            if (invokeNewPolygonEvent && positions.Count > 1)
                 createdNewPolygonArea.InvokeStarted(positions);
-            else if (editedPolygonArea && positions.Count > 1 && editedPolygonArea)
+            else if (positions.Count > 1 && editedPolygonArea)
                 editedPolygonArea.InvokeStarted(positions);
-        }
-
-        private bool PolygonIsClockwise(List<Vector3> points)
-        {
-            bool isClockwise = false;
-            double sum = 0;
-            for (int i = 0; i < points.Count - 1; i++)
-            {
-                sum += (points[i + 1].x - points[i].x) * (points[i + 1].z + points[i].z);
-            }
-            isClockwise = (sum > 0) ? true : false;
-            return isClockwise;
         }
 
         /// <summary>

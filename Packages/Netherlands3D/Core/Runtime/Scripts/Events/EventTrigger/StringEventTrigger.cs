@@ -11,7 +11,7 @@ namespace Netherlands3D.Events
 
         public void call(string value)
         {
-            stringEvent.Invoke(value);
+            stringEvent.InvokeStarted(value);
         }
     }
 }

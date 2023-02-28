@@ -132,7 +132,7 @@ namespace Netherlands3D.ProfileRendering
 
         private IEnumerator FinishAndSave()
         {
-            if (outputProgress) outputProgress.Invoke(1.0f);
+            if (outputProgress) outputProgress.InvokeStarted(1.0f);
             yield return new WaitForEndOfFrame();
             SaveFile(dxfDocument);
 

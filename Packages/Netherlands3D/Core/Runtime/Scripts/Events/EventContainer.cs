@@ -26,12 +26,9 @@ public abstract class EventContainer<T0, T1> : ScriptableObject where T0 : Unity
     public string eventName;
     public string description;
 
-    [HideInInspector]
-    protected T0 started;
-    [HideInInspector]
-    protected UnityEvent received;
-    [HideInInspector]
-    protected UnityEvent cancelled;
+    protected T0 started = default;
+    protected UnityEvent received = default;
+    protected UnityEvent cancelled = default;
 
     private void OnValidate()
     {

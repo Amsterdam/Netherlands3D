@@ -56,7 +56,7 @@ public class ObjImportManager : MonoBehaviour
             objFileName = value;
 
             Debug.Log("received objFile: " + objFileName);
-            if (ReceivedOBJFilename) ReceivedOBJFilename.Invoke(System.IO.Path.GetFileName(objFileName));
+            if (ReceivedOBJFilename) ReceivedOBJFilename.InvokeStarted(System.IO.Path.GetFileName(objFileName));
         }
     }
 
@@ -76,7 +76,7 @@ public class ObjImportManager : MonoBehaviour
             mtlFileName = System.IO.Path.Combine(Application.persistentDataPath, mtlFileName);
             }
 #endif
-            if (ReceivedMTLFilename) ReceivedMTLFilename.Invoke(System.IO.Path.GetFileName(mtlFileName));
+            if (ReceivedMTLFilename) ReceivedMTLFilename.InvokeStarted(System.IO.Path.GetFileName(mtlFileName));
         }
     }
 
@@ -93,7 +93,7 @@ public class ObjImportManager : MonoBehaviour
         {
             imgFileName = value;
 
-            if (ReceivedImageFilename) ReceivedImageFilename.Invoke(System.IO.Path.GetFileName(imgFileName));
+            if (ReceivedImageFilename) ReceivedImageFilename.InvokeStarted(System.IO.Path.GetFileName(imgFileName));
         }
     }
 
@@ -210,7 +210,7 @@ public class ObjImportManager : MonoBehaviour
             }
             else
             {
-                if (ReadyForImport) ReadyForImport.Invoke(true);
+                if (ReadyForImport) ReadyForImport.InvokeStarted(true);
             }
         }
     }
@@ -219,7 +219,7 @@ public class ObjImportManager : MonoBehaviour
     {
         receiveFileToLoad.RemoveListenerStarted(OnOBJFileReceived);
         objfilename = value;
-        if (ReadyForImport) ReadyForImport.Invoke(true);
+        if (ReadyForImport) ReadyForImport.InvokeStarted(true);
 
     }
 
@@ -240,7 +240,7 @@ public class ObjImportManager : MonoBehaviour
     public void OnCancel()
     {
         BroadcastMessage("Cancel");
-        if (currentActivity) currentActivity.Invoke("cancelling the import");
+        if (currentActivity) currentActivity.InvokeStarted("cancelling the import");
     }
 
     void OnStartImporting()
@@ -253,7 +253,7 @@ public class ObjImportManager : MonoBehaviour
 
         importer.BaseMaterial = baseMaterial;
         importer.createSubMeshes = createSubMeshes;
-        if (started) started.Invoke(true);
+        if (started) started.InvokeStarted(true);
         importer.StartImporting(OnOBJImported);
     }
 
@@ -261,14 +261,14 @@ public class ObjImportManager : MonoBehaviour
     {
         bool canBemoved = importer.createdGameobjectIsMoveable;
 
-        if (started) started.Invoke(false);
+        if (started) started.InvokeStarted(false);
         if (canBemoved)
         {
-            if (CreatedMoveableGameObject) CreatedMoveableGameObject.Invoke(returnedGameObject);
+            if (CreatedMoveableGameObject) CreatedMoveableGameObject.InvokeStarted(returnedGameObject);
         }
         else
         {
-            if (CreatedImmoveableGameObject) CreatedImmoveableGameObject.Invoke(returnedGameObject);
+            if (CreatedImmoveableGameObject) CreatedImmoveableGameObject.InvokeStarted(returnedGameObject);
         }
 
         objfilename = string.Empty;
@@ -294,24 +294,24 @@ public class ObjImportManager : MonoBehaviour
     }
     void BroadcastCurrentActivity(string value)
     {
-        if (currentActivity != null) currentActivity.Invoke(value);
+        if (currentActivity != null) currentActivity.InvokeStarted(value);
     }
     void BroadcastCurrentAction(string value)
     {
-        if (currentAction != null) currentAction.Invoke(value);
+        if (currentAction != null) currentAction.InvokeStarted(value);
     }
 
     void BroadcastProgressPercentage(float value)
     {
-        if (progressPercentage != null) progressPercentage.Invoke(value);
+        if (progressPercentage != null) progressPercentage.InvokeStarted(value);
     }
     void BroadcastAlertmessage(string value)
     {
-        if (alertmessage != null) alertmessage.Invoke(value);
+        if (alertmessage != null) alertmessage.InvokeStarted(value);
     }
     void BroadcastErrormessage(string value)
     {
-        if (errormessage != null) errormessage.Invoke(value);
+        if (errormessage != null) errormessage.InvokeStarted(value);
     }
 
 
