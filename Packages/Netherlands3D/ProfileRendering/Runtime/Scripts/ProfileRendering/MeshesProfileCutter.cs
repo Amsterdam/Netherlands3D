@@ -107,7 +107,7 @@ namespace Netherlands3D.ProfileRendering
             outputProgress.InvokeStarted(0.99f);
             yield return new WaitForEndOfFrame();
 
-            outputProfileDone.Invoke();
+            outputProfileDone.InvokeStarted();
 
             yield return null;
         }
