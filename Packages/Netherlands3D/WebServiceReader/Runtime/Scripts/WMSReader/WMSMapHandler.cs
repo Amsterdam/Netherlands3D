@@ -22,7 +22,7 @@ public class WMSMapHandler : MonoBehaviour
 
     private void Awake()
     {
-        wmsDataEvent.started.AddListener(HandleMapPreview);
+        wmsDataEvent.AddListenerStarted(HandleMapPreview);
         if(cam == null)
             cam = Camera.main;
     }

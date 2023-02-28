@@ -49,12 +49,12 @@ public class WMSInterface : MonoBehaviour
     private void Awake()
     {
         legendRawImage.gameObject.SetActive(false);
-        resetEvent.started.AddListener(ResetInterface);
-        buildInterfaceEvent.started.AddListener(BuildInterface);
-        imageEvent.started.AddListener(DisplayPreviewImage);
-        legendEvent.started.AddListener(GetLegendTexture);
+        resetEvent.AddListenerStarted(ResetInterface);
+        buildInterfaceEvent.AddListenerStarted(BuildInterface);
+        imageEvent.AddListenerStarted(DisplayPreviewImage);
+        legendEvent.AddListenerStarted(GetLegendTexture);
 
-        logEvent.started.AddListener(() =>
+        logEvent.AddListenerStarted(() =>
             {
                 messagePanel.SetActive(true);
                 messageTitleEvent.Invoke("Url Logged");

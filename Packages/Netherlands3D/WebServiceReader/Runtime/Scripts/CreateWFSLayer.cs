@@ -24,7 +24,7 @@ public class CreateWFSLayer : MonoBehaviour
         tileHandler = FindObjectOfType<TileHandler>();
         if(onWfsUrlDefined_String)
         {
-            onWfsUrlDefined_String.started.AddListener(CreateWebFeatureLayer);
+            onWfsUrlDefined_String.AddListenerStarted(CreateWebFeatureLayer);
         }
     }
     // Start is called before the first frame update

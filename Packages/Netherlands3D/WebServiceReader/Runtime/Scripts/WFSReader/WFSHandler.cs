@@ -60,24 +60,24 @@ public class WFSHandler : MonoBehaviour
 
     private void Awake()
     {
-        wfsCreationEvent.started.AddListener(CreateWFS);
+        wfsCreationEvent.AddListenerStarted(CreateWFS);
         //getFeatureEvent.started.AddListener(GetFeature);
-        startIndexEvent.started.AddListener(SetStartIndex);
-        countEvent.started.AddListener(SetWebFeatureCount);
-        setActiveFeatureEvent.started.AddListener(SetActiveFeature);
+        startIndexEvent.AddListenerStarted(SetStartIndex);
+        countEvent.AddListenerStarted(SetWebFeatureCount);
+        setActiveFeatureEvent.AddListenerStarted(SetActiveFeature);
 
-        wfsMinXEvent.started.AddListener(SetBoundingBoxMinX);
-        wfsMaxXEvent.started.AddListener(SetBoundingBoxMaxX);
-        wfsMinYEvent.started.AddListener(SetBoundingBoxMinY);
-        wfsMaxYEvent.started.AddListener(SetBoundingBoxMaxY);
+        wfsMinXEvent.AddListenerStarted(SetBoundingBoxMinX);
+        wfsMaxXEvent.AddListenerStarted(SetBoundingBoxMaxX);
+        wfsMinYEvent.AddListenerStarted(SetBoundingBoxMinY);
+        wfsMaxYEvent.AddListenerStarted(SetBoundingBoxMaxY);
 
-        if (boundingBoxDoubleArrayEvent) boundingBoxDoubleArrayEvent.started.AddListener(SetBoundsFromDoubleArray);
+        if (boundingBoxDoubleArrayEvent) boundingBoxDoubleArrayEvent.AddListenerStarted(SetBoundsFromDoubleArray);
 
         // The addition of these functions to the events are only for testing and debugging purposes.
         // They should be removed or commented out later.
-        pointEvent.started.AddListener(TestPoint);
-        multiPointEvent.started.AddListener(TestMultiPoints);
-        drawLinesEvent.started.AddListener(TestMultiLine);
+        pointEvent.AddListenerStarted(TestPoint);
+        multiPointEvent.AddListenerStarted(TestMultiPoints);
+        drawLinesEvent.AddListenerStarted(TestMultiLine);
     }
     private bool ParseFields()
     {

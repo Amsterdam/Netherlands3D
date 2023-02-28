@@ -39,18 +39,18 @@ public class WMSHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        legendRequestEvent.started.AddListener((string url) => StartCoroutine(GetLegendImage(url)));
-        wmsCreationEvent.started.AddListener(CreateWMS);
-        requestWMSData.started.AddListener(SendWMSData);
+        legendRequestEvent.AddListenerStarted((string url) => StartCoroutine(GetLegendImage(url)));
+        wmsCreationEvent.AddListenerStarted(CreateWMS);
+        requestWMSData.AddListenerStarted(SendWMSData);
 
-        boundingBoxMinXEvent.started.AddListener(SetBoundingBoxMinX);
-        boundingBoxMaxXEvent.started.AddListener(SetBoundingBoxMaxX);
-        boundingBoxMinYEvent.started.AddListener(SetBoundingBoxMinY);
-        boundingBoxMaxYEvent.started.AddListener(SetBoundingBoxMaxY);
+        boundingBoxMinXEvent.AddListenerStarted(SetBoundingBoxMinX);
+        boundingBoxMaxXEvent.AddListenerStarted(SetBoundingBoxMaxX);
+        boundingBoxMinYEvent.AddListenerStarted(SetBoundingBoxMinY);
+        boundingBoxMaxYEvent.AddListenerStarted(SetBoundingBoxMaxY);
 
-        if (boundingBoxDoubleArrayEvent) boundingBoxDoubleArrayEvent.started.AddListener(SetBoundsFromDoubleArray);
+        if (boundingBoxDoubleArrayEvent) boundingBoxDoubleArrayEvent.AddListenerStarted(SetBoundsFromDoubleArray);
 
-        resolutionEvent.started.AddListener(SetResolution);
+        resolutionEvent.AddListenerStarted(SetResolution);
     }
 
     public IEnumerator DownloadImage(string mediaURL, ObjectEvent imageEvent)

@@ -33,7 +33,7 @@ namespace Netherlands3D.Visualisers
 
 		void Start()
 		{
-			lineCoordinatesEvent.started.AddListener(DrawLine);
+			lineCoordinatesEvent.AddListenerStarted(DrawLine);
 			if(lineParentEvent) lineParentEvent.AddListenerStarted((parentObject) => lineParent = parentObject.transform);
 			if (lineColorEvent) lineColorEvent.AddListenerStarted((color) => lineColor = color);
 		}

@@ -27,8 +27,8 @@ public class WFSInterface : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        wfsDataEvent.started.AddListener((object wfs) => BuildWFSInterface((WFS)wfs));
-        activateFeatureEvent.started.AddListener((object feature) => BuildFilterInterface((WFSFeature)feature));
+        wfsDataEvent.AddListenerStarted((object wfs) => BuildWFSInterface((WFS)wfs));
+        activateFeatureEvent.AddListenerStarted((object feature) => BuildFilterInterface((WFSFeature)feature));
     }
 
     //public void InvokeFeatureEvent()
