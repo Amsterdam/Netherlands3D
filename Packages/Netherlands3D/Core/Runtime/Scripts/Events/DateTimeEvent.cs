@@ -9,11 +9,11 @@ namespace Netherlands3D.Events
 
 	[CreateAssetMenu(fileName = "DateTimeEvent", menuName = "EventContainers/DateTimeEvent", order = 0)]
 	[System.Serializable]
-	public class DateTimeEvent : EventContainer<DateTimeUnityEvent>
-	{
-		public void Invoke(DateTime dateTimeContent)
+	public class DateTimeEvent : EventContainer<DateTimeUnityEvent, DateTime>
+    {
+		public override void InvokeStarted(DateTime dateTimeContent)
 		{
-			started.Invoke(dateTimeContent);
+            started.Invoke(dateTimeContent);
 		}
 	}
 }

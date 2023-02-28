@@ -54,13 +54,13 @@ namespace Netherlands3D.T3DPipeline
         private void OnEnable()
         {
             if (onCityJSONReceived)
-                onCityJSONReceived.started.AddListener(ParseCityJSON);
+                onCityJSONReceived.AddListenerStarted(ParseCityJSON);
         }
 
         private void OnDisable()
         {
             if (onCityJSONReceived)
-                onCityJSONReceived.started.RemoveAllListeners();
+                onCityJSONReceived.RemoveAllListenersStarted();
         }
 
         public void ParseCityJSON(string cityJson)
@@ -81,7 +81,7 @@ namespace Netherlands3D.T3DPipeline
             var isCityJSON = type == "CityJSON";
             if (isCityJSONType)
             {
-                isCityJSONType.Invoke(isCityJSON);
+                isCityJSONType.InvokeStarted(isCityJSON);
                 if (!isCityJSON)
                     return;
             }

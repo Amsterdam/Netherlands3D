@@ -56,7 +56,7 @@ public class FileInputIndexedDB : MonoBehaviour
         this.gameObject.name = sendMessageObjectName;
 
         if (clearDataBaseEvent)
-            clearDataBaseEvent.started.AddListener(ClearDatabase);
+            clearDataBaseEvent.AddListenerStarted(ClearDatabase);
 
 #if !UNITY_EDITOR && UNITY_WEBGL
         InitializeIndexedDB(Application.persistentDataPath);
@@ -128,7 +128,7 @@ public class FileInputIndexedDB : MonoBehaviour
         if (callbackAdress == null)
         {
             Debug.Log("FileInputIndexedDB: No callback set. Using default file import event.");
-            if (filesImportedEvent) filesImportedEvent.started.Invoke(files);
+            if (filesImportedEvent) filesImportedEvent.InvokeStarted(files);
         }
         else
         {

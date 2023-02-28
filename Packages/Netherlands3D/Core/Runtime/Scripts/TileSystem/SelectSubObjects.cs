@@ -73,10 +73,10 @@ namespace Netherlands3D.TileSystem
             TilesWithInteractedSubObjects = new List<string>();
 
             if (onColoringSubobjects)
-                onColoringSubobjects.started.AddListener(DisableWhileColoring);
+                onColoringSubobjects.AddListenerStarted(DisableWhileColoring);
 
             if (clickedOnPosition)
-                clickedOnPosition.started.AddListener(ShootRayAtPosition);
+                clickedOnPosition.AddListenerStarted(ShootRayAtPosition);
 
             containerLayer = gameObject.GetComponent<BinaryMeshLayer>();
         }
@@ -190,7 +190,7 @@ namespace Netherlands3D.TileSystem
             if (id == emptyID && !doingMultiselect)
             {
                 ClearSelection();
-                clickedOnObject.Invoke(false);
+                clickedOnObject.InvokeStarted(false);
             }
             else
             {
@@ -209,7 +209,7 @@ namespace Netherlands3D.TileSystem
                     singleIdList.Add(filteredID);
                 }
                 HighlightObjectsWithIDs(singleIdList);
-                clickedOnObject.Invoke(true);
+                clickedOnObject.InvokeStarted(true);
             }
         }
 
@@ -243,7 +243,7 @@ namespace Netherlands3D.TileSystem
 
             HighlightSelectedWithColor(selectionVertexColor);
 
-            selectedIdsOnClick.started.Invoke(SelectedIDs);
+            selectedIdsOnClick.InvokeStarted(SelectedIDs);
         }
 
         /// <summary>

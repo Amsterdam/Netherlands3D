@@ -66,7 +66,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 		private set
 		{
 			loadedResultsForArea = value;
-			busyLoadingData.Invoke(!loadedResultsForArea);
+			busyLoadingData.InvokeStarted(!loadedResultsForArea);
 		}
 	}
 
@@ -86,7 +86,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 
     void Awake()
     {
-		if (setFilterValue) setFilterValue.started.AddListener(ChangeFilterValue);
+		if (setFilterValue) setFilterValue.AddListenerStarted(ChangeFilterValue);
     }
 
 	private void OnDrawGizmos()
@@ -232,7 +232,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 				stringAndFloat.Add(retrievedIDs[i], value);
 			}
 		}
-		filteredIdsAndFloats.started.Invoke(stringAndFloat);
+		filteredIdsAndFloats.InvokeStarted(stringAndFloat);
 	}
 
 	private bool ComparesToFilter(float value)

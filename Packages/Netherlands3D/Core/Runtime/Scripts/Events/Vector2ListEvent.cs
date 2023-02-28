@@ -26,11 +26,22 @@ namespace Netherlands3D.Events
 
 	[CreateAssetMenu(fileName = "Vector2ListEvent", menuName = "EventContainers/Vector2ListEvent", order = 0)]
 	[System.Serializable]
-	public class Vector2ListEvent : EventContainer<Vector2ListValueUnityEvent>
+	public class Vector2ListEvent : EventContainer<Vector2ListValueUnityEvent, List<Vector2>>
 	{
-		public void Invoke(List<Vector2> listVector2Content)
+        [SerializeField]
+        private bool sendAsCopy = true;
+
+		public override void InvokeStarted(List<Vector2> listVector2Content)
 		{
-			started.Invoke(listVector2Content);
-		}
+            if (sendAsCopy)
+            {
+                var copy = new List<Vector2>(listVector2Content);
+                started.Invoke(copy);
+            }
+            else
+            {
+                started.Invoke(listVector2Content);
+            }
+        }
 	}
 }

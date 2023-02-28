@@ -21,22 +21,80 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [System.Serializable]
-public class EventContainer<T> : ScriptableObject where T : UnityEventBase
+public abstract class EventContainer<T0, T1> : ScriptableObject where T0 : UnityEvent<T1>
 {
     public string eventName;
     public string description;
 
-    [HideInInspector]
-    public T started;
-	[HideInInspector]
-	public UnityEvent received;
-	[HideInInspector]
-	public UnityEvent cancelled;
+    protected T0 started = default;
+    protected UnityEvent received = default;
+    protected UnityEvent cancelled = default;
 
-	private void OnValidate()
-	{
-		if (eventName == "")
-			eventName = this.name;
-	}
+    private void OnValidate()
+    {
+        if (eventName == "")
+            eventName = this.name;
+    }
 
+    [Obsolete("Invoke is deprecated, please use InvokeStarted instead.")]
+    public void Invoke(T1 payload)
+    {
+        InvokeStarted(payload);
+    }
+
+    public abstract void InvokeStarted(T1 payload);
+
+    public void InvokeReceived()
+    {
+        received.Invoke();
+    }
+    public void InvokeCancelled()
+    {
+        cancelled.Invoke();
+    }
+
+    public void AddListenerStarted(UnityAction<T1> action)
+    {
+        started.AddListener(action);
+    }
+
+    public void RemoveListenerStarted(UnityAction<T1> action)
+    {
+        started.RemoveListener(action);
+    }
+
+    public void RemoveAllListenersStarted()
+    {
+        started.RemoveAllListeners();
+    }
+
+    public void AddListenerReceived(UnityAction action)
+    {
+        received.AddListener(action);
+    }
+
+    public void RemoveListenerReceived(UnityAction action)
+    {
+        received.RemoveListener(action);
+    }
+
+    public void RemoveAllListenersReceived()
+    {
+        received.RemoveAllListeners();
+    }
+
+    public void AddListenerCancelled(UnityAction action)
+    {
+        cancelled.AddListener(action);
+    }
+
+    public void RemoveListenerCancelled(UnityAction action)
+    {
+        cancelled.RemoveListener(action);
+    }
+
+    public void RemoveAllListenersCancelled()
+    {
+        cancelled.RemoveAllListeners();
+    }
 }

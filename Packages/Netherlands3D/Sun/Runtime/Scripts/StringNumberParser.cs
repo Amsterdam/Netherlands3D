@@ -12,14 +12,14 @@ public class StringNumberParser : MonoBehaviour
     {
         if(int.TryParse(integerString, out int parsedInt))
         {
-            intEvent.Invoke(parsedInt);
+            intEvent.InvokeStarted(parsedInt);
         }
     }
     public void ParseToFloat(string floatString)
     {
         if(float.TryParse(floatString, out float parsedFloat))
         {
-            floatEvent.Invoke(parsedFloat);
+            floatEvent.InvokeStarted(parsedFloat);
         }
 
     }

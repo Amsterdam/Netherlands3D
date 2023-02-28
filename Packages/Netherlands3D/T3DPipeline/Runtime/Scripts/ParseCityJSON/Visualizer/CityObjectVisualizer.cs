@@ -96,7 +96,7 @@ namespace Netherlands3D.T3DPipeline
             meshes = CreateMeshes(cityObject);
             var highestLod = meshes.Keys.Max(g => g.Lod);
             SetLODActive(highestLod);
-            jsonVisualized.Invoke(gameObject);
+            jsonVisualized.InvokeStarted(gameObject);
         }
 
         private Vector3 SetPosition(CityObject cityObject)

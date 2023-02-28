@@ -25,11 +25,11 @@ namespace Netherlands3D.Events
 
 	[CreateAssetMenu(fileName = "StringEvent", menuName = "EventContainers/StringEvent", order = 0)]
 	[System.Serializable]
-	public class StringEvent : EventContainer<StringUnityEvent> 
+	public class StringEvent : EventContainer<StringUnityEvent, string> 
 	{ 
-		public void Invoke(string stringContent)
+		public override void InvokeStarted(string stringContent)
 		{
-			started.Invoke(stringContent);
+            started.Invoke(stringContent);
 		}
 	}
 }

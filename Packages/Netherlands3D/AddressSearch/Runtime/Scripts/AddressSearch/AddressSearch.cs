@@ -50,7 +50,7 @@ public class AddressSearch : MonoBehaviour
         searchInputField = GetComponent<TMP_InputField>();
         searchInputField.onValueChanged.AddListener(delegate { GetSuggestions(searchInputField.text); });
 
-        if (clearInput) clearInput.started.AddListener(ClearInput);
+        if (clearInput) clearInput.AddListenerStarted(ClearInput);
     }
 
     public void ClearInput()
@@ -70,7 +70,7 @@ public class AddressSearch : MonoBehaviour
         {
             if (textInput.Length > charactersNeededBeforeSearch)
             {
-                if (toggleClearButton) toggleClearButton.started.Invoke(true);
+                if (toggleClearButton) toggleClearButton.InvokeStarted(true);
                 StartCoroutine(FindSearchSuggestions(textInput));
             }
             else
@@ -81,7 +81,7 @@ public class AddressSearch : MonoBehaviour
         else
         {
             ClearSearchResults();
-            toggleClearButton.started.Invoke(false);
+            toggleClearButton.InvokeStarted(false);
         }
     }
 
@@ -240,7 +240,7 @@ public class AddressSearch : MonoBehaviour
                 List<string> bagIDs = new List<string>();
                 bagIDs.Add(BAGID);
 
-                if (gotBuilding) gotBuilding.started.Invoke(bagIDs);
+                if (gotBuilding) gotBuilding.InvokeStarted(bagIDs);
             }
         }
     }

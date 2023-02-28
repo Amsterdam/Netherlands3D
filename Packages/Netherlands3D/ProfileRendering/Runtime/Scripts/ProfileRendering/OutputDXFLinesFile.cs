@@ -36,10 +36,10 @@ namespace Netherlands3D.ProfileRendering
 
         void Awake()
         {
-            onReceiveLayerName.started.AddListener(AddDXFLayer);
-            onReceiveLayerLines.started.AddListener(AddDXFLayerLines);
-            onReceiveLayerColor.started.AddListener(SetDXFLayerColor);
-            onReadyForExport.started.AddListener(FinishDXFDocument);
+            onReceiveLayerName.AddListenerStarted(AddDXFLayer);
+            onReceiveLayerLines.AddListenerStarted(AddDXFLayerLines);
+            onReceiveLayerColor.AddListenerStarted(SetDXFLayerColor);
+            onReadyForExport.AddListenerStarted(FinishDXFDocument);
         }
 
         private void ConfigBaseDocument()
@@ -132,7 +132,7 @@ namespace Netherlands3D.ProfileRendering
 
         private IEnumerator FinishAndSave()
         {
-            if (outputProgress) outputProgress.Invoke(1.0f);
+            if (outputProgress) outputProgress.InvokeStarted(1.0f);
             yield return new WaitForEndOfFrame();
             SaveFile(dxfDocument);
 

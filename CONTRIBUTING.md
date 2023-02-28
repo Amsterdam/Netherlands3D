@@ -1,6 +1,7 @@
 # Contributing
 
 ## Technical
+
 Developers that like to contribute you must fork this repository and make your changes inside the package folder:
 
 Packages/Netherlands3D/
@@ -29,7 +30,7 @@ This package allows you to create ScriptableObject Event Containers via a Right-
 
 You can create an EventContainer by choosing a specific payload type.
 
-Depending on the types the ScriptableObject contains a UnityEvent<type> as 'started'.
+Depending on the types the ScriptableObject contains a  'started' UnityEvent<type> that contains a payload of the type, and a received and cancelled UnityEvent (without payload) that you can invoke or subscribe to using the corresponding methods.
 
 This example uses a BoolEvent container and shows how to add a listener, and invoke it.
 
@@ -38,16 +39,18 @@ This example uses a BoolEvent container and shows how to add a listener, and inv
 
 private void Start()
 {
-	boolEvent.started.AddListener(MyListener)
-	boolEvent.started.Invoke(true);
+    boolEvent.AddListenerStarted(MyListener)
+    boolEvent.InvokeStarted(true);
 }
 
 private void MyListener(bool boolValue)
 {
-	Debug.Log( (boolValue) ? "Yes its true":"No it is false");
+    Debug.Log( (boolValue) ? "Yes its true":"No it is false");
 }
 ```
 
+Most reference type EventContainers have an option 'Send As Copy' that you can optionaly disable in the Inspector.
+You may use this if you want to use the payload as a reference instead of creating a copy.
 If you are missing a basic payload type, feel free to add it to the package and create a pull request.
 
 ## Code convention
@@ -59,4 +62,3 @@ https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/inside-a-progra
 
 For variable naming please refer to:<br>
 https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/general-naming-conventions<br>
-

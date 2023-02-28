@@ -56,7 +56,7 @@ public class ObjImportManager : MonoBehaviour
             objFileName = value;
 
             Debug.Log("received objFile: " + objFileName);
-            if (ReceivedOBJFilename) ReceivedOBJFilename.started.Invoke(System.IO.Path.GetFileName(objFileName));
+            if (ReceivedOBJFilename) ReceivedOBJFilename.InvokeStarted(System.IO.Path.GetFileName(objFileName));
         }
     }
 
@@ -76,7 +76,7 @@ public class ObjImportManager : MonoBehaviour
             mtlFileName = System.IO.Path.Combine(Application.persistentDataPath, mtlFileName);
             }
 #endif
-            if (ReceivedMTLFilename) ReceivedMTLFilename.started.Invoke(System.IO.Path.GetFileName(mtlFileName));
+            if (ReceivedMTLFilename) ReceivedMTLFilename.InvokeStarted(System.IO.Path.GetFileName(mtlFileName));
         }
     }
 
@@ -93,7 +93,7 @@ public class ObjImportManager : MonoBehaviour
         {
             imgFileName = value;
 
-            if (ReceivedImageFilename) ReceivedImageFilename.started.Invoke(System.IO.Path.GetFileName(imgFileName));
+            if (ReceivedImageFilename) ReceivedImageFilename.InvokeStarted(System.IO.Path.GetFileName(imgFileName));
         }
     }
 
@@ -102,19 +102,19 @@ public class ObjImportManager : MonoBehaviour
     ObjImporter importer;
     private void Awake()
     {
-        if (startImporting) startImporting.started.AddListener(OnStartImporting);
+        if (startImporting) startImporting.AddListenerStarted(OnStartImporting);
         if (expectOBJFile)
         {
-            expectOBJFile.started.AddListener(OnExpectingOBJFile);
+            expectOBJFile.AddListenerStarted(OnExpectingOBJFile);
         }
         else
         {
             expectingObjFile = true;
-            receiveFileToLoad.started.AddListener(OnFileNamesReceived);
+            receiveFileToLoad.AddListenerStarted(OnFileNamesReceived);
         }
         if (expectMTLFile)
         {
-            expectMTLFile.started.AddListener(OnExpectingMTLFile);
+            expectMTLFile.AddListenerStarted(OnExpectingMTLFile);
         }
         else
         {
@@ -123,7 +123,7 @@ public class ObjImportManager : MonoBehaviour
 
         if (expectImageFile == true)
         {
-            expectImageFile.started.AddListener(OnExpectingImageFile);
+            expectImageFile.AddListenerStarted(OnExpectingImageFile);
         }
         else
         {
@@ -132,7 +132,7 @@ public class ObjImportManager : MonoBehaviour
 
 
 
-        if (cancelImporting) cancelImporting.started.AddListener(OnCancel);
+        if (cancelImporting) cancelImporting.AddListenerStarted(OnCancel);
         if (true)
         {
 
@@ -144,9 +144,9 @@ public class ObjImportManager : MonoBehaviour
     {
         if (expectingMTLFile)
         {
-            receiveFileToLoad.started.RemoveListener(OnMTLFileReceived);
+            receiveFileToLoad.RemoveListenerStarted(OnMTLFileReceived);
         }
-        receiveFileToLoad.started.AddListener(OnOBJFileReceived);
+        receiveFileToLoad.AddListenerStarted(OnOBJFileReceived);
         expectingObjFile = true;
     }
 
@@ -154,9 +154,9 @@ public class ObjImportManager : MonoBehaviour
     {
         if (expectingObjFile)
         {
-            receiveFileToLoad.started.RemoveListener(OnOBJFileReceived);
+            receiveFileToLoad.RemoveListenerStarted(OnOBJFileReceived);
         }
-        receiveFileToLoad.started.AddListener(OnMTLFileReceived);
+        receiveFileToLoad.AddListenerStarted(OnMTLFileReceived);
     }
 
 
@@ -164,10 +164,10 @@ public class ObjImportManager : MonoBehaviour
     {
         if (expectingImageFile == true)
         {
-            receiveFileToLoad.started.RemoveListener(OnImageFileReceived);
+            receiveFileToLoad.RemoveListenerStarted(OnImageFileReceived);
         }
 
-        receiveFileToLoad.started.AddListener(OnImageFileReceived);
+        receiveFileToLoad.AddListenerStarted(OnImageFileReceived);
         expectingImageFile = true;
     }
 
@@ -210,28 +210,28 @@ public class ObjImportManager : MonoBehaviour
             }
             else
             {
-                if (ReadyForImport) ReadyForImport.started.Invoke(true);
+                if (ReadyForImport) ReadyForImport.InvokeStarted(true);
             }
         }
     }
 
     void OnOBJFileReceived(string value)
     {
-        receiveFileToLoad.started.RemoveListener(OnOBJFileReceived);
+        receiveFileToLoad.RemoveListenerStarted(OnOBJFileReceived);
         objfilename = value;
-        if (ReadyForImport) ReadyForImport.started.Invoke(true);
+        if (ReadyForImport) ReadyForImport.InvokeStarted(true);
 
     }
 
     void OnMTLFileReceived(string value)
     {
-        receiveFileToLoad.started.RemoveListener(OnMTLFileReceived);
+        receiveFileToLoad.RemoveListenerStarted(OnMTLFileReceived);
         mtlfilename = value;
     }
 
     void OnImageFileReceived(string value)
     {
-        receiveFileToLoad.started.RemoveListener(OnImageFileReceived);
+        receiveFileToLoad.RemoveListenerStarted(OnImageFileReceived);
         imgfilename = value;
     }
     #endregion
@@ -240,7 +240,7 @@ public class ObjImportManager : MonoBehaviour
     public void OnCancel()
     {
         BroadcastMessage("Cancel");
-        if (currentActivity) currentActivity.started.Invoke("cancelling the import");
+        if (currentActivity) currentActivity.InvokeStarted("cancelling the import");
     }
 
     void OnStartImporting()
@@ -253,7 +253,7 @@ public class ObjImportManager : MonoBehaviour
 
         importer.BaseMaterial = baseMaterial;
         importer.createSubMeshes = createSubMeshes;
-        if (started) started.started.Invoke(true);
+        if (started) started.InvokeStarted(true);
         importer.StartImporting(OnOBJImported);
     }
 
@@ -261,14 +261,14 @@ public class ObjImportManager : MonoBehaviour
     {
         bool canBemoved = importer.createdGameobjectIsMoveable;
 
-        if (started) started.started.Invoke(false);
+        if (started) started.InvokeStarted(false);
         if (canBemoved)
         {
-            if (CreatedMoveableGameObject) CreatedMoveableGameObject.started.Invoke(returnedGameObject);
+            if (CreatedMoveableGameObject) CreatedMoveableGameObject.InvokeStarted(returnedGameObject);
         }
         else
         {
-            if (CreatedImmoveableGameObject) CreatedImmoveableGameObject.started.Invoke(returnedGameObject);
+            if (CreatedImmoveableGameObject) CreatedImmoveableGameObject.InvokeStarted(returnedGameObject);
         }
 
         objfilename = string.Empty;
@@ -294,24 +294,24 @@ public class ObjImportManager : MonoBehaviour
     }
     void BroadcastCurrentActivity(string value)
     {
-        if (currentActivity != null) currentActivity.started.Invoke(value);
+        if (currentActivity != null) currentActivity.InvokeStarted(value);
     }
     void BroadcastCurrentAction(string value)
     {
-        if (currentAction != null) currentAction.started.Invoke(value);
+        if (currentAction != null) currentAction.InvokeStarted(value);
     }
 
     void BroadcastProgressPercentage(float value)
     {
-        if (progressPercentage != null) progressPercentage.started.Invoke(value);
+        if (progressPercentage != null) progressPercentage.InvokeStarted(value);
     }
     void BroadcastAlertmessage(string value)
     {
-        if (alertmessage != null) alertmessage.started.Invoke(value);
+        if (alertmessage != null) alertmessage.InvokeStarted(value);
     }
     void BroadcastErrormessage(string value)
     {
-        if (errormessage != null) errormessage.started.Invoke(value);
+        if (errormessage != null) errormessage.InvokeStarted(value);
     }
 
 

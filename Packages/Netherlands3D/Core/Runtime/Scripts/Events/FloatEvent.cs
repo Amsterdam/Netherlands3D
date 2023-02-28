@@ -25,11 +25,11 @@ namespace Netherlands3D.Events
 
 	[CreateAssetMenu(fileName = "FloatEvent", menuName = "EventContainers/FloatEvent", order = 0)]
 	[System.Serializable]
-	public class FloatEvent : EventContainer<FloatValueUnityEvent>
-	{
-		public void Invoke(float floatContent)
+	public class FloatEvent : EventContainer<FloatValueUnityEvent, float>
+    {
+		public override void InvokeStarted(float floatContent)
 		{
-			started.Invoke(floatContent);
+            started.Invoke(floatContent);
 		}
 	}
 }

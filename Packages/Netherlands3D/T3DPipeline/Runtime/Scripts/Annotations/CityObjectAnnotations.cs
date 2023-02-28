@@ -111,14 +111,14 @@ namespace Netherlands3D.T3DPipeline
         {
             allCityObjectAnnotations.Add(this);
             if (reselectAnnotationEvent)
-                reselectAnnotationEvent.started.AddListener(OnReselectAnnotation);
+                reselectAnnotationEvent.AddListenerStarted(OnReselectAnnotation);
         }
 
         private void OnDisable()
         {
             allCityObjectAnnotations.Remove(this);
             if (reselectAnnotationEvent)
-                reselectAnnotationEvent.started.RemoveListener(OnReselectAnnotation);
+                reselectAnnotationEvent.RemoveListenerStarted(OnReselectAnnotation);
         }
 
         private void Start()
@@ -149,14 +149,14 @@ namespace Netherlands3D.T3DPipeline
             var globalId = allCompletedAnnotations.Count;
             currentActiveAnnotation = new Annotation(localId, globalId, "", doublePos, annotationsAttribute, activeAnnotationMarker);
 
-            onAnnotationTextChanged.started.AddListener(OnActiveAnnotationTextChanged);
-            onNewAnnotationSumbmitted.started.AddListener(OnAnnotationSubmitted);
+            onAnnotationTextChanged.AddListenerStarted(OnActiveAnnotationTextChanged);
+            onNewAnnotationSumbmitted.AddListenerStarted(OnAnnotationSubmitted);
 
             var id = countAnnotationsGlobally ? globalId : localId;
             if (newAnnotationWithLocalIDStarted)
-                newAnnotationWithLocalIDStarted.Invoke(localId);
+                newAnnotationWithLocalIDStarted.InvokeStarted(localId);
             if (newAnnotationWithGlobalIDStarted)
-                newAnnotationWithGlobalIDStarted.Invoke(globalId);
+                newAnnotationWithGlobalIDStarted.InvokeStarted(globalId);
         }
 
         protected virtual void CreateActiveAnnotationMarker(Vector3 position)
@@ -172,9 +172,9 @@ namespace Netherlands3D.T3DPipeline
         {
             if (currentActiveAnnotation != null)
             {
-                onAnnotationTextChanged.started.RemoveListener(OnActiveAnnotationTextChanged);
+                onAnnotationTextChanged.RemoveListenerStarted(OnActiveAnnotationTextChanged);
                 if (activeAnnotationMarker && annotationMarkerDeselected != null)
-                    annotationMarkerDeselected.Invoke(activeAnnotationMarker);
+                    annotationMarkerDeselected.InvokeStarted(activeAnnotationMarker);
                 currentActiveAnnotation = null;
                 activeAnnotationMarker = null;
             }
@@ -235,7 +235,7 @@ namespace Netherlands3D.T3DPipeline
             if (annotationsAttribute.Annotations.Contains(annotation))
             {
                 currentActiveAnnotation = annotation;
-                onAnnotationTextChanged.started.AddListener(OnActiveAnnotationTextChanged);
+                onAnnotationTextChanged.AddListenerStarted(OnActiveAnnotationTextChanged);
                 return true;
             }
             return false;

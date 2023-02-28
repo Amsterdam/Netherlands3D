@@ -34,8 +34,8 @@ namespace Netherlands3D.Visualisers
 		void Start()
 		{
 			lineCoordinatesEvent.started.AddListener(DrawLine);
-			if(lineParentEvent) lineParentEvent.started.AddListener((parentObject) => lineParent = parentObject.transform);
-			if (lineColorEvent) lineColorEvent.started.AddListener((color) => lineColor = color);
+			if(lineParentEvent) lineParentEvent.AddListenerStarted((parentObject) => lineParent = parentObject.transform);
+			if (lineColorEvent) lineColorEvent.AddListenerStarted((color) => lineColor = color);
 		}
 
 		public void DrawLine(List<Vector3> linePoints)
