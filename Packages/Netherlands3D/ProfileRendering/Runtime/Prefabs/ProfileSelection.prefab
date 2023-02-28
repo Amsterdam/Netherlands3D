@@ -140,6 +140,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 965432690250480436}
+  - component: {fileID: 4272117660660140166}
   m_Layer: 0
   m_Name: Pointer
   m_TagString: Untagged
@@ -163,6 +164,19 @@ Transform:
   m_Father: {fileID: 6195754652070294112}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4272117660660140166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6022904879452244260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3f6482c3d267104b8b86d87be3c2419, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleMultiplier: 0.003
 --- !u!1 &6195754652070294141
 GameObject:
   m_ObjectHideFlags: 0
