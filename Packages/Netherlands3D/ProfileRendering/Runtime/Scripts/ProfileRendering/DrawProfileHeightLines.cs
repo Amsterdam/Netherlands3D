@@ -10,16 +10,20 @@ namespace Netherlands3D.ProfileRendering {
     public class DrawProfileHeightLines : MonoBehaviour
     {
         [SerializeField] private FloatEvent sizeInWorld;
+        [SerializeField] private TextMeshProUGUI widthText;
         [SerializeField] private float startHeight = 100;
         void Awake()
         {
-            sizeInWorld.AddListenerStarted(SetNumbersByNewHeight);
+            if(sizeInWorld)
+                sizeInWorld.AddListenerStarted(SetNumbersByNewHeight);
             SetNumbersByNewHeight(startHeight);
         }
 
-        //Set height lines numbers ( child objects with TMP_Text on it )
-        private void SetNumbersByNewHeight(float newHeight)
+        //Sets height lines numbers ( child objects with TMP_Text on it )
+        public void SetNumbersByNewHeight(float newHeight)
         {
+            widthText.text = newHeight.ToString("F0") + "m";
+
             int childLines = transform.childCount;
             float lineHeight = newHeight / 2;
             float stepSize = newHeight / (childLines-1);
