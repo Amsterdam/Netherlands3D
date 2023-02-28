@@ -310,9 +310,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputActionAsset: {fileID: -944628639613478452, guid: 445da62e811e3254c927570f340ea56d, type: 3}
+  polygonReselectionInput: {fileID: 0}
   blockCameraDrag: {fileID: 11400000, guid: 007cc40d489e1ef44857ad3377a33220, type: 2}
-  selectedPolygonArea: {fileID: 11400000, guid: 77f9110b380db7e4085386da1f665dd3, type: 2}
-  lineHasChanged: {fileID: 0}
+  createdNewPolygonArea: {fileID: 11400000, guid: d2662de31e988b94696535c563e12a8b, type: 2}
+  editedPolygonArea: {fileID: 0}
+  previewLineHasChanged: {fileID: 0}
   lineColor: {r: 1, g: 0.7202714, b: 0, a: 1}
   closedLoopLineColor: {r: 0, g: 1, b: 0, a: 1}
   lineWidthMultiplier: 1
