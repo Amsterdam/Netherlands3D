@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 599e103cd86fdec4b8972c92d559167d, type: 3}
   m_Name: CreatedProfileCut
   m_EditorClassIdentifier: 
-  eventName: 
+  eventName: CreatedProfileCut
   description: 
-  started:
-    m_PersistentCalls:
-      m_Calls: []
+  sendAsCopy: 0
