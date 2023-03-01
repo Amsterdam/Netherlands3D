@@ -41,11 +41,15 @@ namespace Netherlands3D.SelectionTools
         private FloatEvent setExtrusionHeightEvent;
         [SerializeField]
         private Vector3ListEvent polygonEdited;
+        [SerializeField]
+        private Vector3ListsEvent polygonsEdited;
 
         [SerializeField]
         private string newDrawingObjectName = "";
 
         [Header("Mesh")]
+        [SerializeField]
+        private bool drawMesh = true;
         [SerializeField]
         private Material defaultMaterial;
 
@@ -70,6 +74,8 @@ namespace Netherlands3D.SelectionTools
         private bool addColliders = false;
 
         [Header("Line")]
+        [SerializeField]
+        private bool drawLine = true;
         [SerializeField]
         private Material lineMaterial;
         [SerializeField]
@@ -137,6 +143,8 @@ namespace Netherlands3D.SelectionTools
 
             var polygonVisualisation = newPolygonObject.AddComponent<PolygonVisualisation>();
             polygonVisualisation.Initialize(contours, extrusionHeight, addBottom, createInwardMesh, polygonReselected, polygonEdited, lineMaterial, lineColor, uvCoordinate);
+            polygonVisualisation.DrawLine = drawLine;
+            polygonVisualisation.DrawMesh = drawMesh;
 
             newPolygonObject.transform.SetParent(this.transform);
             newPolygonObject.transform.Translate(0, extrusionHeight, 0);

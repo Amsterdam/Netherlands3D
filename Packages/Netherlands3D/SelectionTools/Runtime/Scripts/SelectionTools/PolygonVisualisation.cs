@@ -33,6 +33,20 @@ namespace Netherlands3D.SelectionTools
         private Vector3ListEvent onPolygonEdited;
 
         //[Header("Mesh")]
+        [SerializeField]
+        private bool drawMesh = true;
+        public bool DrawMesh
+        {
+            get
+            {
+                return drawMesh;
+            }
+            set
+            {
+                drawMesh= value;
+                EnableMeshVisualisation(value);
+            }
+        }
         private float extrusionHeight;
         private bool addBottom;
         private bool createInwardMesh;
@@ -91,6 +105,11 @@ namespace Netherlands3D.SelectionTools
             {
                 line.gameObject.SetActive(enable);
             }
+        }
+
+        private void EnableMeshVisualisation(bool enable)
+        {
+            GetComponent<MeshRenderer>().enabled = enable;
         }
 
         public void DestroyLineRenderers()
@@ -167,7 +186,7 @@ namespace Netherlands3D.SelectionTools
             ReselectPolygon();
         }
 
-        private void ReselectPolygon()
+        public void ReselectPolygon()
         {
             if (onPolygonEdited)
                 onPolygonEdited.RemoveAllListenersStarted();
