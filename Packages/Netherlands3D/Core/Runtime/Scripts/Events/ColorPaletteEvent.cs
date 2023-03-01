@@ -21,12 +21,9 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class ColorPaletteUnityEvent : UnityEvent<ColorPalette> { }
-
 	[CreateAssetMenu(fileName = "ColorPaletteEvent", menuName = "EventContainers/ColorPaletteEvent", order = 0)]
 	[System.Serializable]
-	public class ColorPaletteEvent : EventContainer<ColorPaletteUnityEvent, ColorPalette> 
+	public class ColorPaletteEvent : EventContainer<ColorPalette> 
 	{
 		public override void InvokeStarted(ColorPalette colorPaletteContent)
 		{

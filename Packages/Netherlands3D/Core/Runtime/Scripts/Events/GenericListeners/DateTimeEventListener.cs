@@ -11,7 +11,7 @@ public class DateTimeEventListener : MonoBehaviour
     private DateTimeEvent onEvent;
 
     [SerializeField]
-    private DateTimeUnityEvent trigger;
+    private UnityEvent<DateTime> trigger;
 
     void Awake()
     {
