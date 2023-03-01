@@ -21,11 +21,6 @@ public class FloatEventListener : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        if (!onEvent) Debug.Log("OnEvent null");
-    }
-
 	public void Invoke(float value)
 	{
         trigger.Invoke(value);
