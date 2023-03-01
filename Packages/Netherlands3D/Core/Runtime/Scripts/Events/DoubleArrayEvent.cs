@@ -22,12 +22,9 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class DoubleArrayValueUnityEvent : UnityEvent<double[]> { }
-
 	[CreateAssetMenu(fileName = "DoubleArrayEvent", menuName = "EventContainers/DoubleArrayEvent", order = 0)]
 	[System.Serializable]
-	public class DoubleArrayEvent : EventContainer<DoubleArrayValueUnityEvent, double[]> 
+	public class DoubleArrayEvent : EventContainer<double[]> 
 	{
         [SerializeField]
         private bool sendAsCopy = true;

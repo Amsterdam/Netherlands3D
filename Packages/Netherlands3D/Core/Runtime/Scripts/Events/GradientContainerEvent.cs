@@ -21,12 +21,9 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class GradientContainerUnityEvent : UnityEvent<GradientContainer> { }
-
 	[CreateAssetMenu(fileName = "GradientContainerEvent", menuName = "EventContainers/GradientContainerEvent", order = 0)]
 	[System.Serializable]
-	public class GradientContainerEvent : EventContainer<GradientContainerUnityEvent, GradientContainer> 
+	public class GradientContainerEvent : EventContainer<GradientContainer> 
 	{
 		public override void InvokeStarted(GradientContainer gradientContainerContent)
 		{

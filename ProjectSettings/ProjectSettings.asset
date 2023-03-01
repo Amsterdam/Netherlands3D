@@ -689,7 +689,7 @@ PlayerSettings:
   blurSplashScreenBackground: 1
   spritePackerPolicy: 
   webGLMemorySize: 16
-  webGLExceptionSupport: 0
+  webGLExceptionSupport: 3
   webGLNameFilesAsHashes: 0
   webGLDataCaching: 1
   webGLDebugSymbols: 0
@@ -698,7 +698,7 @@ PlayerSettings:
   webGLTemplate: PROJECT:Netherlands3D
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
-  webGLCompressionFormat: 0
+  webGLCompressionFormat: 2
   webGLWasmArithmeticExceptions: 1
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0

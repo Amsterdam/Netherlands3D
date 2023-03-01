@@ -20,12 +20,9 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class FloatValueUnityEvent : UnityEvent<float> { }
-
 	[CreateAssetMenu(fileName = "FloatEvent", menuName = "EventContainers/FloatEvent", order = 0)]
 	[System.Serializable]
-	public class FloatEvent : EventContainer<FloatValueUnityEvent, float>
+	public class FloatEvent : EventContainer<float>
     {
 		public override void InvokeStarted(float floatContent)
 		{
