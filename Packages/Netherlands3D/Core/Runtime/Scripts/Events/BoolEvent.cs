@@ -20,12 +20,9 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class BoolValueUnityEvent : UnityEvent<bool> { }
-
 	[CreateAssetMenu(fileName = "BoolEvent", menuName = "EventContainers/BoolEvent", order = 0)]
 	[System.Serializable]
-	public class BoolEvent : EventContainer<BoolValueUnityEvent, bool>
+	public class BoolEvent : EventContainer<bool>
 	{
 		public override void InvokeStarted(bool boolContent)
 		{
