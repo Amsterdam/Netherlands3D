@@ -35,6 +35,7 @@ namespace Netherlands3D.ProfileRendering
 
         private void OnEnable()
         {
+            cuttingLine.gameObject.SetActive(false);
             onReceiveCuttingLine.AddListenerStarted(Align);
         }
 
@@ -52,6 +53,7 @@ namespace Netherlands3D.ProfileRendering
 
             var worldSliceWidth = Vector3.Distance(linePoints[0], linePoints[1]);
             cuttingLine.localScale = new Vector3(worldSliceWidth, heightRange, 1);
+            cuttingLine.gameObject.SetActive(true);
 
             worldSliceHeight = (worldSliceWidth / renderTexture.width) * renderTexture.height;
 
