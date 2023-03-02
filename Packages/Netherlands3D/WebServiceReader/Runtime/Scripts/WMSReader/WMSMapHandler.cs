@@ -37,7 +37,7 @@ public class WMSMapHandler : MonoBehaviour
             if(intervalTimer >= updateInterval)
             {
                 intervalTimer = 0;
-                requestWMSData.Invoke();
+                requestWMSData.InvokeStarted();
             }
         }
     }

@@ -108,7 +108,7 @@ public class WFSHandler : MonoBehaviour
     {
         ActiveWFS = new WFS(baseUrl);
         ClearSpawnedMeshItems();
-        resetReaderEvent.Invoke();
+        resetReaderEvent.InvokeStarted();
         Debug.Log(ActiveWFS.GetCapabilities());
         StartCoroutine(GetWebString(ActiveWFS.GetCapabilities(), ProcessWFS));
     }
@@ -252,7 +252,7 @@ public class WFSHandler : MonoBehaviour
                 formatter = new WFSFormatter();
             }
             ActiveWFS = formatter.ReadFromWFS(ActiveWFS, xml);
-            resetReaderEvent.Invoke();
+            resetReaderEvent.InvokeStarted();
             isWmsEvent.Invoke(false);
             wfsDataEvent.Invoke(ActiveWFS);
         }

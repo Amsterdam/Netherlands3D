@@ -98,7 +98,7 @@ namespace Netherlands3D.BAGInformation
 
 					if (properties.Count > 0)
 					{
-						loadedFeatureWithProperties.Invoke();
+						loadedFeatureWithProperties.InvokeStarted();
 					}
 				}
 			}

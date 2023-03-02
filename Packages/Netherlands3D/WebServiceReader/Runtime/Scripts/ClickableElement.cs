@@ -9,7 +9,7 @@ public class ClickableElement : MonoBehaviour
     private void OnMouseDown()
     {
         if (onClicked)
-            onClicked.Invoke();
+            onClicked.InvokeStarted();
     }
 }
 

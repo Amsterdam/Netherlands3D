@@ -58,7 +58,7 @@ public class UrlReader : MonoBehaviour
     private string ValidateUrl(string url)
     {
         if (resetReaderEvent)
-            resetReaderEvent.Invoke();
+            resetReaderEvent.InvokeStarted();
 
         url.Trim();
         if (string.IsNullOrWhiteSpace(url))
