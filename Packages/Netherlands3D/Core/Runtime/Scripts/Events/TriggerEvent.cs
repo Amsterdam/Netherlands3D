@@ -28,9 +28,9 @@ namespace Netherlands3D.Events
         public string eventName;
         public string description;
 
-        protected UnityEvent started = default;
-        protected UnityEvent received = default;
-        protected UnityEvent cancelled = default;
+        protected UnityEvent started = new UnityEvent();
+        protected UnityEvent received = new UnityEvent();
+        protected UnityEvent cancelled =  new UnityEvent();
 
         private void OnValidate()
         {

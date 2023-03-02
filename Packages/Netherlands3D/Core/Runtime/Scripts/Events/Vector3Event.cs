@@ -21,12 +21,9 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class Vector3ValueUnityEvent : UnityEvent<Vector3> { }
-
 	[CreateAssetMenu(fileName = "Vector3Event", menuName = "EventContainers/Vector3Event", order = 0)]
 	[System.Serializable]
-	public class Vector3Event : EventContainer<Vector3ValueUnityEvent, Vector3> 
+	public class Vector3Event : EventContainer<Vector3> 
 	{
 		public override void InvokeStarted(Vector3 vector3Content)
 		{
