@@ -137,6 +137,7 @@ namespace Netherlands3D.SelectionTools
             }
         }
 
+#if UNITY_EDITOR
         private void OnValidate()
         {
             if (createHandles && doubleClickToCloseLoop)
@@ -146,6 +147,7 @@ namespace Netherlands3D.SelectionTools
                 doubleClickToCloseLoop = false;
             }
         }
+#endif
 
         private void OnEnable()
         {
@@ -158,6 +160,13 @@ namespace Netherlands3D.SelectionTools
 
             if (polygonReselectionInput)
                 polygonReselectionInput.AddListenerStarted(ReselectPolygon);
+        }
+
+        private void OnDisable()
+        {
+            autoDrawPolygon = false;
+            blockCameraDrag.InvokeStarted(false);
+            polygonSelectionActionMap.Disable();
         }
 
         public void ReselectPolygon(List<Vector3> points)
@@ -175,13 +184,6 @@ namespace Netherlands3D.SelectionTools
                 AddPoint(point, false);
             }
             CloseLoop(false);
-        }
-
-        private void OnDisable()
-        {
-            autoDrawPolygon = false;
-            blockCameraDrag.InvokeStarted(false);
-            polygonSelectionActionMap.Disable();
         }
 
         private void Update()
@@ -258,46 +260,6 @@ namespace Netherlands3D.SelectionTools
         }
 
         /// <summary>
-        /// Compare line with placed lines to check if they do not intersect.
-        /// </summary>
-        /// <param name="linePointA">Start point of the line we want to check</param>
-        /// <param name="linePointB">End point of the line we want to check</param>
-        /// <param name="lines">End point of the line we want to check</param>
-        /// <param name="skipFirst">Skip the first line in our chain</param>
-        /// <param name="skipLast">Skip the last line in our chain</param>
-        /// <returns>Returns true if an intersection was found</returns>
-        private bool LineCrossesOtherLine(Vector3 linePointA, Vector3 linePointB, bool skipFirst = false, bool skipLast = false, bool ignoreConnected = false)
-        {
-            int startIndex = (skipFirst) ? 2 : 1;
-            int endIndex = (skipLast) ? polygonLineRenderer.positionCount - 1 : polygonLineRenderer.positionCount;
-            for (int i = startIndex; i < endIndex; i++)
-            {
-                var comparisonStart = polygonLineRenderer.GetPosition(i - 1);
-                var comparisonEnd = polygonLineRenderer.GetPosition(i);
-                if (PolygonCalculator.LinesIntersectOnPlane(linePointA, linePointB, comparisonStart, comparisonEnd))
-                {
-                    if (ignoreConnected)
-                    {
-                        if (linePointA.Equals(comparisonStart) || linePointA.Equals(comparisonEnd) || linePointB.Equals(comparisonStart) || linePointB.Equals(comparisonEnd))
-                        {
-                            Debug.Log("Line is overlapping connected line! This is allowed.");
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        Debug.Log("Line is crossing other line! This is not allowed.");
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
         /// Automatically add a new point if our pointer position changed direction (based on threshold) on the 2D plane 
         /// </summary>
         private void AutoAddPoint()
@@ -351,7 +313,7 @@ namespace Netherlands3D.SelectionTools
                     Debug.Log("Try to add a finishing line.");
                     var closingLineStart = positions[positions.Count - 1];
                     var closingLineEnd = positions[0];
-                    if (LineCrossesOtherLine(closingLineStart, closingLineEnd, true, true))
+                    if (LineCrossesOtherLine(closingLineStart, closingLineEnd, positions.ToArray(), true, true))
                     {
                         Debug.Log("Cant close loop, closing line will cross another line.");
                         return;
@@ -540,8 +502,8 @@ namespace Netherlands3D.SelectionTools
                 lineTwoB = positions[dragHandle.pointIndex - 1];
             }
 
-            if (LineCrossesOtherLine(lineOneA, lineOneB, false, false, true)) return true;
-            if (LineCrossesOtherLine(lineTwoA, lineTwoB, false, false, true)) return true;
+            if (LineCrossesOtherLine(lineOneA, lineOneB, positions.ToArray(), false, false, true)) return true;
+            if (LineCrossesOtherLine(lineTwoA, lineTwoB, positions.ToArray(), false, false, true)) return true;
 
             return false;
         }

@@ -154,5 +154,45 @@ namespace Netherlands3D.SelectionTools
                 ((lineTwoA.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoA.x - lineOneA.x)) !=
                 ((lineTwoB.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoB.x - lineOneA.x)));
         }
+
+        /// <summary>
+        /// Compare line with placed lines to check if they do not intersect.
+        /// </summary>
+        /// <param name="linePointA">Start point of the line we want to check</param>
+        /// <param name="linePointB">End point of the line we want to check</param>
+        /// <param name="existingLines">lines to check against. Each adjacent pair of Vector3 points is considered the start and end point of a line</param>
+        /// <param name="skipFirst">Skip the first line in our chain</param>
+        /// <param name="skipLast">Skip the last line in our chain</param>
+        /// <returns>Returns true if an intersection was found</returns>
+        public static bool LineCrossesOtherLine(Vector3 linePointA, Vector3 linePointB, Vector3[] existingLines, bool skipFirst = false, bool skipLast = false, bool ignoreConnected = false)
+        {
+            int startIndex = (skipFirst) ? 2 : 1;
+            int endIndex = (skipLast) ? existingLines.Length - 1 : existingLines.Length;
+            for (int i = startIndex; i < endIndex; i++)
+            {
+                var comparisonStart = existingLines[i - 1];
+                var comparisonEnd = existingLines[i];
+                if (PolygonCalculator.LinesIntersectOnPlane(linePointA, linePointB, comparisonStart, comparisonEnd))
+                {
+                    if (ignoreConnected)
+                    {
+                        if (linePointA.Equals(comparisonStart) || linePointA.Equals(comparisonEnd) || linePointB.Equals(comparisonStart) || linePointB.Equals(comparisonEnd))
+                        {
+                            //Debug.Log("Line is overlapping connected line! This is allowed.");
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        //Debug.Log("Line is crossing other line! This is not allowed.");
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 }
