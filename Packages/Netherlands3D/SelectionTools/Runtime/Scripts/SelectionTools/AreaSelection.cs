@@ -109,7 +109,8 @@ namespace Netherlands3D.SelectionTools
         private void Update()
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
-            var currentWorldCoordinate = GetGridPosition(GetCoordinateInWorld(currentPointerPosition));
+            var worldPosition = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
+            var currentWorldCoordinate = GetGridPosition(worldPosition);
             gridHighlight.transform.position = currentWorldCoordinate;
 
             if (!drawingArea && clickAction.IsPressed() && modifierAction.IsPressed())
@@ -132,7 +133,8 @@ namespace Netherlands3D.SelectionTools
         private void Tap()
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
-            var tappedPosition = GetGridPosition(GetCoordinateInWorld(currentPointerPosition));
+            var worldPosition = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
+            var tappedPosition = GetGridPosition(worldPosition);
             DrawSelectionArea(tappedPosition, tappedPosition);
             MakeSelection();
         }
@@ -140,13 +142,15 @@ namespace Netherlands3D.SelectionTools
         private void StartClick()
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
-            selectionStartPosition = GetGridPosition(GetCoordinateInWorld(currentPointerPosition));
+            var worldPosition = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
+            selectionStartPosition = GetGridPosition(worldPosition);
         }
 
         private void Release()
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
-            var selectionEndPosition = GetGridPosition(GetCoordinateInWorld(currentPointerPosition));
+            var worldPosition = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
+            var selectionEndPosition = GetGridPosition(worldPosition);
 
             if (drawingArea)
             {
@@ -202,21 +206,6 @@ namespace Netherlands3D.SelectionTools
                     (currentWorldCoordinate.x - startWorldCoordinate.x) + ((xDifference < 0) ? -gridSize : gridSize),
                     gridSize,
                     (currentWorldCoordinate.z - startWorldCoordinate.z) + ((zDifference < 0) ? -gridSize : gridSize));
-        }
-
-        /// <summary>
-        /// Get the position of a screen point in world coordinates ( on a plane )
-        /// </summary>
-        /// <param name="screenPoint">The point in screenpoint coordinates</param>
-        /// <returns></returns>
-        private Vector3 GetCoordinateInWorld(Vector3 screenPoint)
-        {
-            var screenRay = Camera.main.ScreenPointToRay(screenPoint);
-
-            worldPlane.Raycast(screenRay, out float distance);
-            var samplePoint = screenRay.GetPoint(Mathf.Min(maxSelectionDistanceFromCamera, distance));
-
-            return samplePoint;
         }
     }
 }

@@ -23,6 +23,12 @@ namespace Netherlands3D.SelectionTools
 {
     public static class PolygonCalculator
     {
+        /// <summary>
+        /// flatten a 3D polygon 
+        /// </summary>
+        /// <param name="polygon3D">A polygon defined in 3D space</param>
+        /// <param name="plane"> The plane on which to flatten the 3D polygon</param>
+        /// <returns>An array with the polygon projected on the plane</returns>
         public static Vector2[] FlattenPolygon(Vector3[] polygon3D, Plane plane)
         {
             Vector2[] polygon = new Vector2[polygon3D.Length];
@@ -34,6 +40,12 @@ namespace Netherlands3D.SelectionTools
             return polygon;
         }
 
+        /// <summary>
+        /// Check if a 2d polygon contains point p
+        /// </summary>
+        /// <param name="polygon">array of points that define the polygon</param>
+        /// <param name="p">point to test</param>
+        /// <returns>true if point p is inside the polygon, otherwise false</returns>
         public static bool ContainsPoint(Vector2[] polygon, Vector2 p)
         {
             var j = polygon.Length - 1;
@@ -49,6 +61,11 @@ namespace Netherlands3D.SelectionTools
             return inside;
         }
 
+        /// <summary>
+        /// Calculate the area of a 2d Polygon
+        /// </summary>
+        /// <param name="polygon">array of points that define the polygon</param>
+        /// <returns>the area of the polygon</returns>
         public static float Area(Vector2[] polygon)
         {
             int n = polygon.Length;
@@ -62,6 +79,14 @@ namespace Netherlands3D.SelectionTools
             return Mathf.Abs(a * 0.5f);
         }
 
+        /// <summary>
+        /// Check if a point is inside or outside a triangle defined by points a, b, and c
+        /// </summary>
+        /// <param name="a">First point of the triangle</param>
+        /// <param name="b">Second point of the triangle</param>
+        /// <param name="c">Third point of the triangle</param>
+        /// <param name="point">Point to evaluate</param>
+        /// <returns>true if the point is inside triangle abc, otherwise false</returns>
         public static bool IsInsideTriangle(Vector2 a, Vector2 b, Vector2 c, Vector2 point)
         {
             float ax, ay, bx, by, cx, cy, apx, apy, bpx, bpy, cpx, cpy;
@@ -81,7 +106,12 @@ namespace Netherlands3D.SelectionTools
             return ((aCROSSbp >= 0.0f) && (bCROSScp >= 0.0f) && (cCROSSap >= 0.0f));
         }
 
-        public static bool PolygonIsClockwise(List<Vector3> points)
+        /// <summary>
+        /// Check if the provided list of points is a clockwise polygon
+        /// </summary>
+        /// <param name="points"></param>
+        /// <returns>true if the polygon is clockwise; false if the polygon is counter-clockwise</returns>
+        public static bool PolygonIsClockwise(List<Vector3> points) //todo: make input parameter 2D since y component is not used
         {
             double sum = 0;
             for (int i = 0; i < points.Count - 1; i++)
@@ -90,6 +120,39 @@ namespace Netherlands3D.SelectionTools
             }
             bool isClockwise = (sum > 0) ? true : false;
             return isClockwise;
+        }
+
+        /// <summary>
+        /// Poly2Mesh has problems with polygons that have points in the same position.
+        /// Lets move them a bit.
+        /// This function modifies the provided source list
+        /// </summary>
+        /// <param name="contour"></param>
+        public static void FixSequentialDoubles(List<Vector3> contour)
+        {
+            var removedSomeDoubles = false;
+            for (int i = contour.Count - 2; i >= 0; i--)
+            {
+                if (contour[i] == contour[i + 1])
+                {
+                    contour.RemoveAt(i + 1);
+                    removedSomeDoubles = true;
+                }
+            }
+            if (removedSomeDoubles) Debug.Log("Removed some doubles");
+        }
+
+        /// <summary>
+        /// Returns if lines intersect on a flat plane
+        /// </summary>
+        /// <returns></returns>
+        public static bool LinesIntersectOnPlane(Vector3 lineOneA, Vector3 lineOneB, Vector3 lineTwoA, Vector3 lineTwoB)
+        {
+            return
+                (((lineTwoB.z - lineOneA.z) * (lineTwoA.x - lineOneA.x) > (lineTwoA.z - lineOneA.z) * (lineTwoB.x - lineOneA.x)) !=
+                ((lineTwoB.z - lineOneB.z) * (lineTwoA.x - lineOneB.x) > (lineTwoA.z - lineOneB.z) * (lineTwoB.x - lineOneB.x)) &&
+                ((lineTwoA.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoA.x - lineOneA.x)) !=
+                ((lineTwoB.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoB.x - lineOneA.x)));
         }
     }
 }

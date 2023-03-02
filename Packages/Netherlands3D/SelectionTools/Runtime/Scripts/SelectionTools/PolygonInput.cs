@@ -25,7 +25,7 @@ using UnityEngine.InputSystem;
 namespace Netherlands3D.SelectionTools
 {
     [RequireComponent(typeof(LineRenderer))]
-    public class PolygonSelection : MonoBehaviour
+    public class PolygonInput : MonoBehaviour
     {
         [System.Serializable]
         public enum WindingOrder
@@ -149,24 +149,24 @@ namespace Netherlands3D.SelectionTools
 
         private void OnEnable()
         {
-                if (clearOnEnable)
-                {
-                    ClearPolygon(true);
-                }
+            if (clearOnEnable)
+            {
+                ClearPolygon(true);
+            }
 
-                polygonSelectionActionMap.Enable();
+            polygonSelectionActionMap.Enable();
 
             if (polygonReselectionInput)
                 polygonReselectionInput.AddListenerStarted(ReselectPolygon);
         }
 
-        private void ReselectPolygon(List<Vector3> points)
+        public void ReselectPolygon(List<Vector3> points)
         {
             ClearPolygon(true);
             for (int i = 0; i < points.Count; i++)
             {
                 Vector3 point = points[i];
-                if(i == points.Count - 1)
+                if (i == points.Count - 1)
                 {
                     if (point == points[0])
                         continue;
@@ -187,7 +187,7 @@ namespace Netherlands3D.SelectionTools
         private void Update()
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
-            currentWorldCoordinate = GetCoordinateInWorld(currentPointerPosition);
+            currentWorldCoordinate = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
 
             UpdatePreviewLine();
             pointerRepresentation.position = currentWorldCoordinate;
@@ -245,7 +245,7 @@ namespace Netherlands3D.SelectionTools
 
                 var comparisonStart = polygonLineRenderer.GetPosition(i - 1);
                 var comparisonEnd = polygonLineRenderer.GetPosition(i);
-                if (LinesIntersectOnPlane(previewLineFirstPoint, previewLineLastPoint, comparisonStart, comparisonEnd))
+                if (PolygonCalculator.LinesIntersectOnPlane(previewLineFirstPoint, previewLineLastPoint, comparisonStart, comparisonEnd))
                 {
                     previewLineCrossed = true;
                     previewLineRenderer.startColor = previewLineRenderer.endColor = Color.red;
@@ -262,6 +262,7 @@ namespace Netherlands3D.SelectionTools
         /// </summary>
         /// <param name="linePointA">Start point of the line we want to check</param>
         /// <param name="linePointB">End point of the line we want to check</param>
+        /// <param name="lines">End point of the line we want to check</param>
         /// <param name="skipFirst">Skip the first line in our chain</param>
         /// <param name="skipLast">Skip the last line in our chain</param>
         /// <returns>Returns true if an intersection was found</returns>
@@ -273,7 +274,7 @@ namespace Netherlands3D.SelectionTools
             {
                 var comparisonStart = polygonLineRenderer.GetPosition(i - 1);
                 var comparisonEnd = polygonLineRenderer.GetPosition(i);
-                if (LinesIntersectOnPlane(linePointA, linePointB, comparisonStart, comparisonEnd))
+                if (PolygonCalculator.LinesIntersectOnPlane(linePointA, linePointB, comparisonStart, comparisonEnd))
                 {
                     if (ignoreConnected)
                     {
@@ -294,19 +295,6 @@ namespace Netherlands3D.SelectionTools
                 }
             }
             return false;
-        }
-
-        /// <summary>
-        /// Returns if lines intersect on a flat plane
-        /// </summary>
-        /// <returns></returns>
-        public static bool LinesIntersectOnPlane(Vector3 lineOneA, Vector3 lineOneB, Vector3 lineTwoA, Vector3 lineTwoB)
-        {
-            return
-                (((lineTwoB.z - lineOneA.z) * (lineTwoA.x - lineOneA.x) > (lineTwoA.z - lineOneA.z) * (lineTwoB.x - lineOneA.x)) !=
-                ((lineTwoB.z - lineOneB.z) * (lineTwoA.x - lineOneB.x) > (lineTwoA.z - lineOneB.z) * (lineTwoB.x - lineOneB.x)) &&
-                ((lineTwoA.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoA.x - lineOneA.x)) !=
-                ((lineTwoB.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoB.x - lineOneA.x)));
         }
 
         /// <summary>
@@ -386,7 +374,7 @@ namespace Netherlands3D.SelectionTools
                 return;
 
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
-            currentWorldCoordinate = GetCoordinateInWorld(currentPointerPosition);
+            currentWorldCoordinate = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
 
             if (doubleClickToCloseLoop)
             {
@@ -595,13 +583,13 @@ namespace Netherlands3D.SelectionTools
         private void StartClick()
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
-            selectionStartPosition = GetCoordinateInWorld(currentPointerPosition);
+            selectionStartPosition = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
         }
 
         private void Release()
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
-            var selectionEndPosition = GetCoordinateInWorld(currentPointerPosition);
+            var selectionEndPosition = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
         }
 
         private void FinishPolygon(bool invokeNewPolygonEvent)
@@ -631,21 +619,6 @@ namespace Netherlands3D.SelectionTools
                 createdNewPolygonArea.InvokeStarted(positions);
             else if (editedPolygonArea && positions.Count > 1)
                 editedPolygonArea.InvokeStarted(positions);
-        }
-
-        /// <summary>
-        /// Get the position of a screen point in world coordinates ( on a plane )
-        /// </summary>
-        /// <param name="screenPoint">The point in screenpoint coordinates</param>
-        /// <returns></returns>
-        private Vector3 GetCoordinateInWorld(Vector3 screenPoint)
-        {
-            var screenRay = Camera.main.ScreenPointToRay(screenPoint);
-
-            worldPlane.Raycast(screenRay, out float distance);
-            var samplePoint = screenRay.GetPoint(Mathf.Min(maxSelectionDistanceFromCamera, distance));
-
-            return samplePoint;
         }
     }
 }
