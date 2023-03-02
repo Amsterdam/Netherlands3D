@@ -144,7 +144,7 @@ public class WFSHandler : MonoBehaviour
         ShiftLineColor();
         SpawnParent = new GameObject().transform;
         SpawnParent.name = "WFS_ObjectParent";
-        wfsParentEvent.Invoke(SpawnParent.gameObject);
+        wfsParentEvent.InvokeStarted(SpawnParent.gameObject);
 
         DateTime dateTime = DateTime.UtcNow;
 
@@ -178,7 +178,7 @@ public class WFSHandler : MonoBehaviour
             }
         }
         if (propertyFeatureEvent)
-            propertyFeatureEvent.Invoke(activeFeature);
+            propertyFeatureEvent.InvokeStarted(activeFeature);
     }
     private void SetStartIndex(string index)
     {
@@ -195,28 +195,28 @@ public class WFSHandler : MonoBehaviour
         {
             case GeoJSON.GeoJSONGeometryType.Point:
                 double[] geoPointDouble = geoJSON.GetGeometryPoint2DDouble();
-                pointEvent.Invoke(CoordConvert.RDtoUnity(geoPointDouble[0], geoPointDouble[1], -10));
+                pointEvent.InvokeStarted(CoordConvert.RDtoUnity(geoPointDouble[0], geoPointDouble[1], -10));
                 break;
             case GeoJSON.GeoJSONGeometryType.MultiPoint:
                 MultiPointHandler pointHandler = new MultiPointHandler();
-                multiPointEvent.Invoke(pointHandler.ProcessMultiPoint(geoJSON.GetMultiPoint()));
+                multiPointEvent.InvokeStarted(pointHandler.ProcessMultiPoint(geoJSON.GetMultiPoint()));
                 break;
             case GeoJSON.GeoJSONGeometryType.LineString:
                 LineStringHandler lineStringHandler = new LineStringHandler();
                 //ShiftLineColor();
-                drawLineEvent.Invoke(lineStringHandler.ProcessLineString(geoJSON.GetGeometryLineString()));
+                drawLineEvent.InvokeStarted(lineStringHandler.ProcessLineString(geoJSON.GetGeometryLineString()));
                 break;
             case GeoJSON.GeoJSONGeometryType.MultiLineString:
                 MultiLineHandler multiLineHandler = new MultiLineHandler();
-                drawLinesEvent.Invoke(multiLineHandler.ProcessMultiLine(geoJSON.GetMultiLine()));
+                drawLinesEvent.InvokeStarted(multiLineHandler.ProcessMultiLine(geoJSON.GetMultiLine()));
                 break;
             case GeoJSON.GeoJSONGeometryType.Polygon:
                 PolygonHandler polyHandler = new PolygonHandler();
-                drawPolygonEvent.Invoke(polyHandler.ProcessPolygon(geoJSON.GetPolygon()));
+                drawPolygonEvent.InvokeStarted(polyHandler.ProcessPolygon(geoJSON.GetPolygon()));
                 break;
             case GeoJSON.GeoJSONGeometryType.MultiPolygon:
                 MultiPolygonHandler multiPolyHandler = new MultiPolygonHandler();
-                drawPolygonsEvent.Invoke(multiPolyHandler.GetMultiPoly(geoJSON.GetMultiPolygon()));
+                drawPolygonsEvent.InvokeStarted(multiPolyHandler.GetMultiPoly(geoJSON.GetMultiPolygon()));
                 break;
             case GeoJSON.GeoJSONGeometryType.GeometryCollection:
                 // String Event voor error.
@@ -253,8 +253,8 @@ public class WFSHandler : MonoBehaviour
             }
             ActiveWFS = formatter.ReadFromWFS(ActiveWFS, xml);
             resetReaderEvent.InvokeStarted();
-            isWmsEvent.Invoke(false);
-            wfsDataEvent.Invoke(ActiveWFS);
+            isWmsEvent.InvokeStarted(false);
+            wfsDataEvent.InvokeStarted(ActiveWFS);
         }
     }
     private void SetBoundingBoxMinX(string value)
@@ -290,7 +290,7 @@ public class WFSHandler : MonoBehaviour
                 }
             }
         }
-        lineColorEvent.Invoke(Color.HSVToRGB(hue, saturation, brightness));
+        lineColorEvent.InvokeStarted(Color.HSVToRGB(hue, saturation, brightness));
     }
 
     private void TestMultiLine(List<IList<Vector3>> multiLine)
@@ -298,7 +298,7 @@ public class WFSHandler : MonoBehaviour
         //ShiftLineColor();
         foreach(List<Vector3> lines in multiLine)
         {
-            drawLineEvent.Invoke(lines);
+            drawLineEvent.InvokeStarted(lines);
         }
     }
     private void TestPoint(Vector3 pointCoord)

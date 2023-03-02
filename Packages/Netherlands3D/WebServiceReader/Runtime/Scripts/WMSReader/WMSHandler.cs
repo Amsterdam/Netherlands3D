@@ -65,25 +65,26 @@ public class WMSHandler : MonoBehaviour
         {
             if (imageEvent != null)
             {
-                imageEvent.Invoke(((DownloadHandlerTexture)request.downloadHandler).texture);
+                imageEvent.InvokeStarted(((DownloadHandlerTexture)request.downloadHandler).texture);
             }
         }
     }
     public void SendRequest(bool preview)
     {
-        if (!ParseFields())
-            return;
+
 
         wms.IsPreview(preview);
         string url = wms.GetMapRequest();
         if (preview)
         {
+            if (!ParseFields())
+                return;
             StartCoroutine(DownloadImage(url, imageEvent));
             return;
         }
         if (wmsLayerEvent != null)
         {
-            wmsLayerEvent.Invoke(url);
+            wmsLayerEvent.InvokeStarted(url);
             foreach (WMSLayer l in wms.ActivatedLayers)
             {
                 if (l.activeStyle != null)
@@ -126,7 +127,7 @@ public class WMSHandler : MonoBehaviour
     }
     private void SendWMSData()
     {
-        wmsDataEvent.Invoke(wms);
+        wmsDataEvent.InvokeStarted(wms);
     }
     private IEnumerator GetWebString(string url)
     {
@@ -156,7 +157,7 @@ public class WMSHandler : MonoBehaviour
         {
             if (legendEvent != null)
             {
-                legendEvent.Invoke(((DownloadHandlerTexture)request.downloadHandler).texture);
+                legendEvent.InvokeStarted(((DownloadHandlerTexture)request.downloadHandler).texture);
                 StopCoroutine("GetLegendImage");
             }
         }
@@ -172,8 +173,8 @@ public class WMSHandler : MonoBehaviour
             WMSFormatterX formatter = new WMSFormatterX();
             formatter.ReadWMSFromXML(ref wms, xml);
             //resetReaderEvent.Invoke();
-            wmsLayerBuildEvent.Invoke(wms.Layers);
-            isWMSEvent.Invoke(true);
+            wmsLayerBuildEvent.InvokeStarted(wms.Layers);
+            isWMSEvent.InvokeStarted(true);
         }
     }
     private void SetResolution(string resolution)
