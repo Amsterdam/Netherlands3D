@@ -11,7 +11,7 @@ public class FloatEventListener : MonoBehaviour
     private FloatEvent onEvent;
 
     [SerializeField]
-    private FloatValueUnityEvent trigger;
+    private UnityEvent<float> trigger;
 
     void Awake()
     {

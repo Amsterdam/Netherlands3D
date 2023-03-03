@@ -63,7 +63,7 @@ namespace Netherlands3D.Geoservice
             _url = url;
             if (OnURLChanged_String != null)
             {
-                OnURLChanged_String.Invoke(_url);
+                OnURLChanged_String.InvokeStarted(_url);
             }
         }
 
@@ -142,7 +142,7 @@ namespace Netherlands3D.Geoservice
                 {
                     if (OnError_String != null)
                     {
-                        OnError_String.Invoke($"unable to read the Capabilties at {url}");
+                        OnError_String.InvokeStarted($"unable to read the Capabilties at {url}");
                     }
                 }
 
@@ -152,7 +152,7 @@ namespace Netherlands3D.Geoservice
             {
                 if (OnError_String != null)
                 {
-                    OnError_String.Invoke($"can't connect to {url}");
+                    OnError_String.InvokeStarted($"can't connect to {url}");
                 }
             }
             yield return null;

@@ -128,7 +128,7 @@ public class FileInputIndexedDB : MonoBehaviour
         if (callbackAdress == null)
         {
             Debug.Log("FileInputIndexedDB: No callback set. Using default file import event.");
-            if (filesImportedEvent) filesImportedEvent.Invoke(files);
+            if (filesImportedEvent) filesImportedEvent.InvokeStarted(files);
         }
         else
         {

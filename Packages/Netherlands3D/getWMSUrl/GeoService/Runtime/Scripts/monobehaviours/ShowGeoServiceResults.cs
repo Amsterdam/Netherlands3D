@@ -128,12 +128,12 @@ namespace Netherlands3D.Geoservice
         {
             if (onLayerSelected != null)
             {
-                onLayerSelected.Invoke(serverData.layer[layerIndex].styles[styleIndex].imageURL);
+                onLayerSelected.InvokeStarted(serverData.layer[layerIndex].styles[styleIndex].imageURL);
 
             }
             if (onLegendSelected != null)
             {
-                onLegendSelected.Invoke(serverData.layer[layerIndex].styles[styleIndex].LegendURL);
+                onLegendSelected.InvokeStarted(serverData.layer[layerIndex].styles[styleIndex].LegendURL);
 
             }
         }

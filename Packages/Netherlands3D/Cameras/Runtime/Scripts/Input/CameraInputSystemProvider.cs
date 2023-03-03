@@ -72,13 +72,13 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         var rotate = rotateModifierAction.IsPressed();
         var firstPerson = firstPersonModifierAction.IsPressed();
 
-        draggingModifier.Invoke(dragging);
-        rotateModifier.Invoke(rotate);
-        firstPersonModifier.Invoke(firstPerson);
+        draggingModifier.InvokeStarted(dragging);
+        rotateModifier.InvokeStarted(rotate);
+        firstPersonModifier.InvokeStarted(firstPerson);
 
         //Always send position of main pointer
         var pointer = pointerAction.ReadValue<Vector2>();
-        pointerPosition.Invoke(pointer);
+        pointerPosition.InvokeStarted(pointer);
 
         //Transform inputs 
         var moveValue = moveAction.ReadValue<Vector2>();
@@ -89,33 +89,33 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         var upPressed = upAction.IsPressed();
         var downPressed = downAction.IsPressed();
 
-        lookInput.Invoke(lookValue);
+        lookInput.InvokeStarted(lookValue);
 
         if (moveValue.magnitude>0)
         {
-            horizontalInput.Invoke(moveValue.x);
-            verticalInput.Invoke(moveValue.y);
+            horizontalInput.InvokeStarted(moveValue.x);
+            verticalInput.InvokeStarted(moveValue.y);
         }
         if(flyValue.magnitude>0)
         {
-            flyInput.Invoke(flyValue);
+            flyInput.InvokeStarted(flyValue);
 		}
         if (zoomValue.magnitude > 0)
         {
-            zoomInput.Invoke(zoomValue.y);
+            zoomInput.InvokeStarted(zoomValue.y);
         }
         if (rotateValue.magnitude > 0)
         {
-            rotateInput.Invoke(rotateValue);
+            rotateInput.InvokeStarted(rotateValue);
         }
 
         if (upPressed)
         {
-            upDownInput.Invoke(1);
+            upDownInput.InvokeStarted(1);
         }
         else if(downPressed)
         {
-            upDownInput.Invoke(-1);
+            upDownInput.InvokeStarted(-1);
         }
     }
 

@@ -11,7 +11,7 @@ public class IntEventListener : MonoBehaviour
     private IntEvent onEvent;
 
     [SerializeField]
-    private IntValueUnityEvent trigger;
+    private UnityEvent<int> trigger;
 
     void Awake()
     {

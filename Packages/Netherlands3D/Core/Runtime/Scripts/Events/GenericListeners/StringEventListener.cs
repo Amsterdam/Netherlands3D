@@ -11,7 +11,7 @@ public class StringEventListener : MonoBehaviour
     private StringEvent onEvent;
 
     [SerializeField]
-    private StringUnityEvent trigger;
+    private UnityEvent<string> trigger;
 
     void Awake()
     {

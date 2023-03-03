@@ -20,12 +20,9 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class ColorValueUnityEvent : UnityEvent<Color> { }
-
 	[CreateAssetMenu(fileName = "ColorEvent", menuName = "EventContainers/ColorEvent", order = 0)]
 	[System.Serializable]
-	public class ColorEvent : EventContainer<ColorValueUnityEvent, Color> 
+	public class ColorEvent : EventContainer<Color> 
 	{
 		public override void InvokeStarted(Color colorContent)
 		{

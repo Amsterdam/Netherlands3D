@@ -21,12 +21,9 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class Vector3ListValueUnityEvent : UnityEvent<List<Vector3>> { }
-
     [CreateAssetMenu(fileName = "Vector3ListEvent", menuName = "EventContainers/Vector3ListEvent", order = 0)]
     [System.Serializable]
-    public class Vector3ListEvent : EventContainer<Vector3ListValueUnityEvent, List<Vector3>>
+    public class Vector3ListEvent : EventContainer<List<Vector3>>
     {
         [SerializeField]
         private bool sendAsCopy = true;

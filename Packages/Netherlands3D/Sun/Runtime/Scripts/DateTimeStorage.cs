@@ -32,7 +32,7 @@ public class DateTimeStorage : MonoBehaviour
         dateTimeContainer.SetValue(receivedDateTime);
         if(onDateTimeStored != null)
         {
-            onDateTimeStored.Invoke(dateTimeContainer.Value);
+            onDateTimeStored.InvokeStarted(dateTimeContainer.Value);
         }
     }
 
@@ -40,7 +40,7 @@ public class DateTimeStorage : MonoBehaviour
     {
         if(onDateTimeLoaded != null)
         {
-            onDateTimeLoaded.Invoke(dateTimeContainer.Value);
+            onDateTimeLoaded.InvokeStarted(dateTimeContainer.Value);
         }
     }
 

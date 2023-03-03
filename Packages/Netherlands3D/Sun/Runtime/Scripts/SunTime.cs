@@ -109,7 +109,7 @@ namespace Netherlands3D.Sun
             if (frameStep==0) {
                 if(dateTimeUpdate != null)
                 {
-                    dateTimeUpdate.Invoke(time);
+                    dateTimeUpdate.InvokeStarted(time);
                 }
                 SetPosition();
             }
@@ -193,7 +193,7 @@ namespace Netherlands3D.Sun
             timeSpeed = Math.Clamp(timeSpeed * multiplicationFactor, 1, 10000);
             if(sendAnimationSpeed != null)
             {
-                sendAnimationSpeed.Invoke(timeSpeed);
+                sendAnimationSpeed.InvokeStarted(timeSpeed);
             }
         }
 		public void ResetToNow()
@@ -211,7 +211,7 @@ namespace Netherlands3D.Sun
         {
             if(singleTriggerDateTimeEvent != null)
             {
-                singleTriggerDateTimeEvent.Invoke(time);
+                singleTriggerDateTimeEvent.InvokeStarted(time);
             }
         }
 

@@ -44,7 +44,7 @@ namespace Netherlands3D
             {
                 var currentPointerPosition = pointerPositionAction.ReadValue<Vector2>();
                 Debug.Log($"Click at :{currentPointerPosition}");
-                clickOnScreenPosition.Invoke(currentPointerPosition);
+                clickOnScreenPosition.InvokeStarted(currentPointerPosition);
             }
         }
 
@@ -54,7 +54,7 @@ namespace Netherlands3D
             {
                 var currentPointerPosition = pointerPositionAction.ReadValue<Vector2>();
                 Debug.Log($"Secondary click at :{currentPointerPosition}");
-                secondaryClickOnScreenPosition.Invoke(currentPointerPosition);
+                secondaryClickOnScreenPosition.InvokeStarted(currentPointerPosition);
             }
         }
 

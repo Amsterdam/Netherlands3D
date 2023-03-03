@@ -37,7 +37,7 @@ namespace Netherlands3D.SelectionTools
             var bottomLeft = CoordConvert.UnitytoRD(bounds.min);
             var topRight = CoordConvert.UnitytoRD(bounds.max);
 
-            boundingBoxRDEvent.Invoke(new double[] { bottomLeft.x, bottomLeft.y, topRight.x, topRight.y });
+            boundingBoxRDEvent.InvokeStarted(new double[] { bottomLeft.x, bottomLeft.y, topRight.x, topRight.y });
         }
     }
 }

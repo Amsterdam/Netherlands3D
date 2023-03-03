@@ -2,6 +2,7 @@ using Netherlands3D.Events;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Netherlands3D.Events.GenericListeners
 {
@@ -11,7 +12,7 @@ namespace Netherlands3D.Events.GenericListeners
         private ObjectEvent onEvent;
 
         [SerializeField]
-        private ObjectValueUnityEvent trigger;
+        private UnityEvent<object> trigger;
 
         void Awake()
         {

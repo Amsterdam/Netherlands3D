@@ -78,7 +78,7 @@ namespace Netherlands3D.Timeline
                 previousCurrentDate = currentDate;
                 currentDate = value;
                 onCurrentDateChange?.Invoke(currentDate);
-                if(dateTimeEvent != null) dateTimeEvent.Invoke(currentDate);
+                if(dateTimeEvent != null) dateTimeEvent.InvokeStarted(currentDate);
             }
         }
 
