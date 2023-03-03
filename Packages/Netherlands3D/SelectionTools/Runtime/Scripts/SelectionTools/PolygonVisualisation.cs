@@ -33,15 +33,45 @@ namespace Netherlands3D.SelectionTools
         public UnityEvent<PolygonVisualisation> reselectVisualisedPolygon = new UnityEvent<PolygonVisualisation>();
 
         //[Header("Mesh")]
+        [SerializeField]
+        private bool drawMesh = true;
+        public bool DrawMesh
+        {
+            get
+            {
+                return drawMesh;
+            }
+            set
+            {
+                drawMesh = value;
+                EnableMeshRenderers(value);
+            }
+        }
+
         private float extrusionHeight;
         private bool addBottom;
         private bool createInwardMesh;
         private Vector2 uvCoordinate;
 
+        [SerializeField]
+        private bool activeCollider = true;
+        public bool ActiveCollider
+        {
+            get
+            {
+                return activeCollider;
+            }
+            set
+            {
+                activeCollider = value;
+                EnableColliders(value);
+            }
+        }
+
         //[Header("Line")]
         private List<LineRenderer> lineRenderers = new List<LineRenderer>();
         [SerializeField]
-        private bool drawLine;
+        private bool drawLine = true;
         public bool DrawLine
         {
             get
@@ -56,6 +86,15 @@ namespace Netherlands3D.SelectionTools
         }
         private Material lineMaterial;
         private Color lineColor;
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            EnableLineRenderers(drawLine);
+            EnableMeshRenderers(drawMesh);
+            EnableColliders(activeCollider);
+        }
+#endif
 
         /// <summary>
         /// Sets a reference of the polygon to be visualised
@@ -113,6 +152,9 @@ namespace Netherlands3D.SelectionTools
                 mc.sharedMesh = mesh;
 
             UpdateLineRenderers();
+
+            EnableMeshRenderers(drawMesh);
+            EnableLineRenderers(drawLine);
         }
 
         public void UpdateLineRenderers() //todo: reuse existing line renderers if this is possible and if this is significantly more performant
@@ -136,6 +178,21 @@ namespace Netherlands3D.SelectionTools
             {
                 line.gameObject.SetActive(enable);
             }
+        }
+
+
+        private void EnableMeshRenderers(bool value) // to set this programatically, set the property DrawMesh
+        {
+            GetComponent<MeshRenderer>().enabled = value;
+        }
+
+        private void EnableColliders(bool value)
+        {
+            var mc = GetComponent<MeshCollider>();
+            if (mc)
+                mc.enabled = value;
+            else
+                Debug.LogWarning("This PolygonVisualisation has to collider to enable/disable", gameObject);
         }
     }
 }
