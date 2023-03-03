@@ -93,7 +93,8 @@ namespace Netherlands3D.SelectionTools
         {
             polygons = newPolygon;
 
-            var clockwise = PolygonCalculator.PolygonIsClockwise(newPolygon[0] as List<Vector3>);
+            var polygon2D = PolygonCalculator.FlattenPolygon(newPolygon[0], new Plane(Vector3.up,0));
+            var clockwise = PolygonCalculator.PolygonIsClockwise(polygon2D);
 
             if (clockwise == createInwardMesh) // (clockwise && inward) || (!clockwise && !inward)
             {
@@ -120,7 +121,7 @@ namespace Netherlands3D.SelectionTools
             lineRenderers = PolygonVisualisationUtility.CreateLineRenderers(polygons, lineMaterial, lineColor, transform);
         }
 
-        public void DestroyLineRenderers()
+        private void DestroyLineRenderers()
         {
             for (int i = lineRenderers.Count - 1; i >= 0; i--)
             {

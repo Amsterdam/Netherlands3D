@@ -313,7 +313,7 @@ namespace Netherlands3D.SelectionTools
                     Debug.Log("Try to add a finishing line.");
                     var closingLineStart = positions[positions.Count - 1];
                     var closingLineEnd = positions[0];
-                    if (PolygonCalculator.LineCrossesOtherLine(closingLineStart, closingLineEnd, positions.ToArray(), true, true))
+                    if (PolygonCalculator.LineCrossesOtherLine(closingLineStart, closingLineEnd, positions, true, true))
                     {
                         Debug.Log("Cant close loop, closing line will cross another line.");
                         return;
@@ -502,8 +502,8 @@ namespace Netherlands3D.SelectionTools
                 lineTwoB = positions[dragHandle.pointIndex - 1];
             }
 
-            if (PolygonCalculator.LineCrossesOtherLine(lineOneA, lineOneB, positions.ToArray(), false, false, true)) return true;
-            if (PolygonCalculator.LineCrossesOtherLine(lineTwoA, lineTwoB, positions.ToArray(), false, false, true)) return true;
+            if (PolygonCalculator.LineCrossesOtherLine(lineOneA, lineOneB, positions, false, false, true)) return true;
+            if (PolygonCalculator.LineCrossesOtherLine(lineTwoA, lineTwoB, positions, false, false, true)) return true;
 
             return false;
         }
@@ -569,7 +569,8 @@ namespace Netherlands3D.SelectionTools
             if (!displayLineUntilRedraw)
                 polygonLineRenderer.enabled = false;
 
-            var polygonIsClockwise = PolygonCalculator.PolygonIsClockwise(positions);
+            var positions2D = PolygonCalculator.FlattenPolygon(positions.ToArray(), worldPlane);
+            var polygonIsClockwise = PolygonCalculator.PolygonIsClockwise(positions2D);
             if ((windingOrder == WindingOrder.COUNTERCLOCKWISE && polygonIsClockwise) || (windingOrder == WindingOrder.CLOCKWISE && !polygonIsClockwise))
             {
                 Debug.Log($"Forcing to {windingOrder}");

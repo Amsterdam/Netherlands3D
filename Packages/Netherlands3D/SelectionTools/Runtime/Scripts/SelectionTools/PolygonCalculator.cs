@@ -29,10 +29,10 @@ namespace Netherlands3D.SelectionTools
         /// <param name="polygon3D">A polygon defined in 3D space</param>
         /// <param name="plane"> The plane on which to flatten the 3D polygon</param>
         /// <returns>An array with the polygon projected on the plane</returns>
-        public static Vector2[] FlattenPolygon(Vector3[] polygon3D, Plane plane)
+        public static Vector2[] FlattenPolygon(IList<Vector3> polygon3D, Plane plane)
         {
-            Vector2[] polygon = new Vector2[polygon3D.Length];
-            for (int i = 0; i < polygon3D.Length; i++)
+            Vector2[] polygon = new Vector2[polygon3D.Count];
+            for (int i = 0; i < polygon3D.Count; i++)
             {
                 Quaternion planeRotation = Quaternion.FromToRotation(-plane.normal, Vector3.forward); //use forward so that z component can be ignored
                 polygon[i] = planeRotation * polygon3D[i];
@@ -46,11 +46,11 @@ namespace Netherlands3D.SelectionTools
         /// <param name="polygon">array of points that define the polygon</param>
         /// <param name="p">point to test</param>
         /// <returns>true if point p is inside the polygon, otherwise false</returns>
-        public static bool ContainsPoint(Vector2[] polygon, Vector2 p)
+        public static bool ContainsPoint(IList<Vector2> polygon, Vector2 p)
         {
-            var j = polygon.Length - 1;
+            var j = polygon.Count - 1;
             var inside = false;
-            for (int i = 0; i < polygon.Length; j = i++)
+            for (int i = 0; i < polygon.Count; j = i++)
             {
                 var pi = polygon[i];
                 var pj = polygon[j];
@@ -66,9 +66,9 @@ namespace Netherlands3D.SelectionTools
         /// </summary>
         /// <param name="polygon">array of points that define the polygon</param>
         /// <returns>the area of the polygon</returns>
-        public static float Area(Vector2[] polygon)
+        public static float Area(IList<Vector2> polygon)
         {
-            int n = polygon.Length;
+            int n = polygon.Count;
             float a = 0.0f;
             for (int p = n - 1, q = 0; q < n; p = q++)
             {
@@ -111,12 +111,12 @@ namespace Netherlands3D.SelectionTools
         /// </summary>
         /// <param name="points"></param>
         /// <returns>true if the polygon is clockwise; false if the polygon is counter-clockwise</returns>
-        public static bool PolygonIsClockwise(List<Vector3> points) //todo: make input parameter 2D since y component is not used
+        public static bool PolygonIsClockwise(IList<Vector2> points) //todo: make input parameter 2D since y component is not used
         {
             double sum = 0;
             for (int i = 0; i < points.Count - 1; i++)
             {
-                sum += (points[i + 1].x - points[i].x) * (points[i + 1].z + points[i].z);
+                sum += (points[i + 1].x - points[i].x) * (points[i + 1].y + points[i].y);
             }
             bool isClockwise = (sum > 0) ? true : false;
             return isClockwise;
@@ -164,10 +164,10 @@ namespace Netherlands3D.SelectionTools
         /// <param name="skipFirst">Skip the first line in our chain</param>
         /// <param name="skipLast">Skip the last line in our chain</param>
         /// <returns>Returns true if an intersection was found</returns>
-        public static bool LineCrossesOtherLine(Vector3 linePointA, Vector3 linePointB, Vector3[] existingLines, bool skipFirst = false, bool skipLast = false, bool ignoreConnected = false)
+        public static bool LineCrossesOtherLine(Vector3 linePointA, Vector3 linePointB, IList<Vector3> existingLines, bool skipFirst = false, bool skipLast = false, bool ignoreConnected = false)
         {
             int startIndex = (skipFirst) ? 2 : 1;
-            int endIndex = (skipLast) ? existingLines.Length - 1 : existingLines.Length;
+            int endIndex = (skipLast) ? existingLines.Count - 1 : existingLines.Count;
             for (int i = startIndex; i < endIndex; i++)
             {
                 var comparisonStart = existingLines[i - 1];
