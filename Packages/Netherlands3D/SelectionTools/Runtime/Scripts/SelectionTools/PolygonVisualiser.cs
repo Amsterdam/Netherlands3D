@@ -39,8 +39,8 @@ namespace Netherlands3D.SelectionTools
         private StringEvent setDrawingObjectName;
         [SerializeField]
         private FloatEvent setExtrusionHeightEvent;
-        [SerializeField]
-        private Vector3ListEvent polygonEdited;
+        [SerializeField] private GameObjectEvent polyParentEvent;
+        [SerializeField] private Vector3ListEvent polygonEdited;
 
         [SerializeField]
         private string newDrawingObjectName = "";
@@ -81,12 +81,15 @@ namespace Netherlands3D.SelectionTools
         [SerializeField]
         Vector3ListEvent polygonReselected;
 
+        private Transform geometryParent;
+
         void Awake()
         {
             if (setDrawingObjectName) setDrawingObjectName.AddListenerStarted(SetName);
             if (drawPolygonEvent) drawPolygonEvent.AddListenerStarted(CreatePolygons);
             if (drawSinglePolygonEvent) drawSinglePolygonEvent.AddListenerStarted(CreateSinglePolygon);
             if (setExtrusionHeightEvent) setExtrusionHeightEvent.AddListenerStarted(SetExtrusionHeight);
+            if (polyParentEvent) polyParentEvent.AddListenerStarted((parentObject) => geometryParent = parentObject.transform);
         }
 
         public void SetExtrusionHeight(float extrusionHeight)
@@ -132,9 +135,6 @@ namespace Netherlands3D.SelectionTools
 
             if (addColliders)
                 newPolygonObject.AddComponent<MeshCollider>().sharedMesh = newPolygonMesh;
-
-            var polygonVisualisation = newPolygonObject.AddComponent<PolygonVisualisation>();
-            polygonVisualisation.Initialize(contours, extrusionHeight, addBottom, createInwardMesh, polygonReselected, polygonEdited, lineMaterial, lineColor, uvCoordinate);
 
             newPolygonObject.transform.SetParent(this.transform);
             newPolygonObject.transform.Translate(0, extrusionHeight, 0);

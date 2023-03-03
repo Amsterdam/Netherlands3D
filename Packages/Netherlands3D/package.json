@@ -90,9 +90,9 @@
       "path": "Traffic/Samples~/Traffic Example"
     },
     {
-      "displayName": "WMS-layer",
-      "description": "Example of a wms-layer",
-      "path": "WMSLayer/Samples~/wmsLayer"
+      "displayName": "Web Service Reader",
+      "description": "Web Service Reader to read WMS' and WFS' from urls",
+      "path": "WebServiceReader/Samples~/WebServiceReaderSamples"
     },
     {
       "displayName": "WMS-url",

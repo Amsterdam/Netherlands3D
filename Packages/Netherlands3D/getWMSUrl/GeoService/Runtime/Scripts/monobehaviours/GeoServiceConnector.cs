@@ -135,7 +135,7 @@ namespace Netherlands3D.Geoservice
                 {
                     if (OnCapabilitiesParsed_Trigger != null)
                     {
-                        OnCapabilitiesParsed_Trigger.Invoke();
+                        OnCapabilitiesParsed_Trigger.InvokeStarted();
                     }
                 }
                 else
