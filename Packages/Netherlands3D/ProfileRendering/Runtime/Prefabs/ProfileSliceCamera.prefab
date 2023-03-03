@@ -180,7 +180,7 @@ GameObject:
   - component: {fileID: 6781047678125791765}
   - component: {fileID: 6781047678125791769}
   m_Layer: 0
-  m_Name: SliceCamera
+  m_Name: ProfileSliceCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -294,6 +294,5 @@ MonoBehaviour:
   heightOffset: 0
   renderTexture: {fileID: 8400000, guid: 69c519a8b00254245b3d67e3f2dce9e1, type: 2}
   cuttingLine: {fileID: 4968407319315594453}
-  onReceiveCuttingLine: {fileID: 11400000, guid: 77f9110b380db7e4085386da1f665dd3, type: 2}
-  onReveiceHeightRange: {fileID: 0}
-  onReveiceHeightOffset: {fileID: 0}
+  onReceiveCuttingLine: {fileID: 11400000, guid: d2662de31e988b94696535c563e12a8b, type: 2}
+  sizeWasChanged: {fileID: 11400000, guid: e1bd12f69609851419b89827d31604d0, type: 2}
