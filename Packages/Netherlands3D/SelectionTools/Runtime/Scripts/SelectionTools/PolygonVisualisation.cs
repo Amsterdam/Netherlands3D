@@ -11,7 +11,7 @@ namespace Netherlands3D.SelectionTools
 {
     public class PolygonVisualisation : MonoBehaviour, IPointerClickHandler
     {
-        private List<IList<Vector3>> polygons;
+        private List<List<Vector3>> polygons;
         public ReadOnlyCollection<ReadOnlyCollection<Vector3>> Polygons
         {
             get
@@ -58,7 +58,7 @@ namespace Netherlands3D.SelectionTools
         private Material lineMaterial;
         private Color lineColor;
 
-        private List<LineRenderer> CreateLineRenderers(List<IList<Vector3>> polygons)
+        private List<LineRenderer> CreateLineRenderers(List<List<Vector3>> polygons)
         {
             var list = new List<LineRenderer>();
             foreach (var contour in polygons)
@@ -113,7 +113,7 @@ namespace Netherlands3D.SelectionTools
         /// Sets a reference of the polygon to be visualised
         /// </summary>
         /// <param name="polygon"></param>
-        public void Initialize(List<IList<Vector3>> sourcePolygons, float extrusionHeight, bool addBottom, bool createInwardMesh, Vector3ListEvent reselectVisualisedPolygon, Vector3ListEvent onPolygonEdited, Material lineMaterial, Color lineColor, Vector2 uvCoordinate = new Vector2())
+        public void Initialize(List<List<Vector3>> sourcePolygons, float extrusionHeight, bool addBottom, bool createInwardMesh, Vector3ListEvent reselectVisualisedPolygon, Vector3ListEvent onPolygonEdited, Material lineMaterial, Color lineColor, Vector2 uvCoordinate = new Vector2())
         {
             polygons = sourcePolygons;
             this.extrusionHeight = extrusionHeight;
@@ -135,10 +135,10 @@ namespace Netherlands3D.SelectionTools
 
         public void UpdateVisualisation(List<Vector3> newPolygon)
         {
-            UpdateVisualisation(new List<IList<Vector3>>() { newPolygon });
+            UpdateVisualisation(new List<List<Vector3>>() { newPolygon });
         }
 
-        public void UpdateVisualisation(List<IList<Vector3>> newPolygon)
+        public void UpdateVisualisation(List<List<Vector3>> newPolygon)
         {
             polygons = newPolygon;
 
@@ -148,8 +148,7 @@ namespace Netherlands3D.SelectionTools
             {
                 foreach (var contour in newPolygon)
                 {
-                    var list = (List<Vector3>)contour;
-                    list.Reverse();
+                    contour.Reverse();
                 }
             }
 
@@ -175,10 +174,10 @@ namespace Netherlands3D.SelectionTools
             onPolygonEdited.AddListenerStarted(UpdateVisualisation);
         }
 
-        public static Mesh CreatePolygonMesh(List<IList<Vector3>> contours, float extrusionHeight, bool addBottom, Vector2 uvCoordinate = new Vector2())
+        public static Mesh CreatePolygonMesh(List<List<Vector3>> contours, float extrusionHeight, bool addBottom, Vector2 uvCoordinate = new Vector2())
         {
             var polygon = new Poly2Mesh.Polygon();
-            var outerContour = (List<Vector3>)contours[0];
+            var outerContour = contours[0];
 
             if (outerContour.Count < 3) return null;
             polygon.outside = outerContour;
