@@ -40,8 +40,8 @@ namespace Netherlands3D.SelectionTools
         private StringEvent setDrawingObjectName;
         [SerializeField]
         private FloatEvent setExtrusionHeightEvent;
-        [SerializeField]
-        private Vector3ListEvent polygonEdited;
+        [SerializeField] private GameObjectEvent polyParentEvent;
+        [SerializeField] private Vector3ListEvent polygonEdited;
 
         [SerializeField]
         private string newDrawingObjectName = "";
@@ -85,12 +85,15 @@ namespace Netherlands3D.SelectionTools
         //List<PolygonVisualisation> polygonVisualisations = new List<PolygonVisualisation>();
         PolygonVisualisation selectedPolygon;
 
+        private Transform geometryParent;
+
         void Awake()
         {
             if (setDrawingObjectName) setDrawingObjectName.AddListenerStarted(SetName);
             if (drawPolygonEvent) drawPolygonEvent.AddListenerStarted(CreatePolygons);
             if (drawSinglePolygonEvent) drawSinglePolygonEvent.AddListenerStarted(CreateSinglePolygon);
             if (setExtrusionHeightEvent) setExtrusionHeightEvent.AddListenerStarted(SetExtrusionHeight);
+            if (polyParentEvent) polyParentEvent.AddListenerStarted((parentObject) => geometryParent = parentObject.transform);
         }
 
         private void OnEnable()
@@ -135,7 +138,6 @@ namespace Netherlands3D.SelectionTools
             //Do not bother setting object name outside of Editor untill we need it.
             polygonVisualisation.gameObject.name = newDrawingObjectName;
 #endif
-
             polygonVisualisation.transform.SetParent(this.transform);
             if (createdPolygonGameObject) createdPolygonGameObject.InvokeStarted(polygonVisualisation.gameObject);
         }
@@ -146,6 +148,7 @@ namespace Netherlands3D.SelectionTools
             polygonReselected.InvokeStarted(polygonToReselect.Polygons[0] as List<Vector3>);
             selectedPolygon = polygonToReselect;
         }
+
 
         private void UpdateSelectedPolygon(List<Vector3> newPolygon)
         {

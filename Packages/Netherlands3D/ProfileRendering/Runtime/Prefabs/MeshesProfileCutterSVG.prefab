@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   onCutMeshes: {fileID: 11400000, guid: 76a321098cc604140b448c387ac90ba3, type: 2}
-  onReceiveCuttingLine: {fileID: 11400000, guid: 777e7bc0e0d3e4c4496e3278d9b50a7c, type: 2}
+  onReceiveCuttingLine: {fileID: 11400000, guid: d2662de31e988b94696535c563e12a8b, type: 2}
   outputProgress: {fileID: 11400000, guid: 5ec0a9f132b109c4a829cd53685b5303, type: 2}
   outputProfileMaterialName: {fileID: 0}
   outputMaterialColor: {fileID: 11400000, guid: 8f7986281e911794a9e3e02462dd3989, type: 2}
@@ -57,6 +57,9 @@ MonoBehaviour:
     m_Bits: 192
   drawInEditorGizmos: 1
   maxTrianglesPerFrame: 10000
+  materialColorShaderProperty: _Color
+  materialNameRegex: 
+  materialNameRegexReplacement: 
 --- !u!114 &8688411203850925300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,3 +79,4 @@ MonoBehaviour:
   outputFileName: Profile_Netherlands3D.svg
   strokeWidth: 1
   documentHeight: 300
+  useMaterialColorForLines: 0

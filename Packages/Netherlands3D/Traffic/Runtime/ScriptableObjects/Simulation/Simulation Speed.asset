@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c342922c018cd5a47a21e82e5926dced, type: 3}
   m_Name: Simulation Speed
   m_EditorClassIdentifier: 
-  value: 0
-  description: 
-  onValueChanged: {fileID: 0}
+  value: 1
+  description: 'The speed at which the simulation is running.
+
+    1 = normal realtime
+    speed.
+
+
+    ! Make sure that this value does not go below or equal to 0 !'
+  onValueChanged: {fileID: 11400000, guid: 221a2b2e7995a9940a2b93b76f04d386, type: 2}
