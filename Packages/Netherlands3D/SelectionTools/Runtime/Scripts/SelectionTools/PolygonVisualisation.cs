@@ -180,7 +180,6 @@ namespace Netherlands3D.SelectionTools
             }
         }
 
-
         private void EnableMeshRenderers(bool value) // to set this programatically, set the property DrawMesh
         {
             GetComponent<MeshRenderer>().enabled = value;

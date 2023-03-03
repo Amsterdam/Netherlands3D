@@ -25,7 +25,8 @@ namespace Netherlands3D.SelectionTools
             //    return null;
 
             var newPolygonObject = new GameObject();
-
+            newPolygonObject.name = "PolygonVisualisation";
+            
             var meshFilter = newPolygonObject.AddComponent<MeshFilter>(); //mesh is created by the PolygonVisualisation script
             var meshRenderer = newPolygonObject.AddComponent<MeshRenderer>();
             meshRenderer.material = meshMaterial;
