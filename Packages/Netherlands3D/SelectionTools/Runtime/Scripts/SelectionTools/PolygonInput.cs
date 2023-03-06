@@ -562,8 +562,6 @@ namespace Netherlands3D.SelectionTools
             UpdateLine();
 
             requireReleaseBeforeRedraw = true;
-            polygonFinished = true;
-
             previewLineRenderer.enabled = false;
 
             if (!displayLineUntilRedraw)
@@ -578,10 +576,12 @@ namespace Netherlands3D.SelectionTools
                 MoveAllHandlesToPoint();
             }
 
-            if (createdNewPolygonArea && invokeNewPolygonEvent && positions.Count > 1)
+            if (!polygonFinished && createdNewPolygonArea && invokeNewPolygonEvent && positions.Count > 1)
                 createdNewPolygonArea.InvokeStarted(positions);
             else if (editedPolygonArea && positions.Count > 1)
                 editedPolygonArea.InvokeStarted(positions);
+
+            polygonFinished = true;
         }
     }
 }
