@@ -455,8 +455,14 @@ namespace Netherlands3D.SelectionTools
             lineHandle.pointIndex = positionIndex;
             lineHandle.transform.position = positions[positionIndex];
 
+            lineHandle.pointerDown.AddListener(() =>
+            {
+                blockCameraDrag.InvokeStarted(true);
+            });
+
             lineHandle.clicked.AddListener(() =>
             {
+                blockCameraDrag.InvokeStarted(false);
                 if (!closedLoop && lineHandle.pointIndex == 0)
                     CloseLoop(false);
             });
@@ -475,6 +481,8 @@ namespace Netherlands3D.SelectionTools
             });
             lineHandle.endDrag.AddListener(() =>
             {
+                blockCameraDrag.InvokeStarted(false);
+
                 if (!closedLoop) return;
 
                 FinishPolygon(false);

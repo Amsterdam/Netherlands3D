@@ -21,41 +21,58 @@ using UnityEngine.EventSystems;
 
 namespace Netherlands3D.SelectionTools
 {
-    public class PolygonDragHandle : MonoBehaviour, IDragHandler, IPointerClickHandler, IEndDragHandler
+    public class PolygonDragHandle : MonoBehaviour, IDragHandler, IPointerClickHandler, IEndDragHandler, IPointerDownHandler
     {
         public UnityEvent dragged = new UnityEvent();
         public UnityEvent endDrag = new UnityEvent();
         public UnityEvent clicked = new UnityEvent();
+        public UnityEvent pointerDown = new UnityEvent();
 
         public int pointIndex = 0;
 
         [SerializeField] private float scale = 0.02f;
         [SerializeField] private float minScale = 2f;
         [SerializeField] private bool autoScale = true;
+        [SerializeField] PointerEventData.InputButton actionButton;
         private Camera camera;
         private void OnEnable()
         {
             camera = Camera.main;
+            ScaleByDistance();
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            if(eventData.button == actionButton)
             clicked.Invoke();
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            dragged.Invoke();
+            if(eventData.button == actionButton)
+                dragged.Invoke();
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            endDrag.Invoke();
+            if(eventData.button == actionButton)
+                endDrag.Invoke();
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if(eventData.button == actionButton)
+                pointerDown.Invoke();
         }
 
         private void Update()
         {
-            var handleScale = Mathf.Max(minScale,scale * Vector3.Distance(camera.transform.position, transform.position));
+            ScaleByDistance();
+        }
+
+        private void ScaleByDistance()
+        {
+            var handleScale = Mathf.Max(minScale, scale * Vector3.Distance(camera.transform.position, transform.position));
             this.transform.localScale = Vector3.one * handleScale;
         }
 
