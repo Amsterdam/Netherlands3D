@@ -55,10 +55,15 @@ namespace Netherlands3D.SelectionTools
         /// <returns></returns>
         public static Mesh CreatePolygonMesh(List<IList<Vector3>> contours, float extrusionHeight, bool addBottom, Vector2 uvCoordinate = new Vector2())
         {
+            if (contours.Count == 0)
+                return null;
+
             var polygon = new Poly2Mesh.Polygon();
             var outerContour = (List<Vector3>)contours[0];
 
-            if (outerContour.Count < 3) return null;
+            if (outerContour.Count < 3)
+                return null;
+
             polygon.outside = outerContour;
 
             for (int i = 0; i < polygon.outside.Count; i++)

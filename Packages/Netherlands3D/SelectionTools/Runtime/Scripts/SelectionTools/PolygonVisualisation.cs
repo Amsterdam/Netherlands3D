@@ -13,7 +13,7 @@ namespace Netherlands3D.SelectionTools
     public class PolygonVisualisation : MonoBehaviour, IPointerClickHandler
     {
         private List<IList<Vector3>> polygons;
-        public List<IList<Vector3>> Polygons => polygons; //todo
+        public List<IList<Vector3>> Polygons => polygons; //todo make read only
         //public ReadOnlyCollection<ReadOnlyCollection<Vector3>> Polygons
         //{
         //    get
@@ -132,15 +132,18 @@ namespace Netherlands3D.SelectionTools
         {
             polygons = newPolygon;
 
-            var polygon2D = PolygonCalculator.FlattenPolygon(newPolygon[0], new Plane(Vector3.up,0));
-            var clockwise = PolygonCalculator.PolygonIsClockwise(polygon2D);
-
-            if (clockwise == createInwardMesh) // (clockwise && inward) || (!clockwise && !inward)
+            if (newPolygon.Count > 0)
             {
-                foreach (var contour in newPolygon)
+                var polygon2D = PolygonCalculator.FlattenPolygon(newPolygon[0], new Plane(Vector3.up, 0));
+                var clockwise = PolygonCalculator.PolygonIsClockwise(polygon2D);
+
+                if (clockwise == createInwardMesh) // (clockwise && inward) || (!clockwise && !inward)
                 {
-                    var list = (List<Vector3>)contour;
-                    list.Reverse();
+                    foreach (var contour in newPolygon)
+                    {
+                        var list = (List<Vector3>)contour;
+                        list.Reverse();
+                    }
                 }
             }
 
