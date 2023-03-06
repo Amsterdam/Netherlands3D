@@ -1,4 +1,6 @@
 #if UNITY_EDITOR
+using System.Collections.Generic;
+using System.Linq;
 using Netherlands3D.Events;
 using UnityEditor;
 #endif
@@ -14,6 +16,10 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 #if ENABLE_INPUT_SYSTEM
     [Header("Input")]
     [SerializeField] private InputActionAsset inputActionAsset;
+    [Header("Interface input ignore")]
+    [Tooltip("The CameraInputProvider will lock the input when a interaction starts while the pointer is over any of these layers")]
+    [SerializeField] private LayerMask lockInputLayers = 32; //UI layer 5th bit is a 1
+
     private InputActionMap cameraActionMap;
     private InputActionMap cameraPointerActionMap;
 
@@ -31,8 +37,28 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 
     private InputAction pointerAction;
 
+    public bool OverLockingObject
+    {
+        get
+        {
+            if (!EventSystem.current)
+                return false;
+
+            PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+            eventDataCurrentPosition.position = pointerAction.ReadValue<Vector2>();
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+            var uiElement = results.FirstOrDefault(result => (result.gameObject.IsInLayerMask(lockInputLayers)));
+            if (uiElement.gameObject != null)
+            {
+                return true;
+            }
+            return false;
+        }
+    }
+
     private void Awake()
-	{
+    {
         cameraActionMap = inputActionAsset.FindActionMap("Camera");
         cameraPointerActionMap = inputActionAsset.FindActionMap("CameraPointerActions");
         cameraActionMap.Enable();
@@ -52,9 +78,9 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
     }
 
     public void Update()
-	{
+    {
         //Optionaly ignore camera input when the pointer is interacting with UI
-        if (!isDragging && ignoreInputWhenHoveringInterface && EventSystem.current && EventSystem.current.IsPointerOverGameObject())
+        if (!isDragging && OverLockingObject)
         {
             ingoringInput = true;
             return;
@@ -91,15 +117,15 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 
         lookInput.InvokeStarted(lookValue);
 
-        if (moveValue.magnitude>0)
+        if (moveValue.magnitude > 0)
         {
             horizontalInput.InvokeStarted(moveValue.x);
             verticalInput.InvokeStarted(moveValue.y);
         }
-        if(flyValue.magnitude>0)
+        if (flyValue.magnitude > 0)
         {
             flyInput.InvokeStarted(flyValue);
-		}
+        }
         if (zoomValue.magnitude > 0)
         {
             zoomInput.InvokeStarted(zoomValue.y);
@@ -113,7 +139,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         {
             upDownInput.InvokeStarted(1);
         }
-        else if(downPressed)
+        else if (downPressed)
         {
             upDownInput.InvokeStarted(-1);
         }

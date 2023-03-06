@@ -175,6 +175,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ignoreInputWhenHoveringInterface: 1
+  lockInputLayers:
+    serializedVersion: 2
+    m_Bits: 32
   ingoringInput: 0
   lockDraggingInput: 0
   isDragging: 0

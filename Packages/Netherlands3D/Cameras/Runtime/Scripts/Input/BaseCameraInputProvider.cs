@@ -1,13 +1,8 @@
 ﻿using Netherlands3D.Events;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseCameraInputProvider : MonoBehaviour
+public abstract class BaseCameraInputProvider : MonoBehaviour
 {
-    [Header("Interface input ignore")]
-    public bool ignoreInputWhenHoveringInterface = true;
-
     [HideInInspector]
     public bool ingoringInput = false;
     [HideInInspector]

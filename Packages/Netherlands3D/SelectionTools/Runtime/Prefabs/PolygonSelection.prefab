@@ -119,10 +119,14 @@ MonoBehaviour:
   clicked:
     m_PersistentCalls:
       m_Calls: []
+  pointerDown:
+    m_PersistentCalls:
+      m_Calls: []
   pointIndex: 0
   scale: 0.02
   minScale: 2
   autoScale: 1
+  actionButton: 0
 --- !u!1 &5383004384880775817
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,9 +438,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputActionAsset: {fileID: -944628639613478452, guid: 445da62e811e3254c927570f340ea56d, type: 3}
+  polygonReselectionInput: {fileID: 11400000, guid: 5b96feff55d584cff9829cd46c04b21a, type: 2}
   blockCameraDrag: {fileID: 11400000, guid: 007cc40d489e1ef44857ad3377a33220, type: 2}
-  selectedPolygonArea: {fileID: 11400000, guid: 777e7bc0e0d3e4c4496e3278d9b50a7c, type: 2}
-  lineHasChanged: {fileID: 11400000, guid: 11bfe03ea53b4dd4a882ef7d345d340f, type: 2}
+  createdNewPolygonArea: {fileID: 0}
+  editedPolygonArea: {fileID: 11400000, guid: 6040433f915cd4f0eaae4862785c42f7, type: 2}
+  previewLineHasChanged: {fileID: 0}
   lineColor: {r: 1, g: 0.7202714, b: 0, a: 1}
   closedLoopLineColor: {r: 0, g: 1, b: 0, a: 1}
   lineWidthMultiplier: 1
