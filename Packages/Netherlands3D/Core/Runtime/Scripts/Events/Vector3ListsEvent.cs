@@ -23,16 +23,16 @@ namespace Netherlands3D.Events
 {
 	[CreateAssetMenu(fileName = "Vector3ListsEvent", menuName = "EventContainers/Vector3ListsEvent", order = 0)]
 	[System.Serializable]
-	public class Vector3ListsEvent : EventContainer<List<IList<Vector3>>>
+	public class Vector3ListsEvent : EventContainer<List<List<Vector3>>>
 	{
         [SerializeField]
         private bool sendAsCopy = true;
 
-        public override void InvokeStarted(List<IList<Vector3>> listListsVector3Content)
+        public override void InvokeStarted(List<List<Vector3>> listListsVector3Content)
 		{
             if (sendAsCopy)
             {
-                var copy = new List<IList<Vector3>>();
+                var copy = new List<List<Vector3>>();
                 foreach(var list in listListsVector3Content)
                 {
                     copy.Add(new List<Vector3>(list));

@@ -8,7 +8,7 @@ namespace Netherlands3D.SelectionTools
     {
         #region UnityComponents
         //Treat first contour as outer contour, and extra contours as holes
-        public static PolygonVisualisation CreateAndReturnPolygonObject(List<IList<Vector3>> contours,
+        public static PolygonVisualisation CreateAndReturnPolygonObject(List<List<Vector3>> contours,
             float meshExtrusionHeight,
             bool addMeshColliders,
             bool createInwardMesh = false,
@@ -53,7 +53,7 @@ namespace Netherlands3D.SelectionTools
         /// <param name="addBottom"></param>
         /// <param name="uvCoordinate"></param>
         /// <returns></returns>
-        public static Mesh CreatePolygonMesh(List<IList<Vector3>> contours, float extrusionHeight, bool addBottom, Vector2 uvCoordinate = new Vector2())
+        public static Mesh CreatePolygonMesh(List<List<Vector3>> contours, float extrusionHeight, bool addBottom, Vector2 uvCoordinate = new Vector2())
         {
             if (contours.Count == 0)
                 return null;
@@ -94,7 +94,7 @@ namespace Netherlands3D.SelectionTools
         #endregion
 
         #region PolygonLine
-        public static List<LineRenderer> CreateLineRenderers(List<IList<Vector3>> polygons, Material lineMaterial, Color lineColor, Transform parent = null)
+        public static List<LineRenderer> CreateLineRenderers(List<List<Vector3>> polygons, Material lineMaterial, Color lineColor, Transform parent = null)
         {
             var list = new List<LineRenderer>();
             foreach (var contour in polygons)

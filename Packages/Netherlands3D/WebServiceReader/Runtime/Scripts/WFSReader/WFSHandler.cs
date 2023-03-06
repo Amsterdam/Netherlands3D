@@ -293,7 +293,7 @@ public class WFSHandler : MonoBehaviour
         lineColorEvent.InvokeStarted(Color.HSVToRGB(hue, saturation, brightness));
     }
 
-    private void TestMultiLine(List<IList<Vector3>> multiLine)
+    private void TestMultiLine(List<List<Vector3>> multiLine)
     {
         //ShiftLineColor();
         foreach(List<Vector3> lines in multiLine)
