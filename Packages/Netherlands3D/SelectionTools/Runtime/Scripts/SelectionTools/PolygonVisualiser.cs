@@ -118,11 +118,11 @@ namespace Netherlands3D.SelectionTools
 
         public void CreateSinglePolygon(List<Vector3> contour)
         {
-            var contours = new List<IList<Vector3>> { contour };
+            var contours = new List<List<Vector3>> { contour };
             CreatePolygons(contours);
         }
 
-        public void CreatePolygons(List<IList<Vector3>> contours)
+        public void CreatePolygons(List<List<Vector3>> contours)
         {
             if (polygonCount >= maxPolygons)
                 return;

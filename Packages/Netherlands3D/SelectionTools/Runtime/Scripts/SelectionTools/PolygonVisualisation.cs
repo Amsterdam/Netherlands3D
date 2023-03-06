@@ -12,8 +12,8 @@ namespace Netherlands3D.SelectionTools
 {
     public class PolygonVisualisation : MonoBehaviour, IPointerClickHandler
     {
-        private List<IList<Vector3>> polygons;
-        public List<IList<Vector3>> Polygons => polygons; //todo make read only
+        private List<List<Vector3>> polygons;
+        public List<List<Vector3>> Polygons => polygons; //todo make read only
         //public ReadOnlyCollection<ReadOnlyCollection<Vector3>> Polygons
         //{
         //    get
@@ -100,7 +100,7 @@ namespace Netherlands3D.SelectionTools
         /// Sets a reference of the polygon to be visualised
         /// </summary>
         /// <param name="polygon"></param>
-        public void Initialize(List<IList<Vector3>> sourcePolygons, float extrusionHeight, bool addBottom, bool createInwardMesh, Material lineMaterial, Color lineColor, Vector2 uvCoordinate = new Vector2())
+        public void Initialize(List<List<Vector3>> sourcePolygons, float extrusionHeight, bool addBottom, bool createInwardMesh, Material lineMaterial, Color lineColor, Vector2 uvCoordinate = new Vector2())
         {
             polygons = sourcePolygons;
             this.extrusionHeight = extrusionHeight;
@@ -125,10 +125,10 @@ namespace Netherlands3D.SelectionTools
 
         public void UpdateVisualisation(List<Vector3> newPolygon)
         {
-            UpdateVisualisation(new List<IList<Vector3>>() { newPolygon });
+            UpdateVisualisation(new List<List<Vector3>>() { newPolygon });
         }
 
-        public void UpdateVisualisation(List<IList<Vector3>> newPolygon)
+        public void UpdateVisualisation(List<List<Vector3>> newPolygon)
         {
             polygons = newPolygon;
 
@@ -141,8 +141,7 @@ namespace Netherlands3D.SelectionTools
                 {
                     foreach (var contour in newPolygon)
                     {
-                        var list = (List<Vector3>)contour;
-                        list.Reverse();
+                        contour.Reverse();
                     }
                 }
             }

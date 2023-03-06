@@ -7,9 +7,9 @@ namespace Netherlands3D.WFSHandlers
 {
     public class MultiPolygonHandler
     {
-        public List<IList<Vector3>> GetMultiPoly(List<List<List<GeoJSONPoint>>> multiPolyList)
+        public List<List<Vector3>> GetMultiPoly(List<List<List<GeoJSONPoint>>> multiPolyList)
         {
-            List<IList<Vector3>> result = new();
+            List<List<Vector3>> result = new();
             foreach (List<List<GeoJSONPoint>> pointListList in multiPolyList)
             {
                 foreach (List<GeoJSONPoint> pointList in pointListList)
