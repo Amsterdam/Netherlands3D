@@ -25,7 +25,7 @@ using UnityEngine.InputSystem;
 namespace Netherlands3D.SelectionTools
 {
     [RequireComponent(typeof(LineRenderer))]
-    public class PolygonSelection : MonoBehaviour
+    public class PolygonInput : MonoBehaviour
     {
         [System.Serializable]
         public enum WindingOrder
@@ -137,6 +137,7 @@ namespace Netherlands3D.SelectionTools
             }
         }
 
+#if UNITY_EDITOR
         private void OnValidate()
         {
             if (createHandles && doubleClickToCloseLoop)
@@ -146,27 +147,35 @@ namespace Netherlands3D.SelectionTools
                 doubleClickToCloseLoop = false;
             }
         }
+#endif
 
         private void OnEnable()
         {
-                if (clearOnEnable)
-                {
-                    ClearPolygon(true);
-                }
+            if (clearOnEnable)
+            {
+                ClearPolygon(true);
+            }
 
-                polygonSelectionActionMap.Enable();
+            polygonSelectionActionMap.Enable();
 
             if (polygonReselectionInput)
                 polygonReselectionInput.AddListenerStarted(ReselectPolygon);
         }
 
-        private void ReselectPolygon(List<Vector3> points)
+        private void OnDisable()
+        {
+            autoDrawPolygon = false;
+            blockCameraDrag.InvokeStarted(false);
+            polygonSelectionActionMap.Disable();
+        }
+
+        public void ReselectPolygon(List<Vector3> points)
         {
             ClearPolygon(true);
             for (int i = 0; i < points.Count; i++)
             {
                 Vector3 point = points[i];
-                if(i == points.Count - 1)
+                if (i == points.Count - 1)
                 {
                     if (point == points[0])
                         continue;
@@ -177,17 +186,10 @@ namespace Netherlands3D.SelectionTools
             CloseLoop(false);
         }
 
-        private void OnDisable()
-        {
-            autoDrawPolygon = false;
-            blockCameraDrag.InvokeStarted(false);
-            polygonSelectionActionMap.Disable();
-        }
-
         private void Update()
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
-            currentWorldCoordinate = GetCoordinateInWorld(currentPointerPosition);
+            currentWorldCoordinate = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
 
             UpdatePreviewLine();
             pointerRepresentation.position = currentWorldCoordinate;
@@ -245,7 +247,7 @@ namespace Netherlands3D.SelectionTools
 
                 var comparisonStart = polygonLineRenderer.GetPosition(i - 1);
                 var comparisonEnd = polygonLineRenderer.GetPosition(i);
-                if (LinesIntersectOnPlane(previewLineFirstPoint, previewLineLastPoint, comparisonStart, comparisonEnd))
+                if (PolygonCalculator.LinesIntersectOnPlane(previewLineFirstPoint, previewLineLastPoint, comparisonStart, comparisonEnd))
                 {
                     previewLineCrossed = true;
                     previewLineRenderer.startColor = previewLineRenderer.endColor = Color.red;
@@ -255,58 +257,6 @@ namespace Netherlands3D.SelectionTools
             }
 
             previewLineRenderer.startColor = previewLineRenderer.endColor = Color.green;
-        }
-
-        /// <summary>
-        /// Compare line with placed lines to check if they do not intersect.
-        /// </summary>
-        /// <param name="linePointA">Start point of the line we want to check</param>
-        /// <param name="linePointB">End point of the line we want to check</param>
-        /// <param name="skipFirst">Skip the first line in our chain</param>
-        /// <param name="skipLast">Skip the last line in our chain</param>
-        /// <returns>Returns true if an intersection was found</returns>
-        private bool LineCrossesOtherLine(Vector3 linePointA, Vector3 linePointB, bool skipFirst = false, bool skipLast = false, bool ignoreConnected = false)
-        {
-            int startIndex = (skipFirst) ? 2 : 1;
-            int endIndex = (skipLast) ? polygonLineRenderer.positionCount - 1 : polygonLineRenderer.positionCount;
-            for (int i = startIndex; i < endIndex; i++)
-            {
-                var comparisonStart = polygonLineRenderer.GetPosition(i - 1);
-                var comparisonEnd = polygonLineRenderer.GetPosition(i);
-                if (LinesIntersectOnPlane(linePointA, linePointB, comparisonStart, comparisonEnd))
-                {
-                    if (ignoreConnected)
-                    {
-                        if (linePointA.Equals(comparisonStart) || linePointA.Equals(comparisonEnd) || linePointB.Equals(comparisonStart) || linePointB.Equals(comparisonEnd))
-                        {
-                            Debug.Log("Line is overlapping connected line! This is allowed.");
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        Debug.Log("Line is crossing other line! This is not allowed.");
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Returns if lines intersect on a flat plane
-        /// </summary>
-        /// <returns></returns>
-        public static bool LinesIntersectOnPlane(Vector3 lineOneA, Vector3 lineOneB, Vector3 lineTwoA, Vector3 lineTwoB)
-        {
-            return
-                (((lineTwoB.z - lineOneA.z) * (lineTwoA.x - lineOneA.x) > (lineTwoA.z - lineOneA.z) * (lineTwoB.x - lineOneA.x)) !=
-                ((lineTwoB.z - lineOneB.z) * (lineTwoA.x - lineOneB.x) > (lineTwoA.z - lineOneB.z) * (lineTwoB.x - lineOneB.x)) &&
-                ((lineTwoA.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoA.x - lineOneA.x)) !=
-                ((lineTwoB.z - lineOneA.z) * (lineOneB.x - lineOneA.x) > (lineOneB.z - lineOneA.z) * (lineTwoB.x - lineOneA.x)));
         }
 
         /// <summary>
@@ -338,6 +288,9 @@ namespace Netherlands3D.SelectionTools
 
         private void CloseLoop(bool isNewPolygon, bool checkPreviewLine = true)
         {
+            if (closedLoop)
+                return;
+
             if (requireClosedPolygon)
             {
                 if (positions.Count < minPointsToCloseLoop)
@@ -363,7 +316,7 @@ namespace Netherlands3D.SelectionTools
                     Debug.Log("Try to add a finishing line.");
                     var closingLineStart = positions[positions.Count - 1];
                     var closingLineEnd = positions[0];
-                    if (LineCrossesOtherLine(closingLineStart, closingLineEnd, true, true))
+                    if (PolygonCalculator.LineCrossesOtherLine(closingLineStart, closingLineEnd, positions, true, true))
                     {
                         Debug.Log("Cant close loop, closing line will cross another line.");
                         return;
@@ -386,7 +339,7 @@ namespace Netherlands3D.SelectionTools
                 return;
 
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
-            currentWorldCoordinate = GetCoordinateInWorld(currentPointerPosition);
+            currentWorldCoordinate = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
 
             if (doubleClickToCloseLoop)
             {
@@ -552,8 +505,8 @@ namespace Netherlands3D.SelectionTools
                 lineTwoB = positions[dragHandle.pointIndex - 1];
             }
 
-            if (LineCrossesOtherLine(lineOneA, lineOneB, false, false, true)) return true;
-            if (LineCrossesOtherLine(lineTwoA, lineTwoB, false, false, true)) return true;
+            if (PolygonCalculator.LineCrossesOtherLine(lineOneA, lineOneB, positions, false, false, true)) return true;
+            if (PolygonCalculator.LineCrossesOtherLine(lineTwoA, lineTwoB, positions, false, false, true)) return true;
 
             return false;
         }
@@ -595,13 +548,13 @@ namespace Netherlands3D.SelectionTools
         private void StartClick()
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
-            selectionStartPosition = GetCoordinateInWorld(currentPointerPosition);
+            selectionStartPosition = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
         }
 
         private void Release()
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
-            var selectionEndPosition = GetCoordinateInWorld(currentPointerPosition);
+            var selectionEndPosition = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
         }
 
         private void FinishPolygon(bool invokeNewPolygonEvent)
@@ -612,14 +565,13 @@ namespace Netherlands3D.SelectionTools
             UpdateLine();
 
             requireReleaseBeforeRedraw = true;
-            polygonFinished = true;
-
             previewLineRenderer.enabled = false;
 
             if (!displayLineUntilRedraw)
                 polygonLineRenderer.enabled = false;
 
-            var polygonIsClockwise = PolygonCalculator.PolygonIsClockwise(positions);
+            var positions2D = PolygonCalculator.FlattenPolygon(positions.ToArray(), worldPlane);
+            var polygonIsClockwise = PolygonCalculator.PolygonIsClockwise(positions2D);
             if ((windingOrder == WindingOrder.COUNTERCLOCKWISE && polygonIsClockwise) || (windingOrder == WindingOrder.CLOCKWISE && !polygonIsClockwise))
             {
                 Debug.Log($"Forcing to {windingOrder}");
@@ -627,25 +579,12 @@ namespace Netherlands3D.SelectionTools
                 MoveAllHandlesToPoint();
             }
 
-            if (createdNewPolygonArea && invokeNewPolygonEvent && positions.Count > 1)
+            if (!polygonFinished && createdNewPolygonArea && invokeNewPolygonEvent && positions.Count > 1)
                 createdNewPolygonArea.InvokeStarted(positions);
             else if (editedPolygonArea && positions.Count > 1)
                 editedPolygonArea.InvokeStarted(positions);
-        }
 
-        /// <summary>
-        /// Get the position of a screen point in world coordinates ( on a plane )
-        /// </summary>
-        /// <param name="screenPoint">The point in screenpoint coordinates</param>
-        /// <returns></returns>
-        private Vector3 GetCoordinateInWorld(Vector3 screenPoint)
-        {
-            var screenRay = Camera.main.ScreenPointToRay(screenPoint);
-
-            worldPlane.Raycast(screenRay, out float distance);
-            var samplePoint = screenRay.GetPoint(Mathf.Min(maxSelectionDistanceFromCamera, distance));
-
-            return samplePoint;
+            polygonFinished = true;
         }
     }
 }
