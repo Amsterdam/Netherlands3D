@@ -142,6 +142,11 @@ public static class IListInsertIntoSortedListExtensions
 		list.Insert(startIndex, value);
 	}
 
+    /// <summary>
+    /// Convert a List<Vector2> to a List<Vector3> with the y component as the height
+    /// </summary>
+    /// <param name="input">Vector2 list to make 3D, heigt component</param>
+    /// <returns>Vector3 List</returns>
     public static List<Vector3> ToVector3List(this List<Vector2> input, float height = 0)
     {
         var list = new List<Vector3>();
@@ -149,6 +154,22 @@ public static class IListInsertIntoSortedListExtensions
         {
             var p = input[i];
             list.Add(new(p.x, height, p.y));
+        }
+        return list;
+    }
+
+    /// <summary>
+    /// Flattens a List<Vector3> to a List<Vector2> by removing the y component
+    /// </summary>
+    /// <param name="input">Vector3 list to flatten</param>
+    /// <returns>vector2 List</returns>
+    public static List<Vector2> ToVector2List(this List<Vector3> input)
+    {
+        var list = new List<Vector2>();
+        for (int i = 0; i < input.Count; i++)
+        {
+            var p = input[i];
+            list.Add(new(p.x, p.y));
         }
         return list;
     }

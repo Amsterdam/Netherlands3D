@@ -21,6 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UIElements;
 
 namespace Netherlands3D.SelectionTools
@@ -39,15 +40,15 @@ namespace Netherlands3D.SelectionTools
         private StringEvent setDrawingObjectName;
         [SerializeField]
         private FloatEvent setExtrusionHeightEvent;
-        [SerializeField]
-        private Vector3ListEvent polygonEdited;
+        [SerializeField] private GameObjectEvent polyParentEvent;
+        [SerializeField] private Vector3ListEvent polygonEdited;
 
         [SerializeField]
         private string newDrawingObjectName = "";
 
         [Header("Mesh")]
         [SerializeField]
-        private Material defaultMaterial;
+        private Material meshMaterial;
 
         [SerializeField]
         private float extrusionHeight = 100.0f;
@@ -56,7 +57,7 @@ namespace Netherlands3D.SelectionTools
         private int polygonCount = 0;
 
         [SerializeField]
-        private bool createInwardMesh;
+        private bool createInwardMesh = false;
         [SerializeField]
         private bool addBottom = false;
         [SerializeField]
@@ -79,7 +80,12 @@ namespace Netherlands3D.SelectionTools
         [SerializeField]
         GameObjectEvent createdPolygonGameObject;
         [SerializeField]
-        Vector3ListEvent polygonReselected;
+        Vector3ListEvent polygonReselected; //sends list to PolygonSelection for reselection
+
+        //List<PolygonVisualisation> polygonVisualisations = new List<PolygonVisualisation>();
+        PolygonVisualisation selectedPolygon;
+
+        private Transform geometryParent;
 
         void Awake()
         {
@@ -87,6 +93,17 @@ namespace Netherlands3D.SelectionTools
             if (drawPolygonEvent) drawPolygonEvent.AddListenerStarted(CreatePolygons);
             if (drawSinglePolygonEvent) drawSinglePolygonEvent.AddListenerStarted(CreateSinglePolygon);
             if (setExtrusionHeightEvent) setExtrusionHeightEvent.AddListenerStarted(SetExtrusionHeight);
+            if (polyParentEvent) polyParentEvent.AddListenerStarted((parentObject) => geometryParent = parentObject.transform);
+        }
+
+        private void OnEnable()
+        {
+            polygonEdited.AddListenerStarted(UpdateSelectedPolygon);
+        }
+
+        private void OnDisable()
+        {
+            polygonEdited.RemoveAllListenersStarted();
         }
 
         public void SetExtrusionHeight(float extrusionHeight)
@@ -101,46 +118,42 @@ namespace Netherlands3D.SelectionTools
 
         public void CreateSinglePolygon(List<Vector3> contour)
         {
-            var contours = new List<List<Vector3>> { contour };
+            var contours = new List<IList<Vector3>> { contour };
             CreatePolygons(contours);
         }
 
-        public void CreatePolygons(List<List<Vector3>> contours)
+        public void CreatePolygons(List<IList<Vector3>> contours)
         {
-            CreateAndReturnPolygons(contours);
-        }
+            if (polygonCount >= maxPolygons)
+                return;
 
-        //Treat first contour as outer contour, and extra contours as holes
-        public GameObject CreateAndReturnPolygons(List<List<Vector3>> contours)
-        {
-            if (polygonCount >= maxPolygons) return null;
             polygonCount++;
+            var polygonVisualisation = PolygonVisualisationUtility.CreateAndReturnPolygonObject(contours, extrusionHeight, addColliders, createInwardMesh, addBottom, meshMaterial, lineMaterial, lineColor, uvCoordinate, receiveShadows);
 
-            Mesh newPolygonMesh = PolygonVisualisation.CreatePolygonMesh(contours, extrusionHeight, addBottom, uvCoordinate);
-            if (newPolygonMesh == null)
-                return null;
+            selectedPolygon = polygonVisualisation;
+            polygonVisualisation.reselectVisualisedPolygon.AddListener(InvokeReselectPolygonEvent);
+            polygonVisualisation.ReselectPolygon();
 
-            var newPolygonObject = new GameObject();
 #if UNITY_EDITOR
             //Do not bother setting object name outside of Editor untill we need it.
-            newPolygonObject.name = newDrawingObjectName;
+            polygonVisualisation.gameObject.name = newDrawingObjectName;
 #endif
-            var meshFilter = newPolygonObject.AddComponent<MeshFilter>(); //mesh is created by the PolygonVisualisation script
-            var meshRenderer = newPolygonObject.AddComponent<MeshRenderer>();
-            meshRenderer.material = defaultMaterial;
-            meshRenderer.receiveShadows = receiveShadows;
+            polygonVisualisation.transform.SetParent(this.transform);
+            if (createdPolygonGameObject) createdPolygonGameObject.InvokeStarted(polygonVisualisation.gameObject);
+        }
 
-            if (addColliders)
-                newPolygonObject.AddComponent<MeshCollider>().sharedMesh = newPolygonMesh;
+        private void InvokeReselectPolygonEvent(PolygonVisualisation polygonToReselect)
+        {
+            selectedPolygon = null; //deselect active polygon so it doesn't change shape to the reselected polygon when invoking the reselection event
+            polygonReselected.InvokeStarted(polygonToReselect.Polygons[0] as List<Vector3>);
+            selectedPolygon = polygonToReselect;
+        }
 
-            var polygonVisualisation = newPolygonObject.AddComponent<PolygonVisualisation>();
-            polygonVisualisation.Initialize(contours, extrusionHeight, addBottom, createInwardMesh, polygonReselected, polygonEdited, lineMaterial, lineColor, uvCoordinate);
 
-            newPolygonObject.transform.SetParent(this.transform);
-            newPolygonObject.transform.Translate(0, extrusionHeight, 0);
-
-            if (createdPolygonGameObject) createdPolygonGameObject.InvokeStarted(newPolygonObject);
-            return newPolygonObject;
+        private void UpdateSelectedPolygon(List<Vector3> newPolygon)
+        {
+            if (selectedPolygon)
+                selectedPolygon.UpdateVisualisation(newPolygon);
         }
     }
 }

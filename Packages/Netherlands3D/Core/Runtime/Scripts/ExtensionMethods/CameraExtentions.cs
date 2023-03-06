@@ -91,4 +91,19 @@ public static class CameraExtensions
     {
         return corners;
     }
+
+    /// <summary>
+    /// Get the position of a screen point in world coordinates ( on a plane )
+    /// </summary>
+    /// <param name="screenPoint">The point in screenpoint coordinates</param>
+    /// <returns></returns>
+    public static Vector3 GetCoordinateInWorld(this Camera camera, Vector3 screenPoint, Plane worldPlane, float maxSelectionDistanceFromCamera = Mathf.Infinity)
+    {
+        var screenRay = camera.ScreenPointToRay(screenPoint);
+
+        worldPlane.Raycast(screenRay, out float distance);
+        var samplePoint = screenRay.GetPoint(Mathf.Min(maxSelectionDistanceFromCamera, distance));
+
+        return samplePoint;
+    }
 }
