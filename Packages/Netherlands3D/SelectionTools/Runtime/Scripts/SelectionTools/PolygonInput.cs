@@ -288,6 +288,9 @@ namespace Netherlands3D.SelectionTools
 
         private void CloseLoop(bool isNewPolygon, bool checkPreviewLine = true)
         {
+            if (closedLoop)
+                return;
+
             if (requireClosedPolygon)
             {
                 if (positions.Count < minPointsToCloseLoop)
