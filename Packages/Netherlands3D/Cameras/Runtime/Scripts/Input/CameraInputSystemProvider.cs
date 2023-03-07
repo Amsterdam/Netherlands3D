@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 #endif
 
 public class CameraInputSystemProvider : BaseCameraInputProvider
@@ -37,19 +38,17 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 
     private InputAction pointerAction;
 
+    private InputSystemUIInputModule inputSystemUIInputModule;
+
     public bool OverLockingObject
     {
         get
         {
-            if (!EventSystem.current)
+            if (!inputSystemUIInputModule)
                 return false;
 
-            PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-            eventDataCurrentPosition.position = pointerAction.ReadValue<Vector2>();
-            List<RaycastResult> results = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
-            var uiElement = results.FirstOrDefault(result => (result.gameObject.IsInLayerMask(lockInputLayers)));
-            if (uiElement.gameObject != null)
+            GameObject gameObjectUnderPoint = inputSystemUIInputModule.GetLastRaycastResult(0).gameObject;
+            if (gameObjectUnderPoint && gameObjectUnderPoint.IsInLayerMask(lockInputLayers))
             {
                 return true;
             }
@@ -59,7 +58,11 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 
     private void Awake()
     {
+        if (EventSystem.current)
+            inputSystemUIInputModule = EventSystem.current.GetComponent<InputSystemUIInputModule>();
+
         cameraActionMap = inputActionAsset.FindActionMap("Camera");
+
         cameraPointerActionMap = inputActionAsset.FindActionMap("CameraPointerActions");
         cameraActionMap.Enable();
         cameraPointerActionMap.Enable();
