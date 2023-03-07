@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
@@ -42,6 +43,10 @@ namespace RuntimeHandle
         public InputSystemUIInputModule inputSystemUIInputModule;
 
         public string layerName = "UI";
+
+        public UnityEvent startedDraggingHandle = new UnityEvent();
+        public UnityEvent draggingHandle = new UnityEvent();
+        public UnityEvent endedDraggingHandle = new UnityEvent();
 
         private void Awake()
         {
@@ -115,24 +120,22 @@ namespace RuntimeHandle
 
             HandleOverEffect(handle);
 
-            if (inputSystemUIInputModule.leftClick.action.IsPressed() && _draggingHandle != null)
-            {
-                Debug.Log("PRESSED");
-                _draggingHandle.Interact(_previousMousePosition);
-            }
-
             if (inputSystemUIInputModule.leftClick.action.WasPressedThisFrame() && handle != null)
             {
-                Debug.Log("PRESSED");
                 _draggingHandle = handle;
                 _draggingHandle.StartInteraction(hitPoint);
+                startedDraggingHandle.Invoke();
             }
-
+            if (inputSystemUIInputModule.leftClick.action.IsPressed() && _draggingHandle != null)
+            {
+                _draggingHandle.Interact(_previousMousePosition);
+                draggingHandle.Invoke();
+            }
             if (inputSystemUIInputModule.leftClick.action.WasReleasedThisFrame() && _draggingHandle != null)
             {
-                Debug.Log("END");
                 _draggingHandle.EndInteraction();
                 _draggingHandle = null;
+                endedDraggingHandle.Invoke();
             }
 
             _previousMousePosition = inputSystemUIInputModule.point.action.ReadValue<Vector2>();
