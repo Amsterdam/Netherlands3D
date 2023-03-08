@@ -44,4 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a627cec4c1d89fd4dac5c04bd7d4c971, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cube: {fileID: 0}
+  draggingHandle: {fileID: 11400000, guid: 007cc40d489e1ef44857ad3377a33220, type: 2}
+  addGameObject: {fileID: 11400000, guid: 07a573fdbacb1b64088be2a1bea29a14, type: 2}
