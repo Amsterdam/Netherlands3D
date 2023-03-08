@@ -71,3 +71,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 .vscode/settings.json
+
+#NL3D specific
+/[Aa]ssets/[Ss]amples/*
+/[Aa]ssets/[Ss]amples.meta
