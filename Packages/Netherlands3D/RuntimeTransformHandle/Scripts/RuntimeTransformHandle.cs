@@ -53,6 +53,13 @@ namespace RuntimeHandle
             gameObject.layer = LayerMask.NameToLayer(layerName);
         }
 
+        private void OnDestroy()
+        {
+            startedDraggingHandle.RemoveAllListeners();
+            draggingHandle.RemoveAllListeners();
+            endedDraggingHandle.RemoveAllListeners();
+        }
+
         void Start()
         {
             if(!inputSystemUIInputModule && EventSystem.current)

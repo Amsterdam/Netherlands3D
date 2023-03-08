@@ -1,36 +1,80 @@
-using System.Collections;
-using System.Collections.Generic;
+using Netherlands3D.Events;
 using RuntimeHandle;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 
 public class HandleGameObjectsContainer : MonoBehaviour
 {
-    private Dictionary<GameObject,RuntimeTransformHandle> handleGameObjects = new Dictionary<GameObject, RuntimeTransformHandle>();
+    private RuntimeTransformHandle handle;
+    private InputSystemUIInputModule inputSystemUIInputModule;
 
-    private void OnTransformChildrenChanged()
+    private GameObject selectedObject;
+
+    public HandleType handleType = HandleType.POSITION;
+
+    [SerializeField] BoolEvent draggingHandle;
+
+    private void Start()
     {
-        //Add handles to new child objects
-        foreach (Transform child in transform)
+        if (!inputSystemUIInputModule && EventSystem.current)
+            inputSystemUIInputModule = EventSystem.current.GetComponent<InputSystemUIInputModule>();
+
+        if (!inputSystemUIInputModule)
         {
-            if (!handleGameObjects.ContainsKey(child.gameObject))
-            {
-                var newHandle = RuntimeTransformHandle.Create(child, HandleType.POSITION);
-                handleGameObjects.Add(child.gameObject, newHandle);
-            }
+            Debug.LogError("InputSystemUIInputModule required to register clicks", this.gameObject);
+            return;
         }
 
-        //Child objects can be moved out of this parent or destroyed
-        foreach(KeyValuePair<GameObject, RuntimeTransformHandle> objectAndHandle in handleGameObjects)
+        //Add click listener for all objects that add gizmo on click
+        inputSystemUIInputModule.leftClick.action.performed += SelectObject;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void SelectObject(InputAction.CallbackContext obj)
+    {
+        ClearHandle();
+
+        var selectedObject = inputSystemUIInputModule.GetLastRaycastResult(0).gameObject;
+        if(selectedObject != null)
         {
-            if (objectAndHandle.Key == null)
-            {
-                handleGameObjects.Remove(objectAndHandle.Key);
-            }
-            else if(objectAndHandle.Key.transform.parent != this.transform)
-            {
-                Destroy(objectAndHandle.Value);
-                handleGameObjects.Remove(objectAndHandle.Key);
-            }
+            this.selectedObject = selectedObject;
+            HandleToTransform(selectedObject.transform);
         }
+    }
+
+    /// <summary>
+    /// Clears current handle
+    /// </summary>
+    private void ClearHandle()
+    {
+        if (handle) Destroy(handle);
+    }
+
+    private void HandleToTransform(Transform objectTransform)
+    {
+        handle = RuntimeTransformHandle.Create(objectTransform, handleType);
+
+        handle.startedDraggingHandle.AddListener(StartedDragging);
+        handle.endedDraggingHandle.AddListener(EndedDragging);
+    }
+
+    private void StartedDragging()
+    {
+        if(draggingHandle)
+            draggingHandle.InvokeStarted(true);
+    }
+    private void EndedDragging()
+    {
+        if (draggingHandle)
+            draggingHandle.InvokeStarted(false);
+    }
+
+    private void OnDisable()
+    {
+        Destroy(handle);
     }
 }
