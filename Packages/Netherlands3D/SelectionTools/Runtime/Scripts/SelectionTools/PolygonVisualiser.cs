@@ -98,12 +98,14 @@ namespace Netherlands3D.SelectionTools
 
         private void OnEnable()
         {
-            polygonEdited.AddListenerStarted(UpdateSelectedPolygon);
+           if(polygonEdited)
+                polygonEdited.AddListenerStarted(UpdateSelectedPolygon);
         }
 
         private void OnDisable()
         {
-            polygonEdited.RemoveAllListenersStarted();
+            if (polygonEdited)
+                polygonEdited.RemoveAllListenersStarted();
         }
 
         public void SetExtrusionHeight(float extrusionHeight)
