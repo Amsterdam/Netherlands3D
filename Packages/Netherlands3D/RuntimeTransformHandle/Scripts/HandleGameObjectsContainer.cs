@@ -42,6 +42,7 @@ public class HandleGameObjectsContainer : MonoBehaviour
             return;
         }
 
+        Debug.Log("InputSystemUIInputModule found ", inputSystemUIInputModule.gameObject);
         //Add click listener for all objects that add gizmo on click
         inputSystemUIInputModule.leftClick.action.performed += SelectObject;
     }
@@ -69,7 +70,7 @@ public class HandleGameObjectsContainer : MonoBehaviour
     /// </summary>
     private void SelectObject(InputAction.CallbackContext callback)
     {
-        if (callback.phase == InputActionPhase.Started)
+        if (callback.phase == InputActionPhase.Performed)
         {
             Debug.Log("Clicked, trying to select an object");
             var selectedObject = inputSystemUIInputModule.GetLastRaycastResult(0).gameObject;
