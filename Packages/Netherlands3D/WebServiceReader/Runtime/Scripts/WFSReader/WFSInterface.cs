@@ -28,7 +28,7 @@ public class WFSInterface : MonoBehaviour
     void Start()
     {
         wfsDataEvent.AddListenerStarted((object wfs) => BuildWFSInterface((WFS)wfs));
-        activateFeatureEvent.AddListenerStarted((object feature) => BuildFilterInterface((WFSFeature)feature));
+        //activateFeatureEvent.AddListenerStarted((object feature) => BuildFilterInterface((WFSFeature)feature));
     }
 
     //public void InvokeFeatureEvent()

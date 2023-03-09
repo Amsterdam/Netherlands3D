@@ -42,6 +42,7 @@ public class WFSHandler : MonoBehaviour
     [SerializeField] private StringEvent wfsCreationEvent;
     //[SerializeField] private StringEvent getFeatureEvent;
     [SerializeField] private ObjectEvent setActiveFeatureEvent;
+    [SerializeField] private GameObjectEvent polygonVisualizeReturnEvent;
     [SerializeField] private StringEvent wfsMinXEvent;
     [SerializeField] private StringEvent wfsMaxXEvent;
     [SerializeField] private StringEvent wfsMinYEvent;
@@ -49,9 +50,13 @@ public class WFSHandler : MonoBehaviour
 
     [SerializeField] private DoubleArrayEvent boundingBoxDoubleArrayEvent;
 
+    [Header("Temp Events(Debug)")]
+    [SerializeField] private ColorEvent featureColorEvent;
 
     private WFSFormatter formatter;
     private WFSFeature activeFeature;
+    private List<GameObject> currentFeatureObjects;
+    private Dictionary<string, List<GameObject>> wfsObjectsDictionary = new();
     private WFSFeatureData featureData;
     private float coroutineRunTime = 200f;
     private float hue = 0.9f;
@@ -72,7 +77,8 @@ public class WFSHandler : MonoBehaviour
         wfsMaxYEvent.AddListenerStarted(SetBoundingBoxMaxY);
 
         if (boundingBoxDoubleArrayEvent) boundingBoxDoubleArrayEvent.AddListenerStarted(SetBoundsFromDoubleArray);
-
+        if (polygonVisualizeReturnEvent) polygonVisualizeReturnEvent.AddListenerStarted((GameObject g) => currentFeatureObjects?.Add(g));
+        if (featureColorEvent) featureColorEvent.AddListenerStarted(TestFeatureColorEdit);
         // The addition of these functions to the events are only for testing and debugging purposes.
         // They should be removed or commented out later.
         pointEvent.AddListenerStarted(TestPoint);
@@ -142,6 +148,7 @@ public class WFSHandler : MonoBehaviour
     private IEnumerator HandleFeatureJSON(GeoJSON geoJSON)
     {
         ShiftLineColor();
+        currentFeatureObjects = new();
         SpawnParent = new GameObject().transform;
         SpawnParent.name = "WFS_ObjectParent";
         wfsParentEvent.InvokeStarted(SpawnParent.gameObject);
@@ -161,6 +168,7 @@ public class WFSHandler : MonoBehaviour
 
 
         }
+        yield return null;
         while (geoJSON.GotoNextFeature())
         {
             Debug.Log("Evaluating next feature!");
@@ -176,6 +184,20 @@ public class WFSHandler : MonoBehaviour
                 yield return null;
                 dateTime = DateTime.UtcNow;
             }
+        }
+        Debug.Log("Passed through the while-loop");
+        Debug.Log(currentFeatureObjects.Count);
+        if (wfsObjectsDictionary.ContainsKey(activeFeature.FeatureName))
+        {
+            foreach(GameObject g in wfsObjectsDictionary[activeFeature.FeatureName])
+            {
+                Destroy(g);
+            }
+            wfsObjectsDictionary[activeFeature.FeatureName] = currentFeatureObjects;
+        }
+        else
+        {
+            wfsObjectsDictionary.Add(activeFeature.FeatureName, currentFeatureObjects);
         }
         if (propertyFeatureEvent)
             propertyFeatureEvent.InvokeStarted(activeFeature);
@@ -307,6 +329,7 @@ public class WFSHandler : MonoBehaviour
         //SpawnParent = new GameObject().transform;
         //SpawnParent.name = "WFS_ObjectParent";
         GameObject wfsPointObject = Instantiate(visualizer, pointCoord + Vector3.up * 100, Quaternion.identity, SpawnParent);
+        currentFeatureObjects.Add(wfsPointObject);
     }
     private void TestMultiPoints(List<Vector3> pointCoords)
     {
@@ -316,7 +339,17 @@ public class WFSHandler : MonoBehaviour
         foreach (Vector3 position in pointCoords)
         {
             GameObject wfsPointObject = Instantiate(visualizer, position + Vector3.up * 100, Quaternion.identity, SpawnParent);
+            currentFeatureObjects.Add(wfsPointObject);
         }
     }
-
+    private void TestFeatureColorEdit(Color newColor)
+    {
+        if (wfsObjectsDictionary.ContainsKey(activeFeature?.FeatureName))
+        {
+            foreach(GameObject g in wfsObjectsDictionary[activeFeature.FeatureName])
+            {
+                g.GetComponent<MeshRenderer>().material.color = newColor;
+            }
+        }
+    }
 }
