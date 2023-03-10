@@ -15,21 +15,32 @@
 *  implied. See the License for the specific language governing
 *  permissions and limitations under the License.
 */
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class DoubleArrayValueUnityEvent : UnityEvent<double[]> { }
-
 	[CreateAssetMenu(fileName = "DoubleArrayEvent", menuName = "EventContainers/DoubleArrayEvent", order = 0)]
 	[System.Serializable]
-	public class DoubleArrayEvent : EventContainer<DoubleArrayValueUnityEvent> 
+	public class DoubleArrayEvent : EventContainer<double[]> 
 	{
-		public void Invoke(double[] doubleArray)
+        [SerializeField]
+        private bool sendAsCopy = true;
+
+        public override void InvokeStarted(double[] doubleArray)
 		{
-			started.Invoke(doubleArray);
+            if (sendAsCopy)
+            {
+                var copy = new double[doubleArray.Length];
+                Array.Copy(doubleArray, copy, doubleArray.Length);
+                started.Invoke(copy);
+            }
+            else
+            {
+                started.Invoke(doubleArray);
+            }
 		}
 	}
 }

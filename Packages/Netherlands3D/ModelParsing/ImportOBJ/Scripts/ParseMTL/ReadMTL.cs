@@ -41,6 +41,11 @@ namespace Netherlands3D.ModelParsing
         private MaterialData targetMaterialData;
         private int parseLinePointer = 0;
 
+        /// <summary>
+        /// Dictionary with loaded textures for use in the material.
+        /// </summary>
+        private Dictionary<string, Texture2D> loadedTextures = new Dictionary<string, Texture2D>();
+
         [SerializeField]
         //private GeometryBuffer buffer;
         // Materials
@@ -64,6 +69,21 @@ namespace Netherlands3D.ModelParsing
         {
             needToCancel = true;
             Debug.Log("Cancelling ReadMTL");
+        }
+
+        public void AddTexture(string orgName, string fileName)
+        {
+            if (loadedTextures.ContainsKey(orgName) == false)
+            {
+                Texture2D tex = new Texture2D(2, 2);
+                tex.LoadImage(System.IO.File.ReadAllBytes(fileName));
+                
+                Debug.Log("Loaded tex: " + orgName + " = " + fileName);
+
+                loadedTextures.Add(orgName, tex);
+            }
+
+
         }
 
         //	/// <summary>
@@ -176,7 +196,19 @@ namespace Netherlands3D.ModelParsing
                         targetMaterialData.Alpha = cf(linePart[1]);
                         break;
                     case MAP_KD:
+
+
                         targetMaterialData.DiffuseTexPath = linePart[linePart.Length - 1].Trim();
+
+                        // Check if texture exists as preloaded imagE:
+                        if (loadedTextures.ContainsKey(targetMaterialData.DiffuseTexPath))
+                        {
+                            targetMaterialData.DiffuseTex = loadedTextures[targetMaterialData.DiffuseTexPath];
+                        }
+
+                        // Could be repeated for bump etc.
+
+
                         break;
                     case MAP_BUMP:
                     case BUMP:

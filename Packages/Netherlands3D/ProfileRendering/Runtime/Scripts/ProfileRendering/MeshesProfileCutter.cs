@@ -39,8 +39,8 @@ namespace Netherlands3D.ProfileRendering
 
         void Awake()
         {
-            onReceiveCuttingLine.started.AddListener(SetLine);
-            onCutMeshes.started.AddListener(CutMeshes);
+            onReceiveCuttingLine.AddListenerStarted(SetLine);
+            onCutMeshes.AddListenerStarted(CutMeshes);
 
             triangleIntersectionLine.Capacity = 2;
         }
@@ -80,7 +80,7 @@ namespace Netherlands3D.ProfileRendering
             profileLines.Clear();
             List<Vector3> submeshProfile = new List<Vector3>();
 
-            outputProgress.Invoke(1/ meshFilters.Length);
+            outputProgress.InvokeStarted(1/ meshFilters.Length);
             yield return new WaitForEndOfFrame();
 
             for (int i = 0; i < meshFilters.Length; i++)
@@ -88,7 +88,7 @@ namespace Netherlands3D.ProfileRendering
                 var meshFilter = meshFilters[i];
                 if (outputProgress && i > 0)
                 {
-                    outputProgress.Invoke((float)i / meshFilters.Length);
+                    outputProgress.InvokeStarted((float)i / meshFilters.Length);
                     yield return new WaitForEndOfFrame();
                 }
 
@@ -104,10 +104,10 @@ namespace Netherlands3D.ProfileRendering
                 }
             }
 
-            outputProgress.Invoke(0.99f);
+            outputProgress.InvokeStarted(0.99f);
             yield return new WaitForEndOfFrame();
 
-            outputProfileDone.Invoke();
+            outputProfileDone.InvokeStarted();
 
             yield return null;
         }
@@ -144,9 +144,9 @@ namespace Netherlands3D.ProfileRendering
                 //Invoke layer name and color
                 materialName = (materialNameRegex != "") ? Regex.Replace(materialName, materialNameRegex, materialNameRegexReplacement) : materialName;
                 if (outputProfileMaterialName)
-                    outputProfileMaterialName.Invoke(materialName);
+                    outputProfileMaterialName.InvokeStarted(materialName);
                 if (outputMaterialColor)
-                    outputMaterialColor.Invoke(materialColor);
+                    outputMaterialColor.InvokeStarted(materialColor);
 
 
                 Debug.Log($"Profile for submesh {materialName}");
@@ -195,7 +195,7 @@ namespace Netherlands3D.ProfileRendering
                         }
                     }
                 }
-                outputProfilePolyline.Invoke(submeshProfile);
+                outputProfilePolyline.InvokeStarted(submeshProfile);
             }
         }
 

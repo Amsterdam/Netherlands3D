@@ -21,12 +21,12 @@ namespace Netherlands3D.T3DPipeline
 
         private void OnEnable()
         {
-            BagIDInput.started.AddListener(RequestCityJson);
+            BagIDInput.AddListenerStarted(RequestCityJson);
         }
 
         private void OnDisable()
         {
-            BagIDInput.started.RemoveAllListeners();
+            BagIDInput.RemoveAllListenersStarted();
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Netherlands3D.T3DPipeline
                 {
                     var cityJsonBag = uwr.downloadHandler.text;
                     print(cityJsonBag);
-                    CityJsonBagReceived.started.Invoke(cityJsonBag);
+                    CityJsonBagReceived.InvokeStarted(cityJsonBag);
                     callback?.Invoke(cityJsonBag);
                 }
             }

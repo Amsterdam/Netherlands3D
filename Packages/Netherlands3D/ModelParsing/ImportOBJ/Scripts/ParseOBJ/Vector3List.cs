@@ -32,6 +32,7 @@ namespace Netherlands3D.ModelParsing
 
         public void SetupWriting(string name)
         {
+         
             if (basepath=="")
             {
                 basepath = Application.persistentDataPath;
@@ -61,6 +62,7 @@ namespace Netherlands3D.ModelParsing
         }
         public void SetupReading(string name = "")
         {
+   
             
             if (name !="")
             {

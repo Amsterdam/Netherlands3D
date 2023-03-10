@@ -16,7 +16,7 @@ mergeInto(LibraryManager.library, {
 		var roundedOffsetX = Math.round(offsetX);
 		var roundedOffsetY = Math.round(offsetY);
 		
-        if (targetDomObject) {
+        if (targetDomObject != null) {
             targetDomObject.style.display = UTF8ToString(display);
             targetDomObject.style.margin = "0px 0px calc(" + ((y + height) * heightScreenPercentage) + "vh - " + roundedOffsetY + "px) calc(" + (x * widthScreenPercentage) + "vw + " + roundedOffsetX + "px)";
             targetDomObject.style.width = (width * widthScreenPercentage) + "vw";

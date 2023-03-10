@@ -20,16 +20,13 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class GameObjectValueUnityEvent : UnityEvent<GameObject> { }
-
 	[CreateAssetMenu(fileName = "GameObjectEvent", menuName = "EventContainers/GameObjectEvent", order = 0)]
 	[System.Serializable]
-	public class GameObjectEvent : EventContainer<GameObjectValueUnityEvent> 
+	public class GameObjectEvent : EventContainer<GameObject> 
 	{
-		public void Invoke(GameObject gameObjectContent)
+		public override void InvokeStarted(GameObject gameObjectContent)
 		{
-			started.Invoke(gameObjectContent);
+            started.Invoke(gameObjectContent);
 		}
 	}
 }

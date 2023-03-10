@@ -20,7 +20,7 @@ namespace Netherlands3D.Traffic
             set
             {
                 this.value = value;
-                if(onValueChanged != null) onValueChanged.started.Invoke(value);
+                if(Application.isPlaying && onValueChanged != null) onValueChanged.InvokeStarted(value);
             }
         }
 

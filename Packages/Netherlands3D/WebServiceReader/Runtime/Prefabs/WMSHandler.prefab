@@ -1,0 +1,178 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5244566043938844758
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5244566043938844756}
+  - component: {fileID: 5244566043938844762}
+  - component: {fileID: 5244566043938844757}
+  - component: {fileID: 5244566043938844763}
+  - component: {fileID: 5244566043938844761}
+  - component: {fileID: 5244566043938844760}
+  m_Layer: 0
+  m_Name: WMSHandler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5244566043938844756
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5244566043938844758}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5244566043938844762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5244566043938844758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e86e32e933b58a4c9b4b16b788f6cca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  messagePanel: {fileID: 0}
+  layerContentParent: {fileID: 0}
+  styleContentParent: {fileID: 0}
+  styleWindow: {fileID: 0}
+  crsContentParent: {fileID: 0}
+  activeLayerParent: {fileID: 0}
+  dtcPrefab: {fileID: 8215911685052303735, guid: f551be057a3aa2d469b015aaafe08b80, type: 3}
+  layerButtonPrefab: {fileID: 894064302172811730, guid: c24770f65988e9c4ea7266beb57e23e2, type: 3}
+  previewRawImage: {fileID: 0}
+  legendRawImage: {fileID: 0}
+  messageTitleEvent: {fileID: 11400000, guid: a1dcab17575cdb343930eb1b80707f0c, type: 2}
+  urlDisplayEvent: {fileID: 11400000, guid: b1242dfdad0d44041aa8c6a43be2f08e, type: 2}
+  resetEvent: {fileID: 11400000, guid: d6d90274d0bae8a4084f3136e436344b, type: 2}
+  buildInterfaceEvent: {fileID: 11400000, guid: 985987ba087d3154fa3a2a35f84b7d43, type: 2}
+  imageEvent: {fileID: 11400000, guid: e74676f9f857072498f02ae9f504bd67, type: 2}
+  legendEvent: {fileID: 11400000, guid: 2c80cb1d1b6d8974081debb829b1035b, type: 2}
+  logEvent: {fileID: 11400000, guid: 5248d210ac1a7b540a29c2fdaec6f28b, type: 2}
+--- !u!114 &5244566043938844757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5244566043938844758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51dcb5ba401ad314785d31e1a7493b59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minXField: {fileID: 0}
+  maxXField: {fileID: 0}
+  minYField: {fileID: 0}
+  maxYField: {fileID: 0}
+  isWMSEvent: {fileID: 11400000, guid: 419babfbe092481438d4026211ef9d33, type: 2}
+  wmsLayerEvent: {fileID: 11400000, guid: c8719babe877f4f4eae101179a660069, type: 2}
+  wmsLayerBuildEvent: {fileID: 11400000, guid: 985987ba087d3154fa3a2a35f84b7d43, type: 2}
+  legendEvent: {fileID: 11400000, guid: 2c80cb1d1b6d8974081debb829b1035b, type: 2}
+  wmsDataEvent: {fileID: 11400000, guid: afbd85bf813fc3149942fc8ecf97c31b, type: 2}
+  imageEvent: {fileID: 11400000, guid: e74676f9f857072498f02ae9f504bd67, type: 2}
+  legendRequestEvent: {fileID: 11400000, guid: 26841a0ec38aa764e93956e5c69ed3c3, type: 2}
+  wmsCreationEvent: {fileID: 11400000, guid: 2d76cbee8e7433347b54f8fc74983b51, type: 2}
+  requestWMSData: {fileID: 11400000, guid: 1412b2e15e4312240a95a058015910b4, type: 2}
+  boundingBoxMinXEvent: {fileID: 11400000, guid: d16e04389db8d4d4192db5634f3761c9, type: 2}
+  boundingBoxMinYEvent: {fileID: 11400000, guid: 9906b9d2846bcfe4eb2e8e0b1cf84213, type: 2}
+  boundingBoxMaxXEvent: {fileID: 11400000, guid: 32c8309760b18eb42b3ba21d35d47353, type: 2}
+  boundingBoxMaxYEvent: {fileID: 11400000, guid: 44dffb90ff8b79b4280793c00415d726, type: 2}
+  boundingBoxDoubleArrayEvent: {fileID: 11400000, guid: 6e9ed9b4f38d0d2418d43bc05dbb3645, type: 2}
+  resolutionEvent: {fileID: 11400000, guid: 3cc92fa11f2efed46ade8cf9a19b20d9, type: 2}
+--- !u!114 &5244566043938844763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5244566043938844758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3047fb88b553b3146bc69bfc5f1ec292, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateInterval: 1
+  cam: {fileID: 0}
+  handler: {fileID: 5244566043938844757}
+  requestWMSData: {fileID: 11400000, guid: 1412b2e15e4312240a95a058015910b4, type: 2}
+  mapImageEvent: {fileID: 11400000, guid: e74676f9f857072498f02ae9f504bd67, type: 2}
+  wmsDataEvent: {fileID: 11400000, guid: afbd85bf813fc3149942fc8ecf97c31b, type: 2}
+--- !u!114 &5244566043938844761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5244566043938844758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75b7e70441345c14ab89bfbaf4f57f18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEvent: {fileID: 11400000, guid: 3fb0b7246670d3b43be1fe7ca86ea162, type: 2}
+  trigger:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5244566043938844757}
+        m_TargetAssemblyTypeName: WMSHandler, Netherlands3D.WMS.Runtime
+        m_MethodName: SendRequest
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+--- !u!114 &5244566043938844760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5244566043938844758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bda199de660f4334b8a50d8e350bdf29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEvent: {fileID: 11400000, guid: 192b6e99a328f2b4a98bb726cd4c6a40, type: 2}
+  onTriggered:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5244566043938844763}
+        m_TargetAssemblyTypeName: WMSMapHandler, Netherlands3D.WMS.Runtime
+        m_MethodName: AutoUpdateMap
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onTrue:
+    m_PersistentCalls:
+      m_Calls: []
+  onFalse:
+    m_PersistentCalls:
+      m_Calls: []

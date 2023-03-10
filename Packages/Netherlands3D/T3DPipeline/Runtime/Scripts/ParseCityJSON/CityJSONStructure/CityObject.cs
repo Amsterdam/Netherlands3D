@@ -54,7 +54,7 @@ namespace Netherlands3D.T3DPipeline
         public Vector3Double AbsoluteCenter { get { return (MaxExtent + MinExtent) / 2; } }
 
         public List<CityGeometry> Geometries { get; protected set; }
-        protected List<CityObjectAttribute> attributes = new List<CityObjectAttribute>();
+        public List<CityObjectAttribute> Attributes { get; protected set; } = new List<CityObjectAttribute>();
 
         protected List<CityObject> cityChildren = new List<CityObject>();
         public CityObject[] CityChildren => cityChildren.ToArray();
@@ -88,6 +88,17 @@ namespace Netherlands3D.T3DPipeline
         protected virtual void OnDisable()
         {
             IncludeInExport = false;
+        }
+
+        public void UnparentFromAll()
+        {
+            SetParents(new CityObject[] { });
+        }
+
+        public void SetId(string newId)
+        {
+            Id = newId;
+            gameObject.name = newId;
         }
 
         public void SetParents(CityObject[] newParents)
@@ -185,7 +196,7 @@ namespace Netherlands3D.T3DPipeline
         protected virtual JSONObject GetAttributes()
         {
             var obj = new JSONObject();
-            foreach (var attribute in attributes)
+            foreach (var attribute in Attributes)
             {
                 obj.Add(attribute.Key, attribute.GetJSONValue());
             }
@@ -194,12 +205,12 @@ namespace Netherlands3D.T3DPipeline
 
         public void AddAttribute(CityObjectAttribute attribute)
         {
-            attributes.Add(attribute);
+            Attributes.Add(attribute);
         }
 
         public void FromJSONNode(string id, JSONNode cityObjectNode, CoordinateSystem coordinateSystem, List<Vector3Double> combinedVertices)
         {
-            Id = id;
+            SetId(id);
             Type = (CityObjectType)Enum.Parse(typeof(CityObjectType), cityObjectNode["type"]);
             CoordinateSystem = coordinateSystem;
             Geometries = new List<CityGeometry>();
@@ -210,7 +221,7 @@ namespace Netherlands3D.T3DPipeline
                 Assert.IsTrue(CityGeometry.IsValidType(Type, geometry.Type));
                 Geometries.Add(geometry);
             }
-            attributes = CityObjectAttribute.ParseAttributesNode(this, cityObjectNode["attributes"]);
+            Attributes = CityObjectAttribute.ParseAttributesNode(this, cityObjectNode["attributes"]);
 
             var geographicalExtent = cityObjectNode["geographicalExtent"];
             if (geographicalExtent.Count > 0)

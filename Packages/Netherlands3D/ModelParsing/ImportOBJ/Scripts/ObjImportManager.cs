@@ -10,18 +10,24 @@ public class ObjImportManager : MonoBehaviour
     [SerializeField] Material baseMaterial;
     bool expectingObjFile = false;
     bool expectingMTLFile = false;
+    bool expectingImageFile = false;
     [SerializeField] StringEvent receiveFileToLoad;
     [SerializeField] TriggerEvent cancelImporting;
 
     [Header("Optional triggers")]
     [SerializeField] TriggerEvent expectOBJFile;
     [SerializeField] TriggerEvent expectMTLFile;
+    [SerializeField] TriggerEvent expectImageFile;
     [SerializeField, Tooltip("Use this trigger in combination with expectOBJFile and expectMTLFile to import OBJ and MTL files in specific steps")] TriggerEvent startImporting;
 
     [Header("Optional output")]
     [SerializeField] BoolEvent ReadyForImport;
     [SerializeField] StringEvent ReceivedOBJFilename;
     [SerializeField] StringEvent ReceivedMTLFilename;
+
+    // We support one image right now.
+    [SerializeField] StringEvent ReceivedImageFilename;
+
     [SerializeField] GameObjectEvent CreatedMoveableGameObject;
     [SerializeField] GameObjectEvent CreatedImmoveableGameObject;
 
@@ -49,12 +55,8 @@ public class ObjImportManager : MonoBehaviour
         {
             objFileName = value;
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-        objFileName = System.IO.Path.Combine(Application.persistentDataPath, objFileName);
-#endif
-
             Debug.Log("received objFile: " + objFileName);
-            if (ReceivedOBJFilename) ReceivedOBJFilename.started.Invoke(System.IO.Path.GetFileName(objFileName));
+            if (ReceivedOBJFilename) ReceivedOBJFilename.InvokeStarted(System.IO.Path.GetFileName(objFileName));
         }
     }
 
@@ -69,48 +71,82 @@ public class ObjImportManager : MonoBehaviour
         {
             mtlFileName = value;
 #if UNITY_WEBGL && !UNITY_EDITOR
-        mtlFileName = System.IO.Path.Combine(Application.persistentDataPath, mtlFileName);
+        if(mtlFileName!="")
+            {
+            mtlFileName = System.IO.Path.Combine(Application.persistentDataPath, mtlFileName);
+            }
 #endif
-            if (ReceivedMTLFilename) ReceivedMTLFilename.started.Invoke(System.IO.Path.GetFileName(mtlFileName));
+            if (ReceivedMTLFilename) ReceivedMTLFilename.InvokeStarted(System.IO.Path.GetFileName(mtlFileName));
         }
     }
+
+
+
+    string imgFileName = "";
+    string imgfilename
+    {
+        get
+        {
+            return imgFileName;
+        }
+        set
+        {
+            imgFileName = value;
+
+            if (ReceivedImageFilename) ReceivedImageFilename.InvokeStarted(System.IO.Path.GetFileName(imgFileName));
+        }
+    }
+
+
 
     ObjImporter importer;
     private void Awake()
     {
-        if(startImporting) startImporting.started.AddListener(OnStartImporting);
+        if (startImporting) startImporting.AddListenerStarted(OnStartImporting);
         if (expectOBJFile)
         {
-            expectOBJFile.started.AddListener(OnExpectingOBJFile);
+            expectOBJFile.AddListenerStarted(OnExpectingOBJFile);
         }
         else
         {
             expectingObjFile = true;
-            receiveFileToLoad.started.AddListener(OnFileneamesReceived);
+            receiveFileToLoad.AddListenerStarted(OnFileNamesReceived);
         }
         if (expectMTLFile)
         {
-            expectMTLFile.started.AddListener(OnExpectingMTLFile);
+            expectMTLFile.AddListenerStarted(OnExpectingMTLFile);
         }
         else
         {
             expectingMTLFile = true;
         }
-        if (cancelImporting) cancelImporting.started.AddListener(OnCancel);
+
+        if (expectImageFile == true)
+        {
+            expectImageFile.AddListenerStarted(OnExpectingImageFile);
+        }
+        else
+        {
+            expectingImageFile = true;
+        }
+
+
+
+        if (cancelImporting) cancelImporting.AddListenerStarted(OnCancel);
         if (true)
         {
 
         }
     }
 
-#region collect input
+    #region collect input
     void OnExpectingOBJFile()
     {
         if (expectingMTLFile)
         {
-            receiveFileToLoad.started.RemoveListener(OnMTLFileReceived);
+            receiveFileToLoad.RemoveListenerStarted(OnMTLFileReceived);
         }
-        receiveFileToLoad.started.AddListener(OnOBJFileReceived);
+        receiveFileToLoad.AddListenerStarted(OnOBJFileReceived);
         expectingObjFile = true;
     }
 
@@ -118,78 +154,106 @@ public class ObjImportManager : MonoBehaviour
     {
         if (expectingObjFile)
         {
-            receiveFileToLoad.started.RemoveListener(OnOBJFileReceived);
+            receiveFileToLoad.RemoveListenerStarted(OnOBJFileReceived);
         }
-        receiveFileToLoad.started.AddListener(OnMTLFileReceived);
+        receiveFileToLoad.AddListenerStarted(OnMTLFileReceived);
     }
 
-    void OnFileneamesReceived(string value)
+
+    void OnExpectingImageFile()
+    {
+        if (expectingImageFile == true)
+        {
+            receiveFileToLoad.RemoveListenerStarted(OnImageFileReceived);
+        }
+
+        receiveFileToLoad.AddListenerStarted(OnImageFileReceived);
+        expectingImageFile = true;
+    }
+
+    void OnFileNamesReceived(string value)
     {
         Debug.Log("receiveid files: " + value);
 
-        if (value=="")//empty string received, so no selection was made
+        if (value == "")//empty string received, so no selection was made
         {
             return;
         }
         string[] filenames = value.Split(',');
-        
+
         foreach (var file in filenames)
         {
-            string fileextention = System.IO.Path.GetExtension(file);
-            if (fileextention == ".obj")
+            string fileextention = System.IO.Path.GetExtension(file).ToLower();
+            switch (fileextention)
             {
-                objfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
-            }
-            else if (fileextention == ".mtl")
-            {
-                mtlfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
+                case ".obj":
+                    objfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
+                    break;
+
+                case ".mtl":
+                    mtlfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
+                    break;
+
+                case ".jpg":
+                case ".png":
+                case ".jpeg":
+                    imgfilename = System.IO.Path.Combine(Application.persistentDataPath, file);
+                    break;
             }
         }
-        if (objfilename!="")
+
+        if (objfilename != "")
         {
-            if(startImporting==null)
+            if (startImporting == null)
             {
                 OnStartImporting();
             }
             else
             {
-                if (ReadyForImport) ReadyForImport.started.Invoke(true);
+                if (ReadyForImport) ReadyForImport.InvokeStarted(true);
             }
         }
-
     }
 
     void OnOBJFileReceived(string value)
     {
-        receiveFileToLoad.started.RemoveListener(OnOBJFileReceived);
+        receiveFileToLoad.RemoveListenerStarted(OnOBJFileReceived);
         objfilename = value;
-        if (ReadyForImport) ReadyForImport.started.Invoke(true);
+        if (ReadyForImport) ReadyForImport.InvokeStarted(true);
 
     }
 
     void OnMTLFileReceived(string value)
     {
-        receiveFileToLoad.started.RemoveListener(OnMTLFileReceived);
+        receiveFileToLoad.RemoveListenerStarted(OnMTLFileReceived);
         mtlfilename = value;
     }
-#endregion
+
+    void OnImageFileReceived(string value)
+    {
+        receiveFileToLoad.RemoveListenerStarted(OnImageFileReceived);
+        imgfilename = value;
+    }
+    #endregion
 
 
     public void OnCancel()
     {
         BroadcastMessage("Cancel");
-        if (currentActivity) currentActivity.started.Invoke("cancelling the import");
+        if (currentActivity) currentActivity.InvokeStarted("cancelling the import");
     }
 
     void OnStartImporting()
     {
-        if (!importer) ConnectToImporter();
+        ConnectToImporter();
 
         importer.objFilePath = objfilename;
         importer.mtlFilePath = mtlfilename;
+        importer.imgFilePath = imgfilename;
+
         importer.BaseMaterial = baseMaterial;
         importer.createSubMeshes = createSubMeshes;
-        if(started)started.started.Invoke(true);
+        if (started) started.InvokeStarted(true);
         importer.StartImporting(OnOBJImported);
     }
 
@@ -197,23 +261,27 @@ public class ObjImportManager : MonoBehaviour
     {
         bool canBemoved = importer.createdGameobjectIsMoveable;
 
-        if (started) started.started.Invoke(false);
+        if (started) started.InvokeStarted(false);
         if (canBemoved)
         {
-            if (CreatedMoveableGameObject) CreatedMoveableGameObject.started.Invoke(returnedGameObject);
+            if (CreatedMoveableGameObject) CreatedMoveableGameObject.InvokeStarted(returnedGameObject);
         }
         else
         {
-            if (CreatedImmoveableGameObject) CreatedImmoveableGameObject.started.Invoke(returnedGameObject);
+            if (CreatedImmoveableGameObject) CreatedImmoveableGameObject.InvokeStarted(returnedGameObject);
         }
-        
-        objfilename = "";
-        mtlfilename = "";
+
+        objfilename = string.Empty;
+        mtlfilename = string.Empty;
+        imgfilename = string.Empty;
+
+        if (importer != null) Destroy(importer);
     }
 
     void ConnectToImporter()
     {
-        if (importer!=null) return;
+        if (importer != null) Destroy(importer);
+
         importer = gameObject.AddComponent<ObjImporter>();
         // give the importer handles for progress- and errormessaging
         importer.currentActivity = BroadcastCurrentActivity;
@@ -222,27 +290,28 @@ public class ObjImportManager : MonoBehaviour
         importer.alertmessage = BroadcastAlertmessage;
         importer.errormessage = BroadcastErrormessage;
 
+        Debug.Log("Connected to new ObjImporter");
     }
     void BroadcastCurrentActivity(string value)
     {
-        if (currentActivity != null) currentActivity.started.Invoke(value);
+        if (currentActivity != null) currentActivity.InvokeStarted(value);
     }
     void BroadcastCurrentAction(string value)
     {
-        if (currentAction != null) currentAction.started.Invoke(value);
+        if (currentAction != null) currentAction.InvokeStarted(value);
     }
 
     void BroadcastProgressPercentage(float value)
     {
-        if (progressPercentage != null) progressPercentage.started.Invoke(value);
+        if (progressPercentage != null) progressPercentage.InvokeStarted(value);
     }
     void BroadcastAlertmessage(string value)
     {
-        if (alertmessage != null) alertmessage.started.Invoke(value);
+        if (alertmessage != null) alertmessage.InvokeStarted(value);
     }
     void BroadcastErrormessage(string value)
     {
-        if (errormessage != null) errormessage.started.Invoke(value);
+        if (errormessage != null) errormessage.InvokeStarted(value);
     }
 
 

@@ -20,14 +20,11 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class BoundsValueUnityEvent : UnityEvent<Bounds> { }
-
 	[CreateAssetMenu(fileName = "BoundsEvent", menuName = "EventContainers/BoundsEvent", order = 0)]
 	[System.Serializable]
-	public class BoundsEvent : EventContainer<BoundsValueUnityEvent> 
+	public class BoundsEvent : EventContainer<Bounds> 
 	{
-		public void Invoke(Bounds boundsContent)
+		public override void InvokeStarted(Bounds boundsContent)
 		{
 			started.Invoke(boundsContent);
 		}

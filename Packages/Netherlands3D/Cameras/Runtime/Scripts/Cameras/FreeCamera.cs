@@ -1,5 +1,6 @@
 using Netherlands3D.Events;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /*
 *  Copyright (C) X Gemeente
@@ -99,23 +100,23 @@ public class FreeCamera : MonoBehaviour
         cameraComponent = GetComponent<Camera>();
         worldPlane = new Plane(Vector3.up, Vector3.zero);
 
-        horizontalInput.started.AddListener(MoveHorizontally);
-        verticalInput.started.AddListener(MoveForwardBackwards);
-        upDownInput.started.AddListener(MoveUpDown);
-        lookInput.started.AddListener(PointerDelta);
-        flyInput.started.AddListener(FreeFly);
-        rotateInput.started.AddListener(RotateAroundOwnAxis);
+        horizontalInput.AddListenerStarted(MoveHorizontally);
+        verticalInput.AddListenerStarted(MoveForwardBackwards);
+        upDownInput.AddListenerStarted(MoveUpDown);
+        lookInput.AddListenerStarted(PointerDelta);
+        flyInput.AddListenerStarted(FreeFly);
+        rotateInput.AddListenerStarted(RotateAroundOwnAxis);
 
-        zoomToPointerInput.started.AddListener(ZoomToPointer);
-        pointerPosition.started.AddListener(SetPointerPosition);
+        zoomToPointerInput.AddListenerStarted(ZoomToPointer);
+        pointerPosition.AddListenerStarted(SetPointerPosition);
 
-        dragModifier.started.AddListener(Drag);
-        rotateModifier.started.AddListener(Rotate);
-        firstPersonModifier.started.AddListener(RotateFirstPerson);
+        dragModifier.AddListenerStarted(Drag);
+        rotateModifier.AddListenerStarted(Rotate);
+        firstPersonModifier.AddListenerStarted(RotateFirstPerson);
 
-        if(blockCameraDrag) blockCameraDrag.started.AddListener(LockDragging);
-        if(ortographicEnabled) ortographicEnabled.started.AddListener(EnableOrtographic);
-        if(focusOnObject) focusOnObject.started.AddListener(FocusOnObject);
+        if(blockCameraDrag) blockCameraDrag.AddListenerStarted(LockDragging);
+        if(ortographicEnabled) ortographicEnabled.AddListenerStarted(EnableOrtographic);
+        if(focusOnObject) focusOnObject.AddListenerStarted(FocusOnObject);
     }
 
     /// <summary>
@@ -405,6 +406,11 @@ public class FreeCamera : MonoBehaviour
         CalculateSpeed();
         zoomTarget = GetWorldPoint();
         var direction = zoomTarget - this.transform.position;
+
+        //Make sure we always have a direction. Even when the zoompoint is on the camera.
+        if (Vector3.Distance(zoomTarget,this.transform.position) < 0.01f)
+            direction = this.transform.forward;
+
         var targetIsBehind = Vector3.Dot(this.transform.forward, direction) < 0;
         if (targetIsBehind) direction = -direction;
 

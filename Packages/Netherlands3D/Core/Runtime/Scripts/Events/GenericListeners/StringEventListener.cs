@@ -11,13 +11,13 @@ public class StringEventListener : MonoBehaviour
     private StringEvent onEvent;
 
     [SerializeField]
-    private StringUnityEvent trigger;
+    private UnityEvent<string> trigger;
 
     void Awake()
     {
         if (onEvent)
         {
-            onEvent.started.AddListener(Invoke);
+            onEvent.AddListenerStarted(Invoke);
         }
     }
 

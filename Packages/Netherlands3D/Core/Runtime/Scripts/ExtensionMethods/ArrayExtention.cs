@@ -83,5 +83,37 @@ public static class ArrayExtention
             }
         }
     }
+
+    /// <summary>
+    /// Convert a Vector2[] to a List<Vector3> with the y component as the height
+    /// </summary>
+    /// <param name="input">Vector2 array to make 3D, heigt component</param>
+    /// <returns>Vector3 List</returns>
+    public static List<Vector3> ToVector3List(this Vector2[] input, float height = 0)
+    {
+        var list = new List<Vector3>();
+        for (int i = 0; i < input.Length; i++)
+        {
+            var p = input[i];
+            list.Add(new(p.x, height, p.y));
+        }
+        return list;
+    }
+
+    /// <summary>
+    /// Flattens a Vector3[] to a List<Vector2> by removing the y component
+    /// </summary>
+    /// <param name="input">Vector3 array to flatten</param>
+    /// <returns>Flattened Vector2 List</returns>
+    public static List<Vector2> ToVector2List(this Vector3[] input)
+    {
+        var list = new List<Vector2>();
+        for (int i = 0; i < input.Length; i++)
+        {
+            var p = input[i];
+            list.Add(new(p.x, p.y));
+        }
+        return list;
+    }
 }
 

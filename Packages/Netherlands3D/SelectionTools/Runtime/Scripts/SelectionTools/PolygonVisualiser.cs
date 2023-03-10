@@ -16,12 +16,15 @@
 *  permissions and limitations under the License.
 */
 using Netherlands3D.Events;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UIElements;
 
-namespace Netherlands3D.Events
+namespace Netherlands3D.SelectionTools
 {
     /// <summary>
     /// Use countour lists as input to draw solidified 2D shapes in the 3D world
@@ -37,19 +40,24 @@ namespace Netherlands3D.Events
         private StringEvent setDrawingObjectName;
         [SerializeField]
         private FloatEvent setExtrusionHeightEvent;
+        [SerializeField] private GameObjectEvent polyParentEvent;
+        [SerializeField] private Vector3ListEvent polygonEdited;
 
         [SerializeField]
-        private Material defaultMaterial;
+        private string newDrawingObjectName = "";
+
+        [Header("Mesh")]
+        [SerializeField]
+        private Material meshMaterial;
 
         [SerializeField]
         private float extrusionHeight = 100.0f;
 
         private int maxPolygons = 10000;
         private int polygonCount = 0;
-        
-        [SerializeField]
-        private string newDrawingObjectName = "";
 
+        [SerializeField]
+        private bool createInwardMesh = false;
         [SerializeField]
         private bool addBottom = false;
         [SerializeField]
@@ -60,25 +68,48 @@ namespace Netherlands3D.Events
         private Vector2 uvCoordinate = Vector2.zero;
 
         [SerializeField]
-        private bool reverseWindingOrder = true;
-
-        [SerializeField]
         private bool addColliders = false;
+
+        [Header("Line")]
+        [SerializeField]
+        private Material lineMaterial;
+        [SerializeField]
+        private Color lineColor = Color.white;
 
         [Header("Invoke events")]
         [SerializeField]
         GameObjectEvent createdPolygonGameObject;
+        [SerializeField]
+        Vector3ListEvent polygonReselected; //sends list to PolygonSelection for reselection
+
+        //List<PolygonVisualisation> polygonVisualisations = new List<PolygonVisualisation>();
+        PolygonVisualisation selectedPolygon;
+
+        private Transform geometryParent;
 
         void Awake()
         {
-            if (setDrawingObjectName) setDrawingObjectName.started.AddListener(SetName);
-            if (drawPolygonEvent) drawPolygonEvent.started.AddListener(CreatePolygon);
-            if (drawSinglePolygonEvent) drawSinglePolygonEvent.started.AddListener(CreateSinglePolygon);
-            if (setExtrusionHeightEvent) setExtrusionHeightEvent.started.AddListener(SetExtrusionHeight);
+            if (setDrawingObjectName) setDrawingObjectName.AddListenerStarted(SetName);
+            if (drawPolygonEvent) drawPolygonEvent.AddListenerStarted(CreatePolygons);
+            if (drawSinglePolygonEvent) drawSinglePolygonEvent.AddListenerStarted(CreateSinglePolygon);
+            if (setExtrusionHeightEvent) setExtrusionHeightEvent.AddListenerStarted(SetExtrusionHeight);
+            if (polyParentEvent) polyParentEvent.AddListenerStarted((parentObject) => geometryParent = parentObject.transform);
         }
 
-		public void SetExtrusionHeight(float extrusionHeight)
-		{
+        private void OnEnable()
+        {
+           if(polygonEdited)
+                polygonEdited.AddListenerStarted(UpdateSelectedPolygon);
+        }
+
+        private void OnDisable()
+        {
+            if (polygonEdited)
+                polygonEdited.RemoveAllListenersStarted();
+        }
+
+        public void SetExtrusionHeight(float extrusionHeight)
+        {
             this.extrusionHeight = extrusionHeight;
         }
 
@@ -87,107 +118,44 @@ namespace Netherlands3D.Events
             newDrawingObjectName = drawingObjectName;
         }
 
-        private void CreateSinglePolygon(List<Vector3> contour)
+        public void CreateSinglePolygon(List<Vector3> contour)
         {
-            var contours = new List<IList<Vector3>> { contour };
-            CreatePolygon(contours);
+            var contours = new List<List<Vector3>> { contour };
+            CreatePolygons(contours);
         }
 
-        private void CreatePolygon(List<IList<Vector3>> contours)
+        public void CreatePolygons(List<List<Vector3>> contours)
         {
-            CreateAndReturnPolygon(contours);
-        }
+            if (polygonCount >= maxPolygons)
+                return;
 
-        //Treat first contour as outer contour, and extra contours as holes
-        public GameObject CreateAndReturnPolygon(List<IList<Vector3>> contours)
-        {
-            if (polygonCount >= maxPolygons) return null;
             polygonCount++;
+            var polygonVisualisation = PolygonVisualisationUtility.CreateAndReturnPolygonObject(contours, extrusionHeight, addColliders, createInwardMesh, addBottom, meshMaterial, lineMaterial, lineColor, uvCoordinate, receiveShadows);
 
-            var polygon = new Poly2Mesh.Polygon();
-            var outerContour = (List<Vector3>)contours[0];
+            selectedPolygon = polygonVisualisation;
+            polygonVisualisation.reselectVisualisedPolygon.AddListener(InvokeReselectPolygonEvent);
+            polygonVisualisation.ReselectPolygon();
 
-            if (outerContour.Count < 3) return null;
-            if (reverseWindingOrder) outerContour.Reverse();
-
-            polygon.outside = outerContour;
-
-            for (int i = 0; i < polygon.outside.Count; i++)
-            {
-                polygon.outside[i] = new Vector3(polygon.outside[i].x, polygon.outside[i].y, polygon.outside[i].z);
-            }
-
-            if (contours.Count > 1)
-            {
-                for (int i = 1; i < contours.Count; i++)
-                {
-                    var holeContour = (List<Vector3>)contours[i];
-                    FixSequentialDoubles(holeContour);
-                    
-                    if (holeContour.Count > 2)
-                    {
-                        if (reverseWindingOrder) holeContour.Reverse();
-                        polygon.holes.Add(holeContour);
-                    }
-                }
-            }
-            var newPolygonMesh = Poly2Mesh.CreateMesh(polygon, extrusionHeight, addBottom);
-            if (newPolygonMesh) newPolygonMesh.RecalculateNormals();
-
-            if (setUVCoordinates)
-            {
-                SetUVCoordinates(newPolygonMesh);
-            }
-
-            var newPolygonObject = new GameObject();
 #if UNITY_EDITOR
             //Do not bother setting object name outside of Editor untill we need it.
-            newPolygonObject.name = newDrawingObjectName;
+            polygonVisualisation.gameObject.name = newDrawingObjectName;
 #endif
-            var meshFilter = newPolygonObject.AddComponent<MeshFilter>();
-            meshFilter.sharedMesh = newPolygonMesh;
-
-            var meshRenderer = newPolygonObject.AddComponent<MeshRenderer>();
-            meshRenderer.material = defaultMaterial;
-            meshRenderer.receiveShadows = receiveShadows;
-
-            if (addColliders)
-                newPolygonObject.AddComponent<MeshCollider>().sharedMesh = newPolygonMesh;
-
-            newPolygonObject.transform.SetParent(this.transform);
-            newPolygonObject.transform.Translate(0, extrusionHeight, 0);
-
-            if (createdPolygonGameObject) createdPolygonGameObject.Invoke(newPolygonObject);
-            return newPolygonObject;
+            polygonVisualisation.transform.SetParent(this.transform);
+            if (createdPolygonGameObject) createdPolygonGameObject.InvokeStarted(polygonVisualisation.gameObject);
         }
 
-        /// <summary>
-        /// Poly2Mesh has problems with polygons that have points in the same position.
-        /// Lets move them a bit.
-        /// </summary>
-        /// <param name="contour"></param>
-        private static void FixSequentialDoubles(List<Vector3> contour)
+        private void InvokeReselectPolygonEvent(PolygonVisualisation polygonToReselect)
         {
-            var removedSomeDoubles = false;
-            for (int i = contour.Count - 2; i >= 0; i--)
-            {
-                if (contour[i] == contour[i + 1])
-                {
-                    contour.RemoveAt(i+1);
-                    removedSomeDoubles = true;
-                }
-            }
-            if (removedSomeDoubles) Debug.Log("Removed some doubles");
+            selectedPolygon = null; //deselect active polygon so it doesn't change shape to the reselected polygon when invoking the reselection event
+            polygonReselected.InvokeStarted(polygonToReselect.Polygons[0] as List<Vector3>);
+            selectedPolygon = polygonToReselect;
         }
 
-        private void SetUVCoordinates(Mesh newPolygonMesh)
-		{
-			var uvs = new Vector2[newPolygonMesh.vertexCount];
-			for (int i = 0; i < uvs.Length; i++)
-			{
-				uvs[i] = uvCoordinate;
-			}
-			newPolygonMesh.uv = uvs;
-		}
-	}
+
+        private void UpdateSelectedPolygon(List<Vector3> newPolygon)
+        {
+            if (selectedPolygon)
+                selectedPolygon.UpdateVisualisation(newPolygon);
+        }
+    }
 }

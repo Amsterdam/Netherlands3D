@@ -11,13 +11,13 @@ public class DateTimeEventListener : MonoBehaviour
     private DateTimeEvent onEvent;
 
     [SerializeField]
-    private DateTimeUnityEvent trigger;
+    private UnityEvent<DateTime> trigger;
 
     void Awake()
     {
         if (onEvent)
         {
-            onEvent.started.AddListener(Invoke);
+            onEvent.AddListenerStarted(Invoke);
         }
     }
 

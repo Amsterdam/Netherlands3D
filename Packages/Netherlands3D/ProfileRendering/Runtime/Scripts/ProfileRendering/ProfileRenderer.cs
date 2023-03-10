@@ -17,8 +17,8 @@ namespace Netherlands3D.ProfileRendering
         [Header("Listen to")]
         [SerializeField] private Vector3ListEvent onReceiveCuttingLine;
 
-        [SerializeField] private FloatEvent onReveiceHeightRange;
-        [SerializeField] private FloatEvent onReveiceHeightOffset;
+        [Header("Invoke")]
+        [SerializeField] private FloatEvent sizeWasChanged;
 
         private Camera renderCamera;
 
@@ -31,14 +31,17 @@ namespace Netherlands3D.ProfileRendering
             renderCamera.targetTexture = renderTexture;
             //We render manualy using renderCamera.Render();
             renderCamera.enabled = false;
+        }
 
-            onReceiveCuttingLine.started.AddListener(Align);
+        private void OnEnable()
+        {
+            cuttingLine.gameObject.SetActive(false);
+            onReceiveCuttingLine.AddListenerStarted(Align);
+        }
 
-            if (onReveiceHeightRange)
-                onReveiceHeightRange.started.AddListener((value) => heightRange = value);
-
-            if (onReveiceHeightRange)
-                onReveiceHeightRange.started.AddListener((value) => heightOffset = value);
+        private void OnDisable()
+        {
+            onReceiveCuttingLine.RemoveListenerStarted(Align);
         }
 
         private void Align(List<Vector3> linePoints)
@@ -50,9 +53,11 @@ namespace Netherlands3D.ProfileRendering
 
             var worldSliceWidth = Vector3.Distance(linePoints[0], linePoints[1]);
             cuttingLine.localScale = new Vector3(worldSliceWidth, heightRange, 1);
+            cuttingLine.gameObject.SetActive(true);
 
             worldSliceHeight = (worldSliceWidth / renderTexture.width) * renderTexture.height;
 
+            sizeWasChanged.InvokeStarted(worldSliceHeight);
             renderCamera.orthographicSize = worldSliceHeight / 2.0f;
             renderCamera.Render();
         }

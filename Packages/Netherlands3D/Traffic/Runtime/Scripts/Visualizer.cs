@@ -18,7 +18,9 @@ namespace Netherlands3D.Traffic.VISSIM
             set
             {
                 updateEntitiesRealtime = value;
-                sso.eventUpdateRealtime.started.Invoke(value);
+
+                if(Application.isPlaying)
+                    sso.eventUpdateRealtime.InvokeStarted(value);
             }
         }
 
@@ -86,7 +88,7 @@ namespace Netherlands3D.Traffic.VISSIM
             database.OnAddData.AddListener(UpdateEntities);
             database.OnSignalHeadsChanged.AddListener(UpdateSignalHeads);
             database.OnClear.AddListener(OnClear);
-            sso.eventSimulationStateChanged.started.AddListener(OnSimulationStateChanged);
+            sso.eventSimulationStateChanged.AddListenerStarted(OnSimulationStateChanged);
         }
 
         private void OnDisable()
@@ -94,7 +96,7 @@ namespace Netherlands3D.Traffic.VISSIM
             database.OnAddData.RemoveListener(UpdateEntities);
             database.OnSignalHeadsChanged.RemoveListener(UpdateSignalHeads);
             database.OnClear.RemoveListener(OnClear);
-            sso.eventSimulationStateChanged.started.RemoveListener(OnSimulationStateChanged);
+            sso.eventSimulationStateChanged.RemoveListenerStarted(OnSimulationStateChanged);
         }
 
         private void Awake()
@@ -298,7 +300,8 @@ namespace Netherlands3D.Traffic.VISSIM
 
         private void OnValidate()
         {
-            UpdateEntitiesRealtime = updateEntitiesRealtime;
+            if(Application.isPlaying)
+                UpdateEntitiesRealtime = updateEntitiesRealtime;
         }
     }
 }

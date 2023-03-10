@@ -3,13 +3,15 @@
     "rootNamespace": "",
     "references": [
         "GUID:9ca88277166fea644a31588b4f943acc",
-        "GUID:970025a0eb677984599fab35aa02713e"
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "netDxf.dll"
+    ],
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],

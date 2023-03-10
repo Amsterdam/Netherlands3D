@@ -11,14 +11,19 @@ public class FloatEventListener : MonoBehaviour
     private FloatEvent onEvent;
 
     [SerializeField]
-    private FloatValueUnityEvent trigger;
+    private UnityEvent<float> trigger;
 
     void Awake()
     {
         if (onEvent)
         {
-            onEvent.started.AddListener(Invoke);
+            onEvent.AddListenerStarted(Invoke);
         }
+    }
+
+    void Update()
+    {
+        if (!onEvent) Debug.Log("OnEvent null");
     }
 
 	public void Invoke(float value)

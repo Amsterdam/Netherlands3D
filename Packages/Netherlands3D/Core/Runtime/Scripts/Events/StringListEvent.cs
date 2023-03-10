@@ -21,16 +21,24 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class StringListUnityEvent : UnityEvent<List<string>> { }
-
 	[CreateAssetMenu(fileName = "StringListEvent", menuName = "EventContainers/StringListEvent", order = 0)]
 	[System.Serializable]
-	public class StringListEvent : EventContainer<StringListUnityEvent> 
+	public class StringListEvent : EventContainer<List<string>> 
 	{
-		public void Invoke(List<string> listStringContent)
+        [SerializeField]
+        private bool sendAsCopy = true;
+
+        public override void InvokeStarted(List<string> listStringContent)
 		{
-			started.Invoke(listStringContent);
-		}
+            if (sendAsCopy)
+            {
+                var copy = new List<string>(listStringContent);
+                started.Invoke(copy);
+            }
+            else
+            {
+                started.Invoke(listStringContent);
+            }
+        }
 	}
 }

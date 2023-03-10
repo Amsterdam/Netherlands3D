@@ -36,17 +36,17 @@ namespace Netherlands3D.T3DPipeline
         private void OnEnable()
         {
             if (onUserNameChanged)
-                onUserNameChanged.started.AddListener(SetUserName);
+                onUserNameChanged.AddListenerStarted(SetUserName);
             if (onBagIdChanged)
-                onBagIdChanged.started.AddListener(SetBagId);
+                onBagIdChanged.AddListenerStarted(SetBagId);
         }
 
         private void OnDisable()
         {
             if (onUserNameChanged)
-                onUserNameChanged.started.RemoveAllListeners();
+                onUserNameChanged.RemoveAllListenersStarted();
             if (onBagIdChanged)
-                onBagIdChanged.started.RemoveAllListeners();
+                onBagIdChanged.RemoveAllListenersStarted();
         }
 
         public void SetUserName(string newName)
@@ -77,7 +77,7 @@ namespace Netherlands3D.T3DPipeline
             else
             {
                 print("Still waiting for coroutine to return, not sending data");
-                uploadToEndpointSucceded?.Invoke(false);
+                uploadToEndpointSucceded?.InvokeStarted(false);
             }
         }
 
@@ -97,12 +97,12 @@ namespace Netherlands3D.T3DPipeline
                 if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
                 {
                     Debug.LogError(uwr.error);
-                    uploadToEndpointSucceded?.Invoke(false);
+                    uploadToEndpointSucceded?.InvokeStarted(false);
                 }
                 else
                 {
                     print("Upload succeeded");
-                    uploadToEndpointSucceded?.Invoke(true);
+                    uploadToEndpointSucceded?.InvokeStarted(true);
                 }
                 requestCoroutine = null;
             }

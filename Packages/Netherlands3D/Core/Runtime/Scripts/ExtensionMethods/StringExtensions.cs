@@ -26,22 +26,20 @@ public static class StringExtensions
     }
 
     /// <summary>
-    /// Replace the template properties defined in a dynamic object
+    /// Replace the template properties defined in a KeyValuePair list
     /// </summary>
     /// <param name="template">The template string</param>
-    /// <param name="d">dynamic object</param>    
+    /// <param name="keyvals">KeyValuePair list</param>    
     /// <returns>The replaced template string</returns>
-    public static string ReplacePlaceholders(this string template, object d)
+    public static string ReplacePlaceholders(this string template, List<KeyValuePair<string,object>> keyvals)
     {
-        StringBuilder sb = new StringBuilder(template);
-        object o = d;
-        string[] propertyNames = o.GetType().GetProperties().Select(p => p.Name).ToArray();
-        foreach (var prop in propertyNames)
+        foreach (var keyval in keyvals)
         {
-            object val = o.GetType().GetProperty(prop).GetValue(o, null);
-            sb.Replace($"{{{prop}}}", $"{val}");
+            var name = keyval.Key;
+            var val = keyval.Value;
+            template = template.Replace($"{{{name}}}", $"{val}");
         }
-        return sb.ToString();
+        return template;
     }
 
     /// <summary>

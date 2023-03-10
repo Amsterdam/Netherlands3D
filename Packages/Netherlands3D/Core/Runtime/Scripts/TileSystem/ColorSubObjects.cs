@@ -52,46 +52,46 @@ namespace Netherlands3D.TileSystem
         {
             if (onEnableDrawingColors)
             {
-                onEnableDrawingColors.started.AddListener(EnableDrawingColors);
+                onEnableDrawingColors.AddListenerStarted(EnableDrawingColors);
             }
 
             if (onReceiveIdsAndColors)
             {
-                onReceiveIdsAndColors.started.AddListener(SetIDsAndColors);
-                if (onEnableDrawingColors) onEnableDrawingColors.started.Invoke(true);
+                onReceiveIdsAndColors.AddListenerStarted(SetIDsAndColors);
+                if (onEnableDrawingColors) onEnableDrawingColors.InvokeStarted(true);
                 this.enabled = true;
             }
 
             if (onReceiveIdsAndFloats)
             {
-                onReceiveIdsAndFloats.started.AddListener(SetIDsAndFloatsAsColors);
+                onReceiveIdsAndFloats.AddListenerStarted(SetIDsAndFloatsAsColors);
 
                 //If we can receive ids+floats, add listeners to determine the min and max of the range
-                if (onReceiveMinRange) onReceiveMinRange.started.AddListener(SetMinRange);
-                if (onReceiveMaxRange) onReceiveMaxRange.started.AddListener(SetMaxRange);
-                if (onEnableDrawingColors) onEnableDrawingColors.started.Invoke(true);
+                if (onReceiveMinRange) onReceiveMinRange.AddListenerStarted(SetMinRange);
+                if (onReceiveMaxRange) onReceiveMaxRange.AddListenerStarted(SetMaxRange);
+                if (onEnableDrawingColors) onEnableDrawingColors.InvokeStarted(true);
                 this.enabled = true;
             }
 
             if (onReceiveIdsAndFloatsForAlpha)
             {
-                onReceiveIdsAndFloatsForAlpha.started.AddListener(SetIDsAndFloatsAsAlpha);
+                onReceiveIdsAndFloatsForAlpha.AddListenerStarted(SetIDsAndFloatsAsAlpha);
 
                 //If we can receive ids+floats, add listeners to determine the min and max of the range
-                if (onReceiveMinRange) onReceiveMinRange.started.AddListener(SetMinRange);
-                if (onReceiveMaxRange) onReceiveMaxRange.started.AddListener(SetMaxRange);
-                if (onEnableDrawingColors) onEnableDrawingColors.started.Invoke(true);
+                if (onReceiveMinRange) onReceiveMinRange.AddListenerStarted(SetMinRange);
+                if (onReceiveMaxRange) onReceiveMaxRange.AddListenerStarted(SetMaxRange);
+                if (onEnableDrawingColors) onEnableDrawingColors.InvokeStarted(true);
                 this.enabled = true;
             }
 
             if (onClearData)
             {
-                onClearData.started.AddListener(ClearData);
+                onClearData.AddListenerStarted(ClearData);
             }
 
             if(onSetGradient)
             {
-                onSetGradient.started.AddListener(SwapGradient);
+                onSetGradient.AddListenerStarted(SwapGradient);
             }
         }
 
@@ -100,7 +100,7 @@ namespace Netherlands3D.TileSystem
             if (disableOnStart)
             {
                 this.enabled = false;
-                if(onEnableDrawingColors) onEnableDrawingColors.started.Invoke(false);
+                if(onEnableDrawingColors) onEnableDrawingColors.InvokeStarted(false);
             }
         }
 
