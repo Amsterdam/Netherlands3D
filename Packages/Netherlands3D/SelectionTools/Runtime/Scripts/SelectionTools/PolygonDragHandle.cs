@@ -79,7 +79,9 @@ namespace Netherlands3D.SelectionTools
         private void OnDestroy()
         {
             dragged.RemoveAllListeners();
+            endDrag.RemoveAllListeners();
             clicked.RemoveAllListeners();
+            pointerDown.RemoveAllListeners();
         }
     }
 }

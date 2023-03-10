@@ -119,12 +119,6 @@ namespace Netherlands3D.SelectionTools
             pointerAction = polygonSelectionActionMap.FindAction("Point");
             modifierAction = polygonSelectionActionMap.FindAction("Modifier");
 
-            tapAction.performed += context => Tap();
-            clickAction.performed += context => StartClick();
-            clickAction.canceled += context => Release();
-            escapeAction.canceled += context => ClearPolygon(true);
-            finishAction.performed += context => CloseLoop(true);
-
             worldPlane = new Plane(this.transform.up, this.transform.position);
 
             if (handleTemplate)
@@ -156,6 +150,12 @@ namespace Netherlands3D.SelectionTools
                 ClearPolygon(true);
             }
 
+            tapAction.performed += TapAction_performed;
+            clickAction.performed += ClickAction_performed;
+            clickAction.canceled += ClickAction_canceled;
+            escapeAction.canceled += EscapeAction_canceled;
+            finishAction.performed += FinishAction_performed;
+
             polygonSelectionActionMap.Enable();
 
             if (polygonReselectionInput)
@@ -164,13 +164,49 @@ namespace Netherlands3D.SelectionTools
 
         private void OnDisable()
         {
-            autoDrawPolygon = false;
             blockCameraDrag.InvokeStarted(false);
+
+            tapAction.performed -= TapAction_performed;
+            clickAction.performed -= ClickAction_performed;
+            clickAction.canceled -= ClickAction_canceled;
+            escapeAction.canceled -= EscapeAction_canceled;
+            finishAction.performed -= FinishAction_performed;
+
             polygonSelectionActionMap.Disable();
+
+            if (polygonReselectionInput)
+                polygonReselectionInput.RemoveListenerStarted(ReselectPolygon);
+        }
+
+        private void TapAction_performed(InputAction.CallbackContext obj)
+        {
+            Tap();
+        }
+
+        private void ClickAction_performed(InputAction.CallbackContext obj)
+        {
+            StartClick();
+        }
+
+        private void ClickAction_canceled(InputAction.CallbackContext obj)
+        {
+            Release();
+        }
+
+        private void EscapeAction_canceled(InputAction.CallbackContext obj)
+        {
+            ClearPolygon(true);
+        }
+
+        private void FinishAction_performed(InputAction.CallbackContext obj)
+        {
+            FinishPolygon(true);
         }
 
         public void ReselectPolygon(List<Vector3> points)
         {
+            Debug.Log("reselecting", gameObject);
+
             ClearPolygon(true);
             for (int i = 0; i < points.Count; i++)
             {
