@@ -44,17 +44,28 @@ namespace Netherlands3D.Rendering
         [SerializeField] private StringEvent disableStencilForLayer;
 
 
-        private void Awake()
+        private void OnEnable()
         {
-            enableStencilForLayer.AddListenerStarted(EnableForLayer);
-            disableStencilForLayer.AddListenerStarted(DisableForLayer);
+            if(enableStencilForLayer)
+                enableStencilForLayer.AddListenerStarted(EnableForLayer);
+
+            if(disableStencilForLayer)
+                disableStencilForLayer.AddListenerStarted(DisableForLayer);
+        }
+        private void OnDisable()
+        {
+            if(enableStencilForLayer)
+                enableStencilForLayer.RemoveListenerStarted(EnableForLayer);
+
+            if (disableStencilForLayer)
+                disableStencilForLayer.RemoveListenerStarted(DisableForLayer);
         }
 
-        private void EnableForLayer(string layerName)
+        public void EnableForLayer(string layerName)
         {
             RendererHelpers.EnableStencilByLayerName(layerName, true);
         }
-        private void DisableForLayer(string layerName)
+        public void DisableForLayer(string layerName)
         {
             RendererHelpers.EnableStencilByLayerName(layerName, false);
         }
