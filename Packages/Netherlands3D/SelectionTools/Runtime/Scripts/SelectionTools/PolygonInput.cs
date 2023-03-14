@@ -378,7 +378,6 @@ namespace Netherlands3D.SelectionTools
             if (pointerRaycastResult.gameObject && pointerRaycastResult.gameObject.IsInLayerMask(lockInputLayers))
                 return;
 
-
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
             currentWorldCoordinate = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
 
