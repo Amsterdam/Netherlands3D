@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7579283517297871876}
   - component: {fileID: 7579283517297871931}
+  - component: {fileID: 7017030482294701140}
+  - component: {fileID: 7299460120781480905}
   m_Layer: 8
   m_Name: WMSLayerManager
   m_TagString: Untagged
@@ -55,6 +57,10 @@ MonoBehaviour:
   ShowWMSOnTerrain: {fileID: 11400000, guid: 5a7a900965172f142bd1e646995d5b78, type: 2}
   ShowWMSOnBuildingsAndTerrain: {fileID: 11400000, guid: 8394613e38f476e4f8fa59e6fb826662, type: 2}
   UnloadWMSService: {fileID: 11400000, guid: 983acf4a3bbae6f4b8d0c4c3aa6e2c17, type: 2}
+  RenderObjectTerrainAsTarget: {fileID: 0}
+  RenderObjectTerrainNOTAsTarget: {fileID: 0}
+  RenderObjectBuildingsAsTarget: {fileID: 0}
+  RenderObjectBuildingsNOTAsTarget: {fileID: 0}
   wmsLods:
   - textureSize: 16
     maximumDistance: 6000
@@ -64,3 +70,63 @@ MonoBehaviour:
     maximumDistance: 1000
   tileSize: 1500
   compressLoadedTextures: 1
+--- !u!114 &7017030482294701140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7579283517297871930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bda199de660f4334b8a50d8e350bdf29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEvent: {fileID: 11400000, guid: aa8e4ee71f2f6d34285bc9ce2df81575, type: 2}
+  onTriggered:
+    m_PersistentCalls:
+      m_Calls: []
+  onTrue:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7299460120781480905}
+        m_TargetAssemblyTypeName: Netherlands3D.Rendering.ToggleStencilForRenderFeatures,
+          Netherlands3D.WMS.Runtime
+        m_MethodName: DisableForFeature
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Buildings
+          m_BoolArgument: 0
+        m_CallState: 2
+  onFalse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7299460120781480905}
+        m_TargetAssemblyTypeName: Netherlands3D.Rendering.ToggleStencilForRenderFeatures,
+          Netherlands3D.WMS.Runtime
+        m_MethodName: EnableForFeature
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Buildings
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &7299460120781480905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7579283517297871930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9509dbe4ef5ec594ebc4e3f4c2e47b5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
