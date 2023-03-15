@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 
 namespace Netherlands3D.SelectionTools
 {
@@ -68,6 +69,7 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] private float doubleClickDistance = 10.0f;
         [SerializeField] private bool displayLineUntilRedraw = true;
         [SerializeField] private bool clearOnEnable = false;
+        [SerializeField] private LayerMask lockInputLayers = 32; //UI layer 5th bit is a 1
 
         private InputAction pointerAction;
         private InputAction tapAction;
@@ -371,7 +373,9 @@ namespace Netherlands3D.SelectionTools
 
         private void Tap()
         {
-            if (EventSystem.current.IsPointerOverGameObject())
+            var pointerRaycastResult = EventSystem.current.GetComponent<InputSystemUIInputModule>().GetLastRaycastResult(0);
+
+            if (pointerRaycastResult.gameObject && pointerRaycastResult.gameObject.IsInLayerMask(lockInputLayers))
                 return;
 
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
