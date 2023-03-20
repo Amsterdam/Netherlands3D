@@ -32,6 +32,8 @@ namespace Netherlands3D
         [Header("Optional source camera (Defaults to Camera.main)")]
         public Camera sourceCamera;
 
+        private bool useViewSize = true;
+
         public string FileName { get => fileName; set => fileName = value; }
         public string TargetPath { get => targetPath; set => targetPath = value; }
         public string FileType { get => fileType; set => fileType = value; }
@@ -42,6 +44,7 @@ namespace Netherlands3D
         }
         public void SetImageWidth(int width)
         {
+            useViewSize = false;
             this.width = width;
         }
 
@@ -51,7 +54,13 @@ namespace Netherlands3D
         }
         public void SetImageHeight(int height)
         {
+            useViewSize = false;
             this.height = height;
+        }
+
+        public void UseViewSize(bool useViewSize)
+        {
+            this.useViewSize = useViewSize;
         }
 
         /// <summary>
@@ -68,7 +77,11 @@ namespace Netherlands3D
             if (!sourceCamera)
                 sourceCamera = Camera.main;
 
-            byte[] bytes = SnapshotToImageBytes(width, height, fileType, sourceCamera, snapshotLayers);
+
+            var snapshotWidth = (useViewSize) ? Screen.width : width;
+            var snapshotHeight = (useViewSize) ? Screen.height : height;
+
+            byte[] bytes = SnapshotToImageBytes(snapshotWidth, snapshotHeight, fileType, sourceCamera, snapshotLayers);
 
 #if UNITY_EDITOR
             // Window for user to input desired path/name/filetype
