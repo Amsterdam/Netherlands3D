@@ -78,10 +78,7 @@ namespace Netherlands3D.Core
             IsActive = false;
 
             if (destroyObjectOnCompletion)
-            {
-                print("destroying coroutineObject " + gameObject.name);
                 Destroy(gameObject);
-            }
         }
 
         private IEnumerator GetWebString(string url, StringEvent invokeEvent, bool destroyObjectOnCompletion)
