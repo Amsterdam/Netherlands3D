@@ -37,7 +37,11 @@ public class WFSInterface : MonoBehaviour
     //}
     private void BuildFilterInterface(WFSFeature activeFeature)
     {
-        for(int i = filterParent.childCount - 1; i >= 0; i--)
+        print("should build interface for " + activeFeature.FeatureName);
+        return;
+        var startTime = Time.realtimeSinceStartupAsDouble;
+        print("starting BuildINterface()" + startTime);
+        for (int i = filterParent.childCount - 1; i >= 0; i--)
         {
             Destroy(filterParent.GetChild(i).gameObject);
         }
@@ -68,10 +72,15 @@ public class WFSInterface : MonoBehaviour
                 }
             }
         }
+
+        var endTime = Time.realtimeSinceStartupAsDouble;
+        print("completed BuildINterface() in " + (endTime-startTime)*1000 + "ms");
     }
 
     private void BuildWFSInterface(WFS wfs)
     {
+        var startTime = Time.realtimeSinceStartupAsDouble;
+        print("starting BuildWFSInterface()" + startTime);
         ResetInterface();
         foreach (WFSFeature feature in wfs.features)
         {
@@ -79,7 +88,7 @@ public class WFSInterface : MonoBehaviour
             b.GetComponentInChildren<TextMeshProUGUI>().text = feature.FeatureName;
             b.onClick.AddListener(() => 
                 {
-                    setActiveFeatureEvent.Invoke(feature);
+                    setActiveFeatureEvent.InvokeStarted(feature);
                     activeFeatureText.text = feature.FeatureName;
                     settingsParent.gameObject.SetActive(true);
                 }
@@ -88,10 +97,14 @@ public class WFSInterface : MonoBehaviour
             //b.onClick.AddListener(() => getFeatureEvent.Invoke(feature.FeatureName));
             activatedWFS = wfs;
         }
+
+        var endTime = Time.realtimeSinceStartupAsDouble;
+        print("completed ResetInterface() in " + (endTime - startTime) * 1000 + "ms");
     }
     private void ResetInterface()
     {
-        foreach(Transform child in featureContentParent)
+
+        foreach (Transform child in featureContentParent)
         {
             child.GetComponent<Button>().onClick.RemoveAllListeners();
             Destroy(child.gameObject);

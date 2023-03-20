@@ -2,31 +2,30 @@ using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
 
-public class WFSFormatter
+public static class WFSFormatter
 {
-    private XmlNamespaceManager namespaceManager;
+    //private XmlNamespaceManager namespaceManager;
     //private string namespacePrefix = "";
-    private XmlDocument xml;
-    public WFS ReadFromWFS(WFS wfs, XmlDocument wmsXml)
+    //private XmlDocument xml;
+    public static void ReadFromWFS(this WFS wfs, XmlDocument wmsXml)
     {
-
-        xml = wmsXml;
-        FindNamespaces();
+        //xml = wmsXml;
+        var namespaceManager = FindNamespaces(wmsXml);
         bool allowsGeoJSON = false;
 
-        XmlNode operationsMetadata = GetChildNode(wmsXml.DocumentElement, "OperationsMetadata", "ows");
-        XmlNodeList operations = GetChildNodes(operationsMetadata, "Operation", "ows");
+        XmlNode operationsMetadata = GetChildNode(wmsXml.DocumentElement, "OperationsMetadata", "ows", namespaceManager);
+        XmlNodeList operations = GetChildNodes(operationsMetadata, "Operation", "ows", namespaceManager);
         foreach(XmlNode o in operations)
         {
             if (o.Attributes.GetNamedItem("name")?.Value == "GetFeature")
             {
                 //Debug.Log("Found the Feature Node!");
-                foreach(XmlNode parameter in GetChildNodes(o, "Parameter", "ows"))
+                foreach(XmlNode parameter in GetChildNodes(o, "Parameter", "ows", namespaceManager))
                 {
                     if(parameter.Attributes.GetNamedItem("name").Value == "outputFormat")
                     {
-                        XmlNode allowedValues = GetChildNode(parameter, "AllowedValues", "ows");
-                        foreach(XmlNode value in GetChildNodes(allowedValues, "Value", "ows"))
+                        XmlNode allowedValues = GetChildNode(parameter, "AllowedValues", "ows", namespaceManager);
+                        foreach(XmlNode value in GetChildNodes(allowedValues, "Value", "ows", namespaceManager))
                         {
                             if (value.InnerText.ToLower().Contains("geojson"))
                             {
@@ -42,9 +41,9 @@ public class WFSFormatter
         if (!allowsGeoJSON)
             throw new System.NotImplementedException("This WFS does not support GeoJSON and currently cannot be processed!");
 
-        XmlNode filterCapabilities = GetChildNode(xml.DocumentElement, "Filter_Capabilities", "fes");
+        XmlNode filterCapabilities = GetChildNode(wmsXml.DocumentElement, "Filter_Capabilities", "fes", namespaceManager);
 
-        XmlNode conformance = GetChildNode(filterCapabilities, "Conformance", "fes");
+        XmlNode conformance = GetChildNode(filterCapabilities, "Conformance", "fes", namespaceManager);
         //Debug.Log(conformance.ChildNodes.Count);
 
         //foreach(XmlNode constraint in GetChildNodes(conformance, "Constraint", "fes"))
@@ -96,13 +95,13 @@ public class WFSFormatter
         //}
 
 
-        XmlNode featureList = GetChildNode(xml.DocumentElement, "FeatureTypeList", "wfs");
-        foreach(XmlNode feature in GetChildNodes(featureList, "FeatureType", "wfs"))
+        XmlNode featureList = GetChildNode(wmsXml.DocumentElement, "FeatureTypeList", "wfs", namespaceManager);
+        foreach(XmlNode feature in GetChildNodes(featureList, "FeatureType", "wfs", namespaceManager))
         {
             //Debug.Log("Found a feature in the feature type list");
-            WFSFeature newFeature = new WFSFeature(GetChildNodeValue(feature, "Name", "wfs"));
-            newFeature.CRS.Add(GetChildNodeValue(feature, "DefaultCRS", "wfs"));
-            foreach(XmlNode crs in GetChildNodes(feature, "OtherCRS", "wfs"))
+            WFSFeature newFeature = new WFSFeature(GetChildNodeValue(feature, "Name", "wfs", namespaceManager));
+            newFeature.CRS.Add(GetChildNodeValue(feature, "DefaultCRS", "wfs", namespaceManager));
+            foreach(XmlNode crs in GetChildNodes(feature, "OtherCRS", "wfs", namespaceManager))
             {
                 newFeature.CRS.Add(crs.InnerText);
             }
@@ -111,16 +110,16 @@ public class WFSFormatter
         }
         //Debug.Log(featureList.InnerText);
 
-        string version = xml.DocumentElement.Attributes.GetNamedItem("version").InnerText;
+        string version = wmsXml.DocumentElement.Attributes.GetNamedItem("version").InnerText;
         wfs.Version = version;
 
-        return wfs;
+        //return wfs;
 
     }
 
-    private void FindNamespaces()
+    private static XmlNamespaceManager FindNamespaces(XmlDocument xml)
     {
-        namespaceManager = new XmlNamespaceManager(xml.NameTable);
+        var namespaceManager = new XmlNamespaceManager(xml.NameTable);
 
         if (xml.DocumentElement.Attributes.GetNamedItem("xmlns:fes") != null)
         {
@@ -137,9 +136,11 @@ public class WFSFormatter
             string ns = xml.DocumentElement.Attributes.GetNamedItem("xmlns").InnerText;
             namespaceManager.AddNamespace("wfs", xml.DocumentElement.Attributes.GetNamedItem("xmlns").InnerText);
         }
+
+        return namespaceManager;
     }
 
-    private string GetChildNodeValue(XmlNode parentNode, string childNodeName, string nameSpace)
+    private static string GetChildNodeValue(XmlNode parentNode, string childNodeName, string nameSpace, XmlNamespaceManager namespaceManager)
     {
 
         XmlNode selected = parentNode.SelectSingleNode($"{nameSpace}:{childNodeName}", namespaceManager);
@@ -150,11 +151,12 @@ public class WFSFormatter
         return "";
     }
 
-    private XmlNode GetChildNode(XmlNode parentNode, string childNodeName, string nameSpace)
+    private static XmlNode GetChildNode(XmlNode parentNode, string childNodeName, string nameSpace, XmlNamespaceManager namespaceManager)
     {
         return parentNode.SelectSingleNode($"{nameSpace}:{childNodeName}", namespaceManager);
     }
-    private XmlNodeList GetChildNodes(XmlNode parentNode, string childNodeName, string nameSpace)
+
+    private static XmlNodeList GetChildNodes(XmlNode parentNode, string childNodeName, string nameSpace, XmlNamespaceManager namespaceManager)
     {
         return parentNode.SelectNodes($"{nameSpace}:{childNodeName}", namespaceManager);
     }
