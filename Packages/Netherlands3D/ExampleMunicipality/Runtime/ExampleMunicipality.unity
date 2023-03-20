@@ -2531,19 +2531,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.049463958
+      value: -0.049510375
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.011471438
+      value: -0.011482065
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9728895
+      value: 0.9728877
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.22562775
+      value: -0.2256246
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
@@ -5406,7 +5406,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3940005848846984674, guid: 30feb625b019a6a489c2cc59a88e7580, type: 3}
       propertyPath: m_Name
-      value: SnapshotTrigger
+      value: Snapshots
       objectReference: {fileID: 0}
     - target: {fileID: 3940005848846984675, guid: 30feb625b019a6a489c2cc59a88e7580, type: 3}
       propertyPath: m_RootOrder

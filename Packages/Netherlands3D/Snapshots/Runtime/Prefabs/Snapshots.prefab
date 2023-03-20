@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3940005848846984687}
   - component: {fileID: 3940005848846984686}
   m_Layer: 0
-  m_Name: SnapshotTrigger
+  m_Name: Snapshots
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
