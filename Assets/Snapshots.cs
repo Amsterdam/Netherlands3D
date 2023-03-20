@@ -25,9 +25,11 @@ namespace Netherlands3D
         private string fileType = "png";
         private string filePath = "";
 
+        [SerializeField] LayerMask snapshotLayers;
+
         public UnityEvent<string> snapshotSaved;
 
-        [Header("Optional source camera (Fallback to Camera.main)")]
+        [Header("Optional source camera (Defaults to Camera.main)")]
         public Camera sourceCamera;
 
         public string FileName { get => fileName; set => fileName = value; }
@@ -52,17 +54,21 @@ namespace Netherlands3D
             this.height = height;
         }
 
-        public void TakeSnapshot()
+        /// <summary>
+        /// Set the layermask for the snapshot camera ( if you want to exclude, include specific layers in the image )
+        /// </summary>
+        /// <param name="snapshotLayers">Include these layers in the snapshot</param>
+        public void SetLayerMask(LayerMask snapshotLayers)
         {
-            StartCoroutine(SnapshotWithTemporaryCamera());
+            this.snapshotLayers = snapshotLayers;
         }
 
-        IEnumerator SnapshotWithTemporaryCamera()
+        public void TakeSnapshot()
         {
             if (!sourceCamera)
                 sourceCamera = Camera.main;
 
-            byte[] bytes = RenderCameraToBytes(width,height, fileType, sourceCamera);
+            byte[] bytes = SnapshotToImageBytes(width, height, fileType, sourceCamera, snapshotLayers);
 
 #if UNITY_EDITOR
             // Window for user to input desired path/name/filetype
@@ -83,9 +89,9 @@ namespace Netherlands3D
 #if UNITY_WEBGL && !UNITY_EDITOR
             DownloadFile(bytes, bytes.Length, fileName);
 #else
-            File.WriteAllBytes(filePath, bytes);
+            if (!string.IsNullOrEmpty(filePath))
+                File.WriteAllBytes(filePath, bytes);
 #endif
-            yield return null;
         }
 
         /// <summary>
@@ -93,30 +99,59 @@ namespace Netherlands3D
         /// </summary>
         /// <param name="width">Width in pixels</param>
         /// <param name="height">Height in pixels</param>
-        /// <param name="fileType">Supported types are 'png', 'jpg' and 'raw'</param>
+        /// <param name="fileType">Supported extention/types are 'png', 'jpg' and 'raw'</param>
         /// <returns>Byte array of the encoded image type</returns>
-        private static byte[] RenderCameraToBytes(int width, int height, string fileType = "png", Camera sourceCamera = null)
+        public static byte[] SnapshotToImageBytes(int width, int height, string fileType = "png", Camera sourceCamera = null, LayerMask snapshotLayers = default)
         {
             // Create temporary camera based on main
-            Camera snapshotCamera = new Camera();
-            if(sourceCamera)
-                snapshotCamera.CopyFrom(Camera.main);
+            Camera snapshotCamera = new GameObject().AddComponent<Camera>();
+            if (!sourceCamera) sourceCamera = Camera.main;
+
+            snapshotCamera.transform.SetPositionAndRotation(sourceCamera.transform.position, sourceCamera.transform.rotation);
+            snapshotCamera.CopyFrom(Camera.main);
+            if(snapshotLayers != default)
+            {
+                snapshotCamera.cullingMask = snapshotLayers;
+            }
 
             //Create temporary textures to render to
             Texture2D screenShot = new Texture2D(width,height,TextureFormat.RGB24, false);
             RenderTexture screenshotRenderTexture = new RenderTexture(width, height, 24);
             RenderTexture.active = screenshotRenderTexture;
 
+            //Make sure our render camera can see the canvases
+            Dictionary<Canvas, RenderMode> canvasRenderModes = new Dictionary<Canvas, RenderMode>();
+            var canvases = FindObjectsOfType<Canvas>();
+            foreach (Canvas canvas in canvases)
+            {
+                canvasRenderModes.Add(canvas, canvas.renderMode);
+
+                canvas.worldCamera = snapshotCamera;
+                canvas.renderMode = RenderMode.ScreenSpaceCamera;
+                canvas.planeDistance = snapshotCamera.nearClipPlane + 0.1f;
+            }
+
             // Render the camera
             snapshotCamera.targetTexture = screenshotRenderTexture;
             snapshotCamera.Render();
 
+            //Read pixels from targetTexture
             screenShot.ReadPixels(new Rect(0, 0, width, height), 0, 0);
             screenShot.Apply();
 
             // Resets variables
             snapshotCamera.targetTexture = null;
             RenderTexture.active = null;
+
+            //Reset canvases back to their original mode
+            foreach(KeyValuePair<Canvas,RenderMode> canvasMode in canvasRenderModes)
+            {
+                var canvas = canvasMode.Key;
+                var originalMode = canvasMode.Value;
+
+                canvas.renderMode = originalMode;
+            }
+
             byte[] bytes = fileType switch
             {
                 "png" => screenShot.EncodeToPNG(),
@@ -128,7 +163,7 @@ namespace Netherlands3D
             // Cleanup temporary textures and camera
             Destroy(screenshotRenderTexture);
             Destroy(screenShot);
-            Destroy(snapshotCamera);
+            Destroy(snapshotCamera.gameObject);
 
             //Return bytes
             return bytes;

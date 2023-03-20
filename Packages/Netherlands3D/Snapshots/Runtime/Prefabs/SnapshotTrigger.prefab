@@ -47,6 +47,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abd5a8cda7029114799865d968337b87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  snapshotLayers:
+    serializedVersion: 2
+    m_Bits: 2147483647
+  snapshotSaved:
+    m_PersistentCalls:
+      m_Calls: []
+  sourceCamera: {fileID: 0}
 --- !u!114 &3940005848846984672
 MonoBehaviour:
   m_ObjectHideFlags: 0
