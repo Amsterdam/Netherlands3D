@@ -32,37 +32,78 @@ namespace Netherlands3D.Core
             var coroutineObject = new GameObject(url);
             coroutineObject.transform.SetParent(coroutineObjectsParent.transform);
             var req = coroutineObject.AddComponent<WebRequest>();
-            req.Coroutine = req.StartCoroutine(req.GetWebString(url, callback, destroyObjectOnCompletion));
+            req.Coroutine = req.StartCoroutine(req.GetWebString(url, null, callback, destroyObjectOnCompletion));
 
             return req;
         }
+
+        public static WebRequest CreateWebRequest(string url, Dictionary<string, string> headers, Action<string> callback, bool destroyObjectOnCompletion = true)
+        {
+            var coroutineObject = new GameObject(url);
+            coroutineObject.transform.SetParent(coroutineObjectsParent.transform);
+            var req = coroutineObject.AddComponent<WebRequest>();
+            req.Coroutine = req.StartCoroutine(req.GetWebString(url, headers, callback, destroyObjectOnCompletion));
+
+            return req;
+        }
+
 
         public static WebRequest CreateWebRequest(string url, StringEvent invokeEvent, bool destroyObjectOnCompletion = true)
         {
             var coroutineObject = new GameObject(url);
             coroutineObject.transform.SetParent(coroutineObjectsParent.transform);
             var req = coroutineObject.AddComponent<WebRequest>();
-            req.Coroutine = req.StartCoroutine(req.GetWebString(url, invokeEvent, destroyObjectOnCompletion));
+            req.Coroutine = req.StartCoroutine(req.GetWebString(url, null, invokeEvent, destroyObjectOnCompletion));
 
             return req;
         }
+
+        public static WebRequest CreateWebRequest(string url, Dictionary<string, string> headers, StringEvent invokeEvent, bool destroyObjectOnCompletion = true)
+        {
+            var coroutineObject = new GameObject(url);
+            coroutineObject.transform.SetParent(coroutineObjectsParent.transform);
+            var req = coroutineObject.AddComponent<WebRequest>();
+            req.Coroutine = req.StartCoroutine(req.GetWebString(url, headers, invokeEvent, destroyObjectOnCompletion));
+
+            return req;
+        }
+
 
         public static WebRequest CreateWebRequest(string url, Action<byte[]> callback, bool destroyObjectOnCompletion = true)
         {
             var coroutineObject = new GameObject(url);
             coroutineObject.transform.SetParent(coroutineObjectsParent.transform);
             var req = coroutineObject.AddComponent<WebRequest>();
-            req.Coroutine = req.StartCoroutine(req.GetWebByteArray(url, callback, destroyObjectOnCompletion));
+            req.Coroutine = req.StartCoroutine(req.GetWebByteArray(url, null, callback, destroyObjectOnCompletion));
 
             return req;
         }
 
-        private IEnumerator GetWebString(string url, Action<string> action, bool destroyObjectOnCompletion)
+        public static WebRequest CreateWebRequest(string url, Dictionary<string, string> headers, Action<byte[]> callback, bool destroyObjectOnCompletion = true)
+        {
+            var coroutineObject = new GameObject(url);
+            coroutineObject.transform.SetParent(coroutineObjectsParent.transform);
+            var req = coroutineObject.AddComponent<WebRequest>();
+            req.Coroutine = req.StartCoroutine(req.GetWebByteArray(url, headers, callback, destroyObjectOnCompletion));
+
+            return req;
+        }
+
+
+        private IEnumerator GetWebString(string url, Dictionary<string, string> headers, Action<string> action, bool destroyObjectOnCompletion)
         {
             IsActive = true;
 
             UnityWebRequest request = UnityWebRequest.Get(url);
+
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                    request.SetRequestHeader(header.Key, header.Value);
+            }
+
             yield return request.SendWebRequest();
+
             if (request.result == UnityWebRequest.Result.Success)
             {
                 var result = request.downloadHandler.text;
@@ -81,12 +122,19 @@ namespace Netherlands3D.Core
                 Destroy(gameObject);
         }
 
-        private IEnumerator GetWebString(string url, StringEvent invokeEvent, bool destroyObjectOnCompletion)
+        private IEnumerator GetWebString(string url, Dictionary<string, string> headers, StringEvent invokeEvent, bool destroyObjectOnCompletion)
         {
             IsActive = true;
 
             UnityWebRequest request = UnityWebRequest.Get(url);
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                    request.SetRequestHeader(header.Key, header.Value);
+            }
+
             yield return request.SendWebRequest();
+
             if (request.result == UnityWebRequest.Result.Success)
             {
                 var result = request.downloadHandler.text;
@@ -106,12 +154,19 @@ namespace Netherlands3D.Core
                 Destroy(gameObject);
         }
 
-        private IEnumerator GetWebByteArray(string url, Action<byte[]> action, bool destroyObjectOnCompletion)
+        private IEnumerator GetWebByteArray(string url, Dictionary<string, string> headers, Action<byte[]> action, bool destroyObjectOnCompletion)
         {
             IsActive = true;
 
             UnityWebRequest request = UnityWebRequest.Get(url);
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                    request.SetRequestHeader(header.Key, header.Value);
+            }
+
             yield return request.SendWebRequest();
+
             if (request.result == UnityWebRequest.Result.Success)
             {
                 var result = request.downloadHandler.data;
