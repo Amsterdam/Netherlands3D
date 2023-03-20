@@ -16,6 +16,7 @@ public class WFS : IWebService
     public string Version { get; set; }
     public List<WFSFeature> features { get; set; }
     public string BaseUrl { get; private set; }
+    public Dictionary<string, string> RequestHeaders { get; set; }
 
     public BoundingBox BBox;
 
@@ -92,7 +93,7 @@ public class WFS : IWebService
         var url = GetCapabilities();
         Debug.Log("getting wfs capabilities at " + url);
         //StartCoroutine(UrlReader.GetWebString(url, callback));
-        WebRequest.CreateWebRequest(url, ProcessWFS);
+        WebRequest.CreateWebRequest(url, RequestHeaders, ProcessWFS);
     }
 
     private void ProcessWFS(string xmlData)
