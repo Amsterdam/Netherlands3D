@@ -77,12 +77,12 @@
     {
       "displayName": "TileSystem",
       "description": "Basic TileSystem",
-      "path": "Core/Samples~/TileSystem"
+      "path": "Core/Samples~"
     },
     {
       "displayName": "Timeline UI Mockup",
       "description": "Ready to use timeline UI prefab",
-      "path": "Timeline/Samples~/Scene Setup"
+      "path": "Timeline/Samples~"
     },
     {
       "displayName": "Traffic Sample",
@@ -98,6 +98,11 @@
       "displayName": "WMS-url",
       "description": "Runtime tooling for correct wms-url's for use in the WMS-Layer",
       "path": "getWMSUrl/GeoService/Samples~/WMSSelector"
+    },
+	{
+	"displayName": "Snapshots",
+      "description": "A system that allows you to create snapshots independent of you screen resolution",
+      "path": "Snapshots/Samples~/"
     },
     {
       "displayName": "WebGL template example",
