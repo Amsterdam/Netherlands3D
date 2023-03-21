@@ -101,7 +101,7 @@
     },
 	{
 	"displayName": "Snapshots",
-      "description": "A system that allows you to create snapshots independent of you screen resolution",
+      "description": "A system that allows you to create snapshots independent of you screen resolution, with or without UI",
       "path": "Snapshots/Samples~/"
     },
     {

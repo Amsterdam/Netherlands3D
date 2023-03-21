@@ -44,6 +44,7 @@ namespace Netherlands3D
         }
         public void SetImageWidth(int width)
         {
+            Debug.Log($"Changed snapshot width to {width}");
             useViewSize = false;
             this.width = width;
         }
@@ -54,6 +55,7 @@ namespace Netherlands3D
         }
         public void SetImageHeight(int height)
         {
+            Debug.Log($"Changed snapshot height to {height}");
             useViewSize = false;
             this.height = height;
         }
@@ -110,11 +112,11 @@ namespace Netherlands3D
         /// <summary>
         /// Create a snapshot based on source camera
         /// </summary>
-        /// <param name="width">Width in pixels</param>
-        /// <param name="height">Height in pixels</param>
+        /// <param name="imageWidth">Width in pixels</param>
+        /// <param name="imageHeight">Height in pixels</param>
         /// <param name="fileType">Supported extention/types are 'png', 'jpg' and 'raw'</param>
         /// <returns>Byte array of the encoded image type</returns>
-        public static byte[] SnapshotToImageBytes(int width, int height, string fileType = "png", Camera sourceCamera = null, LayerMask snapshotLayers = default)
+        public static byte[] SnapshotToImageBytes(int imageWidth, int imageHeight, string fileType = "png", Camera sourceCamera = null, LayerMask snapshotLayers = default)
         {
             // Create temporary camera based on main
             Camera snapshotCamera = new GameObject().AddComponent<Camera>();
@@ -128,8 +130,8 @@ namespace Netherlands3D
             }
 
             //Create temporary textures to render to
-            Texture2D screenShot = new Texture2D(width,height,TextureFormat.RGB24, false);
-            RenderTexture screenshotRenderTexture = new RenderTexture(width, height, 24);
+            Texture2D screenShot = new Texture2D(imageWidth,imageHeight,TextureFormat.RGB24, false);
+            RenderTexture screenshotRenderTexture = new RenderTexture(imageWidth, imageHeight, 24);
             RenderTexture.active = screenshotRenderTexture;
 
             //Make sure our render camera can see the canvases
@@ -149,7 +151,7 @@ namespace Netherlands3D
             snapshotCamera.Render();
 
             //Read pixels from targetTexture
-            screenShot.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+            screenShot.ReadPixels(new Rect(0, 0, imageWidth, imageHeight), 0, 0);
             screenShot.Apply();
 
             // Resets variables

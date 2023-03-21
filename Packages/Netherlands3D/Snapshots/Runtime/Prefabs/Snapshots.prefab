@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3940005848846984672}
   - component: {fileID: 3940005848846984687}
   - component: {fileID: 3940005848846984686}
+  - component: {fileID: 3205503241566519891}
   m_Layer: 0
   m_Name: Snapshots
   m_TagString: Untagged
@@ -129,6 +130,34 @@ MonoBehaviour:
       - m_Target: {fileID: 3940005848846984673}
         m_TargetAssemblyTypeName: Netherlands3D.SnapshotTrigger, Assembly-CSharp
         m_MethodName: SetImageHeight
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &3205503241566519891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3940005848846984674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c51d7591ffd87243aba017d1c85d768, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEvent: {fileID: 11400000, guid: f923da3ace725c545b5e306b4d05148c, type: 2}
+  trigger:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3940005848846984673}
+        m_TargetAssemblyTypeName: Netherlands3D.Snapshots, Netherlands3D.Runtime.Snapshots
+        m_MethodName: SetLayerMask
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
