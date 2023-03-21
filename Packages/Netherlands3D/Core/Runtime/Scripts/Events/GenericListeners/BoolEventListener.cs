@@ -9,7 +9,8 @@ namespace Netherlands3D.Core
 {
     public class BoolEventListener : MonoBehaviour
     {
-        [SerializeField] private BoolEvent onEvent;
+        [SerializeField, Tooltip("Optional")] private BoolEvent onEvent;
+
         [SerializeField] private UnityEvent<bool> onTriggered;
         [SerializeField] private UnityEvent<bool> onTrue;
         [SerializeField] private UnityEvent<bool> onFalse;
