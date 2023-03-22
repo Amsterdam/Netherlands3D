@@ -2,16 +2,12 @@
     "viewerVersion": "0.0.1",
     "tilesets": [
         {
-            "url": "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/building_1_1/tileset.json",
+            "url": "https://3d.test.kadaster.nl/3dtiles/2020/buildings/tileset.json",
 			"maximumScreenSpaceError": 5
         },
         {
-            "url": "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json",
+            "url": "https://3d.test.kadaster.nl/3dtiles/2020/terrain/tileset.json",
 			"maximumScreenSpaceError": 5
-        },
-        {
-            "url": "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/tiles_1_1/tileset.json",
-			"maximumScreenSpaceError": 5			
         }
     ]
 }
