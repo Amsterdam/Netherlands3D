@@ -81,7 +81,7 @@ namespace Netherlands3D.T3DPipeline
             var isCityJSON = type == "CityJSON";
             if (isCityJSONType)
             {
-                isCityJSONType.Invoke(isCityJSON);
+                isCityJSONType.InvokeStarted(isCityJSON);
                 if (!isCityJSON)
                     return;
             }
@@ -196,7 +196,7 @@ namespace Netherlands3D.T3DPipeline
             }
 
             if (onAllCityObjectsProcessed)
-                onAllCityObjectsProcessed.Invoke();
+                onAllCityObjectsProcessed.InvokeStarted();
         }
 
         //currently only RD and WGS84 are supported as coordinate systems.

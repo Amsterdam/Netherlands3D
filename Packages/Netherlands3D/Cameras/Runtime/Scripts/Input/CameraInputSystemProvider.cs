@@ -1,12 +1,13 @@
 #if UNITY_EDITOR
-using Netherlands3D.Events;
 using UnityEditor;
 #endif
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 #endif
 
 public class CameraInputSystemProvider : BaseCameraInputProvider
@@ -14,6 +15,10 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 #if ENABLE_INPUT_SYSTEM
     [Header("Input")]
     [SerializeField] private InputActionAsset inputActionAsset;
+    [Header("Interface input ignore")]
+    [Tooltip("The CameraInputProvider will lock the input when a interaction starts while the pointer is over any of these layers")]
+    [SerializeField] private LayerMask lockInputLayers = 32; //UI layer 5th bit is a 1
+
     private InputActionMap cameraActionMap;
     private InputActionMap cameraPointerActionMap;
 
@@ -31,9 +36,31 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 
     private InputAction pointerAction;
 
+    private InputSystemUIInputModule inputSystemUIInputModule;
+
+    public bool OverLockingObject
+    {
+        get
+        {
+            if (!inputSystemUIInputModule)
+                return false;
+
+            GameObject gameObjectUnderPoint = inputSystemUIInputModule.GetLastRaycastResult(0).gameObject;
+            if (gameObjectUnderPoint && gameObjectUnderPoint.IsInLayerMask(lockInputLayers))
+            {
+                return true;
+            }
+            return false;
+        }
+    }
+
     private void Awake()
-	{
+    {
+        if (EventSystem.current)
+            inputSystemUIInputModule = EventSystem.current.GetComponent<InputSystemUIInputModule>();
+
         cameraActionMap = inputActionAsset.FindActionMap("Camera");
+
         cameraPointerActionMap = inputActionAsset.FindActionMap("CameraPointerActions");
         cameraActionMap.Enable();
         cameraPointerActionMap.Enable();
@@ -52,9 +79,9 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
     }
 
     public void Update()
-	{
+    {
         //Optionaly ignore camera input when the pointer is interacting with UI
-        if (!isDragging && ignoreInputWhenHoveringInterface && EventSystem.current && EventSystem.current.IsPointerOverGameObject())
+        if (!isDragging && OverLockingObject)
         {
             ingoringInput = true;
             return;
@@ -72,13 +99,13 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         var rotate = rotateModifierAction.IsPressed();
         var firstPerson = firstPersonModifierAction.IsPressed();
 
-        draggingModifier.Invoke(dragging);
-        rotateModifier.Invoke(rotate);
-        firstPersonModifier.Invoke(firstPerson);
+        draggingModifier.InvokeStarted(dragging);
+        rotateModifier.InvokeStarted(rotate);
+        firstPersonModifier.InvokeStarted(firstPerson);
 
         //Always send position of main pointer
         var pointer = pointerAction.ReadValue<Vector2>();
-        pointerPosition.Invoke(pointer);
+        pointerPosition.InvokeStarted(pointer);
 
         //Transform inputs 
         var moveValue = moveAction.ReadValue<Vector2>();
@@ -89,33 +116,33 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         var upPressed = upAction.IsPressed();
         var downPressed = downAction.IsPressed();
 
-        lookInput.Invoke(lookValue);
+        lookInput.InvokeStarted(lookValue);
 
-        if (moveValue.magnitude>0)
+        if (moveValue.magnitude > 0)
         {
-            horizontalInput.Invoke(moveValue.x);
-            verticalInput.Invoke(moveValue.y);
+            horizontalInput.InvokeStarted(moveValue.x);
+            verticalInput.InvokeStarted(moveValue.y);
         }
-        if(flyValue.magnitude>0)
+        if (flyValue.magnitude > 0)
         {
-            flyInput.Invoke(flyValue);
-		}
+            flyInput.InvokeStarted(flyValue);
+        }
         if (zoomValue.magnitude > 0)
         {
-            zoomInput.Invoke(zoomValue.y);
+            zoomInput.InvokeStarted(zoomValue.y);
         }
         if (rotateValue.magnitude > 0)
         {
-            rotateInput.Invoke(rotateValue);
+            rotateInput.InvokeStarted(rotateValue);
         }
 
         if (upPressed)
         {
-            upDownInput.Invoke(1);
+            upDownInput.InvokeStarted(1);
         }
-        else if(downPressed)
+        else if (downPressed)
         {
-            upDownInput.Invoke(-1);
+            upDownInput.InvokeStarted(-1);
         }
     }
 

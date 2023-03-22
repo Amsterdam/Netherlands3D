@@ -190,7 +190,7 @@ namespace Netherlands3D.TileSystem
             if (id == emptyID && !doingMultiselect)
             {
                 ClearSelection();
-                clickedOnObject.Invoke(false);
+                clickedOnObject.InvokeStarted(false);
             }
             else
             {
@@ -209,7 +209,7 @@ namespace Netherlands3D.TileSystem
                     singleIdList.Add(filteredID);
                 }
                 HighlightObjectsWithIDs(singleIdList);
-                clickedOnObject.Invoke(true);
+                clickedOnObject.InvokeStarted(true);
             }
         }
 
@@ -243,7 +243,7 @@ namespace Netherlands3D.TileSystem
 
             HighlightSelectedWithColor(selectionVertexColor);
 
-            selectedIdsOnClick.Invoke(SelectedIDs);
+            selectedIdsOnClick.InvokeStarted(SelectedIDs);
         }
 
         /// <summary>

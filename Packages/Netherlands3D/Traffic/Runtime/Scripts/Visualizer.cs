@@ -18,7 +18,9 @@ namespace Netherlands3D.Traffic.VISSIM
             set
             {
                 updateEntitiesRealtime = value;
-                sso.eventUpdateRealtime.Invoke(value);
+
+                if(Application.isPlaying)
+                    sso.eventUpdateRealtime.InvokeStarted(value);
             }
         }
 
@@ -298,7 +300,8 @@ namespace Netherlands3D.Traffic.VISSIM
 
         private void OnValidate()
         {
-            UpdateEntitiesRealtime = updateEntitiesRealtime;
+            if(Application.isPlaying)
+                UpdateEntitiesRealtime = updateEntitiesRealtime;
         }
     }
 }

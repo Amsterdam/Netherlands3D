@@ -67,7 +67,7 @@ public class GetGeoJSONFloatValues : MonoBehaviour
 		private set
 		{
 			loadedResultsForArea = value;
-			busyLoadingData.Invoke(!loadedResultsForArea);
+			busyLoadingData.InvokeStarted(!loadedResultsForArea);
 		}
 	}
 
@@ -177,7 +177,7 @@ public class GetGeoJSONFloatValues : MonoBehaviour
 
 					featuresFoundInPage++;
 				}
-				filteredIdsAndFloats.Invoke(stringAndFloat);
+				filteredIdsAndFloats.InvokeStarted(stringAndFloat);
 
 				if (featuresFoundInPage < count)
 				{

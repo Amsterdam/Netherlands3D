@@ -154,9 +154,9 @@ namespace Netherlands3D.T3DPipeline
 
             var id = countAnnotationsGlobally ? globalId : localId;
             if (newAnnotationWithLocalIDStarted)
-                newAnnotationWithLocalIDStarted.Invoke(localId);
+                newAnnotationWithLocalIDStarted.InvokeStarted(localId);
             if (newAnnotationWithGlobalIDStarted)
-                newAnnotationWithGlobalIDStarted.Invoke(globalId);
+                newAnnotationWithGlobalIDStarted.InvokeStarted(globalId);
         }
 
         protected virtual void CreateActiveAnnotationMarker(Vector3 position)
@@ -174,7 +174,7 @@ namespace Netherlands3D.T3DPipeline
             {
                 onAnnotationTextChanged.RemoveListenerStarted(OnActiveAnnotationTextChanged);
                 if (activeAnnotationMarker && annotationMarkerDeselected != null)
-                    annotationMarkerDeselected.Invoke(activeAnnotationMarker);
+                    annotationMarkerDeselected.InvokeStarted(activeAnnotationMarker);
                 currentActiveAnnotation = null;
                 activeAnnotationMarker = null;
             }

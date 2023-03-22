@@ -13,7 +13,7 @@ namespace Netherlands3D.Core
         private Vector3Event onEvent;
 
         [SerializeField]
-        private Vector3ValueUnityEvent trigger;
+        private UnityEvent<Vector3> trigger;
 
         void Awake()
         {

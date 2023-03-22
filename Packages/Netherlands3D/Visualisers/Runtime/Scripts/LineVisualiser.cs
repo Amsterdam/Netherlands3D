@@ -26,15 +26,29 @@ namespace Netherlands3D.Visualisers
 		[SerializeField]
 		private Vector3 offset = Vector3.zero;
 
+		[SerializeField] private GameObjectEvent lineParentEvent;
+		[SerializeField] private ColorEvent lineColorEvent;
+
+		private Transform lineParent;
+
 		void Start()
 		{
 			lineCoordinatesEvent.AddListenerStarted(DrawLine);
+			if(lineParentEvent) lineParentEvent.AddListenerStarted((parentObject) => lineParent = parentObject.transform);
+			if (lineColorEvent) lineColorEvent.AddListenerStarted((color) => lineColor = color);
 		}
 
 		public void DrawLine(List<Vector3> linePoints)
 		{
 			var lineRenderObject = new GameObject();
-			lineRenderObject.transform.SetParent(this.transform);
+			if(lineParent != null)
+            {
+				lineRenderObject.transform.SetParent(lineParent);
+            }
+            else
+            {
+				lineRenderObject.transform.SetParent(this.transform);
+            }
 
 			LineRenderer newLineRenderer = lineRenderObject.AddComponent<LineRenderer>();
 			newLineRenderer.positionCount = linePoints.Count;

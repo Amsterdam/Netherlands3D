@@ -21,31 +21,30 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [System.Serializable]
-public abstract class EventContainer<T0, T1> : ScriptableObject where T0 : UnityEvent<T1>
+public abstract class EventContainer<T> : ScriptableObject
 {
     public string eventName;
     public string description;
 
-    [HideInInspector]
-    protected T0 started;
-    [HideInInspector]
-    protected UnityEvent received;
-    [HideInInspector]
-    protected UnityEvent cancelled;
+    protected UnityEvent<T> started = new UnityEvent<T>();
+    protected UnityEvent received = new UnityEvent();
+    protected UnityEvent cancelled = new UnityEvent();
 
+#if UNITY_EDITOR
     private void OnValidate()
     {
         if (eventName == "")
             eventName = this.name;
     }
+#endif
 
     [Obsolete("Invoke is deprecated, please use InvokeStarted instead.")]
-    public void Invoke(T1 payload)
+    public void Invoke(T payload)
     {
         InvokeStarted(payload);
     }
 
-    public abstract void InvokeStarted(T1 payload);
+    public abstract void InvokeStarted(T payload);
 
     public void InvokeReceived()
     {
@@ -56,12 +55,12 @@ public abstract class EventContainer<T0, T1> : ScriptableObject where T0 : Unity
         cancelled.Invoke();
     }
 
-    public void AddListenerStarted(UnityAction<T1> action)
+    public void AddListenerStarted(UnityAction<T> action)
     {
         started.AddListener(action);
     }
 
-    public void RemoveListenerStarted(UnityAction<T1> action)
+    public void RemoveListenerStarted(UnityAction<T> action)
     {
         started.RemoveListener(action);
     }

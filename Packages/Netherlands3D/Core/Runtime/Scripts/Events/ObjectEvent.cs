@@ -20,12 +20,9 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Events
 {
-	[System.Serializable]
-	public class ObjectValueUnityEvent : UnityEvent<object> { }
-
 	[CreateAssetMenu(fileName = "ObjectEvent", menuName = "EventContainers/ObjectEvent", order = 0)]
 	[System.Serializable]
-	public class ObjectEvent : EventContainer<ObjectValueUnityEvent, object> 
+	public class ObjectEvent : EventContainer<object> 
 	{
 		public override void InvokeStarted(object objectContent)
 		{
