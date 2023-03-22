@@ -30,13 +30,16 @@ namespace Netherlands3D.B3DM
         [SerializeField] private bool debug = false;
         [SerializeField] private bool writeGlbNextToB3dm;
 
-        private static readonly CustomCertificateValidation customCertificateHandler = new CustomCertificateValidation();
-        private static readonly ImportSettings importSettings = new ImportSettings() { AnimationMethod = AnimationMethod.None };
+        private static CustomCertificateValidation customCertificateHandler;
+        private static ImportSettings importSettings;
 
 
         private void Awake()
         {
-            if(binTilePath) binTilePath.AddListenerStarted(ImportBinFromFile);
+            customCertificateHandler = new CustomCertificateValidation();
+            importSettings = new ImportSettings() { AnimationMethod = AnimationMethod.None };
+
+            if (binTilePath) binTilePath.AddListenerStarted(ImportBinFromFile);
             if (changeUrl) changeUrl.AddListenerStarted((newUrl) => { url = newUrl; });
             if (loadFromURL) loadFromURL.AddListenerStarted(LoadFromURL);
         }

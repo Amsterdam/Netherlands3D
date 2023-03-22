@@ -23,7 +23,7 @@ namespace Netherlands3D.Core.Tiles
 
         private Vector2 viewCenter = new Vector2(0.5f, 0.5f);
 
-        [SerializeField] private List<Tile> prioritisedTiles = new List<Tile>();
+        private List<Tile> prioritisedTiles = new List<Tile>();
         public List<Tile> PrioritisedTiles { get => prioritisedTiles; private set => prioritisedTiles = value; }
 
         private Camera currentCamera;

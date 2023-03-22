@@ -12,6 +12,8 @@ public class Tile : IDisposable
     public bool hascontent;
 
     public Tile parent;
+
+    [NonSerialized]
     public List<Tile> children = new List<Tile>();
 
     public double[] transform;
