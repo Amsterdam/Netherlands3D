@@ -160,7 +160,7 @@ namespace Netherlands3D.B3DM
             Debug.Log(stat);
 
             stats += stat + "\n\n";
-            if (logStat) logStat.Invoke(stats);
+            if (logStat) logStat.InvokeStarted(stats);
         }
     }
 }

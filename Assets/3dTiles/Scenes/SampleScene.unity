@@ -179,7 +179,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  prioritisedTiles: []
   showPriorityNumbers: 0
   downloadAvailable: 0
 --- !u!4 &252195314
@@ -1130,7 +1129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b632da76a49ee5745b7fb140e0689838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilesetUrl: file://C:/Users/mvang/Downloads/tilesets3dgi/tilesets/buildings/tileset.json
+  tilesetUrl: https://3d.test.kadaster.nl/3dtiles/2020/buildings/tileset.json
   root:
     X: 0
     Y: 0
