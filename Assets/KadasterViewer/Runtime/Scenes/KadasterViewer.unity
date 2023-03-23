@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
+  m_Sun: {fileID: 1807254022}
   m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
@@ -97,8 +97,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 5cdaa609e629f934bbb8c03d44f022f7, type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 9981bdb3667d5fe45ab2d20870f13116, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -176,6 +176,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1107191816428015817, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1107191816428015819, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
+      propertyPath: maxCameraHeight
+      value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1107191816428015819, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
+      propertyPath: minCameraHeight
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -289,8 +297,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   zeroGroundLevelY: 0
   relativeCenterRD:
-    x: 121000
-    y: 487000
+    x: 81869
+    y: 453404
   setInvariantCultureInfo: 1
   movingOrigin: 0
   maxCameraDistanceFromOrigin: 5000
@@ -702,7 +710,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Intensity: 1.5
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
