@@ -122,7 +122,6 @@ namespace Netherlands3D.Core
             set
             {
                 Vector2RD change = new Vector2RD(value.x - relativeCenterRDCoordinate.x, value.y - relativeCenterRDCoordinate.y);
-                var changeUnity = new Vector3((float)change.x, 0, (float)change.y);
 
                 relativeCenterECEF = WGS84toECEF(RDtoWGS84(value.x, value.y));
 
