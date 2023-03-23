@@ -152,37 +152,37 @@ namespace Netherlands3D.Core
         /// <summary>
         /// Converts WGS84-coordinate to UnityCoordinate
         /// </summary>
-        /// <param name="coordinaat">Vector2 WGS-coordinate</param>
+        /// <param name="coordinate">Vector2 WGS-coordinate</param>
         /// <returns>Vector3 Unity-Coordinate (y=0)</returns>
-        public static Vector3 WGS84toUnity(Vector2 coordinaat)
+        public static Vector3 WGS84toUnity(Vector2 coordinate)
         {
             Vector3 output = new Vector3();
-            output = WGS84toUnity(coordinaat.x, coordinaat.y);
+            output = WGS84toUnity(coordinate.x, coordinate.y);
            
             return output;
         }
         /// <summary>
         /// Converts WGS84-coordinate to UnityCoordinate
         /// </summary>
-        /// <param name="coordinaat">Vector3 WGS-coordinate</param>
+        /// <param name="coordinate">Vector3 WGS-coordinate</param>
         /// <returns>Vector3 Unity-Coordinate</returns>
-        public static Vector3 WGS84toUnity(Vector3 coordinaat)
+        public static Vector3 WGS84toUnity(Vector3 coordinate)
         {
-            Vector3 output = WGS84toUnity(coordinaat.x, coordinaat.y);
-            double hoogteCorrectie = RDCorrection(coordinaat.x, coordinaat.y, "Z", RDCorrectionZ);
-            output.y = (float)(coordinaat.z - hoogteCorrectie);
+            Vector3 output = WGS84toUnity(coordinate.x, coordinate.y);
+            double heightCorrection = RDCorrection(coordinate.x, coordinate.y, "Z", RDCorrectionZ);
+            output.y = (float)(coordinate.z - heightCorrection);
             return output;
         }
         /// <summary>
         /// Converts WGS84-coordinate to UnityCoordinate
         /// </summary>
-        /// <param name="coordinaat">Vector3RD WGS-coordinate</param>
+        /// <param name="coordinate">Vector3RD WGS-coordinate</param>
         /// <returns>Vector Unity-Coordinate</returns>
-        public static Vector3 WGS84toUnity(Vector3WGS coordinaat)
+        public static Vector3 WGS84toUnity(Vector3WGS coordinate)
         {
-            Vector3 output = WGS84toUnity(coordinaat.lon, coordinaat.lat);
-            double hoogteCorrectie = RDCorrection(coordinaat.lon, coordinaat.lat, "Z", RDCorrectionZ);
-            output.y = (float)( coordinaat.h - hoogteCorrectie);
+            Vector3 output = WGS84toUnity(coordinate.lon, coordinate.lat);
+            double heightCorrection = RDCorrection(coordinate.lon, coordinate.lat, "Z", RDCorrectionZ);
+            output.y = (float)( coordinate.h - heightCorrection);
             return output;
         }
         /// <summary>
@@ -218,33 +218,31 @@ namespace Netherlands3D.Core
         /// <summary>
         /// Convert RD-coordinate to Unity-Coordinate
         /// </summary>
-        /// <param name="coordinaat">Vector3RD RD-Coordinate XYH</param>
+        /// <param name="coordinate">Vector3RD RD-Coordinate XYH</param>
         /// <returns>Vector3 Unity-Coordinate</returns>
-        public static Vector3 RDtoUnity(Vector3RD coordinaat)
+        public static Vector3 RDtoUnity(Vector3RD coordinate)
         {
-            return RDtoUnity(coordinaat.x, coordinaat.y, coordinaat.z);
+            return RDtoUnity(coordinate.x, coordinate.y, coordinate.z);
         }
 
         /// <summary>
         /// Convert RD-coordinate to Unity-Coordinate
         /// </summary>
-        /// <param name="coordinaat">Vector3RD RD-Coordinate XYH</param>
+        /// <param name="coordinate">Vector3RD RD-Coordinate XYH</param>
         /// <returns>Vector3 Unity-Coordinate</returns>
-        public static Vector3 RDtoUnity(Vector2RD coordinaat)
+        public static Vector3 RDtoUnity(Vector2RD coordinate)
         {
-            return RDtoUnity(coordinaat.x, coordinaat.y, 0);
+            return RDtoUnity(coordinate.x, coordinate.y, 0);
         }
 
         /// <summary>
         /// Convert RD-coordinate to Unity-coordinate
         /// </summary>
-        /// <param name="coordinaat">RD-coordinate XYH</param>
+        /// <param name="coordinate">RD-coordinate XYH</param>
         /// <returns>Unity-Coordinate</returns>
-        public static Vector3 RDtoUnity(Vector2 coordinaat)
+        public static Vector3 RDtoUnity(Vector2 coordinate)
         {
-            Vector3 output = new Vector3();
-            //convert to unity
-            output = RDtoUnity(coordinaat.x, coordinaat.y,0);
+            Vector3 output = RDtoUnity(coordinate.x, coordinate.y,0);
             return output;
         }
         /// <summary>
@@ -256,10 +254,12 @@ namespace Netherlands3D.Core
         /// <returns>Unity-Coordinate</returns>
         public static Vector3 RDtoUnity(double X, double Y, double Z)
         {
-            Vector3 output = new Vector3();
-            output.x = (float)( X - relativeCenterRD.x);
-            output.y = (float)(Z + zeroGroundLevelY);
-            output.z = (float)(Y - relativeCenterRD.y);
+            Vector3 output = new Vector3()
+            {
+                x = (float)(X - relativeCenterRD.x),
+                y = (float)(Z + zeroGroundLevelY),
+                z = (float)(Y - relativeCenterRD.y)
+            };   
             return output;
         }
 
@@ -309,7 +309,7 @@ namespace Netherlands3D.Core
         private static double[] Lq = new double[] { 0, 1, 2, 0, 3, 1, 1, 2, 4, 2, 0, 0 };
         private static double[] Lpq = new double[] { 5260.52916, 105.94684, 2.45656, -0.81885, 0.05594, -.05607, 0.01199, -0.00256, 0.00128, 0.00022, -0.00022, 0.00026 };
 
-        public static Vector3WGS RDtoWGS84(double x, double y)
+        public static Vector3WGS RDtoWGS84(double x, double y, double nap = 0)
         {
             //coordinates of basepoint in RD
             double refRDX = 155000;
@@ -324,8 +324,6 @@ namespace Netherlands3D.Core
 
             double DeltaX = (x+correctionX - refRDX) * Math.Pow(10, -5);
             double DeltaY = (y+correctionY - refRDY) * Math.Pow(10, -5);
-
-            
 
             //calculate lattitude
             double Deltalat = 0;
@@ -530,22 +528,22 @@ namespace Netherlands3D.Core
         /// </summary>
         /// <param name="x">X-value of coordinate when richting is X or Y, else longitude</param>
         /// <param name="y">Y-value of coordinate when richting is X or Y, else lattitude</param>
-        /// <param name="richting">X, Y, or Z</param>
+        /// <param name="direction">X, Y, or Z</param>
         /// <returns>correction for RD X and Y or Elevationdifference between WGS84  and RD</returns>
-        public static Double RDCorrection(double x, double y, string richting, byte[] bytes)
+        public static Double RDCorrection(double x, double y, string direction, byte[] bytes)
         {
-            double waarde = 0;
+            double value = 0;
             //TextAsset txt;
 
-            if (richting == "X")
+            if (direction == "X")
             {
                 //txt = RDCorrectionX;
-                waarde = -0.185;    
+                value = -0.185;    
             }
-            else if (richting == "Y")
+            else if (direction == "Y")
             {
                 //txt = RDCorrectionY;
-                waarde = -0.232;
+                value = -0.232;
             }
             else
             {
@@ -563,7 +561,7 @@ namespace Netherlands3D.Core
             int sizeX;
             int sizeY;
 
-            int datanummer;
+            int dataNumber;
             sizeX = BitConverter.ToInt16(bytes, 4);
             sizeY = BitConverter.ToInt16(bytes, 6);
             Xmin = BitConverter.ToDouble(bytes, 8);
@@ -571,49 +569,46 @@ namespace Netherlands3D.Core
             Ymin = BitConverter.ToDouble(bytes, 24);
             Ymax = BitConverter.ToDouble(bytes, 32);
 
-            double kolombreedte = (Xmax - Xmin) / sizeX;
-            double locatieX = Math.Floor((x - Xmin) / kolombreedte);
-            double rijhoogte = (Ymax - Ymin) / sizeY;
-            double locatieY = (long)Math.Floor((y - Ymin) / rijhoogte);
+            double columnWidth = (Xmax - Xmin) / sizeX;
+            double locationX = Math.Floor((x - Xmin) / columnWidth);
+            double rowHeight = (Ymax - Ymin) / sizeY;
+            double locationY = (long)Math.Floor((y - Ymin) / rowHeight);
 
-            if (locatieX < Xmin || locatieX > Xmax)
+            if (locationX < Xmin || locationX > Xmax)
             {
-                return waarde;
+                return value;
             }
-            if (locatieY < Ymin || locatieY > Ymax)
+            if (locationY < Ymin || locationY > Ymax)
             {
-                return waarde;
+                return value;
             }
 
-            datanummer = (int)(locatieY * sizeX + locatieX);
+            dataNumber = (int)(locationY * sizeX + locationX);
 
             // do linear interpolation on the grid
-            if (locatieX < sizeX && locatieY < sizeY)
+            if (locationX < sizeX && locationY < sizeY)
             {
-                float linksonder = BitConverter.ToSingle(bytes, 56 + (datanummer * 4));
-                float rechtsonder = BitConverter.ToSingle(bytes, 56 + ((datanummer+1) * 4));
-                float linksboven = BitConverter.ToSingle(bytes, 56 + ((datanummer+ sizeX) * 4));
-                float rechtsboven = BitConverter.ToSingle(bytes, 56 + ((datanummer + sizeX+1) * 4));
+                float bottomLeft = BitConverter.ToSingle(bytes, 56 + (dataNumber * 4));
+                float bottomRight = BitConverter.ToSingle(bytes, 56 + ((dataNumber+1) * 4));
+                float topLeft = BitConverter.ToSingle(bytes, 56 + ((dataNumber+ sizeX) * 4));
+                float topRight = BitConverter.ToSingle(bytes, 56 + ((dataNumber + sizeX+1) * 4));
 
-                double Yafstand = ((y - Ymin) % rijhoogte)/rijhoogte;
-                double YgewogenLinks = ((linksboven-linksonder)*Yafstand)+linksonder;
-                double YgewogenRechts = ((rechtsboven - rechtsonder) * Yafstand)+rechtsonder;
+                double YDistance = ((y - Ymin) % rowHeight)/rowHeight;
+                double YOrdinaryLeft = ((topLeft-bottomLeft)*YDistance)+bottomLeft;
+                double YOrdinaryRigth = ((topRight - bottomRight) * YDistance)+bottomRight;
 
-                double Xafstand = ((x - Xmin) % kolombreedte)/kolombreedte;
-                waarde += ((YgewogenRechts - YgewogenLinks) * Xafstand) + YgewogenLinks;
+                double XDistance = ((x - Xmin) % columnWidth)/columnWidth;
+                value += ((YOrdinaryRigth - YOrdinaryLeft) * XDistance) + YOrdinaryLeft;
             }
             else
             {
                 
-                float myFloat = System.BitConverter.ToSingle(bytes, 56 + (datanummer * 4));
-                waarde += myFloat;
+                float myFloat = System.BitConverter.ToSingle(bytes, 56 + (dataNumber * 4));
+                value += myFloat;
             }
             //datanummer = 1500;
-            
-            
-            
-            
-            return waarde;
+
+            return value;
         }
 
     }
