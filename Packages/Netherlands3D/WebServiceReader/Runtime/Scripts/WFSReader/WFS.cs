@@ -11,12 +11,44 @@ using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
+public enum FeatureType
+{
+    Integer,
+    String,
+    Double,
+    Long,
+    Custom
+}
+
+public struct WFSFeatureDescriptor
+{
+    public string Name;
+    public FeatureType Type;
+    public string TypeString;
+
+    public WFSFeatureDescriptor(string name, FeatureType type)
+    {
+        Name = name;
+        Type = type;
+        TypeString = type.ToString();
+    }
+
+    public WFSFeatureDescriptor(string name, string customType)
+    {
+        Name = name;
+        Type = FeatureType.Custom;
+        TypeString = customType;
+    }
+}
+
 public class WFS : IWebService
 {
     public static WFS ActiveInstance { get; private set; }
     public string TypeName { get; set; }
     public string Version { get; set; }
+    public string PropertyName { get; set; }
     public List<WFSFeature> features { get; set; }
+    public List<WFSFeatureDescriptor> ActiveFeatureDescriptors { get; private set; }
     public string BaseUrl { get; private set; }
     public Dictionary<string, string> RequestHeaders { get; set; }
 
@@ -31,6 +63,7 @@ public class WFS : IWebService
     //public WFSFeature activeFeature;
 
     public UnityEvent wfsGetCapabilitiesProcessedEvent = new UnityEvent();
+    public UnityEvent<List<WFSFeatureDescriptor>> activeFeatureDescriptorsReceived = new UnityEvent<List<WFSFeatureDescriptor>>();
     public UnityEvent<WFSFeatureData> wfsFeatureDataReceivedEvent = new UnityEvent<WFSFeatureData>();
 
     private UnityEvent<Vector3> pointEvent = new UnityEvent<Vector3>();
@@ -52,7 +85,7 @@ public class WFS : IWebService
         return BaseUrl + "?request=GetCapabilities&service=WFS";
     }
 
-    public string GetFeatures()
+    public string GetFeatures(bool usePropertyFilter)
     {
         StringBuilder stringBuilder = new StringBuilder(BaseUrl);
         stringBuilder.Append(featureRequest);
@@ -72,16 +105,24 @@ public class WFS : IWebService
         stringBuilder.Append("&");
         stringBuilder.Append(boundingBoxRequest);
 
+        if (usePropertyFilter)
+        {
+            stringBuilder.Append("&");
+            stringBuilder.Append(propertyNameRequest);
+        }
+
         return stringBuilder.ToString();
 
     }
     private string featureRequest => "?REQUEST=GetFeature&SERVICE=WFS";
     private string versionRequest => $"VERSION={Version}";
     private string typeNameRequest => $"TypeName={TypeName}";
+    private string propertyNameRequest => $"PropertyName={PropertyName}";
     private string outputFormatRequest => "OutputFormat=geojson";
     private string countRequest => $"count={Count}";
     private string startIndexRequest => $"startindex={StartIndex}";
     private string boundingBoxRequest => tileHandled ? "bbox={Xmin},{Ymin},{Xmax},{Ymax}" : $"bbox={BBox.MinX},{BBox.MinY},{BBox.MaxX},{BBox.MaxY}";
+
 
     public void RequestWFSGetCapabilities()
     {
@@ -109,6 +150,7 @@ public class WFS : IWebService
 
     public void GetDescribeFeatureType()
     {
+        ActiveFeatureDescriptors = new();
         var url = BaseUrl + "?REQUEST=DescribeFeatureType&service=WFS&" + versionRequest;
         Debug.Log(url);
         WebRequest.CreateWebRequest(url, RequestHeaders, ProcessGetFeatureInfo);
@@ -128,30 +170,34 @@ public class WFS : IWebService
         foreach (XmlNode element in elements)
         {
             string name = element.Attributes["name"].Value;
-            string type = element.Attributes["type"].Value;
-            Debug.Log($"Name: {name}, Type: {type}");
+            string typeString = element.Attributes["type"].Value;
+            //Debug.Log($"Name: {name}, Type: {typeString}");
+            if (Enum.TryParse(typeof(FeatureType), typeString, true, out var type))
+            {
+                ActiveFeatureDescriptors.Add(new WFSFeatureDescriptor(name, (FeatureType)type));
+            }
+            else
+            {
+                Debug.Log(typeString + " is not an available FeatureType, setting it to custom: " + name);
+                ActiveFeatureDescriptors.Add(new WFSFeatureDescriptor(name, typeString));
+            }
         }
-        //XmlElement serviceID = xml.DocumentElement["ows:ServiceIdentification"]["ows:ServiceType"];
-        //if (serviceID != null && serviceID.InnerText.Contains("WFS"))
-        //{
-        //    //WFSFormatter formatter = new WFSFormatter();
-        //    this.ReadFromWFS(xml);
-        //    //resetReaderEvent.InvokeStarted();
-        //    //isWmsEvent.InvokeStarted(false);
-        //    wfsGetCapabilitiesProcessedEvent.Invoke();
-        //}
+
+        activeFeatureDescriptorsReceived.Invoke(ActiveFeatureDescriptors);
     }
 
-    public void GetFeature()
+    public void GetFeature(string propertyName = "")
     {
         //if (!ParseFields()) //todo: set bounding box requirement?
         //    return;
 
+        PropertyName = propertyName;
+
         TypeName = ActiveFeature.FeatureName;
 
-        var url = GetFeatures();
+        var url = GetFeatures(propertyName != string.Empty);
         Debug.Log("getting wfs features at " + url);
-        WebRequest.CreateWebRequest(GetFeatures(), RequestHeaders, FeatureCallback);
+        WebRequest.CreateWebRequest(url, RequestHeaders, FeatureCallback);
         //StartCoroutine(UrlReader.GetWebString(ActiveWFS.GetFeatures(), (string s) => StartCoroutine(HandleFeatureJSON(new GeoJSON(s)))));
     }
 
