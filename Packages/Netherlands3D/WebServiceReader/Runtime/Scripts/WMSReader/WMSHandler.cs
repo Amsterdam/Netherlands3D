@@ -5,6 +5,7 @@ using System.Xml;
 using UnityEngine;
 using UnityEngine.Networking;
 using TMPro;
+using Netherlands3D.Core;
 
 public class WMSHandler : MonoBehaviour
 {
@@ -123,7 +124,8 @@ public class WMSHandler : MonoBehaviour
     {
         wms = new WMS(baseUrl);
         //resetReaderEvent.Invoke();
-        StartCoroutine(GetWebString(wms.GetCapabilities()));
+        WebRequest.CreateWebRequest(wms.GetCapabilities(), ProcessWMS);
+        //StartCoroutine(GetWebString(wms.GetCapabilities()));
     }
     private void SendWMSData()
     {
@@ -137,6 +139,12 @@ public class WMSHandler : MonoBehaviour
         if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
         {
             Debug.LogError(request.error);
+            if (MessageSystem.Instance != null)
+            {
+                MessageSystem.Instance.DisplayMessage(new MessageText("Error", 20, Color.red, "Title"),
+                    new MessageText(request.error, 14, Color.black, "Message"),
+                    new MessageButton(MessageSystem.Instance.CloseMessage, "Close_Button", "Close"));
+            }
         }
         else
         {
@@ -175,7 +183,11 @@ public class WMSHandler : MonoBehaviour
             //resetReaderEvent.Invoke();
             wmsLayerBuildEvent.InvokeStarted(wms.Layers);
             isWMSEvent.InvokeStarted(true);
+            return;
         }
+        MessageSystem.Instance.DisplayMessage(new MessageText("Error", 20, Color.black, "Title"),
+            new MessageText("Couldn't find a WMS on the selected URL!", 12, Color.black, "Message")
+            );
     }
     private void SetResolution(string resolution)
     {

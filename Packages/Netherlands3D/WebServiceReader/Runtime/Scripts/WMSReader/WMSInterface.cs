@@ -56,10 +56,17 @@ public class WMSInterface : MonoBehaviour
 
         logEvent.AddListenerStarted(() =>
             {
-                messagePanel.SetActive(true);
-                messageTitleEvent.Invoke("Url Logged");
                 WMS.ActiveInstance.IsPreview(false);
-                urlDisplayEvent.Invoke(WMS.ActiveInstance.GetMapRequest());
+                if(MessageSystem.Instance != null)
+                {
+                    MessageSystem.Instance.DisplayMessage(new MessageText("Url Logged", 24, Color.black, "Title"),
+                        new MessageInputField("Field", null, WMS.ActiveInstance.GetMapRequest()),
+                        new MessageButton(MessageSystem.Instance.CloseMessage, "Close_Button", "Close"));
+
+                }
+                //messagePanel.SetActive(true);
+                //messageTitleEvent.Invoke("Url Logged");
+                //urlDisplayEvent.Invoke(WMS.ActiveInstance.GetMapRequest());
             }
         );
     }

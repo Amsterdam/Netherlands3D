@@ -54,6 +54,11 @@ public class MessageSystem : MonoBehaviour
                 case MessageButton:
                     Button btn = Instantiate(buttonPrefab, messageGroup.transform);
                     MessageButton mButton = (MessageButton)element;
+                    TMP_Text buttonText = btn.GetComponentInChildren<TMP_Text>();
+                    if(buttonText != null)
+                    {
+                        buttonText.text = mButton.ButtonText;
+                    }
                     btn.onClick.AddListener(mButton.ButtonFunction.Invoke);
                     btn.name = mButton.ElementName;
                     break;
