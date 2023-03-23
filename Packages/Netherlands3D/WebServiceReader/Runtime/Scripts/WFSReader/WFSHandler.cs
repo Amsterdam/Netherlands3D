@@ -105,7 +105,7 @@ public class WFSHandler : MonoBehaviour
     private void CreateWFS(string baseUrl)
     {
         if (ActiveWFS != null)
-            ActiveWFS.wfsDataProcessedEvent.RemoveAllListeners();
+            ActiveWFS.wfsGetCapabilitiesProcessedEvent.RemoveAllListeners();
 
         ActiveWFS = new WFS(baseUrl);
         //ActiveWFS = wfs;
@@ -114,7 +114,7 @@ public class WFSHandler : MonoBehaviour
         resetReaderEvent.InvokeStarted();
 
         ActiveWFS.RequestWFSGetCapabilities();
-        ActiveWFS.wfsDataProcessedEvent.AddListener(OnWFSDataProcessed);
+        ActiveWFS.wfsGetCapabilitiesProcessedEvent.AddListener(OnWFSDataProcessed);
     }
 
     private void OnWFSDataProcessed()
@@ -152,7 +152,7 @@ public class WFSHandler : MonoBehaviour
     {
 
         var activatedFeature = (WFSFeature)activatedFeatureObject;
-        ActiveWFS.SetActiveFeature(activatedFeature);
+        ActiveWFS.SetActiveFeature(activatedFeature.FeatureName);
     }
 
     private void FeatureCallback(WFSFeatureData featureData)

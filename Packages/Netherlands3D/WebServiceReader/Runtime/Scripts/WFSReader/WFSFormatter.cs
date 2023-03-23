@@ -117,7 +117,7 @@ public static class WFSFormatter
 
     }
 
-    private static XmlNamespaceManager FindNamespaces(XmlDocument xml)
+    public static XmlNamespaceManager FindNamespaces(XmlDocument xml)
     {
         var namespaceManager = new XmlNamespaceManager(xml.NameTable);
 

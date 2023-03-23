@@ -4,8 +4,10 @@ using Netherlands3D.WFSHandlers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -26,9 +28,9 @@ public class WFS : IWebService
     public WFSFeature ActiveFeature { get; private set; }
     //public WFSFeatureData featureData { get; private set; }
     public GeoJSON ActiveGeoJSON { get; private set; }
-    public WFSFeature activeFeature;
+    //public WFSFeature activeFeature;
 
-    public UnityEvent wfsDataProcessedEvent = new UnityEvent();
+    public UnityEvent wfsGetCapabilitiesProcessedEvent = new UnityEvent();
     public UnityEvent<WFSFeatureData> wfsFeatureDataReceivedEvent = new UnityEvent<WFSFeatureData>();
 
     private UnityEvent<Vector3> pointEvent = new UnityEvent<Vector3>();
@@ -43,13 +45,6 @@ public class WFS : IWebService
         BaseUrl = baseUrl;
         ActiveInstance = this;
         features = new();
-
-        //wfsDataProcessedEvent = new UnityEvent();
-        //wfsFeatureDataReceivedEvent = new UnityEvent<GeoJSON>();
-
-        //pointEvent = new UnityEvent<Vector3>();
-        //listPointEvent = new UnityEvent<List<Vector3>>();
-        //multiListPointEvent = new UnityEvent<List<List<Vector3>>>();
     }
 
     public string GetCapabilities()
@@ -93,10 +88,10 @@ public class WFS : IWebService
         var url = GetCapabilities();
         Debug.Log("getting wfs capabilities at " + url);
         //StartCoroutine(UrlReader.GetWebString(url, callback));
-        WebRequest.CreateWebRequest(url, RequestHeaders, ProcessWFS);
+        WebRequest.CreateWebRequest(url, RequestHeaders, ProcessGetCapabilitesXML);
     }
 
-    private void ProcessWFS(string xmlData)
+    private void ProcessGetCapabilitesXML(string xmlData)
     {
         XmlDocument xml = new XmlDocument();
         xml.LoadXml(xmlData);
@@ -108,8 +103,43 @@ public class WFS : IWebService
             this.ReadFromWFS(xml);
             //resetReaderEvent.InvokeStarted();
             //isWmsEvent.InvokeStarted(false);
-            wfsDataProcessedEvent.Invoke();
+            wfsGetCapabilitiesProcessedEvent.Invoke();
         }
+    }
+
+    public void GetDescribeFeatureType()
+    {
+        var url = BaseUrl + "?REQUEST=DescribeFeatureType&service=WFS&" + versionRequest;
+        Debug.Log(url);
+        WebRequest.CreateWebRequest(url, RequestHeaders, ProcessGetFeatureInfo);
+    }
+
+    private void ProcessGetFeatureInfo(string featureInfoXML)
+    {
+        Debug.Log(featureInfoXML);
+
+        XmlDocument xml = new XmlDocument();
+        xml.LoadXml(featureInfoXML);
+
+        XmlNamespaceManager nsManager = new XmlNamespaceManager(xml.NameTable);
+        nsManager.AddNamespace("xsd", "http://www.w3.org/2001/XMLSchema");
+        XmlNodeList elements = xml.SelectNodes("//xsd:element", nsManager);
+
+        foreach (XmlNode element in elements)
+        {
+            string name = element.Attributes["name"].Value;
+            string type = element.Attributes["type"].Value;
+            Debug.Log($"Name: {name}, Type: {type}");
+        }
+        //XmlElement serviceID = xml.DocumentElement["ows:ServiceIdentification"]["ows:ServiceType"];
+        //if (serviceID != null && serviceID.InnerText.Contains("WFS"))
+        //{
+        //    //WFSFormatter formatter = new WFSFormatter();
+        //    this.ReadFromWFS(xml);
+        //    //resetReaderEvent.InvokeStarted();
+        //    //isWmsEvent.InvokeStarted(false);
+        //    wfsGetCapabilitiesProcessedEvent.Invoke();
+        //}
     }
 
     public void GetFeature()
@@ -121,7 +151,7 @@ public class WFS : IWebService
 
         var url = GetFeatures();
         Debug.Log("getting wfs features at " + url);
-        WebRequest.CreateWebRequest(GetFeatures(), FeatureCallback);
+        WebRequest.CreateWebRequest(GetFeatures(), RequestHeaders, FeatureCallback);
         //StartCoroutine(UrlReader.GetWebString(ActiveWFS.GetFeatures(), (string s) => StartCoroutine(HandleFeatureJSON(new GeoJSON(s)))));
     }
 
@@ -131,49 +161,19 @@ public class WFS : IWebService
         ProcessFeatureJSONPerTimeInterval(ActiveGeoJSON);
     }
 
-    public void SetActiveFeature(WFSFeature activatedFeature)
+    public void SetActiveFeature(string activatedFeatureName)
     {
-        Debug.Log("setting active feature " + activatedFeature);
-        ActiveFeature = activatedFeature;
+        //Debug.Log("setting active feature " + activatedFeature.FeatureName);
+        ActiveFeature = features.FirstOrDefault(feature => feature.FeatureName == activatedFeatureName);
+        Debug.Log(ActiveFeature);
     }
 
     private void ProcessFeatureJSONPerTimeInterval(GeoJSON geoJSON)
     {
-        //ShiftLineColor();
-        //SpawnParent = new GameObject().transform;
-        //SpawnParent.name = "WFS_ObjectParent";
-        //wfsParentEvent.InvokeStarted(SpawnParent.gameObject);
-
-        //DateTime dateTime = DateTime.UtcNow;
-
         Debug.Log("Handling Feature JSON!");
-        //if (geoJSON.FindFirstFeature())
-        //{
-        //    Debug.Log("Hadn't found first feature! Doing it now!");
-
-        //    var featureData = new WFSFeatureData();
-        //    featureData.TransferDictionary(geoJSON.GetProperties());
-        //    ActiveFeature.AddNewFeatureData(featureData);
-
-        //    EvaluateGeoType(geoJSON);
-        //}
-
-        //int featureCount = 0;
-
-        //var startTime = Time.realtimeSinceStartupAsDouble;
-        //Debug.Log("evaluating features starting at time " + startTime);
 
         while (geoJSON.GotoNextFeature())
         {
-            //if (featureCount > 10)
-            //{
-            //    Debug.Log("max features exceeded");
-            //    break;
-            //}
-
-            //Debug.Log("Evaluating next feature! " + featureCount);
-            //featureCount++;
-
             var featureData = new WFSFeatureData();
             featureData.GeometryType = geoJSON.GetGeometryType();
             featureData.TransferDictionary(geoJSON.GetProperties());
@@ -181,19 +181,7 @@ public class WFS : IWebService
             wfsFeatureDataReceivedEvent.Invoke(featureData);
 
             EvaluateGeoType(geoJSON);
-
-            //if ((DateTime.UtcNow - dateTime).Milliseconds > coroutineRunTime)
-            //{
-            //    yield return null;
-            //    dateTime = DateTime.UtcNow;
-            //}
         }
-
-        //if (propertyFeatureEvent)
-        //    propertyFeatureEvent.InvokeStarted(activeFeature);
-
-        //var endTime = Time.realtimeSinceStartupAsDouble;
-        //Debug.Log("completed BuildINterface() in " + (endTime - startTime) * 1000 + "ms");
     }
 
     public bool AddListenerFeatureProcessed(UnityAction<Vector3> action)
