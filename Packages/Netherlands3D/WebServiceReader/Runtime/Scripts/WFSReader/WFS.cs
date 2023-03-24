@@ -45,8 +45,8 @@ public class WFS : IWebService
 {
     public static WFS ActiveInstance { get; private set; }
     public string TypeName { get; set; }
-    public string Version { get; set; }
-    public string PropertyName { get; set; }
+    public string Version { get; set; } = "2.0.0";
+    //public List<string> PropertyNames { get; set; }
     public List<WFSFeature> features { get; set; }
     public List<WFSFeatureDescriptor> ActiveFeatureDescriptors { get; private set; }
     public string BaseUrl { get; private set; }
@@ -85,7 +85,7 @@ public class WFS : IWebService
         return BaseUrl + "?request=GetCapabilities&service=WFS";
     }
 
-    public string GetFeatures(bool usePropertyFilter)
+    public string GetFeatures(List<string> propertyFilters)
     {
         StringBuilder stringBuilder = new StringBuilder(BaseUrl);
         stringBuilder.Append(featureRequest);
@@ -105,10 +105,10 @@ public class WFS : IWebService
         stringBuilder.Append("&");
         stringBuilder.Append(boundingBoxRequest);
 
-        if (usePropertyFilter)
+        foreach (var propertyFilter in propertyFilters)
         {
-            stringBuilder.Append("&");
-            stringBuilder.Append(propertyNameRequest);
+            stringBuilder.Append("&PropertyName=");
+            stringBuilder.Append(propertyFilter);
         }
 
         return stringBuilder.ToString();
@@ -117,7 +117,7 @@ public class WFS : IWebService
     private string featureRequest => "?REQUEST=GetFeature&SERVICE=WFS";
     private string versionRequest => $"VERSION={Version}";
     private string typeNameRequest => $"TypeName={TypeName}";
-    private string propertyNameRequest => $"PropertyName={PropertyName}";
+    //private string propertyNameRequest => $"PropertyName={PropertyName}";
     private string outputFormatRequest => "OutputFormat=geojson";
     private string countRequest => $"count={Count}";
     private string startIndexRequest => $"startindex={StartIndex}";
@@ -186,16 +186,15 @@ public class WFS : IWebService
         activeFeatureDescriptorsReceived.Invoke(ActiveFeatureDescriptors);
     }
 
-    public void GetFeature(string propertyName = "")
+    public void GetFeature(List<string> propertyNames = null)
     {
         //if (!ParseFields()) //todo: set bounding box requirement?
         //    return;
 
-        PropertyName = propertyName;
-
+        //PropertyNames = propertyNames;
         TypeName = ActiveFeature.FeatureName;
 
-        var url = GetFeatures(propertyName != string.Empty);
+        var url = GetFeatures(propertyNames);
         Debug.Log("getting wfs features at " + url);
         WebRequest.CreateWebRequest(url, RequestHeaders, FeatureCallback);
         //StartCoroutine(UrlReader.GetWebString(ActiveWFS.GetFeatures(), (string s) => StartCoroutine(HandleFeatureJSON(new GeoJSON(s)))));
@@ -203,6 +202,7 @@ public class WFS : IWebService
 
     private void FeatureCallback(string geoJSONString)
     {
+        Debug.Log(geoJSONString);
         ActiveGeoJSON = new GeoJSON(geoJSONString);
         ProcessFeatureJSONPerTimeInterval(ActiveGeoJSON);
     }
@@ -211,7 +211,15 @@ public class WFS : IWebService
     {
         //Debug.Log("setting active feature " + activatedFeature.FeatureName);
         ActiveFeature = features.FirstOrDefault(feature => feature.FeatureName == activatedFeatureName);
-        Debug.Log(ActiveFeature);
+
+        if (ActiveFeature == null)
+        {
+            var newFeature = new WFSFeature(activatedFeatureName);
+            features.Add(newFeature);
+            ActiveFeature = newFeature;
+        }
+
+        Debug.Log(ActiveFeature.FeatureName);
     }
 
     private void ProcessFeatureJSONPerTimeInterval(GeoJSON geoJSON)
@@ -299,7 +307,6 @@ public class WFS : IWebService
             default:
                 // String Event voor error.
                 throw new System.Exception("Geometry Type is either 'Undefined' or not found, cannot process like this!");
-
         }
     }
 
