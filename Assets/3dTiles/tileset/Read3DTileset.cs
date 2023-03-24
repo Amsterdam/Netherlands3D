@@ -33,6 +33,8 @@ namespace Netherlands3D.Core.Tiles
 
         private List<Tile> visibleTiles = new List<Tile>();
 
+
+
         [SerializeField] private TilePrioritiser tilePrioritiser;
         private Camera currentCamera;
         private Vector3 lastCameraPosition;
@@ -40,6 +42,8 @@ namespace Netherlands3D.Core.Tiles
         private Vector3 currentCameraPosition;
         private Quaternion currentCameraRotation;
         private float lastCameraAngle = 60;
+
+        private const string tilesetFilename = "tileset.json";
 
         private void OnEnable()
         {
@@ -59,7 +63,7 @@ namespace Netherlands3D.Core.Tiles
         {
             if(tilePrioritiser) tilePrioritiser.SetCamera(currentCamera);
 
-            absolutePath = tilesetUrl.Replace("tileset.json", "");
+            absolutePath = tilesetUrl.Replace(tilesetFilename, "");
             StartCoroutine(LoadTileset());
 
             CoordConvert.relativeOriginChanged.AddListener(RelativeCenterChanged);
@@ -146,8 +150,7 @@ namespace Netherlands3D.Core.Tiles
         }
 
         private void ReadTileset(JSONNode rootnode)
-        {
-            
+        {   
             transformValues = new double[16] {1.0, 0.0, 0.0, 0.0,0.0, 1.0, 0.0, 0.0,0.0, 0.0, 1.0, 0.0,0.0, 0.0, 0.0, 1.0 };
             JSONNode transformNode = rootnode["transform"];
             if (transformNode!=null)
@@ -171,7 +174,7 @@ namespace Netherlands3D.Core.Tiles
             switch (tilingMethod)
             {
                 case TilingMethod.explicitTiling:
-                    root = readExplicitNode(rootnode);
+                    root = ReadExplicitNode(rootnode);
                     StartCoroutine(LoadInView());
                     break;
                 case TilingMethod.implicitTiling:
@@ -182,10 +185,10 @@ namespace Netherlands3D.Core.Tiles
             }
         }
 
-        private Tile readExplicitNode(JSONNode node)
+        private Tile ReadExplicitNode(JSONNode node)
         {
             Tile tile = new Tile();
-            tile.transform =new double[16] { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
+            tile.transform = new double[16] { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
             tile.boundingVolume = new BoundingVolume();
             tile.boundingVolume.boundingVolumeType = BoundingVolumeType.Region;
             tile.boundingVolume.values = new double[6];
@@ -203,7 +206,7 @@ namespace Netherlands3D.Core.Tiles
             {
                 for (int i = 0; i < childrenNode.Count; i++)
                 {
-                    tile.children.Add(readExplicitNode(childrenNode[i]));
+                    tile.children.Add(ReadExplicitNode(childrenNode[i]));
                 }
             }
             JSONNode contentNode = node["content"];
@@ -219,8 +222,10 @@ namespace Netherlands3D.Core.Tiles
 
         private void AlignWithUnityWorld()
         {
-            transform.position = CoordConvert.ECEFToUnity(positionECEF);
-            transform.rotation = CoordConvert.ecefRotionToUp();
+            transform.SetPositionAndRotation(
+                CoordConvert.ECEFToUnity(positionECEF), 
+                CoordConvert.ecefRotionToUp()
+            );
         }
 
         private void ReadImplicitTiling(JSONNode rootnode)
@@ -261,7 +266,7 @@ namespace Netherlands3D.Core.Tiles
 
 
             ReadSubtree subtreeReader = GetComponent<ReadSubtree>();
-            string subtreeURL = tilesetUrl.Replace("tileset.json", implicitTilingSettings.subtreeUri)
+            string subtreeURL = tilesetUrl.Replace(tilesetFilename, implicitTilingSettings.subtreeUri)
                                 .Replace("{level}", "0")
                                 .Replace("{x}", "0")
                                 .Replace("{y}", "0");
@@ -415,17 +420,17 @@ namespace Netherlands3D.Core.Tiles
         private IEnumerator DownloadTileSet()
         {
             //Main tileset json
-            UnityWebRequest www = UnityWebRequest.Get(tilesetUrl);
-            yield return www.SendWebRequest();
+            UnityWebRequest webRequest = UnityWebRequest.Get(tilesetUrl);
+            yield return webRequest.SendWebRequest();
             var folder = EditorUtility.SaveFolderPanel("Save tileset to folder", "", "");
-            if (www.result != UnityWebRequest.Result.Success)
+            if (webRequest.result != UnityWebRequest.Result.Success)
             {
-                Debug.Log(www.error);
+                Debug.Log(webRequest.error);
             }
             else
             {
-                string jsonstring = www.downloadHandler.text;
-                File.WriteAllText(folder + "/tileset.json", jsonstring);
+                string jsonstring = webRequest.downloadHandler.text;
+                File.WriteAllText(folder + "/" + tilesetFilename, jsonstring);
             }
 
             //Subtree(s)
@@ -433,17 +438,17 @@ namespace Netherlands3D.Core.Tiles
                                                                .Replace("{x}", "0")
                                                                .Replace("{y}", "0");
 
-            string subtreeURL = tilesetUrl.Replace("tileset.json", subtreePath);
+            string subtreeURL = tilesetUrl.Replace(tilesetFilename, subtreePath);
 
-            www = UnityWebRequest.Get(subtreeURL);
-            yield return www.SendWebRequest();
-            if (www.result != UnityWebRequest.Result.Success)
+            webRequest = UnityWebRequest.Get(subtreeURL);
+            yield return webRequest.SendWebRequest();
+            if (webRequest.result != UnityWebRequest.Result.Success)
             {
-                Debug.Log(www.error);
+                Debug.Log(webRequest.error);
             }
             else
             {
-                var data = www.downloadHandler.data;
+                var data = webRequest.downloadHandler.data;
 
                 var newFile = new FileInfo(folder + "/" + subtreePath);
                 newFile.Directory.Create();
