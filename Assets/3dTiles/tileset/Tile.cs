@@ -11,6 +11,7 @@ public class Tile : IDisposable
     public int Z;
     public bool hascontent;
 
+    public int childrenCountDelayingDispose = 0;
     public Tile parent;
 
     public List<Tile> children = new List<Tile>();
@@ -29,6 +30,7 @@ public class Tile : IDisposable
     private bool boundsAvailable = false;
     private Bounds bounds = new Bounds();
     
+    public bool requestedDispose = false;
     public bool requestedUpdate = false;
 
     public Bounds ContentBounds 
@@ -117,6 +119,9 @@ public class Tile : IDisposable
     public void Dispose()
     {
         if (content != null)
+        {
             content.Dispose();
+            content = null;
+        }
     }
 }

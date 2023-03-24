@@ -8,11 +8,16 @@ namespace Netherlands3D.Core.Tiles
     /// Tile prioritiser optimised for WebGL where we cant use threading.
     /// Modern browsers like Chrome limits parralel downloads from host to 6 per tab.
     /// Threading is not supported for WebGL, so this prioritiser spreads out actions to reduce framedrop spikes.
+    /// This prioritiser takes center-of-screen into account combined with the 3D Tile SSE to determine tile priotities.
+    /// A delayed dispose list 
     /// </summary>
     public class WebTilePrioritiser : TilePrioritiser
     {
         [Header("Web limitations")]
         [SerializeField] private int maxSimultaneousDownloads = 6;
+
+        [Tooltip("Limit the amount of tiles that can be destroyed on delay")]
+        [SerializeField] private int maxTilesInDisposeList = 4;
 
         [Header("Screen space error priority")]
         [SerializeField] private float screenSpaceErrorScoreMultiplier = 10;
@@ -23,15 +28,16 @@ namespace Netherlands3D.Core.Tiles
 
         private Vector2 viewCenter = new Vector2(0.5f, 0.5f);
 
+        [SerializeField] private List<Tile> delayedDisposeList = new List<Tile>();
         private List<Tile> prioritisedTiles = new List<Tile>();
         public List<Tile> PrioritisedTiles { get => prioritisedTiles; private set => prioritisedTiles = value; }
-
-        private Camera currentCamera;
 
         private bool requirePriorityCheck = false;
         public bool showPriorityNumbers = false;
 
         [SerializeField] private int downloadAvailable = 0;
+
+        private Camera currentCamera;
 
         /// <summary>
         /// If a tile completed loading, recalcule priorities
@@ -41,22 +47,92 @@ namespace Netherlands3D.Core.Tiles
             requirePriorityCheck = true;
         }
 
+        /// <summary>
+        /// Request update for this tile by adding it to the prioritised tile list.
+        /// Highest priority will be loaded first.
+        /// </summary>
         public override void RequestUpdate(Tile tile)
         {
             requirePriorityCheck = true;
-
             tile.requestedUpdate = true;
+
             PrioritisedTiles.Add(tile);
         }
 
+        /// <summary>
+        /// Add this tile to the dispose list.
+        /// Using this list we can keep parent tiles visible untill their loading children are done.
+        /// </summary>
         public override void RequestDispose(Tile tile)
         {
-            PrioritisedTiles.Remove(tile);
+            if (maxTilesInDisposeList == 0 || delayedDisposeList.Count >= maxTilesInDisposeList)
+            {
+                Dispose(tile);
+                return;
+            }
 
+            bool anyChildLoading = false;
+            tile.requestedDispose = true;
+            tile.childrenCountDelayingDispose = 0;
+
+            foreach (var child in tile.children)
+            {
+                if(child.requestedUpdate && !child.requestedDispose && child.content.State == Content.ContentLoadState.DOWNLOADING)
+                {
+                    anyChildLoading = true;
+                    tile.childrenCountDelayingDispose++;
+                }
+            }
+
+            if(anyChildLoading)
+            {
+                delayedDisposeList.Add(tile);
+            }
+            else
+            {
+                Dispose(tile);
+            }
+        }
+
+        /// <summary>
+        /// Check the list of tiles where the dispose was delayed
+        /// </summary>
+        private void CheckDelayedDispose()
+        {
+            if (delayedDisposeList.Count > 0)
+            {
+                for (int i = delayedDisposeList.Count - 1; i >= 0; i--)
+                {
+                    var tile = delayedDisposeList[i];
+                    foreach (var child in tile.children)
+                    {
+                        if (child.content.State != Content.ContentLoadState.DOWNLOADING)
+                        {
+                            tile.childrenCountDelayingDispose--;
+                        }
+                    }
+
+                    if(tile.childrenCountDelayingDispose <= 0)
+                    {
+                        Dispose(tile);
+                        delayedDisposeList.RemoveAt(i);
+                    }
+                }
+            }
+        }
+        
+
+        /// <summary>
+        /// Directly dispose this tile content
+        /// </summary>
+        private void Dispose(Tile tile)
+        {
+            PrioritisedTiles.Remove(tile);
             requirePriorityCheck = true;
 
             tile.Dispose();
             tile.requestedUpdate = false;
+            tile.requestedDispose = false;
         }
 
         private void LateUpdate()
@@ -65,6 +141,9 @@ namespace Netherlands3D.Core.Tiles
             {
                 CalculatePriorities();
             }
+
+            //Check delayed tile expose status
+            CheckDelayedDispose();
         }
 
         /// <summary>
@@ -87,14 +166,14 @@ namespace Netherlands3D.Core.Tiles
 
         /// <summary>
         /// Apply new priority changes to the tiles
-        /// by interupting tiles that fall outside the max downloads and
-        /// did not start loading yet.
+        /// and start new downloads for the highest priority tiles if there is a download slot available.
         /// </summary>
         private void Apply()
         {
-            downloadAvailable = maxSimultaneousDownloads - PrioritisedTiles.Count(tile => tile.content.State == Content.ContentLoadState.DOWNLOADING);
+            var downloading = PrioritisedTiles.Count(tile => tile.content.State == Content.ContentLoadState.DOWNLOADING);
+            downloadAvailable = maxSimultaneousDownloads - downloading;
 
-            //Starting from lowest priority, abort any running downloads to make room for top of priority list
+            //Start a new download first the highest priority if a slot is available
             for (int i = 0; i < PrioritisedTiles.Count; i++)
             {
                 if (downloadAvailable <= 0) break;

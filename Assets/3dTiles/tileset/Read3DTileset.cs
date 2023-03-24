@@ -144,7 +144,7 @@ namespace Netherlands3D.Core.Tiles
 
         private void RequestDispose(Tile tile)
         {
-            if (tilePrioritiser != null)
+            if (tilePrioritiser != null && !tile.requestedDispose)
             {
                 tilePrioritiser.RequestDispose(tile);
             }
