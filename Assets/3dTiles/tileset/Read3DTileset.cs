@@ -28,12 +28,12 @@ namespace Netherlands3D.Core.Tiles
         public int tileCount;
         public int nestingDepth;
 
+        [Tooltip("Limits amount of detail higher resolution would cause to load.")]
+        public int maxScreenHeightInPixels = 1080;
         public int maximumScreenSpaceError = 5;
+
         private float sseComponent = -1;
-
         private List<Tile> visibleTiles = new List<Tile>();
-
-
 
         [SerializeField] private TilePrioritiser tilePrioritiser;
         private Camera currentCamera;
@@ -50,6 +50,16 @@ namespace Netherlands3D.Core.Tiles
             currentCamera = Camera.main;
         }
 
+        void Start()
+        {
+            if (tilePrioritiser) tilePrioritiser.SetCamera(currentCamera);
+
+            absolutePath = tilesetUrl.Replace(tilesetFilename, "");
+            StartCoroutine(LoadTileset());
+
+            CoordConvert.relativeOriginChanged.AddListener(RelativeCenterChanged);
+        }
+
         /// <summary>
         /// Optional injection of tile prioritiser system
         /// </summary>
@@ -57,16 +67,6 @@ namespace Netherlands3D.Core.Tiles
         public void SetTilePrioritiser(TilePrioritiser tilePrioritiser)
         {
             this.tilePrioritiser = tilePrioritiser;
-        }
-
-        void Start()
-        {
-            if(tilePrioritiser) tilePrioritiser.SetCamera(currentCamera);
-
-            absolutePath = tilesetUrl.Replace(tilesetFilename, "");
-            StartCoroutine(LoadTileset());
-
-            CoordConvert.relativeOriginChanged.AddListener(RelativeCenterChanged);
         }
 
         private void RelativeCenterChanged(Vector3 cameraOffset)
@@ -94,6 +94,9 @@ namespace Netherlands3D.Core.Tiles
             }
         }
 
+        /// <summary>
+        /// IEnumerator to load tileset.json from url
+        /// </summary>
         IEnumerator LoadTileset()
         {
             UnityWebRequest www = UnityWebRequest.Get(tilesetUrl);
@@ -106,6 +109,7 @@ namespace Netherlands3D.Core.Tiles
             else
             {
                 string jsonstring = www.downloadHandler.text;
+
                 JSONNode rootnode = JSON.Parse(jsonstring)["root"];
                 ReadTileset(rootnode);
             }
@@ -126,6 +130,7 @@ namespace Netherlands3D.Core.Tiles
                     tile.content.uri = absolutePath + tile.contentUri;
                 }
 
+                //Request tile content update via optional prioritiser, or load directly
                 if (tilePrioritiser != null && !tile.requestedUpdate)
                 {
                     tilePrioritiser.RequestUpdate(tile);
@@ -185,6 +190,9 @@ namespace Netherlands3D.Core.Tiles
             }
         }
 
+        /// <summary>
+        /// Recursive reading of tile nodes to build the tiles tree
+        /// </summary>
         private Tile ReadExplicitNode(JSONNode node)
         {
             Tile tile = new Tile();
@@ -282,7 +290,7 @@ namespace Netherlands3D.Core.Tiles
         }
 
         /// <summary>
-        /// Check what tiles should be loaded/unloaded based on view
+        /// Check what tiles should be loaded/unloaded based on view recursively
         /// </summary>
         private IEnumerator LoadInView()
         {
@@ -319,6 +327,11 @@ namespace Netherlands3D.Core.Tiles
                 lastCameraRotation != currentCameraRotation;
         }
 
+        /// <summary>
+        /// Check for tiles in our visibile tiles list that moved out of the view / max distance.
+        /// Request dispose for tiles that moved out of view
+        /// </summary>
+        /// <param name="currentMainCamera">Camera to use for visibility check</param>
         private void DisposeTilesOutsideView(Camera currentMainCamera)
         {
             //Clean up list op previously loaded tiles outside of view
@@ -369,18 +382,22 @@ namespace Netherlands3D.Core.Tiles
         }
 
         /// <summary>
-        /// Screen-space error component calculation
+        /// Screen-space error component calculation.
+        /// Screen height is clamped to limit the amount of geometry that
+        /// would be loaded on very high resolution displays.
         /// </summary>
         public void SetSSEComponent(Camera currentCamera)
         {
+            var screenHeight = Mathf.Min(maxScreenHeightInPixels,Screen.height);
+
             if (currentCamera.orthographic)
             {
-                sseComponent = Screen.height / currentCamera.orthographicSize;
+                sseComponent = screenHeight / currentCamera.orthographicSize;
             }
             else
             {
                 var coverage = 2 * Mathf.Tan((Mathf.Deg2Rad * currentCamera.fieldOfView) / 2);
-                sseComponent = Screen.height / coverage;
+                sseComponent = screenHeight / coverage;
             }
         }
 
