@@ -14,6 +14,16 @@ public static class CameraExtensions
     private static Vector2 bottomRight = new Vector2(1, 0);
     private static Vector2 bottomLeft = new Vector2(0, 0);
 
+    private static Plane[] cameraFrustumPlanes = new Plane[6]
+	{
+		new Plane(), //Left
+		new Plane(), //Right
+		new Plane(), //Down
+		new Plane(), //Up
+		new Plane(), //Near
+		new Plane(), //Far
+	};
+
     public static Extent GetExtent(this Camera camera, float maximumViewDistance = 0)
     {
         if (maximumViewDistance == 0) maximumViewDistance = camera.farClipPlane;
@@ -105,5 +115,11 @@ public static class CameraExtensions
         var samplePoint = screenRay.GetPoint(Mathf.Min(maxSelectionDistanceFromCamera, distance));
 
         return samplePoint;
+    }
+
+    public static bool InView(this Camera camera, Bounds bounds)
+    {
+        GeometryUtility.CalculateFrustumPlanes(camera, cameraFrustumPlanes);
+        return GeometryUtility.TestPlanesAABB(cameraFrustumPlanes, bounds);
     }
 }

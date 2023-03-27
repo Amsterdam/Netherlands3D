@@ -163,8 +163,6 @@ namespace Netherlands3D.TileSystem
 			}
 			InstantlyStartRemoveChanges();
 			layers.Remove(layer);
-			
-
 		}
 
 		private void CacheCameraFrustum()
