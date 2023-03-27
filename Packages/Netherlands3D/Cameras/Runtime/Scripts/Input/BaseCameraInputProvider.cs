@@ -20,6 +20,7 @@ public abstract class BaseCameraInputProvider : MonoBehaviour
     public FloatEvent zoomInput;
     public FloatEvent upDownInput;
     public Vector3Event pointerPosition;
+    public Vector3Event secondaryDragInput; 
 
     public BoolEvent draggingModifier;
     public BoolEvent rotateModifier;

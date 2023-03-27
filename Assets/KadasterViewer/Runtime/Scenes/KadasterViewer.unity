@@ -186,6 +186,10 @@ PrefabInstance:
       propertyPath: minCameraHeight
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6567033620470696027, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
+      propertyPath: secondaryDragInput
+      value: 
+      objectReference: {fileID: 11400000, guid: e7bb94a403075794b88f6e734a7368bf, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
 --- !u!1 &274784704

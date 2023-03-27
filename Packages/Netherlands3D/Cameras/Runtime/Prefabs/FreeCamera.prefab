@@ -174,10 +174,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7204b9895ddf9b41af954d4cd920ec6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ignoreInputWhenHoveringInterface: 1
-  lockInputLayers:
-    serializedVersion: 2
-    m_Bits: 32
   ingoringInput: 0
   lockDraggingInput: 0
   isDragging: 0
@@ -189,10 +185,14 @@ MonoBehaviour:
   zoomInput: {fileID: 11400000, guid: 423bbb8003e87cb4589f152e3b8d033b, type: 2}
   upDownInput: {fileID: 11400000, guid: 3ff45f65e26c59542a8e4f3772860382, type: 2}
   pointerPosition: {fileID: 11400000, guid: 39c03474ebbc57248b389422f44ff77b, type: 2}
+  secondaryDragInput: {fileID: 11400000, guid: e7bb94a403075794b88f6e734a7368bf, type: 2}
   draggingModifier: {fileID: 11400000, guid: f46052d916c896c4c88fefc825961beb, type: 2}
   rotateModifier: {fileID: 11400000, guid: 3469be7c6d4134349bd2dff06d0368ac, type: 2}
   firstPersonModifier: {fileID: 11400000, guid: 6fe59240ca8b0624fa4655824e47b0da, type: 2}
   inputActionAsset: {fileID: -944628639613478452, guid: d5b2b155332606d44ac795422ed556b6, type: 3}
+  lockInputLayers:
+    serializedVersion: 2
+    m_Bits: 32
 --- !u!114 &262063079913678507
 MonoBehaviour:
   m_ObjectHideFlags: 0

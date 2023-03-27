@@ -23,6 +23,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
     private InputActionMap cameraPointerActionMap;
 
     private InputAction dragAction;
+    private InputAction secondaryDragAction;
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction flyAction;
@@ -73,6 +74,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         downAction = cameraActionMap.FindAction("Down");
         zoomAction = cameraActionMap.FindAction("Zoom");
         dragAction = cameraPointerActionMap.FindAction("Drag");
+        secondaryDragAction = cameraPointerActionMap.FindAction("DragSecondary");
         rotateModifierAction = cameraActionMap.FindAction("RotateModifier");
         firstPersonModifierAction = cameraActionMap.FindAction("FirstPersonModifier");
         pointerAction = cameraActionMap.FindAction("Point");
@@ -89,6 +91,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 
         //Modifier inputs
         var dragging = !lockDraggingInput && dragAction.IsPressed();
+        var draggingSecondary = !lockDraggingInput && secondaryDragAction.IsPressed();
 
         //Only start sending input again after we stopped dragging
         if (ingoringInput && !dragging)
@@ -108,6 +111,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         pointerPosition.InvokeStarted(pointer);
 
         //Transform inputs 
+        var secondaryDragValue = secondaryDragAction.ReadValue<Vector2>();
         var moveValue = moveAction.ReadValue<Vector2>();
         var lookValue = lookAction.ReadValue<Vector2>();
         var zoomValue = zoomAction.ReadValue<Vector2>();
@@ -117,6 +121,11 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         var downPressed = downAction.IsPressed();
 
         lookInput.InvokeStarted(lookValue);
+
+        if (secondaryDragValue.magnitude > 0)
+        {
+            secondaryDragInput.InvokeStarted(secondaryDragValue);
+        }
 
         if (moveValue.magnitude > 0)
         {
