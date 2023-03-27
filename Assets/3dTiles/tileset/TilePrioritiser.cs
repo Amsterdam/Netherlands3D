@@ -15,8 +15,8 @@ namespace Netherlands3D.Core.Tiles
         private static extern bool isMobile();
 
         [Header("SSE Screen height limitations (0 is disabled)")]
-        [SerializeField] private int maxScreenHeightInPixels = 0;
-        [SerializeField] private int maxScreenHeightInPixelsMobile = 0;
+        public int maxScreenHeightInPixels = 0;
+        public int maxScreenHeightInPixelsMobile = 0;
 
         private bool mobileMode = false;
         public bool MobileMode { get => mobileMode; set => mobileMode = value; }
@@ -25,7 +25,6 @@ namespace Netherlands3D.Core.Tiles
             {
                 return (mobileMode) ? maxScreenHeightInPixelsMobile: maxScreenHeightInPixels;
             }
-            set => maxScreenHeightInPixels = value; 
         }
 
         public UnityEvent<bool> mobileModeEnabled;
@@ -36,6 +35,15 @@ namespace Netherlands3D.Core.Tiles
             MobileMode = isMobile();
 #endif
             mobileModeEnabled.Invoke(MobileMode);
+        }
+
+        public void SetMaxScreenHeightInPixels(float pixels)
+        {
+            maxScreenHeightInPixels = Mathf.RoundToInt(pixels);
+        }
+        public void SetMaxScreenHeightInPixelsMobile(float pixels)
+        {
+            maxScreenHeightInPixelsMobile = Mathf.RoundToInt(pixels);
         }
 
         public abstract void CalculatePriorities();
