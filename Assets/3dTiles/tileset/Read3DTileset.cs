@@ -36,6 +36,8 @@ namespace Netherlands3D.Core.Tiles
         private List<Tile> visibleTiles = new List<Tile>();
 
         [SerializeField] private TilePrioritiser tilePrioritiser;
+        private bool usingPrioritiser = false;
+
         private Camera currentCamera;
         private Vector3 lastCameraPosition;
         private Quaternion lastCameraRotation;
@@ -52,7 +54,10 @@ namespace Netherlands3D.Core.Tiles
 
         void Start()
         {
-            if (tilePrioritiser) tilePrioritiser.SetCamera(currentCamera);
+            if (usingPrioritiser)
+            {
+                tilePrioritiser.SetCamera(currentCamera);
+            }
 
             absolutePath = tilesetUrl.Replace(tilesetFilename, "");
             StartCoroutine(LoadTileset());
@@ -63,14 +68,14 @@ namespace Netherlands3D.Core.Tiles
         /// <summary>
         /// Optional injection of tile prioritiser system
         /// </summary>
-        /// <param name="tilePrioritiser">Prioritising system with TilePrioritiser base class</param>
+        /// <param name="tilePrioritiser">Prioritising system with TilePrioritiser base class. Set to null to disable.</param>
         public void SetTilePrioritiser(TilePrioritiser tilePrioritiser)
         {
             this.tilePrioritiser = tilePrioritiser;
-
-            if(tilePrioritiser.MobileMode)
-                maxScreenHeightInPixels = tilePrioritiser.OverrideResolutionSSE;
+            usingPrioritiser = (tilePrioritiser);
         }
+
+
 
         private void RelativeCenterChanged(Vector3 cameraOffset)
         {
@@ -134,7 +139,7 @@ namespace Netherlands3D.Core.Tiles
                 }
 
                 //Request tile content update via optional prioritiser, or load directly
-                if (tilePrioritiser != null && !tile.requestedUpdate)
+                if (usingPrioritiser && !tile.requestedUpdate)
                 {
                     tilePrioritiser.RequestUpdate(tile);
                 }
@@ -147,7 +152,7 @@ namespace Netherlands3D.Core.Tiles
 
         private void RequestDispose(Tile tile)
         {
-            if (tilePrioritiser != null && !tile.requestedDispose)
+            if (usingPrioritiser && !tile.requestedDispose)
             {
                 tilePrioritiser.RequestDispose(tile);
             }
@@ -391,6 +396,8 @@ namespace Netherlands3D.Core.Tiles
         /// </summary>
         public void SetSSEComponent(Camera currentCamera)
         {
+            if(usingPrioritiser) maxScreenHeightInPixels = tilePrioritiser.MaxScreenHeightInPixels;
+
             var screenHeight = Mathf.Min(maxScreenHeightInPixels,Screen.height);
 
             if (currentCamera.orthographic)

@@ -14,12 +14,20 @@ namespace Netherlands3D.Core.Tiles
         [DllImport("__Internal")]
         private static extern bool isMobile();
 
-        [Header("Mobile limitations")]
-        [SerializeField] private int overrideResolutionSSE = 540;
-        private bool mobileMode = false;
+        [Header("SSE Screen height limitations (0 is disabled)")]
+        [SerializeField] private int maxScreenHeightInPixels = 0;
+        [SerializeField] private int maxScreenHeightInPixelsMobile = 0;
 
-        public int OverrideResolutionSSE { get => overrideResolutionSSE; set => overrideResolutionSSE = value; }
+        private bool mobileMode = false;
         public bool MobileMode { get => mobileMode; set => mobileMode = value; }
+        public int MaxScreenHeightInPixels {
+            get
+            {
+                return (mobileMode) ? maxScreenHeightInPixelsMobile: maxScreenHeightInPixels;
+            }
+            set => maxScreenHeightInPixels = value; 
+        }
+
         public UnityEvent<bool> mobileModeEnabled;
 
         private void Awake()
