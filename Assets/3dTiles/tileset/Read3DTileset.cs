@@ -67,6 +67,9 @@ namespace Netherlands3D.Core.Tiles
         public void SetTilePrioritiser(TilePrioritiser tilePrioritiser)
         {
             this.tilePrioritiser = tilePrioritiser;
+
+            if(tilePrioritiser.MobileMode)
+                maxScreenHeightInPixels = tilePrioritiser.OverrideResolutionSSE;
         }
 
         private void RelativeCenterChanged(Vector3 cameraOffset)
