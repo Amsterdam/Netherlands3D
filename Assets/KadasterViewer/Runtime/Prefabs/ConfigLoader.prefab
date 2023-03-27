@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fff92e6a69b9d234cbb60c523eaff631, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  overrideResolutionSSE: 540
+  overrideResolutionSSE: 1024
   mobileModeEnabled:
     m_PersistentCalls:
       m_Calls:
