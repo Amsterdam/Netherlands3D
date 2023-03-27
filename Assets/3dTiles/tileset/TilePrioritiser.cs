@@ -14,7 +14,7 @@ namespace Netherlands3D.Core.Tiles
         private static extern bool isMobile();
 
         [Header("Mobile limitations")]
-        private int overrideResolutionSSE = 540;
+        [SerializeField] private int overrideResolutionSSE = 540;
         private bool mobileMode = false;
 
         public int OverrideResolutionSSE { get => overrideResolutionSSE; set => overrideResolutionSSE = value; }
