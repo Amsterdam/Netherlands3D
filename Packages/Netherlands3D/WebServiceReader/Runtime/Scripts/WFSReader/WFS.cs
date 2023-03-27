@@ -64,7 +64,7 @@ public class WFS : IWebService
 
     public UnityEvent wfsGetCapabilitiesProcessedEvent = new UnityEvent();
     public UnityEvent<List<WFSFeatureDescriptor>> activeFeatureDescriptorsReceived = new UnityEvent<List<WFSFeatureDescriptor>>();
-    public UnityEvent<WFSFeatureData> wfsFeatureDataReceivedEvent = new UnityEvent<WFSFeatureData>();
+    public UnityEvent<List<WFSFeatureData>> wfsFeatureDataReceivedEvent = new UnityEvent<List<WFSFeatureData>>();
 
     private UnityEvent<Vector3> pointEvent = new UnityEvent<Vector3>();
     private UnityEvent<List<Vector3>> listPointEvent = new UnityEvent<List<Vector3>>();
@@ -105,11 +105,13 @@ public class WFS : IWebService
         stringBuilder.Append("&");
         stringBuilder.Append(boundingBoxRequest);
 
+        stringBuilder.Append("&PropertyName=");
         foreach (var propertyFilter in propertyFilters)
         {
-            stringBuilder.Append("&PropertyName=");
             stringBuilder.Append(propertyFilter);
+            stringBuilder.Append(",");
         }
+        stringBuilder.Remove(stringBuilder.Length - 1, 1); //remove trailing comma
 
         return stringBuilder.ToString();
 
@@ -202,9 +204,8 @@ public class WFS : IWebService
 
     private void FeatureCallback(string geoJSONString)
     {
-        Debug.Log(geoJSONString);
         ActiveGeoJSON = new GeoJSON(geoJSONString);
-        ProcessFeatureJSONPerTimeInterval(ActiveGeoJSON);
+        ProcessFeatureJSON(ActiveGeoJSON);
     }
 
     public void SetActiveFeature(string activatedFeatureName)
@@ -222,20 +223,23 @@ public class WFS : IWebService
         Debug.Log(ActiveFeature.FeatureName);
     }
 
-    private void ProcessFeatureJSONPerTimeInterval(GeoJSON geoJSON)
+    private void ProcessFeatureJSON(GeoJSON geoJSON)
     {
         Debug.Log("Handling Feature JSON!");
 
+        var list = new List<WFSFeatureData>();
         while (geoJSON.GotoNextFeature())
         {
             var featureData = new WFSFeatureData();
             featureData.GeometryType = geoJSON.GetGeometryType();
             featureData.TransferDictionary(geoJSON.GetProperties());
-            ActiveFeature.AddNewFeatureData(featureData);
-            wfsFeatureDataReceivedEvent.Invoke(featureData);
-
+            ActiveFeature.AddNewFeatureData(featureData); //list of all requested features in this session
+            list.Add(featureData); //list of all features for this request only
             EvaluateGeoType(geoJSON);
         }
+        //wfsFeatureDataReceivedEvent.Invoke(ActiveFeature.GetFeatureDataList);
+        //Debug.Log("listcount: " + list.Count);
+        wfsFeatureDataReceivedEvent.Invoke(list);
     }
 
     public bool AddListenerFeatureProcessed(UnityAction<Vector3> action)

@@ -155,16 +155,19 @@ public class WFSHandler : MonoBehaviour
         ActiveWFS.SetActiveFeature(activatedFeature.FeatureName);
     }
 
-    private void FeatureCallback(WFSFeatureData featureData)
+    private void FeatureCallback(List<WFSFeatureData> featureDataList)
     {
-        SpawnParent = new GameObject().transform;
-        SpawnParent.name = "WFS_ObjectParent";
-        wfsParentEvent.InvokeStarted(SpawnParent.gameObject);
+        foreach (var featureData in featureDataList)
+        {
+            SpawnParent = new GameObject().transform;
+            SpawnParent.name = "WFS_ObjectParent";
+            wfsParentEvent.InvokeStarted(SpawnParent.gameObject);
 
-        LinkEventsForGeoJSONProcessing(featureData);
-        //    var geoJSON = new GeoJSON(geoJSONString);
-        //    ProcessFeatureJSONPerFrame(geoJSON);
+            LinkEventsForGeoJSONProcessing(featureData);
+            //    var geoJSON = new GeoJSON(geoJSONString);
+            //    ProcessFeatureJSONPerFrame(geoJSON);
 
+        }
         if (propertyFeatureEvent)
             propertyFeatureEvent.InvokeStarted(ActiveWFS.ActiveFeature);
     }
