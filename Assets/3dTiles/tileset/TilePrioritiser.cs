@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Netherlands3D.Core.Tiles
 {
@@ -19,10 +20,14 @@ namespace Netherlands3D.Core.Tiles
 
         public int OverrideResolutionSSE { get => overrideResolutionSSE; set => overrideResolutionSSE = value; }
         public bool MobileMode { get => mobileMode; set => mobileMode = value; }
+        public UnityEvent<bool> mobileModeEnabled;
 
         private void Awake()
         {
+#if UNITY_WEBGL && !UNITY_EDITOR
             MobileMode = isMobile();
+#endif
+            mobileModeEnabled.Invoke(MobileMode);
         }
 
         public abstract void CalculatePriorities();
