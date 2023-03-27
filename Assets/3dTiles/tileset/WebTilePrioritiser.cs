@@ -16,6 +16,9 @@ namespace Netherlands3D.Core.Tiles
         [Header("Web limitations")]
         [SerializeField] private int maxSimultaneousDownloads = 6;
 
+        [Header("Mobile web limitations")]
+        public int overrideResolutionSSE = 540;
+
         [Tooltip("Limit the amount of tiles that can be destroyed on delay")]
         [SerializeField] private int maxTilesInDisposeList = 4;
 
