@@ -347,6 +347,7 @@ namespace Netherlands3D.Core
             Vector3WGS output = new Vector3WGS();
             output.lon = lon;
             output.lat = lat;
+            //output height missing
             return output;
         }
         /// <summary>
@@ -452,6 +453,7 @@ namespace Netherlands3D.Core
             Vector3ECEF result = new Vector3ECEF();
             double lattitude = wgsCoordinate.lat * Math.PI / 180;
             double longitude = wgsCoordinate.lon * Math.PI / 180;
+
             //EPSG datset coordinate operation method code 9602)
             double primeVerticalRadius = semimajorAxis / (Math.Sqrt(1 - (Math.Pow(eccentricity, 2) * Math.Pow(Math.Sin(lattitude), 2))));
             result.X = (primeVerticalRadius + wgsCoordinate.h) * Math.Cos(lattitude) * Math.Cos(longitude);
@@ -473,7 +475,6 @@ namespace Netherlands3D.Core
             double primeVerticalRadius = semimajorAxis / (Math.Sqrt(1 - (Math.Pow(eccentricity, 2) * Math.Pow(Math.Sin(lattitude), 2))));
             double height = (p / Math.Cos(lattitude)) - primeVerticalRadius;
             Vector3WGS result = new Vector3WGS( longitude * 180 / Math.PI, lattitude * 180 / Math.PI, height);
-
 
             return result;
         }
