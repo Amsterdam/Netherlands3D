@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Netherlands3D.Core.Tiles
 {
@@ -9,6 +11,41 @@ namespace Netherlands3D.Core.Tiles
     /// </summary>
     public abstract class TilePrioritiser : MonoBehaviour
     {
+        [DllImport("__Internal")]
+        private static extern bool isMobile();
+
+        [Header("SSE Screen height limitations (0 is disabled)")]
+        public int maxScreenHeightInPixels = 0;
+        public int maxScreenHeightInPixelsMobile = 0;
+
+        private bool mobileMode = false;
+        public bool MobileMode { get => mobileMode; set => mobileMode = value; }
+        public int MaxScreenHeightInPixels {
+            get
+            {
+                return (mobileMode) ? maxScreenHeightInPixelsMobile: maxScreenHeightInPixels;
+            }
+        }
+
+        public UnityEvent<bool> mobileModeEnabled;
+
+        private void Awake()
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            MobileMode = isMobile();
+#endif
+            mobileModeEnabled.Invoke(MobileMode);
+        }
+
+        public void SetMaxScreenHeightInPixels(float pixels)
+        {
+            maxScreenHeightInPixels = Mathf.RoundToInt(pixels);
+        }
+        public void SetMaxScreenHeightInPixelsMobile(float pixels)
+        {
+            maxScreenHeightInPixelsMobile = Mathf.RoundToInt(pixels);
+        }
+
         public abstract void CalculatePriorities();
         public abstract void RequestUpdate(Tile tile);
         public abstract void RequestDispose(Tile tile);

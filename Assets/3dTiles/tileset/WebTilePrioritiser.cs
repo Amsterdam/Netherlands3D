@@ -11,12 +11,13 @@ namespace Netherlands3D.Core.Tiles
     /// This prioritiser takes center-of-screen into account combined with the 3D Tile SSE to determine tile priotities.
     /// A delayed dispose list 
     /// </summary>
+    /// 
     public class WebTilePrioritiser : TilePrioritiser
-    {
+    { 
         [Header("Web limitations")]
         [SerializeField] private int maxSimultaneousDownloads = 6;
 
-        [Tooltip("Limit the amount of tiles that can be destroyed on delay")]
+        [Header("Delay tile destroys"),Tooltip("Limit the amount of tiles that can be destroyed on delay")]
         [SerializeField] private int maxTilesInDisposeList = 4;
 
         [Header("Screen space error priority")]
@@ -28,17 +29,17 @@ namespace Netherlands3D.Core.Tiles
 
         private Vector2 viewCenter = new Vector2(0.5f, 0.5f);
 
-        [SerializeField] private List<Tile> delayedDisposeList = new List<Tile>();
+        private List<Tile> delayedDisposeList = new List<Tile>();
         private List<Tile> prioritisedTiles = new List<Tile>();
         public List<Tile> PrioritisedTiles { get => prioritisedTiles; private set => prioritisedTiles = value; }
 
         private bool requirePriorityCheck = false;
         public bool showPriorityNumbers = false;
 
-        [SerializeField] private int downloadAvailable = 0;
+        private int downloadAvailable = 0;
 
         private Camera currentCamera;
-
+       
         /// <summary>
         /// If a tile completed loading, recalcule priorities
         /// </summary>

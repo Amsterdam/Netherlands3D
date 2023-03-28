@@ -65,6 +65,7 @@ public class FreeCamera : MonoBehaviour
     [SerializeField] private Vector3Event rotateInput;
     [SerializeField] private FloatEvent zoomToPointerInput;
     [SerializeField] private Vector3Event pointerPosition;
+    [SerializeField] private Vector3Event secondaryPointerPosition;
     [SerializeField] private BoolEvent dragModifier;
     [SerializeField] private BoolEvent rotateModifier;
     [SerializeField] private BoolEvent firstPersonModifier;
@@ -401,7 +402,6 @@ public class FreeCamera : MonoBehaviour
     /// <param name="amount">Zoom delta where 1 is towards, and -1 is backing up from zoompoint</param>
 	public void ZoomToPointer(float amount)
 	{
-        dragging = false;
         rotatingAroundPoint = false;
 
         CalculateSpeed();

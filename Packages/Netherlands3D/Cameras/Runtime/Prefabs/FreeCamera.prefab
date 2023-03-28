@@ -78,6 +78,7 @@ MonoBehaviour:
   rotateInput: {fileID: 11400000, guid: c54d68801db42554a8595eef05767c38, type: 2}
   zoomToPointerInput: {fileID: 11400000, guid: 423bbb8003e87cb4589f152e3b8d033b, type: 2}
   pointerPosition: {fileID: 11400000, guid: 39c03474ebbc57248b389422f44ff77b, type: 2}
+  secondaryPointerPosition: {fileID: 0}
   dragModifier: {fileID: 11400000, guid: f46052d916c896c4c88fefc825961beb, type: 2}
   rotateModifier: {fileID: 11400000, guid: 3469be7c6d4134349bd2dff06d0368ac, type: 2}
   firstPersonModifier: {fileID: 11400000, guid: 6fe59240ca8b0624fa4655824e47b0da, type: 2}
@@ -174,10 +175,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7204b9895ddf9b41af954d4cd920ec6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ignoreInputWhenHoveringInterface: 1
-  lockInputLayers:
-    serializedVersion: 2
-    m_Bits: 32
   ingoringInput: 0
   lockDraggingInput: 0
   isDragging: 0
@@ -193,6 +190,10 @@ MonoBehaviour:
   rotateModifier: {fileID: 11400000, guid: 3469be7c6d4134349bd2dff06d0368ac, type: 2}
   firstPersonModifier: {fileID: 11400000, guid: 6fe59240ca8b0624fa4655824e47b0da, type: 2}
   inputActionAsset: {fileID: -944628639613478452, guid: d5b2b155332606d44ac795422ed556b6, type: 3}
+  lockInputLayers:
+    serializedVersion: 2
+    m_Bits: 32
+  pinchStrength: 3000
 --- !u!114 &262063079913678507
 MonoBehaviour:
   m_ObjectHideFlags: 0
