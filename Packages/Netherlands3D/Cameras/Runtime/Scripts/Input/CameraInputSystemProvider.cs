@@ -18,6 +18,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
     [Header("Interface input ignore")]
     [Tooltip("The CameraInputProvider will lock the input when a interaction starts while the pointer is over any of these layers")]
     [SerializeField] private LayerMask lockInputLayers = 32; //UI layer 5th bit is a 1
+    [SerializeField] private float pinchStrength = 1000.0f;
 
     private InputActionMap cameraActionMap;
     private InputActionMap cameraPointerActionMap;
@@ -38,6 +39,9 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
     private InputAction pointerAction;
 
     private InputSystemUIInputModule inputSystemUIInputModule;
+
+    private float previousPinchDistance = 0;
+    private bool pinching = false;
 
     public bool OverLockingObject
     {
@@ -89,29 +93,28 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
             return;
         }
 
-        //Modifier inputs
+        //Main inputs
         var dragging = !lockDraggingInput && dragAction.IsPressed();
-        var draggingSecondary = !lockDraggingInput && secondaryDragAction.IsPressed();
-
+        
         //Only start sending input again after we stopped dragging
         if (ingoringInput && !dragging)
             ingoringInput = false;
+
         if (ingoringInput) return;
+
         isDragging = dragging;
 
+        //Modifiers
         var rotate = rotateModifierAction.IsPressed();
         var firstPerson = firstPersonModifierAction.IsPressed();
-
         draggingModifier.InvokeStarted(dragging);
         rotateModifier.InvokeStarted(rotate);
         firstPersonModifier.InvokeStarted(firstPerson);
 
         //Always send position of main pointer
         var pointer = pointerAction.ReadValue<Vector2>();
-        pointerPosition.InvokeStarted(pointer);
 
         //Transform inputs 
-        var secondaryDragValue = secondaryDragAction.ReadValue<Vector2>();
         var moveValue = moveAction.ReadValue<Vector2>();
         var lookValue = lookAction.ReadValue<Vector2>();
         var zoomValue = zoomAction.ReadValue<Vector2>();
@@ -122,10 +125,40 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 
         lookInput.InvokeStarted(lookValue);
 
-        if (secondaryDragValue.magnitude > 0)
+        //If there is a secondary input, convert pinch into zoom
+        var pointerSecondaryPosition = secondaryDragAction.ReadValue<Vector2>();
+        var draggingSecondary = !lockDraggingInput && pointerSecondaryPosition.magnitude > 0;
+#if UNITY_EDITOR
+        //Inverse secondary touch input X in editor so we can test pinch distance with mouse touch debugging
+        pointerSecondaryPosition.x = Screen.width - pointerSecondaryPosition.x;
+#endif
+
+
+        //Optional pinch input that overrides center pointer and zoom
+        if (!pinching && draggingSecondary)
         {
-            secondaryDragInput.InvokeStarted(secondaryDragValue);
+            pinching = true;
+            previousPinchDistance = Vector2.Distance(pointer, pointerSecondaryPosition);
         }
+        else if (pinching && !draggingSecondary)
+        {
+            pinching = false;
+        }
+        if(pinching)
+        {
+            //Override default zoom input with pinch zoom
+            var currentPinchDistance = Vector2.Distance(pointer, pointerSecondaryPosition);
+            var pinchDelta = currentPinchDistance - previousPinchDistance;
+            zoomValue.y = (pinchDelta / Screen.height) * pinchStrength;
+
+            previousPinchDistance = currentPinchDistance;
+
+            //Override center
+            pointer = Vector2.Lerp(pointer, pointerSecondaryPosition, 0.5f);
+        }
+
+        //Always send main pointer position
+        pointerPosition.InvokeStarted(pointer);
 
         if (moveValue.magnitude > 0)
         {
