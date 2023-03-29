@@ -37,7 +37,26 @@ public static class RendererHelpers
 
             if ((layermask.value & 1 << buildingLayermask) > 0)
             {
-                renderObjSetting.settings.stencilSettings.overrideStencilState = enable;
+                renderObjSetting.settings.stencilSettings.stencilReference = (enable) ? 1 : 0;
+                _scriptableRendererData.SetDirty();
+                Debug.Log(renderObjSetting.name + " set stencil set to " + renderObjSetting.settings.stencilSettings.stencilReference);
+            }
+        }
+    }
+
+    public static void EnableStencilByFeatureName(string featureName, bool enable)
+    {
+        var pipeline = ((UniversalRenderPipelineAsset)GraphicsSettings.renderPipelineAsset);
+        FieldInfo propertyInfo = pipeline.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        var _scriptableRendererData = ((ScriptableRendererData[])propertyInfo?.GetValue(pipeline))?[0];
+
+        foreach (var renderObjSetting in _scriptableRendererData.rendererFeatures.OfType<UnityEngine.Experimental.Rendering.Universal.RenderObjects>())
+        {
+            if (renderObjSetting.name == featureName)
+            {
+                renderObjSetting.settings.stencilSettings.stencilReference = (enable) ? 1 : 0;
+                _scriptableRendererData.SetDirty();
+                Debug.Log(renderObjSetting.name + " set stencil set to " + renderObjSetting.settings.stencilSettings.stencilReference);
             }
         }
     }

@@ -17,37 +17,32 @@
 */
 using Netherlands3D.Events;
 using UnityEngine;
-using UnityEngine.Events;
 
-namespace Netherlands3D.Core
+public class ToggleLayerMask : MonoBehaviour
 {
-    public class BoolEventListener : MonoBehaviour
+    [SerializeField] private bool invertBoolean = false;
+
+    public LayerMask layerMaskOnTrue;
+    public LayerMask layerMaskOnFalse;
+
+    [Header("Invoke")]
+    public LayerMaskEvent layerMaskEvent;
+    public void InvokeLayerMask(LayerMask layerMask)
     {
-        [SerializeField, Tooltip("Optional")] private BoolEvent onEvent;
+        layerMaskEvent.InvokeStarted(layerMask);
+    }
 
-        [SerializeField] private UnityEvent<bool> onTriggered;
-        [SerializeField] private UnityEvent<bool> onTrue;
-        [SerializeField] private UnityEvent<bool> onFalse;
+    public void InvokeMask(bool toggle)
+    {
+        if (invertBoolean) toggle = !toggle;
 
-        void Awake()
-        { 
-            if(onEvent)
-            {
-                onEvent.AddListenerStarted(Invoke);
-            }
-        }
-
-        public void Invoke(bool value)
+        if(toggle)
         {
-            onTriggered.Invoke(value);
-            if (value==true)
-            {
-                onTrue.Invoke(true);
-            }
-            else
-            {
-                onFalse.Invoke(true);
-            }
+            InvokeLayerMask(layerMaskOnTrue);
+        }
+        else
+        {
+            InvokeLayerMask(layerMaskOnFalse);
         }
     }
 }

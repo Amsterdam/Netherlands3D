@@ -1283,9 +1283,9 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11400000, guid: 2c17387c0c369f84295d4fdaa6891b70, type: 2}
-        m_TargetAssemblyTypeName: Netherlands3D.Events.BoolEvent, nl.netherlands3d.core
-        m_MethodName: Invoke
+      - m_Target: {fileID: 11400000, guid: aa8e4ee71f2f6d34285bc9ce2df81575, type: 2}
+        m_TargetAssemblyTypeName: Netherlands3D.Events.BoolEvent, Netherlands3D.Core.Runtime
+        m_MethodName: InvokeStarted
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
