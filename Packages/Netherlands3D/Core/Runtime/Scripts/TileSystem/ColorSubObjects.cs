@@ -189,7 +189,6 @@ namespace Netherlands3D.TileSystem
             else
                 this.tileIdColors.Add(tileKey, tileIdColors);
 
-            print("adding color dict for tile " + tileKey.ToString());
             UpdateColorsByTileKey(tileIdFloats.Item1, tileIdColors);
         }
 
@@ -253,7 +252,6 @@ namespace Netherlands3D.TileSystem
 
             foreach (Transform child in transform)
             {
-                Debug.Log(child.gameObject.name, child);
                 SubObjects subObjects = child.gameObject.GetComponent<SubObjects>();
                 if (!subObjects)
                 {
@@ -281,7 +279,6 @@ namespace Netherlands3D.TileSystem
 
         public SubObjects GetSubObjectsByTileKey(Vector2Int tileKey)
         {
-            print(transform.childCount);
             foreach (Transform child in transform)
             {
                 SubObjects subObjects = child.gameObject.GetComponent<SubObjects>();
