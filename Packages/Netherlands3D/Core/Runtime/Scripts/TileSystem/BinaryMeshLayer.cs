@@ -20,6 +20,7 @@ namespace Netherlands3D.TileSystem
         private GameObject container;
         private Mesh mesh;
         private MeshRenderer meshRenderer;
+
         public override void HandleTile(TileChange tileChange, System.Action<TileChange> callback = null)
         {
             TileAction action = tileChange.action;

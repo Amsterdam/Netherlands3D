@@ -17,8 +17,8 @@ namespace Netherlands3D.TileSystem
 
         [SerializeField]
         private bool disableOnStart = false;
-        [SerializeField]
-        private bool useManualIdColorInput;
+        //[SerializeField]
+        //private bool useManualIdColorInput;
 
         [Header("Listen to")]
         [SerializeField]
@@ -41,6 +41,9 @@ namespace Netherlands3D.TileSystem
 
         [SerializeField]
         private TriggerEvent onClearData;
+        [SerializeField]
+        private Vector2IntEvent onClearTileData;
+
 
         [Header("Sample float from gradient")]
         [SerializeField]
@@ -111,6 +114,11 @@ namespace Netherlands3D.TileSystem
             {
                 onSetGradient.AddListenerStarted(SwapGradient);
             }
+
+            if (onClearTileData)
+            {
+                onClearTileData.AddListenerStarted(ClearTileData);
+            }
         }
 
         private void Start()
@@ -139,6 +147,12 @@ namespace Netherlands3D.TileSystem
                 idColors.Clear();
 
             ClearAllSubObjectColorData();
+        }
+
+        private void ClearTileData(Vector2Int tileKey)
+        {
+            if (tileIdColors.ContainsKey(tileKey))
+                tileIdColors.Remove(tileKey);
         }
 
         private void OnEnable()
@@ -171,13 +185,6 @@ namespace Netherlands3D.TileSystem
             var tileKey = tileIdFloats.Item1;
             var idFloats = tileIdFloats.Item2;
 
-            //this.tileIdColors.Add(tileIdColors.Item1, tileIdColors.Item2);
-            //idColors = new Dictionary<string, Color>();
-
-            //foreach (var tileDictionary in this.tileIdColors)
-            //{
-            //    idColors.Union(tileDictionary.Value).ToDictionary(x => x.Key, x => x.Value);
-            //}
             var tileIdColors = new Dictionary<string, Color>();
             foreach (var keyValuePair in idFloats)
             {
@@ -239,16 +246,25 @@ namespace Netherlands3D.TileSystem
 
         private void OnTransformChildrenChanged()
         {
-            if (useManualIdColorInput)
-                foreach (var tileKeyDictionaryPair in tileIdColors)
-                    UpdateColorsByTileKey(tileKeyDictionaryPair.Key, tileKeyDictionaryPair.Value);
-            else
+            //if (useManualIdColorInput)
+            //    foreach (var tileKeyDictionaryPair in tileIdColors)
+            //        UpdateColorsByTileKey(tileKeyDictionaryPair.Key, tileKeyDictionaryPair.Value);
+            //else
                 UpdateColors(false);
         }
 
         private void UpdateColors(bool applyToExistingSubObjects = false)
         {
-            if (useManualIdColorInput || idColors == null) return;
+            if (idColors != null)
+                UpdateColorsWithGlobalList(applyToExistingSubObjects);
+            if (tileIdColors.Count > 0)
+                foreach (var tileKeyDictionaryPair in tileIdColors)
+                    UpdateColorsByTileKey(tileKeyDictionaryPair.Key, tileKeyDictionaryPair.Value);
+        }
+
+        private void UpdateColorsWithGlobalList(bool applyToExistingSubObjects = false)
+        {
+            //if (useManualIdColorInput || idColors == null) return;
 
             foreach (Transform child in transform)
             {
@@ -267,10 +283,10 @@ namespace Netherlands3D.TileSystem
 
         private void UpdateColorsByTileKey(Vector2Int tileKey, Dictionary<string, Color> idColorsOfTile)
         {
-            if (!useManualIdColorInput)
-                Debug.LogWarning("Updating colors by tile key can result in unexpected behaviour if useManualIdColorInput is not enabled");
+            //if (!useManualIdColorInput)
+            //    Debug.LogWarning("Updating colors by tile key can result in unexpected behaviour if useManualIdColorInput is not enabled");
 
-            if (idColorsOfTile == null) return;
+            //if (idColorsOfTile == null) return;
 
             var subObjects = GetSubObjectsByTileKey(tileKey);
             if (subObjects)
