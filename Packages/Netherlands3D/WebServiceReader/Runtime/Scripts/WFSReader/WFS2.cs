@@ -6,7 +6,7 @@ using Netherlands3D.Utilities;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Netherlands3D.WFS
+namespace Netherlands3D.WFSHandlers
 {
     public class UrlBuilder
     {
@@ -163,7 +163,7 @@ namespace Netherlands3D.WFS
             if (serviceID != null && serviceID.InnerText.Contains("WFS"))
             {
                 var features = ReadFromWFS(xml, out var version);
-                versionQuery.Value = version; //todo: why is this needed?
+                versionQuery.Value = version;
                 getCapabilitiesReceived.Invoke(source, features);
             }
         }
@@ -204,10 +204,16 @@ namespace Netherlands3D.WFS
             featureDescriptorsReceived.Invoke(source, featureDescriptors);
         }
 
-        public void GetFeature(object source, string typeName, List<string> propertyNames = null)
+        public void GetFeatureData(object source, string typeName, List<string> propertyNames = null)
         {
             var url = GetFeatureURL(typeName, propertyNames);
             WebRequest.CreateWebRequest(url, RequestHeaders, (data) => ProcessGetFeature(source, data));
+        }
+
+        public void GetFeatureDataWithGeometry(object source, string typeName, List<string> propertyNames = null)
+        {
+            var url = GetFeatureURL(typeName, propertyNames);
+            WebRequest.CreateWebRequest(url, RequestHeaders, (data) => ProcessGetFeatureWithGeometry(source, data));
         }
 
         private void ProcessGetFeature(object source, string geoJSONString)
@@ -223,8 +229,29 @@ namespace Netherlands3D.WFS
                 featureData.TransferDictionary(geoJSON.GetProperties());
                 list.Add(featureData); //list of all features for this request only
             }
+            //geoJSON.FindFirstFeature(); //reset geoJSON to allow it to be used by other classes through the event.
+            //rawGeoJSONReceived.Invoke(source, geoJSON); //if multiple classes listen to this event, reading the GeoJSON will cause problems because it retains the featureIndex
+            featureDataReceived.Invoke(source, list); //todo: check if any listeners are present and if not skip the processing
+        }
 
-            rawGeoJSONReceived.Invoke(source, geoJSON);
+        private void ProcessGetFeatureWithGeometry(object source, string geoJSONString)
+        {
+            var geoJSON = new GeoJSON(geoJSONString);
+            var geometry = new GeoJSONGeometry();
+            geometry.ActiveGeoJSON = geoJSON;
+            Debug.Log("Handling Feature JSON!");
+
+            var list = new List<WFSFeatureData>();
+            while (geoJSON.GotoNextFeature())
+            {
+                var featureData = new WFSFeatureData();
+                featureData.GeometryType = geoJSON.GetGeometryType();
+                featureData.TransferDictionary(geoJSON.GetProperties());
+                list.Add(featureData); //list of all features for this request only
+                geometry.EvaluateGeoType();
+            }
+            geoJSON.FindFirstFeature(); //reset geoJSON to allow it to be used by other classes through the event.
+            rawGeoJSONReceived.Invoke(source, geoJSON); //if multiple classes listen to this event, reading the GeoJSON will cause problems because it retains the featureIndex
             featureDataReceived.Invoke(source, list); //todo: check if any listeners are present and if not skip the processing
         }
         #endregion
