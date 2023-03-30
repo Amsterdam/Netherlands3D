@@ -75,8 +75,6 @@ namespace Netherlands3D.Core.Tiles
             usingPrioritiser = (tilePrioritiser);
         }
 
-
-
         private void RelativeCenterChanged(Vector3 cameraOffset)
         {
             //Point set up from new origin

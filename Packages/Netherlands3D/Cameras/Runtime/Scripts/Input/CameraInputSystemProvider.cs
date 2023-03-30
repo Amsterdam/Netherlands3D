@@ -107,9 +107,6 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         //Modifiers
         var rotate = rotateModifierAction.IsPressed();
         var firstPerson = firstPersonModifierAction.IsPressed();
-        draggingModifier.InvokeStarted(dragging);
-        rotateModifier.InvokeStarted(rotate);
-        firstPersonModifier.InvokeStarted(firstPerson);
 
         //Always send position of main pointer
         var pointer = pointerAction.ReadValue<Vector2>();
@@ -157,8 +154,14 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
             pointer = Vector2.Lerp(pointer, pointerSecondaryPosition, 0.5f);
         }
 
+        //Send modifiers
+        draggingModifier.InvokeStarted(dragging);
+        rotateModifier.InvokeStarted(rotate);
+        firstPersonModifier.InvokeStarted(firstPerson);
+
         //Always send main pointer position
         pointerPosition.InvokeStarted(pointer);
+
 
         if (moveValue.magnitude > 0)
         {
@@ -186,6 +189,38 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         {
             upDownInput.InvokeStarted(-1);
         }
+    }
+
+    /// <summary>
+    /// Converts two previous and current touch positions into rotation delta
+    /// </summary>
+    public static float TouchesToRotationDelta(Vector2 prevTouchPos1, Vector2 prevTouchPos2, Vector2 currTouchPos1, Vector2 currTouchPos2)
+    {
+        // Calculate the previous and current direction vectors between the two touch points
+        Vector2 prevDir = prevTouchPos2 - prevTouchPos1;
+        Vector2 currDir = currTouchPos2 - currTouchPos1;
+
+        // Calculate the previous and current angles between the two touch points
+        float prevAngle = Mathf.Atan2(prevDir.y, prevDir.x) * Mathf.Rad2Deg;
+        float currAngle = Mathf.Atan2(currDir.y, currDir.x) * Mathf.Rad2Deg;
+
+        // Calculate the rotation delta between the previous and current angles
+        float rotationDelta = Mathf.DeltaAngle(prevAngle, currAngle);
+
+        return rotationDelta;
+    }
+
+    /// <summary>
+    /// Combines two touches to get their up/down delta
+    /// </summary>
+    public static float TouchesUpDownDelta(Vector2 prevTouchPos1, Vector2 prevTouchPos2, Vector2 currTouchPos1, Vector2 currTouchPos2)
+    {
+        // Calculate the y-axis delta between the previous and current touch positions
+        float prevY = (prevTouchPos1.y + prevTouchPos2.y) * 0.5f;
+        float currY = (currTouchPos1.y + currTouchPos2.y) * 0.5f;
+        float upDownDelta = currY - prevY;
+
+        return upDownDelta;
     }
 
 #endif
