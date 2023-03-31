@@ -219,7 +219,7 @@ namespace Netherlands3D.WFSHandlers
         private void ProcessGetFeature(object source, string geoJSONString)
         {
             var geoJSON = new GeoJSON(geoJSONString);
-            Debug.Log("Handling Feature JSON!");
+            //Debug.Log("Handling Feature JSON!");
 
             var list = new List<WFSFeatureData>();
             while (geoJSON.GotoNextFeature())
@@ -239,7 +239,7 @@ namespace Netherlands3D.WFSHandlers
             var geoJSON = new GeoJSON(geoJSONString);
             var geometry = new GeoJSONGeometry();
             geometry.ActiveGeoJSON = geoJSON;
-            Debug.Log("Handling Feature JSON!");
+            //Debug.Log("Handling Feature JSON!");
 
             var list = new List<WFSFeatureData>();
             while (geoJSON.GotoNextFeature())
