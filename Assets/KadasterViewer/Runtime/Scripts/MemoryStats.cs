@@ -9,6 +9,8 @@ namespace Netherlands3D.Interface
 	{
 		private TMP_Text memoryOutput;
 
+		[SerializeField] private float everySeconds = 0.5f;
+
 		private void Awake()
 		{
 			memoryOutput = GetComponent<TMP_Text>();
@@ -28,7 +30,7 @@ namespace Netherlands3D.Interface
 			while (true)
 			{
 				DrawMemoryUsageInHeap();
-				yield return new WaitForSeconds(0.5f);
+				yield return new WaitForSeconds(everySeconds);
 			}
 		}
 
