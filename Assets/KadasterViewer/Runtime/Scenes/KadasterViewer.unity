@@ -1192,6 +1192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 052725ccfffb7984bb2065c5b9e3059e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  everySeconds: 0.5
 --- !u!1 &1015731166 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1107191816428015814, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}

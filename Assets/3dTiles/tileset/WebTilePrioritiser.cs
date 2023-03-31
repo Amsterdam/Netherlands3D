@@ -39,7 +39,14 @@ namespace Netherlands3D.Core.Tiles
         private int downloadAvailable = 0;
 
         private Camera currentCamera;
-       
+
+        private bool pauseNewDownloads = false;
+
+        public void PauseDownloads(bool paused)
+        {
+            pauseNewDownloads = paused;
+        }
+
         /// <summary>
         /// If a tile completed loading, recalcule priorities
         /// </summary>
@@ -180,7 +187,7 @@ namespace Netherlands3D.Core.Tiles
                 if (downloadAvailable <= 0) break;
 
                 var tile = PrioritisedTiles[i];
-                if (tile.content && tile.content.State == Content.ContentLoadState.NOTLOADING)
+                if (!pauseNewDownloads && tile.content && tile.content.State == Content.ContentLoadState.NOTLOADING)
                 {
                     downloadAvailable--;
                     tile.content.Load();

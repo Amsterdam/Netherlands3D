@@ -65,7 +65,6 @@ public class FreeCamera : MonoBehaviour
     [SerializeField] private Vector3Event rotateInput;
     [SerializeField] private FloatEvent zoomToPointerInput;
     [SerializeField] private Vector3Event pointerPosition;
-    [SerializeField] private Vector3Event secondaryPointerPosition;
     [SerializeField] private BoolEvent dragModifier;
     [SerializeField] private BoolEvent rotateModifier;
     [SerializeField] private BoolEvent firstPersonModifier;

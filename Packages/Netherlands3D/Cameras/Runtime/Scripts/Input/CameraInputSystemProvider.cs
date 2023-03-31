@@ -204,19 +204,30 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         base.pointerPosition.InvokeStarted(pointerPosition);
 
         //Invoke values as events
-        InvokeEvents(moveValue, zoomValue, flyValue, rotateValue, upPressed, downPressed);
+        InvokeEvents(dragging, pointerPosition, moveValue, zoomValue, flyValue, rotateValue, upPressed, downPressed);
     }
 
-    private void InvokeEvents(Vector2 moveValue, Vector2 zoomValue, Vector2 flyValue, Vector2 rotateValue, bool upPressed, bool downPressed)
+    private void InvokeEvents(bool dragging, Vector2 pointerPosition, Vector2 moveValue, Vector2 zoomValue, Vector2 flyValue, Vector2 rotateValue, bool upPressed, bool downPressed)
     {
+        var requiresSmoothMovement = false;
+
+        if (dragging)
+        {
+            requiresSmoothMovement = true;
+        }
+
         if (moveValue.magnitude > 0)
         {
             horizontalInput.InvokeStarted(moveValue.x);
             verticalInput.InvokeStarted(moveValue.y);
+
+            requiresSmoothMovement = true;
         }
         if (flyValue.magnitude > 0)
         {
             flyInput.InvokeStarted(flyValue);
+
+            requiresSmoothMovement = true;
         }
         if (zoomValue.magnitude > 0)
         {
@@ -225,6 +236,8 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         if (rotateValue.magnitude > 0)
         {
             rotateInput.InvokeStarted(rotateValue);
+
+            requiresSmoothMovement = true;
         }
         if (upPressed)
         {
@@ -234,6 +247,10 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         {
             upDownInput.InvokeStarted(-1);
         }
+
+
+        if(pauseHeavyProcess)
+            pauseHeavyProcess.InvokeStarted(requiresSmoothMovement);
     }
 
     private void OnDrawGizmos()
