@@ -40,34 +40,13 @@ namespace Netherlands3D.Rendering
 {
     public class ToggleStencilForRenderFeatures : MonoBehaviour
     {
-        [SerializeField] private StringEvent enableStencilForLayer;
-        [SerializeField] private StringEvent disableStencilForLayer;
-
-
-        private void OnEnable()
+        public void EnableForFeature(string featureName)
         {
-            if(enableStencilForLayer)
-                enableStencilForLayer.AddListenerStarted(EnableForLayer);
-
-            if(disableStencilForLayer)
-                disableStencilForLayer.AddListenerStarted(DisableForLayer);
+            RendererHelpers.EnableStencilByFeatureName(featureName, true);
         }
-        private void OnDisable()
+        public void DisableForFeature(string featureName)
         {
-            if(enableStencilForLayer)
-                enableStencilForLayer.RemoveListenerStarted(EnableForLayer);
-
-            if (disableStencilForLayer)
-                disableStencilForLayer.RemoveListenerStarted(DisableForLayer);
-        }
-
-        public void EnableForLayer(string layerName)
-        {
-            RendererHelpers.EnableStencilByLayerName(layerName, true);
-        }
-        public void DisableForLayer(string layerName)
-        {
-            RendererHelpers.EnableStencilByLayerName(layerName, false);
+            RendererHelpers.EnableStencilByFeatureName(featureName, false);
         }
     }
 }

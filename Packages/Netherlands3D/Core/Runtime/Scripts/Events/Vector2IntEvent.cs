@@ -15,39 +15,19 @@
 *  implied. See the License for the specific language governing
 *  permissions and limitations under the License.
 */
-using Netherlands3D.Events;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Netherlands3D.Core
+namespace Netherlands3D.Events
 {
-    public class BoolEventListener : MonoBehaviour
+    [CreateAssetMenu(fileName = "Vector2IntEvent", menuName = "EventContainers/Vector2IntEvent", order = 0)]
+    [System.Serializable]
+    public class Vector2IntEvent : EventContainer<Vector2Int>
     {
-        [SerializeField, Tooltip("Optional")] private BoolEvent onEvent;
-
-        [SerializeField] private UnityEvent<bool> onTriggered;
-        [SerializeField] private UnityEvent<bool> onTrue;
-        [SerializeField] private UnityEvent<bool> onFalse;
-
-        void Awake()
-        { 
-            if(onEvent)
-            {
-                onEvent.AddListenerStarted(Invoke);
-            }
-        }
-
-        public void Invoke(bool value)
+        public override void InvokeStarted(Vector2Int vector2IntContent)
         {
-            onTriggered.Invoke(value);
-            if (value==true)
-            {
-                onTrue.Invoke(true);
-            }
-            else
-            {
-                onFalse.Invoke(true);
-            }
+            started.Invoke(vector2IntContent);
         }
     }
 }

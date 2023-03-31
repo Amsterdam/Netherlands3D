@@ -37,8 +37,9 @@ public static class RendererHelpers
 
             if ((layermask.value & 1 << buildingLayermask) > 0)
             {
-                renderObjSetting.settings.stencilSettings.overrideStencilState = enable;
-                Debug.Log(renderObjSetting.name + " set stencil set to " + renderObjSetting.settings.stencilSettings.overrideStencilState);
+                renderObjSetting.settings.stencilSettings.stencilReference = (enable) ? 1 : 0;
+                _scriptableRendererData.SetDirty();
+                Debug.Log(renderObjSetting.name + " set stencil set to " + renderObjSetting.settings.stencilSettings.stencilReference);
             }
         }
     }
@@ -53,8 +54,9 @@ public static class RendererHelpers
         {
             if (renderObjSetting.name == featureName)
             {
-                renderObjSetting.settings.stencilSettings.overrideStencilState = enable;
-                Debug.Log(renderObjSetting.name + " set stencil set to " + renderObjSetting.settings.stencilSettings.overrideStencilState);
+                renderObjSetting.settings.stencilSettings.stencilReference = (enable) ? 1 : 0;
+                _scriptableRendererData.SetDirty();
+                Debug.Log(renderObjSetting.name + " set stencil set to " + renderObjSetting.settings.stencilSettings.stencilReference);
             }
         }
     }
