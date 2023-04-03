@@ -212,8 +212,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 32
   pinchStrength: 3000
-  touchRotateMultiplier: 10
-  touchPitchMultiplier: 10
+  rotateThreshold: 0
+  touchRotateMultiplier: 10000
+  pitchThreshold: 10
+  touchPitchMultiplier: 5000
 --- !u!114 &262063079913678507
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -44,13 +44,18 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
     private bool pinching = false;
 
     private bool havePreviousPinch = false;
+    private bool pinchRotating = false;
 
     private Vector2 previousPrimaryPointerPosition;
     private Vector2 previousSecondaryPointerPosition;
 
     [Header("Multi touch to input")]
+    [SerializeField] private float rotateThreshold = 10.0f;
     [SerializeField] private float touchRotateMultiplier = 10.0f;
+
+    [SerializeField] private float pitchThreshold = 10.0f;
     [SerializeField] private float touchPitchMultiplier = 10.0f;
+
 
     public bool OverLockingObject
     {
@@ -129,8 +134,6 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         var upPressed = upAction.IsPressed();
         var downPressed = downAction.IsPressed();
 
-        lookInput.InvokeStarted(lookValue);
-
         //If there is a secondary input, convert pinch into zoom
         var secondaryPointerPosition = secondaryDragAction.ReadValue<Vector2>();
         var draggingSecondary = !lockDraggingInput && secondaryPointerPosition.magnitude > 0;
@@ -148,16 +151,25 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         {
             pinching = true;
             previousPinchDistance = Vector2.Distance(pointerPosition, secondaryPointerPosition);
+
+            previousPrimaryPointerPosition = pointerPosition;
+            previousSecondaryPointerPosition = secondaryPointerPosition;
         }
         else if (pinching && !draggingSecondary)
         {
             pinching = false;
             havePreviousPinch = false;
+            pinchRotating = false;
         }
+
         if (pinching)
         {
             var primaryPointerPosition = pointerPosition;
-            
+            rotate = true;
+            dragging = false;
+
+            lookValue = Vector2.zero;
+
             if (havePreviousPinch)
             {
                 //Override main pointer to be in the middle of the two touches
@@ -169,23 +181,21 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
                 zoomValue.y = (pinchDelta / Screen.height) * pinchStrength;
 
                 previousPinchDistance = currentPinchDistance;
-
+                
                 //Override rotate around point on pinch rotate
-                var rotationDelta = touchRotateMultiplier * TouchesToRotationDelta(previousPrimaryPointerPosition, previousSecondaryPointerPosition, primaryPointerPosition, secondaryPointerPosition) / Screen.height;   
-                Debug.Log("rotationDelta " + rotationDelta);
-                if(Mathf.Abs(rotationDelta) > 0)
+                var rotationDelta = touchRotateMultiplier * TouchesToRotationDelta(previousPrimaryPointerPosition, previousSecondaryPointerPosition, primaryPointerPosition, secondaryPointerPosition) / Screen.height;
+                var upAndDownDelta = touchPitchMultiplier * TouchesUpDownDelta(previousPrimaryPointerPosition, previousSecondaryPointerPosition, primaryPointerPosition, secondaryPointerPosition) / Screen.height;
+                if (Mathf.Abs(rotationDelta) > rotateThreshold)
                 {
-                    rotate = true;
+                    Debug.Log("rotationDelta " + rotationDelta);
                     lookValue.x = rotationDelta;
                 }
-
-                //Override pitch movement simultaneously moving two fingers up and down
-                var upAndDownDelta = touchPitchMultiplier * TouchesUpDownDelta(previousPrimaryPointerPosition, previousSecondaryPointerPosition, primaryPointerPosition, secondaryPointerPosition) / Screen.height;
-                Debug.Log("upAndDownDelta " + upAndDownDelta);
-                if (Mathf.Abs(upAndDownDelta) > 0)
+                if (Mathf.Abs(upAndDownDelta) > pitchThreshold)
                 {
-                    rotate = true;
+                    //Override pitch movement simultaneously moving two fingers up and down
+                    Debug.Log("upAndDownDelta " + upAndDownDelta);
                     lookValue.y = upAndDownDelta;
+
                 }
             }
 
@@ -204,10 +214,10 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         base.pointerPosition.InvokeStarted(pointerPosition);
 
         //Invoke values as events
-        InvokeEvents(dragging, pointerPosition, moveValue, zoomValue, flyValue, rotateValue, upPressed, downPressed);
+        InvokeEvents(dragging, moveValue, lookValue, zoomValue, flyValue, rotateValue, upPressed, downPressed);
     }
 
-    private void InvokeEvents(bool dragging, Vector2 pointerPosition, Vector2 moveValue, Vector2 zoomValue, Vector2 flyValue, Vector2 rotateValue, bool upPressed, bool downPressed)
+    private void InvokeEvents(bool dragging, Vector2 moveValue, Vector2 lookValue, Vector2 zoomValue, Vector2 flyValue, Vector2 rotateValue, bool upPressed, bool downPressed)
     {
         var requiresSmoothMovement = false;
 
@@ -220,6 +230,12 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         {
             horizontalInput.InvokeStarted(moveValue.x);
             verticalInput.InvokeStarted(moveValue.y);
+
+            requiresSmoothMovement = true;
+        }
+        if (lookValue.magnitude > 0)
+        {
+            lookInput.InvokeStarted(lookValue);
 
             requiresSmoothMovement = true;
         }
@@ -263,26 +279,31 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         Gizmos.color = Color.blue;
         Gizmos.DrawSphere(touchPos1World, 0.01f);
         Gizmos.DrawSphere(touchPos2World, 0.01f);
-
     }
 
     /// <summary>
     /// Converts two previous and current touch positions into rotation delta
     /// </summary>
-    public static float TouchesToRotationDelta(Vector2 prevTouchPos1, Vector2 prevTouchPos2, Vector2 currTouchPos1, Vector2 currTouchPos2)
+    
+    public float TouchesToRotationDelta(Vector2 startTouch1, Vector2 startTouch2, Vector2 endTouch1, Vector2 endTouch2)
     {
-        // Calculate the previous and current direction vectors between the two touch points
-        Vector2 prevDir = prevTouchPos2 - prevTouchPos1;
-        Vector2 currDir = currTouchPos2 - currTouchPos1;
+        //Calculate the initial direction vector between the two touch positions
+        Vector2 initialDirection = startTouch2 - startTouch1;
 
-        // Calculate the previous and current angles between the two touch points
-        float prevAngle = Mathf.Atan2(prevDir.y, prevDir.x) * Mathf.Rad2Deg;
-        float currAngle = Mathf.Atan2(currDir.y, currDir.x) * Mathf.Rad2Deg;
+        //Calculate the final direction vector between the two touch positions
+        Vector2 finalDirection = endTouch2 - endTouch1;
 
-        // Calculate the rotation delta between the previous and current angles
-        float rotationDelta = Mathf.DeltaAngle(prevAngle, currAngle);
+        //Calculate the z-component of the cross product of the two vectors
+        float crossZ = initialDirection.x * finalDirection.y - initialDirection.y * finalDirection.x;
 
-        return rotationDelta;
+        //Rotation clockwise or counterclockwise
+        float sign = Mathf.Sign(crossZ);
+
+        //Angle between the two touch vectors
+        float angle = Vector2.Angle(initialDirection, finalDirection);
+
+        // Return the angle multiplied by the sign to get the clockwise/counterclockwise rotation
+        return angle * sign;
     }
 
     /// <summary>

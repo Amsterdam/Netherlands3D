@@ -255,6 +255,8 @@ public class FreeCamera : MonoBehaviour
     /// <param name="pointerDelta">Pointer delta (based on deltaTime)</param>
     public void RotateAroundPoint(Vector3 pointerDelta)
 	{
+        Debug.Log("Rotate around point " + pointerDelta);
+
         StopEasing();
 
         StorePreviousTransform();
