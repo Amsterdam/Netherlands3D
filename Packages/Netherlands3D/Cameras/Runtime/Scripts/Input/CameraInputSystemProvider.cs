@@ -155,7 +155,6 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
             secondaryPointerPosition.y = Screen.height - secondaryPointerPosition.y;
 #endif
 
-
         //Optional pinch input that overrides center pointer and zoom
         if (!pinching && draggingSecondary)
         {
@@ -177,6 +176,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
             var primaryPointerPosition = pointerPosition;
             rotate = true;
             dragging = false;
+            isDragging = false;
 
             lookValue = Vector2.zero;
 
@@ -215,6 +215,8 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
             havePreviousPinch = true;
         }
 
+        Debug.Log(dragging);
+
         //Send modifiers
         draggingModifier.InvokeStarted(dragging);
         rotateModifier.InvokeStarted(rotate);
@@ -243,12 +245,14 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 
             requiresSmoothMovement = true;
         }
+
+        //Always send pointer delta (so it can reset to 0)
+        lookInput.InvokeStarted(lookValue);
         if (lookValue.magnitude > 0)
         {
-            lookInput.InvokeStarted(lookValue);
-
             requiresSmoothMovement = true;
         }
+
         if (flyValue.magnitude > 0)
         {
             flyInput.InvokeStarted(flyValue);
