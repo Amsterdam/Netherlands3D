@@ -383,7 +383,6 @@ namespace Netherlands3D.Core.Tiles
                         visibleTiles.Add(tile);
                     }
                 }
-                
             }
         }
 
