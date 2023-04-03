@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6826521633573672048}
   - component: {fileID: 6826521633573672049}
   - component: {fileID: 4428085048782309644}
+  - component: {fileID: 5590578820280158205}
   m_Layer: 0
   m_Name: ConfigLoader
   m_TagString: Untagged
@@ -60,7 +61,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fff92e6a69b9d234cbb60c523eaff631, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  overrideResolutionSSE: 1024
+  maxScreenHeightInPixels: 1080
+  maxScreenHeightInPixelsMobile: 1080
   mobileModeEnabled:
     m_PersistentCalls:
       m_Calls:
@@ -105,3 +107,37 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   showPriorityNumbers: 0
+--- !u!114 &5590578820280158205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6826521633573672050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bda199de660f4334b8a50d8e350bdf29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEvent: {fileID: 11400000, guid: 8e2a533380abfec4dbcc38a827eac488, type: 2}
+  onTriggered:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4428085048782309644}
+        m_TargetAssemblyTypeName: Netherlands3D.Core.Tiles.WebTilePrioritiser, Assembly-CSharp
+        m_MethodName: PauseDownloads
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onTrue:
+    m_PersistentCalls:
+      m_Calls: []
+  onFalse:
+    m_PersistentCalls:
+      m_Calls: []

@@ -10,6 +10,16 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 #endif
 
+/* Copyright(C)  X Gemeente
+                 X Amsterdam
+                 X Economic Services Departments
+Licensed under the EUPL, Version 1.2 or later (the "License");
+You may not use this work except in compliance with the License. You may obtain a copy of the License at:
+https://joinup.ec.europa.eu/software/page/eupl
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+implied. See the License for the specific language governing permissions and limitations under the License.
+*/
 public class CameraInputSystemProvider : BaseCameraInputProvider
 {
 #if ENABLE_INPUT_SYSTEM
@@ -42,6 +52,20 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 
     private float previousPinchDistance = 0;
     private bool pinching = false;
+
+    private bool havePreviousPinch = false;
+    private bool pinchRotating = false;
+
+    private Vector2 previousPrimaryPointerPosition;
+    private Vector2 previousSecondaryPointerPosition;
+
+    [Header("Multi touch to input")]
+    [SerializeField] private float rotateThreshold = 10.0f;
+    [SerializeField] private float touchRotateMultiplier = 10.0f;
+
+    [SerializeField] private float pitchThreshold = 10.0f;
+    [SerializeField] private float touchPitchMultiplier = 10.0f;
+
 
     public bool OverLockingObject
     {
@@ -95,7 +119,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 
         //Main inputs
         var dragging = !lockDraggingInput && dragAction.IsPressed();
-        
+
         //Only start sending input again after we stopped dragging
         if (ingoringInput && !dragging)
             ingoringInput = false;
@@ -107,12 +131,9 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         //Modifiers
         var rotate = rotateModifierAction.IsPressed();
         var firstPerson = firstPersonModifierAction.IsPressed();
-        draggingModifier.InvokeStarted(dragging);
-        rotateModifier.InvokeStarted(rotate);
-        firstPersonModifier.InvokeStarted(firstPerson);
 
         //Always send position of main pointer
-        var pointer = pointerAction.ReadValue<Vector2>();
+        var pointerPosition = pointerAction.ReadValue<Vector2>();
 
         //Transform inputs 
         var moveValue = moveAction.ReadValue<Vector2>();
@@ -123,14 +144,15 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         var upPressed = upAction.IsPressed();
         var downPressed = downAction.IsPressed();
 
-        lookInput.InvokeStarted(lookValue);
-
         //If there is a secondary input, convert pinch into zoom
-        var pointerSecondaryPosition = secondaryDragAction.ReadValue<Vector2>();
-        var draggingSecondary = !lockDraggingInput && pointerSecondaryPosition.magnitude > 0;
+        var secondaryPointerPosition = secondaryDragAction.ReadValue<Vector2>();
+        var draggingSecondary = !lockDraggingInput && secondaryPointerPosition.magnitude > 0;
 #if UNITY_EDITOR
         //Inverse secondary touch input X in editor so we can test pinch distance with mouse touch debugging
-        pointerSecondaryPosition.x = Screen.width - pointerSecondaryPosition.x;
+        secondaryPointerPosition.x = Screen.width - secondaryPointerPosition.x;
+
+        if(Keyboard.current.shiftKey.IsPressed())
+            secondaryPointerPosition.y = Screen.height - secondaryPointerPosition.y;
 #endif
 
 
@@ -138,36 +160,100 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         if (!pinching && draggingSecondary)
         {
             pinching = true;
-            previousPinchDistance = Vector2.Distance(pointer, pointerSecondaryPosition);
+            previousPinchDistance = Vector2.Distance(pointerPosition, secondaryPointerPosition);
+
+            previousPrimaryPointerPosition = pointerPosition;
+            previousSecondaryPointerPosition = secondaryPointerPosition;
         }
         else if (pinching && !draggingSecondary)
         {
             pinching = false;
+            havePreviousPinch = false;
+            pinchRotating = false;
         }
-        if(pinching)
+
+        if (pinching)
         {
-            //Override default zoom input with pinch zoom
-            var currentPinchDistance = Vector2.Distance(pointer, pointerSecondaryPosition);
-            var pinchDelta = currentPinchDistance - previousPinchDistance;
-            zoomValue.y = (pinchDelta / Screen.height) * pinchStrength;
+            var primaryPointerPosition = pointerPosition;
+            rotate = true;
+            dragging = false;
 
-            previousPinchDistance = currentPinchDistance;
+            lookValue = Vector2.zero;
 
-            //Override center
-            pointer = Vector2.Lerp(pointer, pointerSecondaryPosition, 0.5f);
+            if (havePreviousPinch)
+            {
+                //Override main pointer to be in the middle of the two touches
+                pointerPosition = Vector2.Lerp(pointerPosition, secondaryPointerPosition, 0.5f);
+
+                //Override default zoom input with pinch zoom
+                var currentPinchDistance = Vector2.Distance(primaryPointerPosition, secondaryPointerPosition);
+                var pinchDelta = currentPinchDistance - previousPinchDistance;
+                zoomValue.y = (pinchDelta / Screen.height) * pinchStrength;
+
+                previousPinchDistance = currentPinchDistance;
+                
+                //Override rotate around point on pinch rotate
+                var rotationDelta = touchRotateMultiplier * TouchesToRotationDelta(previousPrimaryPointerPosition, previousSecondaryPointerPosition, primaryPointerPosition, secondaryPointerPosition) / Screen.height;
+                var upAndDownDelta = touchPitchMultiplier * TouchesUpDownDelta(previousPrimaryPointerPosition, previousSecondaryPointerPosition, primaryPointerPosition, secondaryPointerPosition) / Screen.height;
+                if (Mathf.Abs(rotationDelta) > rotateThreshold)
+                {
+                    Debug.Log("rotationDelta " + rotationDelta);
+                    lookValue.x = rotationDelta;
+                }
+                if (Mathf.Abs(upAndDownDelta) > pitchThreshold)
+                {
+                    //Override pitch movement simultaneously moving two fingers up and down
+                    Debug.Log("upAndDownDelta " + upAndDownDelta);
+                    lookValue.y = upAndDownDelta;
+
+                }
+            }
+
+            //Store positions
+            previousPrimaryPointerPosition = primaryPointerPosition;
+            previousSecondaryPointerPosition = secondaryPointerPosition;
+            havePreviousPinch = true;
         }
+
+        //Send modifiers
+        draggingModifier.InvokeStarted(dragging);
+        rotateModifier.InvokeStarted(rotate);
+        firstPersonModifier.InvokeStarted(firstPerson);
 
         //Always send main pointer position
-        pointerPosition.InvokeStarted(pointer);
+        base.pointerPosition.InvokeStarted(pointerPosition);
+
+        //Invoke values as events
+        InvokeEvents(dragging, moveValue, lookValue, zoomValue, flyValue, rotateValue, upPressed, downPressed);
+    }
+
+    private void InvokeEvents(bool dragging, Vector2 moveValue, Vector2 lookValue, Vector2 zoomValue, Vector2 flyValue, Vector2 rotateValue, bool upPressed, bool downPressed)
+    {
+        var requiresSmoothMovement = false;
+
+        if (dragging)
+        {
+            requiresSmoothMovement = true;
+        }
 
         if (moveValue.magnitude > 0)
         {
             horizontalInput.InvokeStarted(moveValue.x);
             verticalInput.InvokeStarted(moveValue.y);
+
+            requiresSmoothMovement = true;
+        }
+        if (lookValue.magnitude > 0)
+        {
+            lookInput.InvokeStarted(lookValue);
+
+            requiresSmoothMovement = true;
         }
         if (flyValue.magnitude > 0)
         {
             flyInput.InvokeStarted(flyValue);
+
+            requiresSmoothMovement = true;
         }
         if (zoomValue.magnitude > 0)
         {
@@ -176,8 +262,9 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         if (rotateValue.magnitude > 0)
         {
             rotateInput.InvokeStarted(rotateValue);
-        }
 
+            requiresSmoothMovement = true;
+        }
         if (upPressed)
         {
             upDownInput.InvokeStarted(1);
@@ -186,6 +273,60 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         {
             upDownInput.InvokeStarted(-1);
         }
+
+
+        if(pauseHeavyProcess)
+            pauseHeavyProcess.InvokeStarted(requiresSmoothMovement);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Camera cam = Camera.main;
+
+        Vector3 touchPos1World = cam.ScreenToWorldPoint(new Vector3(previousPrimaryPointerPosition.x, previousPrimaryPointerPosition.y, cam.nearClipPlane + 1));
+        Vector3 touchPos2World = cam.ScreenToWorldPoint(new Vector3(previousSecondaryPointerPosition.x, previousSecondaryPointerPosition.y, cam.nearClipPlane + 1));
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(touchPos1World, 0.01f);
+        Gizmos.DrawSphere(touchPos2World, 0.01f);
+    }
+
+    /// <summary>
+    /// Converts two previous and current touch positions into rotation delta
+    /// </summary>
+    
+    public float TouchesToRotationDelta(Vector2 startTouch1, Vector2 startTouch2, Vector2 endTouch1, Vector2 endTouch2)
+    {
+        //Calculate the initial direction vector between the two touch positions
+        Vector2 initialDirection = startTouch2 - startTouch1;
+
+        //Calculate the final direction vector between the two touch positions
+        Vector2 finalDirection = endTouch2 - endTouch1;
+
+        //Calculate the z-component of the cross product of the two vectors
+        float crossZ = initialDirection.x * finalDirection.y - initialDirection.y * finalDirection.x;
+
+        //Rotation clockwise or counterclockwise
+        float sign = Mathf.Sign(crossZ);
+
+        //Angle between the two touch vectors
+        float angle = Vector2.Angle(initialDirection, finalDirection);
+
+        // Return the angle multiplied by the sign to get the clockwise/counterclockwise rotation
+        return angle * sign;
+    }
+
+    /// <summary>
+    /// Combines two touches to get their up/down delta
+    /// </summary>
+    public static float TouchesUpDownDelta(Vector2 prevTouchPos1, Vector2 prevTouchPos2, Vector2 currTouchPos1, Vector2 currTouchPos2)
+    {
+        // Calculate the y-axis delta between the previous and current touch positions
+        float prevY = (prevTouchPos1.y + prevTouchPos2.y) * 0.5f;
+        float currY = (currTouchPos1.y + currTouchPos2.y) * 0.5f;
+        float upDownDelta = currY - prevY;
+
+        return upDownDelta;
     }
 
 #endif
