@@ -198,8 +198,6 @@ namespace Netherlands3D.TileSystem
             container = new GameObject();
 
             container.name = tileChange.X.ToString() + "-" + tileChange.Y.ToString();
-            container.transform.parent = transform.gameObject.transform;
-            container.layer = container.transform.parent.gameObject.layer;
             container.transform.position = CoordConvert.RDtoUnity(new Vector2(tileChange.X + (tileSize / 2), tileChange.Y + (tileSize / 2)));
 
             container.SetActive(isEnabled);
@@ -212,6 +210,9 @@ namespace Netherlands3D.TileSystem
 #endif
             mesh.name = source;
             container.AddComponent<MeshFilter>().sharedMesh = mesh;
+
+            container.transform.parent = transform.gameObject.transform; //set parent after adding meshFilter to not cause SubObjects to give a missing component exception
+            container.layer = container.transform.parent.gameObject.layer;
 
             meshRenderer = container.AddComponent<MeshRenderer>();
             List<Material> materialList = new List<Material>();
