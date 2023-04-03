@@ -215,8 +215,6 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
             havePreviousPinch = true;
         }
 
-        Debug.Log(dragging);
-
         //Send modifiers
         draggingModifier.InvokeStarted(dragging);
         rotateModifier.InvokeStarted(rotate);
