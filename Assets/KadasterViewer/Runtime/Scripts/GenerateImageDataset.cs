@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -16,8 +17,12 @@ namespace Netherlands3D
 
         public string pdokWMSServiceUrl = "https://service.pdok.nl/hwh/luchtfotorgb/wms/v1_0?request=GetMap&service=wms&version=1.3.0&layers=Actueel_ortho25&crs=EPSG:4326&bbox={bbox}&width={width}&height={height}&format=image/png";
 
+        byte[] planeBytes;
+
         void Start()
         {
+            planeBytes = Convert.FromBase64String(planeBase64);
+
             var tileRoot = this.GetComponent<Read3DTileset>().root;
             StartCoroutine(DownloadImagesForTile(tileRoot));
         }
@@ -42,7 +47,7 @@ namespace Netherlands3D
             }
 
             byte[] imageBytes = www.downloadHandler.data;
-            yield return CreateltfForTileWithTexture(imageBytes);
+            yield return CreateGltfForTileWithTexture(imageBytes,tile);
 
             foreach (var child in tile.children)
             {
@@ -51,9 +56,10 @@ namespace Netherlands3D
         }
 
 
-        IEnumerator CreateltfForTileWithTexture(byte[] bytes)
+        IEnumerator CreateGltfForTileWithTexture(byte[] imageBytes, Tile tile)
         {
-            string base64String = "data:application/octet-stream;base64," + planeBase64 + Convert.ToBase64String(bytes);
+            byte[] combinedBytes = planeBytes.Concat(imageBytes).ToArray();
+            string base64String = "data:application/octet-stream;base64," + Convert.ToBase64String(combinedBytes);
 
             // Return the data URI
             var base64encoded = $"{base64String}";
@@ -61,7 +67,12 @@ namespace Netherlands3D
             //Inject into plane gltf and save it as a new tile
             var gltfContent = planeGltfTemplate.Replace("<base64>", base64encoded);
 
-            yield return gltfContent;
+            var dir = Application.dataPath + "/../tiles";
+            var gltfFile = dir + $"/{tile.Z}_{tile.X}_{tile.Y}.gltf";
+            Directory.CreateDirectory(dir);
+            File.WriteAllText(gltfFile, gltfContent);
+            Debug.Log("Written " + gltfFile);
+            yield return null;
         }
     }
 }
