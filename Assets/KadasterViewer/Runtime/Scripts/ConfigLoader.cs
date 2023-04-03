@@ -42,7 +42,7 @@ namespace Netherlands3D.Core.Tiles
 
         IEnumerator LoadJsonConfig(string configPath)
         {
-            UnityWebRequest webRequest = UnityWebRequest.Get(configPath);
+            UnityWebRequest webRequest = UnityWebRequest.Get((new Uri(configPath)));
             yield return webRequest.SendWebRequest();
 
             if (webRequest.result != UnityWebRequest.Result.Success)
