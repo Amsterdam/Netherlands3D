@@ -490,6 +490,8 @@ namespace Netherlands3D.Core
 
             return result;
         }
+
+
         public static Vector3 RotationToUnityUP(Vector3WGS position)
         {
             Vector3 rotation = new Vector3((float)position.lon,-90,(float)-(90-position.lat));
