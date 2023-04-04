@@ -420,13 +420,12 @@ namespace Netherlands3D.Core
             //Compute the rotation to make the tiles point up on the world up
             Quaternion flatRotation = Quaternion.FromToRotation(locationVector, Vector3.up);
 
-            //A long coordinate poiting east
+            //A long coordinate pointing east
             var wgs84East = UnitytoWGS84(Vector3.zero);
             wgs84East.lon += 0.0001;
             var ecefEast = WGS84toECEF(wgs84East); // Use a unit vector pointing in the north direction
 
             Vector3 northVector = new Vector3((float)-ecefEast.X, (float)ecefEast.Z, (float)-ecefEast.Y) - locationVector;
-            
             Quaternion northRotation = Quaternion.FromToRotation(northVector, Vector3.right);
 
             // Combine the two rotations into a single quaternion
