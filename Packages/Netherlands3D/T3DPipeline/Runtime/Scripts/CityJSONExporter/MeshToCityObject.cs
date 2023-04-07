@@ -32,6 +32,10 @@ namespace Netherlands3D.T3DPipeline
 #endif
         protected virtual void Awake()
         {
+            Id = id;
+            Type = type;
+            CoordinateSystem = coordinateSystem;
+
             meshFilter = GetComponent<MeshFilter>();
             CreateGeometryFromMesh(meshFilter.mesh);
             //Attributes = CityObjectAttribute.ParseAttributesNode(this, cityObjectNode["attributes"]);
