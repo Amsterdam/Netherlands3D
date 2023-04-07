@@ -231,22 +231,27 @@ namespace Netherlands3D.T3DPipeline
             }
             else
             {
-                var verts = GetUncombinedGeometryVertices();
-                if (verts.Count > 0)
-                {
-                    var minX = verts.Min(v => v.x);
-                    var minY = verts.Min(v => v.y);
-                    var minZ = verts.Min(v => v.z);
-                    var maxX = verts.Max(v => v.x);
-                    var maxY = verts.Max(v => v.y);
-                    var maxZ = verts.Max(v => v.z);
-
-                    MinExtent = new Vector3Double(minX, minY, minZ);
-                    MaxExtent = new Vector3Double(maxX, maxY, maxZ);
-                }
+                RecalculateExtents();
             }
 
             //Parents and Children cannot be added here because they might not be parsed yet. Setting parents/children happens in CityJSONParser after all objects have been created.
+        }
+
+        public void RecalculateExtents()
+        {
+            var verts = GetUncombinedGeometryVertices();
+            if (verts.Count > 0)
+            {
+                var minX = verts.Min(v => v.x);
+                var minY = verts.Min(v => v.y);
+                var minZ = verts.Min(v => v.z);
+                var maxX = verts.Max(v => v.x);
+                var maxY = verts.Max(v => v.y);
+                var maxZ = verts.Max(v => v.z);
+
+                MinExtent = new Vector3Double(minX, minY, minZ);
+                MaxExtent = new Vector3Double(maxX, maxY, maxZ);
+            }
         }
 
         //called by CityJSON.cs when CityObject is fully parsed and ready for further processing (such as visualization)

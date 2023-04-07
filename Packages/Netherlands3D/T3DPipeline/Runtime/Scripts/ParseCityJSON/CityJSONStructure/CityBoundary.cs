@@ -236,6 +236,21 @@ namespace Netherlands3D.T3DPipeline
             }
             return vertices;
         }
+
+        public void FromMesh(Mesh mesh)
+        {
+            Surfaces = new List<CitySurface>();
+            for (int i = 0; i < mesh.triangles.Length; i += 3)
+            {
+                var surface = new CitySurface();
+                var triIndex1 = mesh.triangles[i];
+                var triIndex2 = mesh.triangles[i+1];
+                var triIndex3 = mesh.triangles[i+2];
+                var polygon = new CityPolygon(new Vector3Double[3] { mesh.vertices[triIndex1], mesh.vertices[triIndex2], mesh.vertices[triIndex3] }, new int[3] { 0, 1, 2 });
+                surface.Polygons = new List<CityPolygon>() { polygon }; //the polygon list only contains a solid surface polygon
+                Surfaces.Add(surface);
+            }
+        }
     }
 
     public class CitySolid : CityBoundary
