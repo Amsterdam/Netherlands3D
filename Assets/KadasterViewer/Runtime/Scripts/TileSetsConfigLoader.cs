@@ -11,7 +11,7 @@ using UnityEngine.Networking;
 
 namespace Netherlands3D.Core.Tiles
 {
-    public class ConfigLoader : MonoBehaviour
+    public class TileSetsConfigLoader : MonoBehaviour
     {
         [Serializable]
         public class Config
@@ -27,10 +27,6 @@ namespace Netherlands3D.Core.Tiles
         }
 
         [SerializeField,Tooltip("Relative to StreamingAssets")] private string configPath = "/config.json";
-
-        [Header("Optional variables")]
-        [SerializeField] GameObject[] enableAfterLoading;
-        [SerializeField] GameObject[] disableAfterLoading;
 
         private Config config;
         private const string examplePath = "https://...";
@@ -53,9 +49,6 @@ namespace Netherlands3D.Core.Tiles
             {
                 string jsonData = webRequest.downloadHandler.text;
                 config = JsonUtility.FromJson<Config>(jsonData);
-                Debug.Log(jsonData );
-
-                StartObjects();
                 AddTileSets();
             }
         }
@@ -74,24 +67,6 @@ namespace Netherlands3D.Core.Tiles
                 tileSetReader.SetTilePrioritiser(tilePrioritiser);
                 tileSetReader.tilesetUrl = tileset.url;
                 tileSetReader.maximumScreenSpaceError = tileset.maximumScreenSpaceError;
-            }
-        }
-
-        /// <summary>
-        /// Optional to activate child objects to force order of operations
-        /// </summary>
-        private void StartObjects()
-        {
-            foreach (var enableTarget in enableAfterLoading)
-            {
-                Debug.Log(enableTarget.name + " enabled", enableTarget);
-                enableTarget.SetActive(true);
-            }
-
-            foreach (var disable in disableAfterLoading)
-            {
-                Debug.Log(disable.name + " disabled", disable);
-                disable.SetActive(false);
             }
         }
 
