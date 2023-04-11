@@ -408,10 +408,16 @@ namespace Netherlands3D.Core
             return output;
         }
 
-        //setup coefficients for ecef-calculation
+        //setup coefficients for ecef-calculation WGS84
+        //private static double semimajorAxis = 6378137;
+        //private static double flattening = 0.00335281066;
+        //private static double eccentricity = 0.08161284189827;
+
+        //setup coefficients for ecef-calculation ETRD89
         private static double semimajorAxis = 6378137;
-        private static double flattening = 0.00335281066;
-        private static double eccentricity = 0.08161284189827;
+        private static double flattening = 0.003352810681183637418;
+        private static double eccentricity = 0.0818191910428;
+
 
         public static Quaternion ecefRotionToUp()
         {
