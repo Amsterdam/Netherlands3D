@@ -15,7 +15,7 @@ namespace Netherlands3D.Tiles3D
         [Serializable]
         public class Config
         {
-            public string viewerVersion = "0.0.1";
+            public string viewerVersion = "2.0.0";
             public TileSet[] tilesets = new TileSet[0];
             [Serializable]
             public class TileSet
@@ -28,7 +28,6 @@ namespace Netherlands3D.Tiles3D
         [SerializeField,Tooltip("Relative to StreamingAssets")] private string configPath = "/config.json";
 
         private Config config;
-        private const string examplePath = "https://...";
         
         private void Awake()
         {
@@ -58,8 +57,6 @@ namespace Netherlands3D.Tiles3D
 
             foreach (var tileset in config.tilesets)
             {
-                if (tileset.url == examplePath) continue;
-
                 var newTileSet = new GameObject(tileset.url);
                 newTileSet.transform.SetParent(this.transform);
 
@@ -69,30 +66,49 @@ namespace Netherlands3D.Tiles3D
         }
 
 #if UNITY_EDITOR
+        private bool configGenerated = false;
+        private void OnValidate()
+        {
+            if(!configGenerated)
+                GenerateConfigFile();
+        }
+
         [ContextMenu("Generate new config file in StreamingAssets")]
         public void GenerateConfigFile()
         {
             var path = Application.streamingAssetsPath + configPath;
             if (!File.Exists(path))
             {
-                //Generate an example config with 3 tilesets
+                //Make sure StreamingAssets path exists
+                Directory.CreateDirectory(Path.GetDirectoryName(Application.streamingAssetsPath + configPath));
+
+                //Generate an example config with 2 tilesets
                 var newConfig = new Config();
-                var exampleTileSet = new Config.TileSet()
+                var exampleBuildingsTileSet = new Config.TileSet()
                 {
-                    url = examplePath,
+                    url = "https://3d.test.kadaster.nl/3dtiles/2020/buildings/tileset.json",
                 };
-                Config.TileSet[] tilesets = new Config.TileSet[3]{ exampleTileSet,exampleTileSet,exampleTileSet  };
+                var exampleTerrainTileSet = new Config.TileSet()
+                {
+                    url = "https://3d.test.kadaster.nl/3dtiles/2020/terrain/tileset.json",
+                };
+                Config.TileSet[] tilesets = new Config.TileSet[2]{ 
+                    exampleBuildingsTileSet, 
+                    exampleTerrainTileSet 
+                };
 
                 newConfig.tilesets = tilesets;
 
                 File.WriteAllText(path, JsonUtility.ToJson(newConfig,true));
+
+                configGenerated = true;
 
                 Debug.Log(path + " generated");
                 AssetDatabase.Refresh();
             }
             else
             {
-                Debug.Log(path + " already exists");
+                Debug.Log(path + " found.", this.gameObject);
             }
         }
 #endif
