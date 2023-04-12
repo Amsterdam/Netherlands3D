@@ -2,7 +2,7 @@
   "name": "nl.netherlands3d",
   "displayName": "Netherlands 3D",
   "version": "1.0.0",
-  "unity": "2021.3",
+  "unity": "2022.2",
   "description": "A library of Unity3D systems/prefabs meant for reuse/addition that were initialy developed for 3D Amsterdam and 3D Utrecht.",
   "type": "library",
   "keywords": [
