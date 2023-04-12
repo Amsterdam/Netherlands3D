@@ -79,6 +79,11 @@
       "description": "Basic TileSystem",
       "path": "Core/Samples~"
     },
+	{
+      "displayName": "3DTiles",
+      "description": "3DTiles tile system example",
+      "path": "3DTiles/Samples~"
+    },
     {
       "displayName": "Timeline UI Mockup",
       "description": "Ready to use timeline UI prefab",
