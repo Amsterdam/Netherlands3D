@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using System.Collections;
 using UnityEditor;
@@ -22,3 +23,4 @@ class DrawTilePriorityLabels : Editor
         }
     }
 }
+#endif
