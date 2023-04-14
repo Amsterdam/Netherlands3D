@@ -213,7 +213,7 @@
                     "path": "<Pointer>/delta",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse;Touch",
+                    "groups": "Keyboard&Mouse",
                     "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -287,7 +287,7 @@
                 {
                     "name": "",
                     "id": "330019d0-f694-4040-96c1-7d450139da04",
-                    "path": "<Touchscreen>/touch*/position",
+                    "path": "<Touchscreen>/touch0/position",
                     "interactions": "",
                     "processors": "",
                     "groups": "Touch",
@@ -463,6 +463,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "DragSecondary",
+                    "type": "PassThrough",
+                    "id": "056b604b-2350-485d-a231-394b4c0599f1",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -491,13 +500,46 @@
                 {
                     "name": "",
                     "id": "5c219ec3-e9ee-4a6c-aabc-f763c4beeacd",
-                    "path": "<Touchscreen>/touch*/Press",
+                    "path": "<Touchscreen>/touch0/press",
                     "interactions": "",
                     "processors": "",
                     "groups": "Touch",
                     "action": "Drag",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "SecondaryTouchPosition",
+                    "id": "70109ab2-7a8a-47ac-aa04-88bd3c760cb3",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DragSecondary",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "ce1c82fc-6d75-49d8-b181-e4ee8d4ca9b8",
+                    "path": "<Touchscreen>/touch1/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Touch",
+                    "action": "DragSecondary",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "1943052f-ad9f-42e8-a71a-b5fa5f3dd094",
+                    "path": "<Touchscreen>/touch1/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Touch",
+                    "action": "DragSecondary",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }

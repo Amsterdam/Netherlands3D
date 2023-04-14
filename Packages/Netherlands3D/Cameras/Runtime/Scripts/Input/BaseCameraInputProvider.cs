@@ -24,4 +24,7 @@ public abstract class BaseCameraInputProvider : MonoBehaviour
     public BoolEvent draggingModifier;
     public BoolEvent rotateModifier;
     public BoolEvent firstPersonModifier;
+
+    [Header("Smoother camera movement by pausing heavy systems")]
+    public BoolEvent pauseHeavyProcess;
 }
