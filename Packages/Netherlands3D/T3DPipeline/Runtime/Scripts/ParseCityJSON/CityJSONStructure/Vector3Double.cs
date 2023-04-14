@@ -94,4 +94,5 @@ public struct Vector3Double
 
     public static implicit operator Vector3RD(Vector3Double v) => new Vector3RD(v.x, v.y, v.z);
     public static implicit operator Vector3Double(Vector3RD v) => new Vector3Double(v.x, v.y, v.z);
+    public static implicit operator Vector3Double(Vector3 v) => new Vector3Double(v.x, v.y, v.z);
 }
