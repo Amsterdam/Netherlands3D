@@ -100,7 +100,7 @@ namespace Netherlands3D.Geoservice
             url = url.Replace("{Xmax}", (tileChange.X+tileSize).ToString());
             url = url.Replace("{Ymax}", (tileChange.Y + tileSize).ToString());
             
-            var webRequest = UnityWebRequestTexture.GetTexture(url);
+            var webRequest = UnityWebRequestTexture.GetTexture(url, compressLoadedTextures == false);
             tiles[tileKey].runningWebRequest = webRequest;
             yield return webRequest.SendWebRequest();
 

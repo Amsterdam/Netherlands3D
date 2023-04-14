@@ -55,7 +55,7 @@ public class WMSHandler : MonoBehaviour
 
     public IEnumerator DownloadImage(string mediaURL, ObjectEvent imageEvent)
     {
-        UnityWebRequest request = UnityWebRequestTexture.GetTexture(mediaURL);
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(mediaURL, true);
         yield return request.SendWebRequest();
         if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
         {
@@ -147,7 +147,7 @@ public class WMSHandler : MonoBehaviour
     }
     private IEnumerator GetLegendImage(string legendUrl)
     {
-        UnityWebRequest request = UnityWebRequestTexture.GetTexture(legendUrl);
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(legendUrl, true);
         yield return request.SendWebRequest();
         if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
         {
