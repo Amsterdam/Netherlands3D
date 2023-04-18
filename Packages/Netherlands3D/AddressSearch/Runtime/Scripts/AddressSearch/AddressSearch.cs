@@ -21,12 +21,14 @@ public class AddressSearch : MonoBehaviour
     [SerializeField]
     [Tooltip("The endpoint for retrieving suggestions when looking up addresses, see: https://www.pdok.nl/restful-api/-/article/pdok-locatieserver-1")]
     private string locationSuggestionEndpoint = "https://geodata.nationaalgeoregister.nl/locatieserver/v3/suggest";
+    [SerializeField]
     [Tooltip("The endpoint for looking up addresses, see: https://www.pdok.nl/restful-api/-/article/pdok-locatieserver-1")]
     private string locationLookupEndpoint = "https://geodata.nationaalgeoregister.nl/locatieserver/v3/lookup";
     [SerializeField]
     private string searchWithinCity = "Amsterdam";
     [SerializeField]
     private int charactersNeededBeforeSearch = 2;
+    [SerializeField]
     private GameObject resultsParent;
 
     [Header("Camera Controls")]
@@ -128,7 +130,7 @@ public class AddressSearch : MonoBehaviour
     {
         foreach (Transform child in resultsParent.transform)
         {
-            Destroy(child.gameObject);
+            GameObject.Destroy(child.gameObject);
         }
     }
 
@@ -155,11 +157,9 @@ public class AddressSearch : MonoBehaviour
 
     private void GeoDataLookup(string ID, string label)
     {
-        searchInputField.onValueChanged.RemoveAllListeners();
-        searchInputField.text = label;
+        searchInputField.SetTextWithoutNotify(label);
         StartCoroutine(GeoDataLookupRoutine(ID));
         ClearSearchResults();
-        searchInputField.onValueChanged.AddListener(delegate { GetSuggestions(searchInputField.text); });
     }
 
     IEnumerator GeoDataLookupRoutine(string ID)
