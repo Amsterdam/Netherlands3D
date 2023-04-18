@@ -14,19 +14,30 @@ using SimpleJSON;
 public class AddressSearch : MonoBehaviour
 {
     private TMP_InputField searchInputField;
-    private Camera mainCam;
 
     [SerializeField]
-    [Tooltip("The WFS endpoint for retrieving BAG information (see: https://www.pdok.nl/geo-services/-/article/basisregistratie-adressen-en-gebouwen-ba-1)")]
+    [Tooltip("The WFS endpoint for retrieving BAG information, see: https://www.pdok.nl/geo-services/-/article/basisregistratie-adressen-en-gebouwen-ba-1")]
     private string bagWfsEndpoint = "https://service.pdok.nl/lv/bag/wfs/v2_0";
+    [SerializeField]
+    [Tooltip("The endpoint for retrieving suggestions when looking up addresses, see: https://www.pdok.nl/restful-api/-/article/pdok-locatieserver-1")]
+    private string locationSuggestionEndpoint = "https://geodata.nationaalgeoregister.nl/locatieserver/v3/suggest";
+    [Tooltip("The endpoint for looking up addresses, see: https://www.pdok.nl/restful-api/-/article/pdok-locatieserver-1")]
+    private string locationLookupEndpoint = "https://geodata.nationaalgeoregister.nl/locatieserver/v3/lookup";
     [SerializeField]
     private string searchWithinCity = "Amsterdam";
     [SerializeField]
     private int charactersNeededBeforeSearch = 2;
+    private GameObject resultsParent;
+
+    [Header("Camera Controls")]
+    [SerializeField]
+    private bool moveCamera = true;
+    [SerializeField]
+    private Camera mainCamera;
+    [SerializeField]
+    private Quaternion targetCameraRotation = Quaternion.Euler(45, 0, 0);
     [SerializeField]
     public AnimationCurve cameraMoveCurve;
-    [SerializeField]
-    private GameObject resultsParent;
 
     [Header("Listen to events")]
     [SerializeField]
@@ -46,7 +57,7 @@ public class AddressSearch : MonoBehaviour
 
     private void Start()
     {
-        mainCam = Camera.main;
+        if (!mainCamera) mainCamera = Camera.main;
 
         searchInputField = GetComponent<TMP_InputField>();
         searchInputField.onValueChanged.AddListener(delegate { GetSuggestions(searchInputField.text); });
@@ -64,57 +75,52 @@ public class AddressSearch : MonoBehaviour
 
     public void GetSuggestions(string textInput = "")
     {
-        var inputNotEmpty = (textInput != "");
         StopAllCoroutines();
 
-        if (inputNotEmpty)
-        {
-            if (textInput.Length > charactersNeededBeforeSearch)
-            {
-                if (toggleClearButton) toggleClearButton.InvokeStarted(true);
-                StartCoroutine(FindSearchSuggestions(textInput));
-            }
-            else
-            {
-                ClearSearchResults();
-            }
-        }
-        else
+        var isEmpty = textInput.Trim() == "";
+        if (isEmpty)
         {
             ClearSearchResults();
-            toggleClearButton.InvokeStarted(false);
+            if (toggleClearButton) toggleClearButton.InvokeStarted(false);
+            return;
         }
+
+        if (textInput.Length <= charactersNeededBeforeSearch)
+        {
+            ClearSearchResults();
+            return;
+        }
+
+        if (toggleClearButton) toggleClearButton.InvokeStarted(true);
+
+        StartCoroutine(FindSearchSuggestions(textInput));
     }
 
     IEnumerator FindSearchSuggestions(string searchTerm)
     {
         string urlEncodedSearchTerm = UnityWebRequest.EscapeURL(searchTerm);
-        string url = "https://geodata.nationaalgeoregister.nl/locatieserver/v3/suggest?q=" + urlEncodedSearchTerm + "%20and%20" + searchWithinCity + "%20and%20type:adres&rows=5".Replace(REPLACEMENT_STRING, urlEncodedSearchTerm);
+        string url =$"{locationSuggestionEndpoint}?q={urlEncodedSearchTerm}%20and%20{searchWithinCity}{"%20and%20type:adres&rows=5".Replace(REPLACEMENT_STRING, urlEncodedSearchTerm)}";
 
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        using UnityWebRequest webRequest = UnityWebRequest.Get(url);
+        yield return webRequest.SendWebRequest();
+
+        if (webRequest.result != UnityWebRequest.Result.Success)
         {
-            yield return webRequest.SendWebRequest();
+            Debug.LogWarning("Geen verbinding");
+            yield break;
+        }
 
-            if (webRequest.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogWarning("Geen verbinding");
-            }
-            else
-            {
-                ClearSearchResults();
+        ClearSearchResults();
 
-                string jsonStringResult = webRequest.downloadHandler.text;
-                var JSONobj = SimpleJSON.JSON.Parse(jsonStringResult);
-                var docs = JSONobj["response"]["docs"];
+        var jsonNode = JSON.Parse(webRequest.downloadHandler.text);
+        var results = jsonNode["response"]["docs"];
 
-                for (int i = 0; i < docs.Count; i++)
-                {
-                    var weergavenaam = docs[i]["weergavenaam"];
-                    var ID = docs[i]["id"];
+        for (int i = 0; i < results.Count; i++)
+        {
+            var ID = results[i]["id"];
+            var label = results[i]["weergavenaam"];
 
-                    GenerateResultItem(weergavenaam, ID);
-                }
-            }
+            GenerateResultItem(ID, label);
         }
     }
 
@@ -122,36 +128,35 @@ public class AddressSearch : MonoBehaviour
     {
         foreach (Transform child in resultsParent.transform)
         {
-            GameObject.Destroy(child.gameObject);
+            Destroy(child.gameObject);
         }
     }
 
-    private void GenerateResultItem(string weergavenaam, string ID)
+    private void GenerateResultItem(string ID, string label)
     {
-        GameObject NewObj = new GameObject();
-        NewObj.name = weergavenaam;
+        GameObject suggestion = new GameObject { name = label };
 
-        RectTransform rt = NewObj.AddComponent<RectTransform>();
+        RectTransform rt = suggestion.AddComponent<RectTransform>();
         rt.SetParent(resultsParent.transform);
         rt.localScale = new Vector3(1, 1, 1);
         rt.sizeDelta = new Vector2(160, 10);
 
-        NewObj.SetActive(true);
+        suggestion.SetActive(true);
 
-        TextMeshProUGUI tmpComp = NewObj.AddComponent<TextMeshProUGUI>();
-        tmpComp.color = Color.black;
-        tmpComp.fontSize = 10;
-        tmpComp.text = weergavenaam;
-        tmpComp.margin = new Vector4(10, 10, 10, 10);
+        TextMeshProUGUI textObject = suggestion.AddComponent<TextMeshProUGUI>();
+        textObject.color = Color.black;
+        textObject.fontSize = 10;
+        textObject.text = label;
+        textObject.margin = new Vector4(10, 10, 10, 10);
 
-        Button btnComp = NewObj.AddComponent<Button>();
-        btnComp.onClick.AddListener(delegate { GeoDataLookup(ID, weergavenaam); });
+        Button buttonObject = suggestion.AddComponent<Button>();
+        buttonObject.onClick.AddListener(delegate { GeoDataLookup(ID, label); });
     }
 
-    void GeoDataLookup(string ID, string weergavenaam)
+    private void GeoDataLookup(string ID, string label)
     {
         searchInputField.onValueChanged.RemoveAllListeners();
-        searchInputField.text = weergavenaam;
+        searchInputField.text = label;
         StartCoroutine(GeoDataLookupRoutine(ID));
         ClearSearchResults();
         searchInputField.onValueChanged.AddListener(delegate { GetSuggestions(searchInputField.text); });
@@ -159,35 +164,32 @@ public class AddressSearch : MonoBehaviour
 
     IEnumerator GeoDataLookupRoutine(string ID)
     {
-        string url = "https://geodata.nationaalgeoregister.nl/locatieserver/v3/lookup?id=" + ID;
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        string url = $"{locationLookupEndpoint}?id={ID}";
+        using UnityWebRequest webRequest = UnityWebRequest.Get(url);
+        yield return webRequest.SendWebRequest();
+
+        if (webRequest.result != UnityWebRequest.Result.Success)
         {
-            yield return webRequest.SendWebRequest();
-
-            if (webRequest.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogWarning("Geen verbinding");
-            }
-            else
-            {
-                string jsonStringResult = webRequest.downloadHandler.text;
-                var JSONobj = SimpleJSON.JSON.Parse(jsonStringResult);
-                var docs = JSONobj["response"]["docs"];
-
-                string centroid = docs[0]["centroide_ll"];
-                string verblijfsobject_id = docs[0]["adresseerbaarobject_id"];
-
-                Vector3 targetLocation = ExtractUnityLocation(ref centroid);
-                var targetPos = new Vector3((targetLocation.x), 300, (targetLocation.z - 300));
-                var targetRot = Quaternion.Euler(45, 0, 0);
-
-                StartCoroutine(LerpCamera(mainCam.gameObject, targetPos, targetRot, 2));
-                yield return new WaitForSeconds(2);
-                StartCoroutine(GetBAGID(verblijfsobject_id));
-            }
+            Debug.LogWarning("Geen verbinding");
+            yield break;
         }
 
-        yield return null;
+        var jsonNode = JSON.Parse(webRequest.downloadHandler.text);
+        var results = jsonNode["response"]["docs"];
+
+        string centroid = results[0]["centroide_ll"];
+        string residentialObjectID = results[0]["adresseerbaarobject_id"];
+
+        if (moveCamera)
+        {
+            Vector3 targetLocation = ExtractUnityLocation(ref centroid);
+            var targetPos = new Vector3(targetLocation.x, 300, targetLocation.z - 300);
+
+            StartCoroutine(LerpCamera(mainCamera.gameObject, targetPos, targetCameraRotation, 2));
+            yield return new WaitForSeconds(2);
+        }
+
+        StartCoroutine(GetBAGID(residentialObjectID));
     }
 
     private static Vector3 ExtractUnityLocation(ref string locationData)
@@ -198,8 +200,7 @@ public class AddressSearch : MonoBehaviour
         double.TryParse(lonLat[0], NumberStyles.Any, CultureInfo.InvariantCulture, out double lon);
         double.TryParse(lonLat[1], NumberStyles.Any, CultureInfo.InvariantCulture, out double lat);
 
-        Vector3 unityLocation = CoordConvert.WGS84toUnity(lon, lat);
-        return unityLocation;
+        return CoordConvert.WGS84toUnity(lon, lat);
     }
 
     IEnumerator LerpCamera(GameObject targetObj, Vector3 endPos, Quaternion endRot, float duration)
