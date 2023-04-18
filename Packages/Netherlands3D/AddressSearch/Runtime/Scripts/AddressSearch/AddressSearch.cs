@@ -155,7 +155,6 @@ public class AddressSearch : MonoBehaviour
         StartCoroutine(GeoDataLookupRoutine(ID));
         ClearSearchResults();
         searchInputField.onValueChanged.AddListener(delegate { GetSuggestions(searchInputField.text); });
-
     }
 
     IEnumerator GeoDataLookupRoutine(string ID)
@@ -187,6 +186,7 @@ public class AddressSearch : MonoBehaviour
                 StartCoroutine(GetBAGID(verblijfsobject_id));
             }
         }
+
         yield return null;
     }
 
@@ -214,6 +214,7 @@ public class AddressSearch : MonoBehaviour
             t += Time.deltaTime;
             yield return null;
         }
+
         targetObj.transform.position = endPos;
     }
 
@@ -233,13 +234,12 @@ public class AddressSearch : MonoBehaviour
         JSONNode jsonNode = JSON.Parse(webRequest.downloadHandler.text);
         JSONNode bagId = jsonNode["features"][0]["properties"]["pandidentificatie"];
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         Debug.Log($"BAG ID: {bagId}");
-        #endif
+#endif
 
-        List<string> bagIDs = new List<string> {bagId};
+        List<string> bagIDs = new List<string> { bagId };
 
         if (gotBuilding) gotBuilding.InvokeStarted(bagIDs);
     }
-
 }
