@@ -8,34 +8,35 @@ using Netherlands3D.Events;
 using System.Globalization;
 using Netherlands3D.Core;
 using System.Collections.Generic;
+using SimpleJSON;
 
 [RequireComponent(typeof(TMP_InputField))]
-
 public class AddressSearch : MonoBehaviour
 {
     private TMP_InputField searchInputField;
     private Camera mainCam;
 
+    [SerializeField]
+    [Tooltip("The WFS endpoint for retrieving BAG information (see: https://www.pdok.nl/geo-services/-/article/basisregistratie-adressen-en-gebouwen-ba-1)")]
+    private string bagWfsEndpoint = "https://service.pdok.nl/lv/bag/wfs/v2_0";
+    [SerializeField]
+    private string searchWithinCity = "Amsterdam";
+    [SerializeField]
+    private int charactersNeededBeforeSearch = 2;
+    [SerializeField]
+    public AnimationCurve cameraMoveCurve;
+    [SerializeField]
+    private GameObject resultsParent;
+
     [Header("Listen to events")]
     [SerializeField]
     private TriggerEvent clearInput;
-
 
     [Header("Invoke events")]
     [SerializeField]
     private BoolEvent toggleClearButton;
     [SerializeField]
     private StringListEvent gotBuilding;
-
-    [Space(10)]
-    [SerializeField]
-    private string searchWithinCity = "Amsterdam";
-    [SerializeField]
-    private int charactersNeededBeforeSearch = 2;
-    [SerializeField]
-    private GameObject resultsParent;
-    [SerializeField]
-    public AnimationCurve cameraMoveCurve;
 
     public string SearchInput { get => searchInputField.text; set => searchInputField.text = Regex.Replace(value, "<.*?>", string.Empty); }
 
@@ -216,33 +217,29 @@ public class AddressSearch : MonoBehaviour
         targetObj.transform.position = endPos;
     }
 
-    IEnumerator GetBAGID(string verblijfsobject_id)
+    IEnumerator GetBAGID(string residentialObjectID)
     {
-        string pdokVerblijfsobjectWFS =
-        "https://service.pdok.nl/lv/bag/wfs/v2_0?SERVICE=WFS&VERSION=2.0.0&outputFormat=geojson&REQUEST=GetFeature&typeName=bag:verblijfsobject&count=100&outputFormat=xml&srsName=EPSG:28992&filter=<Filter><PropertyIsEqualTo><PropertyName>identificatie</PropertyName><Literal>" + verblijfsobject_id + "</Literal></PropertyIsEqualTo></Filter>";
+        string url = $"{bagWfsEndpoint}?SERVICE=WFS&VERSION=2.0.0&outputFormat=geojson&REQUEST=GetFeature&typeName=bag:verblijfsobject&count=100&outputFormat=xml&srsName=EPSG:28992&filter=<Filter><PropertyIsEqualTo><PropertyName>identificatie</PropertyName><Literal>{residentialObjectID}</Literal></PropertyIsEqualTo></Filter>";
 
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(pdokVerblijfsobjectWFS))
+        using UnityWebRequest webRequest = UnityWebRequest.Get(url);
+        yield return webRequest.SendWebRequest();
+
+        if (webRequest.result != UnityWebRequest.Result.Success)
         {
-            yield return webRequest.SendWebRequest();
-
-            if (webRequest.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogWarning("Geen verbinding");
-            }
-            else
-            {
-                string jsonStringResult = webRequest.downloadHandler.text;
-                var JSONobj = SimpleJSON.JSON.Parse(jsonStringResult);
-                var BAGID = JSONobj["features"][0]["properties"]["pandidentificatie"];
-
-                Debug.Log("BAG ID: " + BAGID);
-
-                List<string> bagIDs = new List<string>();
-                bagIDs.Add(BAGID);
-
-                if (gotBuilding) gotBuilding.InvokeStarted(bagIDs);
-            }
+            Debug.LogWarning("Geen verbinding");
+            yield break;
         }
+
+        JSONNode jsonNode = JSON.Parse(webRequest.downloadHandler.text);
+        JSONNode bagId = jsonNode["features"][0]["properties"]["pandidentificatie"];
+
+        #if UNITY_EDITOR
+        Debug.Log($"BAG ID: {bagId}");
+        #endif
+
+        List<string> bagIDs = new List<string> {bagId};
+
+        if (gotBuilding) gotBuilding.InvokeStarted(bagIDs);
     }
 
 }
