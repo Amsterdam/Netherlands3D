@@ -75,11 +75,6 @@
       "description": "CityJSON visualizer, gets a CityJSON building from a BAGID, visualises it, allows for annotations, and resumbits it to be registered",
       "path": "T3DPipeline/Samples~/"
     },
-    {
-      "displayName": "TileSystem",
-      "description": "Basic TileSystem",
-      "path": "Core/Samples~"
-    },
 	{
       "displayName": "3DTiles",
       "description": "3DTiles tile system example",
@@ -131,6 +126,7 @@
     "com.unity.inputsystem": "1.3.0",
     "com.unity.render-pipelines.universal": "1.3.0",
     "com.unity.nuget.newtonsoft-json": "3.1.0",
-    "com.unity.meshopt.decompress": "0.1.0-preview.5"
+    "com.unity.meshopt.decompress": "0.1.0-preview.5",
+    "nl.netherlands3d.tilesystem": "2.0.0"
   }
 }
