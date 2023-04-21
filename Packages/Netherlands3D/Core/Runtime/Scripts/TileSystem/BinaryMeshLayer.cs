@@ -90,17 +90,17 @@ namespace Netherlands3D.TileSystem
             string url = Datasets[index].path;
             if (Datasets[index].path.StartsWith("https://") || Datasets[index].path.StartsWith("file://"))
             {
-                url = Datasets[index].path;
+#if !UNITY_EDITOR && UNITY_WEBGL
+			    if(brotliCompressedExtention.Length>0)
+				    Datasets[index].path += brotliCompressedExtention;
+#endif
+                url = Datasets[index].url;
             }
 
             url = url.ReplaceXY(tileChange.X, tileChange.Y);
 
             //On WebGL we request brotli encoded files instead. We might want to base this on browser support.
 
-#if !UNITY_EDITOR && UNITY_WEBGL
-			if(brotliCompressedExtention.Length>0)
-				url += brotliCompressedExtention;
-#endif
 
             var webRequest = UnityWebRequest.Get(url);
 #if !UNITY_EDITOR && UNITY_WEBGL && ADD_BROTLI_ACCEPT_ENCODING_HEADER
