@@ -1,0 +1,23 @@
+{
+  "name": "nl.netherlands3d.authentication",
+  "displayName": "Netherlands 3D - Authentication",
+  "version": "1.0.0",
+  "unity": "2022.2",
+  "description": "",
+  "type": "library",
+  "keywords": [
+  ],
+  "license": "EUPL-1.2",
+  "documentationUrl": "https://github.com/Amsterdam/Netherlands3D/tree/main/PackageUserManual/Dutch",
+  "changelogUrl": "https://github.com/Amsterdam/Netherlands3D",
+  "licensesUrl": "https://github.com/Amsterdam/Netherlands3D/blob/main/LICENSE.txt",
+  "changelogURL": "https://github.com/Amsterdam/Netherlands3D/blob/main/CHANGELOG.md",
+  "hideInEditor": false,
+  "author": {
+    "name": "3D Amsterdam Team",
+    "url": "https://3d.amsterdam.nl"
+  },
+  "dependencies": {
+    "core.cdm.authentication": "1.1.3"
+  }
+}
