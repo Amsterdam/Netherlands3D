@@ -129,7 +129,7 @@ namespace Netherlands3D.TileSystem
             if (Datasets[index].path.StartsWith("https://") || Datasets[index].path.StartsWith("file://"))
             {
 #if !UNITY_EDITOR && UNITY_WEBGL
-			    if(brotliCompressedExtention.Length>0)
+			    if(brotliCompressedExtention.Length>0 && !Datasets[index].path.EndsWith(brotliCompressedExtention))
 				    Datasets[index].path += brotliCompressedExtention;
 #endif
                 url = Datasets[index].url;
@@ -243,7 +243,7 @@ namespace Netherlands3D.TileSystem
             mesh = BinaryMeshConversion.ReadBinaryMesh(binaryMeshData, out int[] submeshIndices);
 
 #if !UNITY_EDITOR && UNITY_WEBGL
-			if(brotliCompressedExtention.Length>0)
+		    if(brotliCompressedExtention.Length>0 && !Datasets[index].path.EndsWith(brotliCompressedExtention))
 				source = source.Replace(brotliCompressedExtention,"");
 #endif
             mesh.name = source;
