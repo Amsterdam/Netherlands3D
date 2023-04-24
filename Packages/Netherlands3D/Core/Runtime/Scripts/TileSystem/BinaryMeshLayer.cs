@@ -202,7 +202,7 @@ namespace Netherlands3D.TileSystem
             mesh = BinaryMeshConversion.ReadBinaryMesh(binaryMeshData, out int[] submeshIndices);
 
 #if !UNITY_EDITOR && UNITY_WEBGL
-		    if(brotliCompressedExtention.Length>0 && Datasets[index].path.EndsWith(brotliCompressedExtention))
+		    if(brotliCompressedExtention.Length>0 && source.EndsWith(brotliCompressedExtention))
 				source = source.Replace(brotliCompressedExtention,"");
 #endif
             mesh.name = source;
