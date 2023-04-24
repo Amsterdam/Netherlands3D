@@ -21,6 +21,9 @@ namespace Netherlands3D.TileSystem
         private Mesh mesh;
         private MeshRenderer meshRenderer;
 
+        [SerializeField]
+        private bool checkIfFileExistsBeforeDownloading;
+
         public override void HandleTile(TileChange tileChange, System.Action<TileChange> callback = null)
         {
             TileAction action = tileChange.action;
@@ -46,7 +49,10 @@ namespace Netherlands3D.TileSystem
                 default:
                     break;
             }
-            tiles[tileKey].runningCoroutine = StartCoroutine(DownloadBinaryMesh(tileChange, callback));
+            if (checkIfFileExistsBeforeDownloading)
+                tiles[tileKey].runningCoroutine = StartCoroutine(CheckAndDownloadBinaryMesh(tileChange, callback));
+            else
+                tiles[tileKey].runningCoroutine = StartCoroutine(DownloadBinaryMesh(tileChange, callback));
         }
 
         private Tile CreateNewTile(Vector2Int tileKey)
@@ -83,6 +89,38 @@ namespace Netherlands3D.TileSystem
                 Destroy(tiles[tileKey].gameObject);
             }
         }
+
+        private IEnumerator CheckAndDownloadBinaryMesh(TileChange tileChange, System.Action<TileChange> callback = null)
+        {
+            var tileKey = new Vector2Int(tileChange.X, tileChange.Y);
+            int index = tiles[tileKey].unityLOD;
+            string url = Datasets[index].path;
+            if (Datasets[index].path.StartsWith("https://") || Datasets[index].path.StartsWith("file://"))
+            {
+                url = Datasets[index].url;
+            }
+
+            url = url.ReplaceXY(tileChange.X, tileChange.Y);
+
+            var webRequest = UnityWebRequest.Head(url);
+            tiles[tileKey].runningWebRequest = webRequest;
+            yield return webRequest.SendWebRequest();
+
+            if (!tiles.ContainsKey(tileKey)) yield break;
+            tiles[tileKey].runningWebRequest = null;
+
+            if (webRequest.result != UnityWebRequest.Result.Success)
+            {
+                //file does not exist
+                yield break;
+            }
+            else
+            {
+                //file exists, proceed with normal download
+                yield return DownloadBinaryMesh(tileChange, callback);
+            }
+        }
+
         private IEnumerator DownloadBinaryMesh(TileChange tileChange, System.Action<TileChange> callback = null)
         {
             var tileKey = new Vector2Int(tileChange.X, tileChange.Y);
@@ -90,17 +128,17 @@ namespace Netherlands3D.TileSystem
             string url = Datasets[index].path;
             if (Datasets[index].path.StartsWith("https://") || Datasets[index].path.StartsWith("file://"))
             {
-                url = Datasets[index].path;
+#if !UNITY_EDITOR && UNITY_WEBGL
+			    if(brotliCompressedExtention.Length>0)
+				    Datasets[index].path += brotliCompressedExtention;
+#endif
+                url = Datasets[index].url;
             }
 
             url = url.ReplaceXY(tileChange.X, tileChange.Y);
 
             //On WebGL we request brotli encoded files instead. We might want to base this on browser support.
 
-#if !UNITY_EDITOR && UNITY_WEBGL
-			if(brotliCompressedExtention.Length>0)
-				url += brotliCompressedExtention;
-#endif
 
             var webRequest = UnityWebRequest.Get(url);
 #if !UNITY_EDITOR && UNITY_WEBGL && ADD_BROTLI_ACCEPT_ENCODING_HEADER
