@@ -4,6 +4,7 @@ using Cdm.Authentication.Browser;
 using Cdm.Authentication.Clients;
 using Cdm.Authentication.OAuth2;
 using Netherlands3D.Authentication.Clients;
+using Netherlands3D.Authentication.Browser;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -29,7 +30,7 @@ namespace Netherlands3D.Authentication
 
         [SerializeField]
         [Tooltip("An imaginary URL to which the OAuthProvider will return the call; this is intercepted by an HTTPListener")]
-        private string redirectUri = "http://localhost:8080/nl3d_oauth/";
+        private string redirectUri = "http://localhost:8080/oauth/callback.html";
 
         [SerializeField]
         private string scope = "openid profile";
@@ -47,7 +48,12 @@ namespace Netherlands3D.Authentication
 
         public async void SignIn()
         {
-            using var authenticationSession = new AuthenticationSession(CreateFlow(), new StandaloneBrowser());
+            IBrowser browser = new StandaloneBrowser();
+            #if UNITY_WEBGL && !UNITY_EDITOR
+                browser = new WebGLBrowser();
+            #endif
+
+            using var authenticationSession = new AuthenticationSession(CreateFlow(), browser);
             try
             {
                 accessTokenResponse = await authenticationSession.AuthenticateAsync();
