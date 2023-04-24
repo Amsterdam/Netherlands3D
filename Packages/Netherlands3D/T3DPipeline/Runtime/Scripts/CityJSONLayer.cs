@@ -6,20 +6,21 @@ using UnityEngine.Networking;
 using System;
 using System.Linq;
 using UnityEngine.Rendering;
+using Netherlands3D.T3DPipeline;
+using Netherlands3D.Events;
 
 namespace Netherlands3D.TileSystem
 {
-    public class BinaryMeshLayer : Layer
+    public class CityJSONLayer : Layer //todo: put in NL3D Package
     {
-        public List<Material> DefaultMaterialList = new List<Material>();
-        public bool createMeshcollider = false;
         public ShadowCastingMode tileShadowCastingMode = ShadowCastingMode.On;
 
-        public string brotliCompressedExtention = ".br";
-
+        [SerializeField]
+        private GameObject containerPrefab;
         private GameObject container;
-        private Mesh mesh;
-        private MeshRenderer meshRenderer;
+
+        [SerializeField]
+        private bool checkIfFileExistsBeforeDownloading;
 
         public override void HandleTile(TileChange tileChange, System.Action<TileChange> callback = null)
         {
@@ -46,7 +47,10 @@ namespace Netherlands3D.TileSystem
                 default:
                     break;
             }
-            tiles[tileKey].runningCoroutine = StartCoroutine(DownloadBinaryMesh(tileChange, callback));
+            if (checkIfFileExistsBeforeDownloading)
+                tiles[tileKey].runningCoroutine = StartCoroutine(CheckAndDownloadCityJSON(tileChange, callback));
+            else
+                tiles[tileKey].runningCoroutine = StartCoroutine(DownloadCityJSON(tileChange, callback));
         }
 
         private Tile CreateNewTile(Vector2Int tileKey)
@@ -83,26 +87,51 @@ namespace Netherlands3D.TileSystem
                 Destroy(tiles[tileKey].gameObject);
             }
         }
-        private IEnumerator DownloadBinaryMesh(TileChange tileChange, System.Action<TileChange> callback = null)
+
+        private IEnumerator CheckAndDownloadCityJSON(TileChange tileChange, System.Action<TileChange> callback = null)
         {
             var tileKey = new Vector2Int(tileChange.X, tileChange.Y);
             int index = tiles[tileKey].unityLOD;
             string url = Datasets[index].path;
             if (Datasets[index].path.StartsWith("https://") || Datasets[index].path.StartsWith("file://"))
             {
-                //On WebGL we request brotli encoded files instead. We might want to base this on browser support.
-#if !UNITY_EDITOR && UNITY_WEBGL
-		        if(brotliCompressedExtention.Length>0 && !Datasets[index].path.EndsWith(brotliCompressedExtention))
-    				Datasets[index].path += brotliCompressedExtention;
-#endif
                 url = Datasets[index].url;
             }
+
+            url = url.ReplaceXY(tileChange.X, tileChange.Y);
+
+            var webRequest = UnityWebRequest.Head(url);
+            tiles[tileKey].runningWebRequest = webRequest;
+            yield return webRequest.SendWebRequest();
+
+            if (!tiles.ContainsKey(tileKey)) yield break;
+            tiles[tileKey].runningWebRequest = null;
+
+            if (webRequest.result != UnityWebRequest.Result.Success)
+            {
+                //file does not exist
+                yield break;
+            }
+            else
+            {
+                //file exists, proceed with normal download
+                yield return DownloadCityJSON(tileChange, callback);
+            }
+        }
+
+        private IEnumerator DownloadCityJSON(TileChange tileChange, System.Action<TileChange> callback = null)
+        {
+            var tileKey = new Vector2Int(tileChange.X, tileChange.Y);
+            int index = tiles[tileKey].unityLOD;
+            string url = Datasets[index].path;
+            if (Datasets[index].path.StartsWith("https://") || Datasets[index].path.StartsWith("file://"))
+            {
+                url = Datasets[index].url;
+            }
+
             url = url.ReplaceXY(tileChange.X, tileChange.Y);
 
             var webRequest = UnityWebRequest.Get(url);
-#if !UNITY_EDITOR && UNITY_WEBGL && ADD_BROTLI_ACCEPT_ENCODING_HEADER
-			webRequest.SetRequestHeader("Accept-Encoding", "br");
-#endif
 
             tiles[tileKey].runningWebRequest = webRequest;
             yield return webRequest.SendWebRequest();
@@ -118,10 +147,10 @@ namespace Netherlands3D.TileSystem
             }
             else
             {
-                byte[] results = webRequest.downloadHandler.data;
+                string jsonResult = webRequest.downloadHandler.text;
 
                 yield return new WaitUntil(() => pauseLoading == false);
-                GameObject newGameobject = CreateNewGameObject(url, results, tileChange);
+                GameObject newGameobject = CreateNewGameObject(url, jsonResult, tileChange);
                 if (newGameobject != null)
                 {
                     if (TileHasSubObjectAltered(tileChange))
@@ -190,81 +219,17 @@ namespace Netherlands3D.TileSystem
             callback(tileChange);
         }
 
-        private GameObject CreateNewGameObject(string source, byte[] binaryMeshData, TileChange tileChange)
+        private GameObject CreateNewGameObject(string source, string cityJSON, TileChange tileChange)
         {
-            container = new GameObject();
-
+            container = Instantiate(containerPrefab, transform);
             container.name = tileChange.X.ToString() + "-" + tileChange.Y.ToString();
+            container.layer = container.transform.parent.gameObject.layer;
             container.transform.position = CoordConvert.RDtoUnity(new Vector2(tileChange.X + (tileSize / 2), tileChange.Y + (tileSize / 2)));
 
             container.SetActive(isEnabled);
-
-            mesh = BinaryMeshConversion.ReadBinaryMesh(binaryMeshData, out int[] submeshIndices);
-
-#if !UNITY_EDITOR && UNITY_WEBGL
-		    if(brotliCompressedExtention.Length>0 && Datasets[index].path.EndsWith(brotliCompressedExtention))
-				source = source.Replace(brotliCompressedExtention,"");
-#endif
-            mesh.name = source;
-            container.AddComponent<MeshFilter>().sharedMesh = mesh;
-
-            container.transform.parent = transform.gameObject.transform; //set parent after adding meshFilter to not cause SubObjects to give a missing component exception
-            container.layer = container.transform.parent.gameObject.layer;
-
-            meshRenderer = container.AddComponent<MeshRenderer>();
-            List<Material> materialList = new List<Material>();
-            for (int i = 0; i < submeshIndices.Length; i++)
-            {
-                materialList.Add(DefaultMaterialList[submeshIndices[i]]);
-            }
-            meshRenderer.sharedMaterials = materialList.ToArray();
-            meshRenderer.shadowCastingMode = tileShadowCastingMode;
-
-            if (createMeshcollider)
-            {
-                container.AddComponent<MeshCollider>().sharedMesh = mesh;
-            }
+            container.GetComponent<CityJSON>().ParseCityJSON(cityJSON);
 
             return container;
-        }
-
-        /// <summary>
-        /// Adds mesh colliders to the meshes found within this layer
-        /// </summary>
-        /// <param name="onlyTileUnderPosition">Optional world position where this tile should be close to</param>
-        public void AddMeshColliders(Vector3 onlyTileUnderPosition = default)
-        {
-            MeshCollider meshCollider;
-            MeshFilter[] meshFilters = gameObject.GetComponentsInChildren<MeshFilter>();
-
-            if (meshFilters != null)
-            {
-                if (onlyTileUnderPosition != default)
-                {
-                    foreach (MeshFilter meshFilter in meshFilters)
-                    {
-                        if (Mathf.Abs(onlyTileUnderPosition.x - meshFilter.gameObject.transform.position.x) < tileSize && Mathf.Abs(onlyTileUnderPosition.z - meshFilter.gameObject.transform.position.z) < tileSize)
-                        {
-                            meshCollider = meshFilter.gameObject.GetComponent<MeshCollider>();
-                            if (meshCollider == null)
-                            {
-                                meshFilter.gameObject.AddComponent<MeshCollider>().sharedMesh = meshFilter.sharedMesh;
-                            }
-                        }
-                    }
-                    return;
-                }
-
-                //Just add all MeshColliders if no specific area was supplied
-                foreach (MeshFilter meshFilter in meshFilters)
-                {
-                    meshCollider = meshFilter.gameObject.GetComponent<MeshCollider>();
-                    if (meshCollider == null)
-                    {
-                        meshFilter.gameObject.AddComponent<MeshCollider>().sharedMesh = meshFilter.sharedMesh;
-                    }
-                }
-            }
         }
     }
 }
