@@ -1,10 +1,9 @@
 ﻿using System;
-using Cdm.Authentication;
-using Cdm.Authentication.Browser;
+using System.Collections;
 using Cdm.Authentication.Clients;
 using Cdm.Authentication.OAuth2;
 using Netherlands3D.Authentication.Clients;
-using Netherlands3D.Authentication.Browser;
+using Netherlands3D.Authentication.Connections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -35,54 +34,53 @@ namespace Netherlands3D.Authentication
         [SerializeField]
         private string scope = "openid profile";
 
-        public UnityEvent<IUserInfo> OnSignedIn;
+        public UnityEvent OnSignedIn;
         public UnityEvent OnSignInFailed;
         public UnityEvent OnSignedOut;
 
-        private AccessTokenResponse accessTokenResponse;
-        private IUserInfo userInfo;
+        private IConnection connection;
 
-        public bool IsAnonymous => this.accessTokenResponse == null;
-        public string AccessToken => this.accessTokenResponse?.accessToken;
-        public IUserInfo UserInfo => userInfo;
-
-        public async void SignIn()
+        private void OnEnable()
         {
-            IBrowser browser = new StandaloneBrowser();
-            #if UNITY_WEBGL && !UNITY_EDITOR
-                browser = new WebGLBrowser();
-            #endif
+            var authorizationCodeFlow = CreateFlow();
 
-            using var authenticationSession = new AuthenticationSession(CreateFlow(), browser);
-            try
+            connection = new CdmConnection(authorizationCodeFlow);
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
             {
-                accessTokenResponse = await authenticationSession.AuthenticateAsync();
-            }
-            catch
-            {
-                OnSignInFailed?.Invoke();
-                throw;
+                connection = new WebGLConnection(authorizationCodeFlow);
             }
 
-            userInfo = null;
-            try
-            {
-                if (authenticationSession.SupportsUserInfo())
-                {
-                    userInfo = await authenticationSession.GetUserInfoAsync();
-                }
-            }
-            catch
-            {
-                Debug.LogWarning("Retrieving the User Info for the Signed in account failed");
-            }
+            connection.Initialize();
 
-            OnSignedIn?.Invoke(userInfo);
+            connection.OnSignedIn += SignedIn;
+            connection.OnSignInFailed += SignInFailed;
         }
 
-        public void SignOut()
+        private void OnDisable()
         {
-            this.accessTokenResponse = null;
+            connection.OnSignedIn -= SignedIn;
+            connection.OnSignInFailed -= SignInFailed;
+        }
+
+        public IEnumerator SignIn()
+        {
+            yield return connection.Authenticate();
+        }
+
+        private void SignedIn(AccessTokenResponse accessTokenResponse)
+        {
+            this.OnSignedIn?.Invoke();
+        }
+
+        private void SignInFailed()
+        {
+            this.OnSignInFailed?.Invoke();
+        }
+
+        public IEnumerator SignOut()
+        {
+            yield return connection.SignOut();
+
             OnSignedOut?.Invoke();
         }
 

@@ -5,15 +5,20 @@ namespace Netherlands3D.Authentication.Browser
 {
     public class WebGlResponseInterceptor : MonoBehaviour
     {
-        public delegate void OnAuthResultsDelegate(string authResult);
+        public delegate void OnSignedInDelegate(string token);
+        public delegate void OnSignInFailedDelegate();
 
-        public OnAuthResultsDelegate OnAuthResults;
+        public OnSignedInDelegate OnSignedIn;
+        public OnSignInFailedDelegate OnSignInFailed;
 
-        public void GetAuthResults(string authResult)
+        public void SignedIn(string token)
         {
-            Debug.Log(authResult);
+            OnSignedIn(token);
+        }
 
-            OnAuthResults(authResult);
+        public void SignInFailed()
+        {
+            OnSignInFailed();
         }
     }
 }

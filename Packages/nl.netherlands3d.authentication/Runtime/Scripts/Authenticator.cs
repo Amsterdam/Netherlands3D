@@ -1,26 +1,31 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Cdm.Authentication;
-using Netherlands3D.Authentication;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Netherlands3D
+namespace Netherlands3D.Authentication
 {
-    public class SessionListener : MonoBehaviour
+    public class Authenticator : MonoBehaviour
     {
         [SerializeField]
         private Session session;
 
         [SerializeField]
-        private UnityEvent<IUserInfo> onSignedIn;
+        private UnityEvent onSignedIn;
 
         [SerializeField]
         private UnityEvent onSignInFailed;
 
         [SerializeField]
         private UnityEvent onSignedOut;
+
+        public void SignIn()
+        {
+            StartCoroutine(session.SignIn());
+        }
+
+        public void SignOut()
+        {
+            StartCoroutine(session.SignOut());
+        }
 
         private void OnEnable()
         {
@@ -36,9 +41,9 @@ namespace Netherlands3D
             session.OnSignInFailed.RemoveListener(OnFailSignIn);
         }
 
-        private void OnSignIn(IUserInfo userInfo)
+        private void OnSignIn()
         {
-            onSignedIn?.Invoke(userInfo);
+            onSignedIn?.Invoke();
         }
 
         private void OnSignOut()

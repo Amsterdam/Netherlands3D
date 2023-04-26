@@ -1,40 +1,13 @@
 ﻿<!DOCTYPE html>
 <html lang="en-us">
 <head>
-    <script>
-        //Parse query string helper function
-        function getParameterByName(name, url = window.location.href) 
-        {
-                name = name.replace(/[\[\]]/g, '\\$&');
-                var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
-
-                if (!results) 
-                {
-                    return null;
-                }
-
-                if (!results[2]) 
-                {
-                    return '';
-                }
-
-                return decodeURIComponent(results[2].replace(/\+/g, ' '));
-        }
-
-
-        window.opener.postMessage({status: "success", url: window.location.href}, "*")
-     
-        try 
-        {
-            window.close();
-        }
-        catch (e) { console.log(e) }
-
-        try 
-        {
-            self.close();
-        }
-        catch (e) { console.log(e) }       
+    <script type="text/javascript">
+        window.onload = function() {
+            window.opener.popupCompleted();
+            setTimeout(function() {
+                window.close();
+            }, 200);
+        };
     </script>
 </head>
 <body>
