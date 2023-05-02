@@ -3,7 +3,7 @@
 namespace Netherlands3D.Authentication
 {
     [Serializable]
-    public enum OAuthClient
+    public enum IdentityProvider
     {
         Google,
         Facebook,

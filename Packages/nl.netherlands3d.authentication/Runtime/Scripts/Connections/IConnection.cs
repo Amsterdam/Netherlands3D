@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Cdm.Authentication;
 using Cdm.Authentication.OAuth2;
+using UnityEngine.Networking;
 
 namespace Netherlands3D.Authentication.Connections
 {
@@ -21,5 +22,7 @@ namespace Netherlands3D.Authentication.Connections
         public IEnumerator SignOut();
 
         public IEnumerator FetchUserInfo();
+
+        public void SignWebRequest(UnityWebRequest webRequest);
     }
 }

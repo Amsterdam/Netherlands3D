@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections;
+using Cdm.Authentication;
 using Cdm.Authentication.Clients;
 using Cdm.Authentication.OAuth2;
 using Netherlands3D.Authentication.Clients;
 using Netherlands3D.Authentication.Connections;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Netherlands3D.Authentication
 {
     [CreateAssetMenu(fileName = "New Session", menuName = "ScriptableObjects/Authentication/Session")]
     public class Session : ScriptableObject
     {
-        [SerializeField]
-        private OAuthClient oAuthClient;
+        [FormerlySerializedAs("oAuthClient")] [SerializeField]
+        private IdentityProvider identityProvider;
 
         [SerializeField]
         [Tooltip("Some clients have a tenant name as part of their url, for example Azure AD")]
@@ -37,6 +39,7 @@ namespace Netherlands3D.Authentication
         public UnityEvent OnSignedIn;
         public UnityEvent OnSignInFailed;
         public UnityEvent OnSignedOut;
+        public UnityEvent<IUserInfo> OnUserInfoReceived;
 
         private IConnection connection;
 
@@ -47,19 +50,21 @@ namespace Netherlands3D.Authentication
             connection = new CdmConnection(authorizationCodeFlow);
             if (Application.platform == RuntimePlatform.WebGLPlayer)
             {
-                connection = new WebGLConnection(authorizationCodeFlow);
+                connection = new WebGLConnection(identityProvider, authorizationCodeFlow);
             }
 
             connection.Initialize();
 
             connection.OnSignedIn += SignedIn;
             connection.OnSignInFailed += SignInFailed;
+            connection.OnUserInfoReceived += UserInfoReceived;
         }
 
         private void OnDisable()
         {
             connection.OnSignedIn -= SignedIn;
             connection.OnSignInFailed -= SignInFailed;
+            connection.OnUserInfoReceived -= UserInfoReceived;
         }
 
         public IEnumerator SignIn()
@@ -70,6 +75,8 @@ namespace Netherlands3D.Authentication
         private void SignedIn(AccessTokenResponse accessTokenResponse)
         {
             this.OnSignedIn?.Invoke();
+
+            connection.FetchUserInfo();
         }
 
         private void SignInFailed()
@@ -84,6 +91,11 @@ namespace Netherlands3D.Authentication
             OnSignedOut?.Invoke();
         }
 
+        private void UserInfoReceived(IUserInfo userinfo)
+        {
+            OnUserInfoReceived?.Invoke(userinfo);
+        }
+
         private AuthorizationCodeFlow CreateFlow()
         {
             var configuration = new AuthorizationCodeFlow.Configuration()
@@ -95,12 +107,12 @@ namespace Netherlands3D.Authentication
             };
 
             AuthorizationCodeFlow auth = null;
-            switch (oAuthClient)
+            switch (identityProvider)
             {
-                case OAuthClient.Google: auth = new GoogleAuth(configuration); break;
-                case OAuthClient.Facebook: auth = new FacebookAuth(configuration); break;
-                case OAuthClient.Github: auth = new GitHubAuth(configuration); break;
-                case OAuthClient.AzureAD: auth = new AzureADAuth(configuration, tenant); break;
+                case IdentityProvider.Google: auth = new GoogleAuth(configuration); break;
+                case IdentityProvider.Facebook: auth = new FacebookAuth(configuration); break;
+                case IdentityProvider.Github: auth = new GitHubAuth(configuration); break;
+                case IdentityProvider.AzureAD: auth = new AzureADAuth(configuration, tenant); break;
             }
 
             if (auth == null)

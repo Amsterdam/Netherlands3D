@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Text;
+using Cdm.Authentication;
 using Cdm.Authentication.Browser;
+using Cdm.Authentication.Clients;
 using Cdm.Authentication.OAuth2;
 using Netherlands3D.Authentication.Browser;
+using Netherlands3D.Authentication.Clients;
 using UnityEngine;
+using UnityEngine.Networking;
+using IUserInfo = Cdm.Authentication.IUserInfo;
 
 namespace Netherlands3D.Authentication.Connections
 {
@@ -30,10 +36,13 @@ namespace Netherlands3D.Authentication.Connections
         public event IConnection.OnSignInFailedDelegate OnSignInFailed;
         public event IConnection.OnUserInfoReceivedDelegate OnUserInfoReceived;
 
+        private readonly IdentityProvider identityProvider;
         private readonly AuthorizationCodeFlow authorizationCodeFlow;
+        private AccessTokenResponse accessTokenResponse;
 
-        public WebGLConnection(AuthorizationCodeFlow authorizationCodeFlow)
+        public WebGLConnection(IdentityProvider identityProvider, AuthorizationCodeFlow authorizationCodeFlow)
         {
+            this.identityProvider = identityProvider;
             this.authorizationCodeFlow = authorizationCodeFlow;
         }
 
@@ -44,6 +53,7 @@ namespace Netherlands3D.Authentication.Connections
 
         public IEnumerator Authenticate()
         {
+            accessTokenResponse = null;
             using var authenticationSession = new AuthenticationSession(authorizationCodeFlow, new StandaloneBrowser());
 
             GameObject oauthCallbackGameObject = new GameObject("WebGlResponseInterceptor");
@@ -52,17 +62,18 @@ namespace Netherlands3D.Authentication.Connections
             interceptor.OnSignedIn += (token) =>
             {
                 WebGLAccessTokenResponse response = JsonUtility.FromJson<WebGLAccessTokenResponse>(token);
-                Debug.Log(response);
-                OnSignedIn?.Invoke(new AccessTokenResponse()
+                Debug.Log(response.access_token);
+                accessTokenResponse = new AccessTokenResponse()
                 {
                     accessToken = response.access_token,
                     expiresIn = response.expires_in,
-                    refreshToken = "",
                     tokenType = response.token_type,
                     scope = String.Join(' ', response.scopes),
-                });
+                };
+                OnSignedIn?.Invoke(accessTokenResponse);
                 GameObject.Destroy(oauthCallbackGameObject);
             };
+
             interceptor.OnSignInFailed += () =>
             {
                 OnSignInFailed?.Invoke();
@@ -83,6 +94,7 @@ namespace Netherlands3D.Authentication.Connections
 
         public IEnumerator SignOut()
         {
+            accessTokenResponse = null;
             oAuthSignOut();
 
             yield return null;
@@ -91,9 +103,50 @@ namespace Netherlands3D.Authentication.Connections
 
         public IEnumerator FetchUserInfo()
         {
-            OnUserInfoReceived?.Invoke(null);
+            string url = identityProvider switch
+            {
+                IdentityProvider.Google => ((GoogleAuth)authorizationCodeFlow).userInfoUrl,
+                IdentityProvider.Facebook => ((FacebookAuth)authorizationCodeFlow).userInfoUrl,
+                IdentityProvider.Github => ((GitHubAuth)authorizationCodeFlow).userInfoUrl,
+                IdentityProvider.AzureAD => ((AzureADAuth)authorizationCodeFlow).userInfoUrl,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+
+            using var webRequest = UnityWebRequest.Get(url);
+            webRequest.SetRequestHeader("Accept", "application/json");
+            webRequest.downloadHandler = new DownloadHandlerBuffer();
+            webRequest.timeout = 10;
+
+            SignWebRequest(webRequest);
+
+            yield return webRequest.SendWebRequest();
+
+            var json = webRequest.downloadHandler.text;
+
+            IUserInfo userInfo = identityProvider switch
+            {
+                IdentityProvider.Google => JsonUtility.FromJson<GoogleUserInfo>(json),
+                IdentityProvider.Facebook => JsonUtility.FromJson<FacebookUserInfo>(json),
+                IdentityProvider.Github => JsonUtility.FromJson<GitHubUserInfo>(json),
+                IdentityProvider.AzureAD => JsonUtility.FromJson<AzureADUserInfo>(json),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            OnUserInfoReceived?.Invoke(userInfo);
 
             yield return null;
+        }
+
+        public void SignWebRequest(UnityWebRequest webRequest)
+        {
+            if (accessTokenResponse == null)
+            {
+                return;
+            }
+
+            var token = Encoding.UTF8.GetBytes(accessTokenResponse.accessToken);
+            webRequest.SetRequestHeader("Authorization", $"Bearer {token}");
         }
     }
 
