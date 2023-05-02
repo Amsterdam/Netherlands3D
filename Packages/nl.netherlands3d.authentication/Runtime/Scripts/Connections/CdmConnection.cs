@@ -11,6 +11,7 @@ namespace Netherlands3D.Authentication.Connections
     public class CdmConnection : IConnection
     {
         public event IConnection.OnSignedInDelegate OnSignedIn;
+        public event IConnection.OnSignedOutDelegate OnSignedOut;
         public event IConnection.OnSignInFailedDelegate OnSignInFailed;
         public event IConnection.OnUserInfoReceivedDelegate OnUserInfoReceived;
 
@@ -47,6 +48,7 @@ namespace Netherlands3D.Authentication.Connections
         public IEnumerator SignOut()
         {
             accessTokenResponse = null;
+            OnSignedOut?.Invoke();
             yield return null;
         }
 

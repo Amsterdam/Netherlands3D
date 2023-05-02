@@ -33,6 +33,7 @@ namespace Netherlands3D.Authentication.Connections
         private static extern void oAuthSignOut();
 
         public event IConnection.OnSignedInDelegate OnSignedIn;
+        public event IConnection.OnSignedOutDelegate OnSignedOut;
         public event IConnection.OnSignInFailedDelegate OnSignInFailed;
         public event IConnection.OnUserInfoReceivedDelegate OnUserInfoReceived;
 
@@ -96,6 +97,8 @@ namespace Netherlands3D.Authentication.Connections
         {
             accessTokenResponse = null;
             oAuthSignOut();
+
+            OnSignedOut?.Invoke();
 
             yield return null;
         }

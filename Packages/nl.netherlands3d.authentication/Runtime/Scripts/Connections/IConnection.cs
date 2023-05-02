@@ -9,9 +9,11 @@ namespace Netherlands3D.Authentication.Connections
     {
         public delegate void OnSignedInDelegate(AccessTokenResponse accessTokenResponse);
         public delegate void OnSignInFailedDelegate();
+        public delegate void OnSignedOutDelegate();
         public delegate void OnUserInfoReceivedDelegate(IUserInfo userInfo);
 
         public event OnSignedInDelegate OnSignedIn;
+        public event OnSignedOutDelegate OnSignedOut;
         public event OnSignInFailedDelegate OnSignInFailed;
         public event OnUserInfoReceivedDelegate OnUserInfoReceived;
 
