@@ -17,8 +17,6 @@ namespace Netherlands3D.Authentication.Connections
         public event OnSignInFailedDelegate OnSignInFailed;
         public event OnUserInfoReceivedDelegate OnUserInfoReceived;
 
-        public void Initialize();
-
         public IEnumerator Authenticate();
 
         public IEnumerator SignOut();

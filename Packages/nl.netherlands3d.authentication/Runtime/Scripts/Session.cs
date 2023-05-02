@@ -53,8 +53,6 @@ namespace Netherlands3D.Authentication
                 connection = new WebGLConnection(identityProvider, authorizationCodeFlow);
             }
 
-            connection.Initialize();
-
             connection.OnSignedIn += SignedIn;
             connection.OnSignInFailed += SignInFailed;
             connection.OnUserInfoReceived += UserInfoReceived;

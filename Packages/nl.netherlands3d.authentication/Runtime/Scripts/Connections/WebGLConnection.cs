@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Text;
-using Cdm.Authentication;
 using Cdm.Authentication.Browser;
 using Cdm.Authentication.Clients;
 using Cdm.Authentication.OAuth2;
@@ -45,10 +44,7 @@ namespace Netherlands3D.Authentication.Connections
         {
             this.identityProvider = identityProvider;
             this.authorizationCodeFlow = authorizationCodeFlow;
-        }
 
-        public void Initialize()
-        {
             oAuthInit();
         }
 
@@ -103,7 +99,6 @@ namespace Netherlands3D.Authentication.Connections
             yield return null;
         }
 
-
         public IEnumerator FetchUserInfo()
         {
             string url = identityProvider switch
@@ -114,7 +109,6 @@ namespace Netherlands3D.Authentication.Connections
                 IdentityProvider.AzureAD => ((AzureADAuth)authorizationCodeFlow).userInfoUrl,
                 _ => throw new ArgumentOutOfRangeException()
             };
-
 
             using var webRequest = UnityWebRequest.Get(url);
             webRequest.SetRequestHeader("Accept", "application/json");

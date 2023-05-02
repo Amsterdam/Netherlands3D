@@ -23,11 +23,6 @@ namespace Netherlands3D.Authentication.Connections
             this.authorizationCodeFlow = authorizationCodeFlow;
         }
 
-        public void Initialize()
-        {
-            // Needs no initialization
-        }
-
         public IEnumerator Authenticate()
         {
             accessTokenResponse = null;
