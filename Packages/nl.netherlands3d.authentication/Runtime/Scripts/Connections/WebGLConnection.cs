@@ -139,7 +139,7 @@ namespace Netherlands3D.Authentication.Connections
                 return;
             }
 
-            var token = Encoding.UTF8.GetBytes(accessTokenResponse.accessToken);
+            var token = accessTokenResponse.accessToken;
             webRequest.SetRequestHeader("Authorization", $"Bearer {token}");
         }
 

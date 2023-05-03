@@ -30,11 +30,10 @@
         this.client.setLoader(jso.Popup);
         this.client.getToken({ redirect_uri: "http://localhost:8080/oauth/callback.html" })
             .then((token) => {
-                console.log("I got the token: ", token);
                 unityInstance.SendMessage("WebGlResponseInterceptor", "SignedIn", JSON.stringify(token));
             })
             .catch((err) => {
-                console.error("Error from passive loader", err)
+                console.error("Error while fetching OAuth token", err)
                 unityInstance.SendMessage("WebGlResponseInterceptor", "SignInFailed");
             })
     },
