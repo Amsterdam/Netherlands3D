@@ -16,16 +16,9 @@ install it using the same instructions above but with the Package URI
 
 ### WebGL
 
-For WebGL to work, you need to perform additional steps:
-
-1. Import the WebGL sample
-2. Move the `js` and `oauth` folder into your `WebGLTemplates` folder
-3. Add the following line at the bottom of your `index.html`, right before the closing of the `body` tag:
-   ```html
-    <script src="js/oauth2-start.js"></script>
-   ```
-
-With these changes, the WebGL flow can use the WebGLBrowser and perform the authorization flow in a different way.
+For WebGL to work, you need to use a custom WebGL template in your project and use the menu 
+`Netherlands3D / Authentication / Copy WebGL Assets`. This will copy the assets for this package
+into the correct folder.
 
 Usage
 -----
@@ -44,11 +37,15 @@ To do so, create a Scriptable Object asset representing a Session with one of th
 > Take note: On the platform of your choice, you need to create an (OAuth) app that can provide you with a client id 
 > and client secret. Please see the documentation of your client of choice how to accomplish that.
 
+After this, it is recommended to attach the `Authenticator` component to a game object that will be responsible for
+signing in and out. It is also possible to use the Session object directly, but keep in mind that most actions need to 
+be started as coroutines.
+
 ### Signing in and out
 
-Using the Session, you can sign in, sign out or retrieve user information. By default, the session is 'anonymous'; 
-meaning that the user is not authenticated but allowed to interact with the system. After Signing in using the
-`SignIn` method, a browser window will open to allow for the user to sign in with their respective provider.
+Using the `Authenticator`, you can sign in, sign out or retrieve user information. By default, the session is 
+'anonymous'; meaning that the user is not authenticated but allowed to interact with the system. After Signing in 
+using the `SignIn` method, a browser window will open to allow for the user to sign in with their respective provider.
 
 Similarly, the `SignOut` method will close the session and go back to an anonymous session.
 
@@ -62,11 +59,13 @@ activities in the session.
 
 These are:
 
-- `UnityEvent<IUserInfo> OnSignedIn`
-- `UnityEvent OnSignInFailed`
-- `UnityEvent OnSignedOut`
+- `UnityEvent<IUserInfo> OnSignedIn` - Called after a successful sign in, but before user information is retrieved.
+- `UnityEvent OnSignInFailed` - Called after a sign in has failed.
+- `UnityEvent OnSignedOut` - Called after signing out.
+- `UnityEvent<IUserInfo> OnUserInfoReceived` - Called after the user information is retrieved; this is automatically 
+  initiated when using the Authenticator component.
 
-All events are present on the `Session` Scriptable Object, and you use the `SessionListener` behaviour to attach 
+All events are present on the `Session` Scriptable Object, and you use the `Authentication` behaviour to attach 
 listeners to these events, or register listeners to them in a script of your own.
 
 ### WebGL
