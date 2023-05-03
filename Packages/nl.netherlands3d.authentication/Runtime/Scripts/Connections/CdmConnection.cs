@@ -15,18 +15,22 @@ namespace Netherlands3D.Authentication.Connections
         public event IConnection.OnSignInFailedDelegate OnSignInFailed;
         public event IConnection.OnUserInfoReceivedDelegate OnUserInfoReceived;
 
-        private readonly AuthorizationCodeFlow authorizationCodeFlow;
         private AccessTokenResponse accessTokenResponse;
+        private readonly AuthenticationSession authenticationSession;
 
         public CdmConnection(AuthorizationCodeFlow authorizationCodeFlow)
         {
-            this.authorizationCodeFlow = authorizationCodeFlow;
+            authenticationSession = new AuthenticationSession(authorizationCodeFlow, new StandaloneBrowser());
+        }
+
+        ~CdmConnection()
+        {
+            authenticationSession.Dispose();
         }
 
         public IEnumerator Authenticate()
         {
             accessTokenResponse = null;
-            using var authenticationSession = new AuthenticationSession(authorizationCodeFlow, new StandaloneBrowser());
 
             var task = authenticationSession.AuthenticateAsync();
             yield return new WaitUntil(() => task.IsCompleted);
@@ -49,8 +53,6 @@ namespace Netherlands3D.Authentication.Connections
 
         public IEnumerator FetchUserInfo()
         {
-            using var authenticationSession = new AuthenticationSession(authorizationCodeFlow, new StandaloneBrowser());
-
             if (authenticationSession.SupportsUserInfo())
             {
                 yield return null;
@@ -71,6 +73,12 @@ namespace Netherlands3D.Authentication.Connections
 
             var token = Encoding.UTF8.GetBytes(accessTokenResponse.accessToken);
             webRequest.SetRequestHeader("Authorization", $"Bearer {token}");
+        }
+
+        public IEnumerator Refresh()
+        {
+            // Refreshing is part of the CDM package and does not need to be done manually
+            yield break;
         }
     }
 }

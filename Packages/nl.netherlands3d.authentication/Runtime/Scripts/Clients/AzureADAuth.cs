@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 using Cdm.Authentication;
 using Cdm.Authentication.OAuth2;
 using Cdm.Authentication.Utils;
+using Newtonsoft.Json;
 
 namespace Netherlands3D.Authentication.Clients
 {
-    public class AzureADAuth : AuthorizationCodeFlow, IUserInfoProvider
+    public class AzureADAuth : AuthorizationCodeFlow, IUserInfoProvider, IUserInfoProviderExtra
     {
         private readonly string tenant;
 
@@ -32,6 +33,11 @@ namespace Netherlands3D.Authentication.Clients
             var authenticationHeader = accessTokenResponse.GetAuthenticationHeader();
             return await UserInfoParser.GetUserInfoAsync<AzureADUserInfo>(
                 httpClient, userInfoUrl, authenticationHeader, cancellationToken);
+        }
+
+        public IUserInfo DeserializeUserInfo(string json)
+        {
+            return JsonConvert.DeserializeObject<AzureADUserInfo>(json);
         }
     }
 

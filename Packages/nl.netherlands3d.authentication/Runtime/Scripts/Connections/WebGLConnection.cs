@@ -2,14 +2,13 @@
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Text;
+using Cdm.Authentication;
 using Cdm.Authentication.Browser;
-using Cdm.Authentication.Clients;
 using Cdm.Authentication.OAuth2;
 using Netherlands3D.Authentication.Browser;
 using Netherlands3D.Authentication.Clients;
 using UnityEngine;
 using UnityEngine.Networking;
-using IUserInfo = Cdm.Authentication.IUserInfo;
 
 namespace Netherlands3D.Authentication.Connections
 {
@@ -59,7 +58,6 @@ namespace Netherlands3D.Authentication.Connections
             interceptor.OnSignedIn += (token) =>
             {
                 WebGLAccessTokenResponse response = JsonUtility.FromJson<WebGLAccessTokenResponse>(token);
-                Debug.Log(response.access_token);
                 accessTokenResponse = new AccessTokenResponse()
                 {
                     accessToken = response.access_token,
@@ -101,38 +99,37 @@ namespace Netherlands3D.Authentication.Connections
 
         public IEnumerator FetchUserInfo()
         {
-            string url = identityProvider switch
-            {
-                IdentityProvider.Google => ((GoogleAuth)authorizationCodeFlow).userInfoUrl,
-                IdentityProvider.Facebook => ((FacebookAuth)authorizationCodeFlow).userInfoUrl,
-                IdentityProvider.Github => ((GitHubAuth)authorizationCodeFlow).userInfoUrl,
-                IdentityProvider.AzureAD => ((AzureADAuth)authorizationCodeFlow).userInfoUrl,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-
-            using var webRequest = UnityWebRequest.Get(url);
+            using var webRequest = UnityWebRequest.Get(GetUserInfoEndpoint());
             webRequest.SetRequestHeader("Accept", "application/json");
             webRequest.downloadHandler = new DownloadHandlerBuffer();
-            webRequest.timeout = 10;
 
             SignWebRequest(webRequest);
 
             yield return webRequest.SendWebRequest();
 
-            var json = webRequest.downloadHandler.text;
-
-            IUserInfo userInfo = identityProvider switch
+            if (webRequest.result != UnityWebRequest.Result.Success)
             {
-                IdentityProvider.Google => JsonUtility.FromJson<GoogleUserInfo>(json),
-                IdentityProvider.Facebook => JsonUtility.FromJson<FacebookUserInfo>(json),
-                IdentityProvider.Github => JsonUtility.FromJson<GitHubUserInfo>(json),
-                IdentityProvider.AzureAD => JsonUtility.FromJson<AzureADUserInfo>(json),
-                _ => throw new ArgumentOutOfRangeException()
-            };
+                Debug.LogWarning("Unable to retrieve user information: " + webRequest.error);
+                yield break;
+            }
 
-            OnUserInfoReceived?.Invoke(userInfo);
+            OnUserInfoReceived?.Invoke(DeserializeUserInfo(webRequest.downloadHandler.text));
 
             yield return null;
+        }
+
+        private string GetUserInfoEndpoint()
+        {
+            return authorizationCodeFlow is IUserInfoProviderExtra userInfoProvider
+                ? userInfoProvider.userInfoUrl
+                : null;
+        }
+
+        private IUserInfo DeserializeUserInfo(string json)
+        {
+            return authorizationCodeFlow is IUserInfoProviderExtra userInfoProvider
+                ? userInfoProvider.DeserializeUserInfo(json)
+                : null;
         }
 
         public void SignWebRequest(UnityWebRequest webRequest)
@@ -144,6 +141,12 @@ namespace Netherlands3D.Authentication.Connections
 
             var token = Encoding.UTF8.GetBytes(accessTokenResponse.accessToken);
             webRequest.SetRequestHeader("Authorization", $"Bearer {token}");
+        }
+
+        public IEnumerator Refresh()
+        {
+            // The JSO javascript library self-refreshes if you call authenticate again; so we do.
+            yield return Authenticate();
         }
     }
 

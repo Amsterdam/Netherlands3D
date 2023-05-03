@@ -10,16 +10,16 @@ namespace Netherlands3D.Authentication
         private Session session;
 
         [SerializeField]
-        private UnityEvent onSignedIn;
+        private UnityEvent onSignedIn = new();
 
         [SerializeField]
-        private UnityEvent onSignInFailed;
+        private UnityEvent onSignInFailed = new();
 
         [SerializeField]
-        private UnityEvent onSignedOut;
+        private UnityEvent onSignedOut = new();
 
         [SerializeField]
-        private UnityEvent<IUserInfo> onUserInfoReceived;
+        private UnityEvent<IUserInfo> onUserInfoReceived = new();
 
         public void SignIn()
         {
@@ -50,6 +50,8 @@ namespace Netherlands3D.Authentication
         private void OnSignIn()
         {
             onSignedIn?.Invoke();
+            StartCoroutine(session.FetchUserInfo());
+            StartCoroutine(session.RefreshBeforeExpiry());
         }
 
         private void OnSignOut()

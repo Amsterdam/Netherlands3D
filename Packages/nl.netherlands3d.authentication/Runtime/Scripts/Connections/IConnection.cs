@@ -24,5 +24,7 @@ namespace Netherlands3D.Authentication.Connections
         public IEnumerator FetchUserInfo();
 
         public void SignWebRequest(UnityWebRequest webRequest);
+
+        public IEnumerator Refresh();
     }
 }
