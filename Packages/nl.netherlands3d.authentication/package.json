@@ -20,5 +20,12 @@
   },
   "repository": {
     "url": "https://github.com/Amsterdam/Netherlands3D"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "Signing in and out",
+      "description": "Example of a sign in and sign out button, and showing user information after signing in",
+      "path": "Samples~"
+    }
+  ]
 }

@@ -5,40 +5,32 @@
     oAuthInit: function()
     {
         var script = document.createElement("script");
-        script.src = "https://unpkg.com/jso/dist/jso.js";
+        script.src = "https://cdn.jsdelivr.net/npm/@badgateway/oauth2-client@2.2.0/browser/oauth2-client.min.js";
         document.head.appendChild(script);
     },
 
-    oAuthSignIn: function (authorizationEndpoint, tokenEndpoint, clientId, clientSecret, redirectUri, scopes) 
-    {
-        let config = {
-            client_id: UTF8ToString(clientId),
-            redirect_uri: UTF8ToString(redirectUri),
-            authorization: UTF8ToString(authorizationEndpoint),
-            scopes: { request: UTF8ToString(scopes).split(' ')},
-            default_lifetime: 3600,
-        };
+    oAuthSignIn: async function (authorizationEndpoint, tokenEndpoint, clientId, clientSecret, redirectUri, scopes) {
+        const client = new OAuth2Client({
+            server: '',
+            clientId: UTF8ToString(clientId),
+            tokenEndpoint: UTF8ToString(tokenEndpoint),
+            authorizationEndpoint: UTF8ToString(authorizationEndpoint),
+        });
 
-        // use Authorization Code Flow instead of Implicit Flow
-        if (clientSecret) {
-            config.response_type = "code";
-            config.client_secret = UTF8ToString(clientSecret);
-            config.token = UTF8ToString(tokenEndpoint);
-        }
+        const codeVerifier = await generateCodeVerifier();
 
-        this.client = new jso.JSO(config);
-        this.client.setLoader(jso.Popup);
-        this.client.getToken({ redirect_uri: "http://localhost:8080/oauth/callback.html" })
-            .then((token) => {
-                unityInstance.SendMessage("WebGlResponseInterceptor", "SignedIn", JSON.stringify(token));
-            })
-            .catch((err) => {
-                console.error("Error while fetching OAuth token", err)
-                unityInstance.SendMessage("WebGlResponseInterceptor", "SignInFailed");
-            })
+        document.location = await client.authorizationCode.getAuthorizeUri({
+            redirectUri: UTF8ToString(redirectUri),
+            state: 'some-string',
+            codeVerifier,
+            scope: UTF8ToString(scopes).split(' '),
+
+        });
+
+        // unityInstance.SendMessage("WebGlResponseInterceptor", "SignedIn", JSON.stringify(token));
+        // unityInstance.SendMessage("WebGlResponseInterceptor", "SignInFailed");
     },
     
     oAuthSignOut: function() {
-        this.client.wipeTokens();
     }
 });

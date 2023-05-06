@@ -36,6 +36,9 @@ To do so, create a Scriptable Object asset representing a Session with one of th
 
 > Take note: On the platform of your choice, you need to create an (OAuth) app that can provide you with a client id 
 > and client secret. Please see the documentation of your client of choice how to accomplish that.
+> 
+> This also influences which `scopes` you need to configure in the Session object, for example: Azure AD
+> needs the `User.Read` and `offline_access` grants, where other providers are satisfied with `openid` and `profile`. 
 
 After this, it is recommended to attach the `Authenticator` component to a game object that will be responsible for
 signing in and out. It is also possible to use the Session object directly, but keep in mind that most actions need to 
@@ -85,3 +88,5 @@ python -m http.server 8080 -d ./Build/
 
 Where 8080 is the port where it should be served, and `./Build/` is the folder where you have built your WebGL 
 distribution to.
+
+> The above assumes you have Python 3 installed, on Windows you may need to install it using the Window Store.
