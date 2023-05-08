@@ -11,13 +11,7 @@ namespace Netherlands3D.Geoservice
 {
     public class WMSImageLayer : Layer
     {    
-        private int BuildingStencilID=0;
-        private int TerrainStencilID = 0;
-        [SerializeField]
-        private int activeStencilID = 0;
-        private int activeStencilMask = 255;
         public bool compressLoadedTextures = false;
-
         private bool prefabIsDecalProjector = false;
         private GameObject tilePrefab;
         public GameObject TilePrefab {
@@ -175,64 +169,5 @@ namespace Netherlands3D.Geoservice
             material.mainTexture = myTexture;
             tile.gameObject.SetActive(true);
         }
-
-
-
-        public void ProjectOnBuildings(int buildingStencilID)
-        {
-            if (BuildingStencilID==0)
-            {
-                BuildingStencilID = buildingStencilID;
-                
-            }
-            activeStencilMask = 255;
-            activeStencilID = BuildingStencilID;
-            setProjectorStencilSettings();
-
-        }
-        public void ProjectOnTerrain(int terrainStencilID)
-        {
-            if (TerrainStencilID == 0)
-            {
-                TerrainStencilID = terrainStencilID;
-
-            }
-            activeStencilMask = 255;
-            activeStencilID = TerrainStencilID;
-            setProjectorStencilSettings();
-
-        }
-        public void ProjectOnBoth(int buildingStencilID, int terrainStencilID)
-        {
-            if (BuildingStencilID == 0)
-            {
-                BuildingStencilID = buildingStencilID;
-            }
-            if (TerrainStencilID == 0)
-            {
-                TerrainStencilID = terrainStencilID;
-            }
-
-
-            int difference = BuildingStencilID ^ TerrainStencilID;
-            //int difference = Mathf.Abs(BuildingStencilID - TerrainStencilID);
-            //difference = (int)Mathf.Ceil(Mathf.Log(difference, 2));
-            //difference = (int)Mathf.Pow(2, difference);
-            activeStencilMask = 255 - difference;
-
-            activeStencilID = BuildingStencilID;
-            setProjectorStencilSettings();
-        }
-
-        private void setProjectorStencilSettings()
-        {
-
-            foreach (var tile in tiles)
-            {
-               // tile.Value.gameObject.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_StencilRef", activeStencilID);
-               // tile.Value.gameObject.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_ReadMask", activeStencilMask);
-            }
-        }
-
     }
 }
