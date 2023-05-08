@@ -5,19 +5,33 @@ using Netherlands3D.TileSystem;
 using System;
 using Netherlands3D.Core;
 using UnityEngine.Networking;
+using UnityEngine.Rendering.Universal;
 
 namespace Netherlands3D.Geoservice
 {
     public class WMSImageLayer : Layer
-    {
-        
+    {    
         private int BuildingStencilID=0;
         private int TerrainStencilID = 0;
         [SerializeField]
         private int activeStencilID = 0;
         private int activeStencilMask = 255;
         public bool compressLoadedTextures = false;
-        public GameObject TilePrefab;
+
+        private bool prefabIsDecalProjector = false;
+        private GameObject tilePrefab;
+        public GameObject TilePrefab {
+            get
+            {
+                return tilePrefab;
+            }
+            set
+            {
+                tilePrefab = value;
+                prefabIsDecalProjector = tilePrefab.GetComponent<DecalProjector>();
+            }
+        }
+
         public override void HandleTile(TileChange tileChange, Action<TileChange> callback = null)
         {
             var tileKey = new Vector2Int(tileChange.X, tileChange.Y);
@@ -94,12 +108,8 @@ namespace Netherlands3D.Geoservice
         IEnumerator DownloadTexture(TileChange tileChange, Action<TileChange> callback = null)
         {
             var tileKey = new Vector2Int(tileChange.X, tileChange.Y);
-            string url = Datasets[tiles[tileKey].unityLOD].path;
-            url = url.Replace("{Xmin}", tileChange.X.ToString());
-            url = url.Replace("{Ymin}", tileChange.Y.ToString()); ;
-            url = url.Replace("{Xmax}", (tileChange.X+tileSize).ToString());
-            url = url.Replace("{Ymax}", (tileChange.Y + tileSize).ToString());
-            
+            string url = $"{Datasets[tiles[tileKey].unityLOD].path}?Xmin={tileChange.X}&Ymin={tileChange.Y}&Xmax={tileChange.X + tileSize}&Ymax={tileChange.Y + tileSize}";
+
             var webRequest = UnityWebRequestTexture.GetTexture(url, compressLoadedTextures == false);
             tiles[tileKey].runningWebRequest = webRequest;
             yield return webRequest.SendWebRequest();
@@ -115,28 +125,58 @@ namespace Netherlands3D.Geoservice
             }
             else
             {
-                //remove old Texture if it exists
-                Texture OldTexture = tiles[tileKey].gameObject.GetComponent<MeshRenderer>().material.GetTexture("_MainTex");
-                if (OldTexture!=null)
-                {
-                    Destroy(OldTexture);
-                }
+                Tile tile = tiles[tileKey];
+                ClearPreviousTexture(tile);
 
                 Texture2D myTexture = ((DownloadHandlerTexture)webRequest.downloadHandler).texture;
-                if(compressLoadedTextures) myTexture.Compress(false);
+                if (compressLoadedTextures) myTexture.Compress(false);
                 myTexture.wrapMode = TextureWrapMode.Clamp;
-                Tile tile = tiles[tileKey];
 
-                Material material = tile.gameObject.GetComponent<MeshRenderer>().material;
-                material.SetTexture("_MainTex", myTexture);
-                //material.SetFloat("_StencilRef", activeStencilID);
-                //material.SetFloat("_ReadMask", activeStencilMask);
-                tile.gameObject.SetActive(true);
+                ApplyTextureToMaterial(myTexture, tile);
+
                 callback(tileChange);
             }
-
-                yield return null;
+            yield return null;
         }
+
+        /// <summary>
+        /// Clear existing texture from tile projector
+        /// </summary>
+        private void ClearPreviousTexture(Tile tile)
+        {
+            //remove old Texture if it exists
+            Texture oldTexture;
+            if (prefabIsDecalProjector)
+            {
+                oldTexture = tile.gameObject.GetComponent<DecalProjector>().material.mainTexture;
+            }
+            else
+            {
+                oldTexture = tile.gameObject.GetComponent<MeshRenderer>().material.mainTexture;
+            }
+            if (oldTexture != null)
+            {
+                Destroy(oldTexture);
+            }
+        }
+
+        private void ApplyTextureToMaterial(Texture2D myTexture, Tile tile)
+        {
+            Material material;
+            if (prefabIsDecalProjector)
+            {
+                material = tile.gameObject.GetComponent<DecalProjector>().material;
+            }
+            else
+            {
+                material = tile.gameObject.GetComponent<MeshRenderer>().material;
+            }
+
+            material.mainTexture = myTexture;
+            tile.gameObject.SetActive(true);
+        }
+
+
 
         public void ProjectOnBuildings(int buildingStencilID)
         {
