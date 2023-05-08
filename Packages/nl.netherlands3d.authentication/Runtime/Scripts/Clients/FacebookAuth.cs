@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Netherlands3D.Authentication.Clients
 {
-    public class FacebookAuth : Cdm.Authentication.Clients.GoogleAuth, IUserInfoProviderExtra
+    public class FacebookAuth : Cdm.Authentication.Clients.FacebookAuth, IUserInfoProviderExtra
     {
         public FacebookAuth(Configuration configuration) : base(configuration)
         {

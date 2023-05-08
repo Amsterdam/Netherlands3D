@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Netherlands3D.Authentication.Clients
 {
-    public class GitHubAuth : Cdm.Authentication.Clients.GoogleAuth, IUserInfoProviderExtra
+    public class GitHubAuth : Cdm.Authentication.Clients.GitHubAuth, IUserInfoProviderExtra
     {
         public GitHubAuth(Configuration configuration) : base(configuration)
         {
