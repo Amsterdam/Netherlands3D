@@ -62,6 +62,7 @@ namespace Netherlands3D.Geoservice
         public void ShowLayer(bool OnOff)
         {
             DisplayState = OnOff;
+            Debug.Log("Show layer " + OnOff);
             if (layer)
             {
                 layer.isEnabled = OnOff;
@@ -71,6 +72,7 @@ namespace Netherlands3D.Geoservice
 
         private void UnloadLayer()
         {
+            Debug.Log("Removing WMS layer");
             tileHandler.RemoveLayer(layer);
             Destroy(layer.gameObject);
             layer = null;
@@ -78,23 +80,23 @@ namespace Netherlands3D.Geoservice
 
         private void CreateLayer(string baseURL)
         {
-            Debug.Log("Create WMS layer");
-            GameObject layercontainer = null;
+            Debug.Log("Creating WMS layer");
+            GameObject layerContainer = null;
 
             if (layer != null)
             {
                 tileHandler.RemoveLayer(layer);
-                layercontainer = layer.gameObject;
+                layerContainer = layer.gameObject;
                 layer = null;
             }
 
-            if (layercontainer == null)
+            if (layerContainer == null)
             {
-                layercontainer = new GameObject("WMSLayer");
-                layercontainer.layer = this.gameObject.layer;
-                layercontainer.transform.parent = transform;
+                layerContainer = new GameObject("WMSLayer");
+                layerContainer.layer = this.gameObject.layer;
+                layerContainer.transform.parent = transform;
             }
-            layer = layercontainer.AddComponent<WMSImageLayer>();
+            layer = layerContainer.AddComponent<WMSImageLayer>();
             layer.compressLoadedTextures = compressLoadedTextures;
             layer.tileSize = tileSize;
 

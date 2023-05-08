@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3883320769536567203}
   - component: {fileID: 2182191336397338675}
   m_Layer: 0
-  m_Name: DecalPrefab
+  m_Name: DecalProjectorPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,11 +26,11 @@ Transform:
   m_GameObject: {fileID: 8605441521365290572}
   m_LocalRotation: {x: 0.70710576, y: -0, z: -0, w: 0.70710784}
   m_LocalPosition: {x: 0, y: 500, z: 0}
-  m_LocalScale: {x: 1500, y: 1500, z: 1500}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &2182191336397338675
 MonoBehaviour:
@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: df24cfbe11d74df4084abe4600c8033f, type: 2}
+  m_Material: {fileID: 2100000, guid: 6657429cc45ca984d8e69582a9108555, type: 2}
   m_DrawDistance: 30000
   m_FadeScale: 0.9
   m_StartAngleFade: 0

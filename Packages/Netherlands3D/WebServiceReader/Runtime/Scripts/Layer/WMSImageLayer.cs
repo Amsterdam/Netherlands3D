@@ -22,9 +22,20 @@ namespace Netherlands3D.Geoservice
             set
             {
                 tilePrefab = value;
-                prefabIsDecalProjector = tilePrefab.GetComponent<DecalProjector>();
+                var decalProjector = tilePrefab.GetComponent<DecalProjector>();
+                if(decalProjector != null)
+                {
+                    projectorMaterialAsset = decalProjector.material;
+                    prefabIsDecalProjector = true;
+                }
+                else
+                {
+                    prefabIsDecalProjector = false;
+                }
             }
         }
+
+        [SerializeField] private Material projectorMaterialAsset;
 
         public override void HandleTile(TileChange tileChange, Action<TileChange> callback = null)
         {
@@ -57,7 +68,6 @@ namespace Netherlands3D.Geoservice
                 callback(tileChange);
                 return;
             }
-            
         }
 
         private void RemoveGameObjectFromTile(Vector2Int tileKey)
@@ -73,19 +83,16 @@ namespace Netherlands3D.Geoservice
                 {
                     return;
                 }
-                //destroy the image
-                Texture tex= tile.gameObject.GetComponent<MeshRenderer>().material.GetTexture("_MainTex");
-                tile.gameObject.GetComponent<MeshRenderer>().material.SetTexture("_MainTex",null);
-                Destroy(tex);
+                ClearPreviousTexture(tile);
 
                 //destroy the gameobject
-                Destroy(tiles[tileKey].gameObject);
+                Destroy(tile.gameObject);
             }
         }
 
         private Tile CreateNewTile(Vector2Int tileKey)
         {
-            Tile tile = new Tile();
+            Tile tile = new();
             tile.unityLOD = 0;
             tile.tileKey = tileKey;
             tile.layer = transform.gameObject.GetComponent<Layer>();
@@ -95,22 +102,44 @@ namespace Netherlands3D.Geoservice
             tile.gameObject.layer = tile.gameObject.transform.parent.gameObject.layer;
             Vector2Int origin = new Vector2Int(tileKey.x+(tileSize/2), tileKey.y + (tileSize / 2));
             tile.gameObject.transform.position = CoordConvert.RDtoUnity(origin);
-            
+            var sizeVector = new Vector3(tileSize, tileSize, tileSize);
+
+            if (prefabIsDecalProjector)
+            {
+                tile.gameObject.GetComponent<DecalProjector>().size = sizeVector;
+
+            }
+            else
+            {
+                tile.gameObject.transform.localScale = sizeVector;
+            }
+
             return tile;
         }
 
         IEnumerator DownloadTexture(TileChange tileChange, Action<TileChange> callback = null)
         {
             var tileKey = new Vector2Int(tileChange.X, tileChange.Y);
-            string url = $"{Datasets[tiles[tileKey].unityLOD].path}?Xmin={tileChange.X}&Ymin={tileChange.Y}&Xmax={tileChange.X + tileSize}&Ymax={tileChange.Y + tileSize}";
+
+            if (!tiles.ContainsKey(tileKey))
+            {
+                Debug.Log("Tile key does not exist", this.gameObject);
+                yield break;
+            }
+
+            Tile tile = tiles[tileKey];
+
+            string url = Datasets[tiles[tileKey].unityLOD].path;
+            url = url.Replace("{Xmin}", tileChange.X.ToString());
+            url = url.Replace("{Ymin}", tileChange.Y.ToString()); ;
+            url = url.Replace("{Xmax}", (tileChange.X + tileSize).ToString());
+            url = url.Replace("{Ymax}", (tileChange.Y + tileSize).ToString());
 
             var webRequest = UnityWebRequestTexture.GetTexture(url, compressLoadedTextures == false);
-            tiles[tileKey].runningWebRequest = webRequest;
+            tile.runningWebRequest = webRequest;
             yield return webRequest.SendWebRequest();
 
-            if (!tiles.ContainsKey(tileKey)) yield break;
-
-            tiles[tileKey].runningWebRequest = null;
+            tile.runningWebRequest = null;
 
             if (webRequest.result != UnityWebRequest.Result.Success)
             {
@@ -119,7 +148,6 @@ namespace Netherlands3D.Geoservice
             }
             else
             {
-                Tile tile = tiles[tileKey];
                 ClearPreviousTexture(tile);
 
                 Texture2D myTexture = ((DownloadHandlerTexture)webRequest.downloadHandler).texture;
@@ -138,11 +166,14 @@ namespace Netherlands3D.Geoservice
         /// </summary>
         private void ClearPreviousTexture(Tile tile)
         {
-            //remove old Texture if it exists
             Texture oldTexture;
             if (prefabIsDecalProjector)
             {
-                oldTexture = tile.gameObject.GetComponent<DecalProjector>().material.mainTexture;
+                var projectorMaterial = tile.gameObject.GetComponent<DecalProjector>().material;
+                oldTexture = projectorMaterial.mainTexture;
+
+                if(projectorMaterial != projectorMaterialAsset)
+                    Destroy(projectorMaterial);
             }
             else
             {
@@ -159,7 +190,11 @@ namespace Netherlands3D.Geoservice
             Material material;
             if (prefabIsDecalProjector)
             {
-                material = tile.gameObject.GetComponent<DecalProjector>().material;
+                var projector = tile.gameObject.GetComponent<DecalProjector>();
+                var materialInstance = new Material(projectorMaterialAsset);
+
+                material = materialInstance;
+                projector.material = material;
             }
             else
             {

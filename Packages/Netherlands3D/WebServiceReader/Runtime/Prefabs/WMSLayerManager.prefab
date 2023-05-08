@@ -48,19 +48,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   layer: {fileID: 0}
   TilePrefab: {fileID: 5158941830003718476, guid: 616c1bd220ce58340aca5b841fcbb4d3, type: 3}
-  buildingStencilID: 7
-  terrainStencilID: 6
   OnWMSUrlDefined_String: {fileID: 11400000, guid: c8719babe877f4f4eae101179a660069, type: 2}
-  AleenOpMaaiveld_Bool: {fileID: 11400000, guid: 2c17387c0c369f84295d4fdaa6891b70, type: 2}
   ShowLayer_Bool: {fileID: 11400000, guid: 470433e107b8dac40880090116e9f9ba, type: 2}
-  ShowWMSOnBuildings: {fileID: 11400000, guid: 13735b800e3c4b04cbaaba3f27a557e6, type: 2}
-  ShowWMSOnTerrain: {fileID: 11400000, guid: 5a7a900965172f142bd1e646995d5b78, type: 2}
-  ShowWMSOnBuildingsAndTerrain: {fileID: 11400000, guid: 8394613e38f476e4f8fa59e6fb826662, type: 2}
   UnloadWMSService: {fileID: 11400000, guid: 983acf4a3bbae6f4b8d0c4c3aa6e2c17, type: 2}
-  RenderObjectTerrainAsTarget: {fileID: 0}
-  RenderObjectTerrainNOTAsTarget: {fileID: 0}
-  RenderObjectBuildingsAsTarget: {fileID: 0}
-  RenderObjectBuildingsNOTAsTarget: {fileID: 0}
   wmsLods:
   - textureSize: 16
     maximumDistance: 6000
