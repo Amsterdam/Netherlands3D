@@ -48,7 +48,7 @@ MonoBehaviour:
   m_DrawDistance: 30000
   m_FadeScale: 0.9
   m_StartAngleFade: 0
-  m_EndAngleFade: 180
+  m_EndAngleFade: 66.68456
   m_UVScale: {x: 1, y: 1}
   m_UVBias: {x: 0, y: 0}
   m_DecalLayerMask: 1
