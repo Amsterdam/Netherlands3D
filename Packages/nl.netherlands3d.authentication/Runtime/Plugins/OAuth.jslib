@@ -1,77 +1,71 @@
 ﻿mergeInto(LibraryManager.library, 
 {
-    oAuth: null,
-    
+    _oAuth: null,
+
     oAuthInit: function()
     {
-        this.oAuth = new function() {
-            this.client = null;
+        // instantiate a new oAuth service; unless it already has.
+        this._oAuth = this._oAuth || new function() {
+            this.oAuthClientVersion = "2.2.0";
+            this._client = null;
             this.redirectUri = null;
             this.scope = null;
-            this.state = null;
-            this.codeVerifier = null;
+            this._state = null;
+            this._codeVerifier = null;
 
             this.windowObjectReference = null;
             this.previousUrl = null;
 
             this.init = () => {
-                this.state = this._generateRandomString();
+                this._state = this._generateRandomString();
 
+                // Trick of the day: dynamically load an external library so that the user of this package does not need
+                // to explicitly declare it.
                 const script = document.createElement("script");
-                script.src = "https://cdn.jsdelivr.net/npm/@badgateway/oauth2-client@2.2.0/browser/oauth2-client.min.js";
+                script.src = `https://cdn.jsdelivr.net/npm/@badgateway/oauth2-client@${this.oAuthClientVersion}/browser/oauth2-client.min.js`;
                 document.head.appendChild(script);
 
                 window.popupCompleted = () => {
-                    console.log("Popup completed");
-                    console.log(this.windowObjectReference);
-
-                    this.signInSucceeded(this.windowObjectReference.location);
+                    try {
+                        this._signInSucceeded(this.windowObjectReference.location);
+                    } catch (e) {
+                        unityInstance.SendMessage("WebGlResponseInterceptor", "SignInFailed");
+                    }
                 }
             };
-            
-            this.setupClient = (authorizationEndpoint, clientId, tokenEndpoint, redirectUri, scope) => {
+
+            this.setupClient = (authorizationEndpoint, clientId, clientSecret, tokenEndpoint, redirectUri, scope) => {
                 const {host, protocol} = new URL(authorizationEndpoint);
-                
-                this.client = new OAuth2Client.OAuth2Client({
-                    server: `${protocol}//${host}`, 
-                    clientId, 
-                    tokenEndpoint, 
+
+                this._client = new OAuth2Client.OAuth2Client({
+                    server: `${protocol}//${host}`,
+                    clientId,
+                    clientSecret,
+                    tokenEndpoint,
                     authorizationEndpoint
                 });
                 this.redirectUri = redirectUri;
                 this.scope = scope;
+
+                // Don't ask why specifically, but apparently the binding of fetch causes an issue in this library;
+                // I found https://stackoverflow.com/a/72800505 where someone had the same issue and I now explicitly 
+                // bind it to window. See also: https://github.com/foxglove/just-fetch/pull/6 for more details.
+                //
+                // The error that occurs when you do not do this is: 
+                //     TypeError: Failed to execute 'fetch' on 'Window': Illegal invocation 
+                this._client.settings.fetch = window.fetch.bind(window);
             };
 
             this.signIn = async () => {
-                console.log("signing in");
-                this.codeVerifier = await OAuth2Client.generateCodeVerifier();
-                const authorizeUri = await this.client.authorizationCode.getAuthorizeUri({
-                    redirectUri: this.redirectUri, 
-                    state: this.state, 
-                    codeVerifier: this.codeVerifier, 
+                this._codeVerifier = await OAuth2Client.generateCodeVerifier();
+                const authorizeUri = await this._client.authorizationCode.getAuthorizeUri({
+                    redirectUri: this.redirectUri,
+                    state: this._state,
+                    codeVerifier: this._codeVerifier,
                     scope: this.scope
                 });
 
                 this._openSignInWindow(authorizeUri, 'myOAuth');
-            };
-            
-            this.signInSucceeded = async (codeRedirect) =>
-            {
-                console.log("sign in succeeded");
-                console.log(codeRedirect);
-                console.log(codeRedirect.toString());
-                const token = await this.client.authorizationCode.getTokenFromCodeRedirect(
-                    codeRedirect.toString(),
-                    {
-                        redirectUri: this.redirectUri,
-                        state: this.state,
-                        codeVerifier: this.codeVerifier,
-                    }
-                );
-                console.log(token);
-
-                unityInstance.SendMessage("WebGlResponseInterceptor", "SignedIn", JSON.stringify(token));
-                // unityInstance.SendMessage("WebGlResponseInterceptor", "SignInFailed");
             };
 
             this._generateRandomString = () => {
@@ -79,8 +73,6 @@
             };
 
             this._openSignInWindow = (url, name) => {
-                // window.removeEventListener('message', this._receiveMessage);
-
                 const strWindowFeatures = 'toolbar=no, menubar=no, width=600, height=700, top=100, left=100';
 
                 if (this.windowObjectReference === null || this.windowObjectReference.closed) {
@@ -92,47 +84,54 @@
                     this.windowObjectReference.focus();
                 }
 
-                // window.addEventListener('message', event => this._receiveMessage(event), false);
                 this.previousUrl = url;
             };
 
-            // this._receiveMessage = (e) => {
-            //     const { origin, data } = e;
-            //     console.log(origin);
-            //     console.log(data);
-            //     // Do we trust the sender of this message? (might be
-            //     // different from what we originally opened, for example).
-            //    
-            //     // if (origin !== BASE_URL) {
-            //     //     return;
-            //     // }
-            //    
-            //     // if we trust the sender and the source is our popup
-            //     if (data.source === 'lma-login-redirect') {
-            //         // get the URL params and redirect to our server to use Passport to auth/login
-            //         const { payload } = data;
-            //         const redirectUrl = `/auth/google/login${payload}`;
-            //         window.location.pathname = redirectUrl;
-            //     }
-            // }
+            this._signInSucceeded = async (codeRedirect) =>
+            {
+                let token = await this._client.authorizationCode.getTokenFromCodeRedirect(
+                    codeRedirect.toString(),
+                    {
+                        redirectUri: this.redirectUri,
+                        state: this._state,
+                        codeVerifier: this._codeVerifier,
+                    }
+                )
 
-            this.init();
+                unityInstance.SendMessage(
+                    "WebGlResponseInterceptor", 
+                    "SignedIn", 
+                    JSON.stringify(
+                        // Match format to what Cdm.Authentication.OAuth2.AccessTokenResponse expects
+                        {
+                            access_token: token.accessToken,
+                            expires_in: null,
+                            expires: token.expiresAt,
+                            token_type: '',
+                            scopes: this.scope.join(' '),
+                            refresh_token: token.refreshToken
+                        }
+                    )
+                );
+            };
         };
+
+        this._oAuth.init();
     },
     
     oAuthSignIn: async function (authorizationEndpoint, tokenEndpoint, clientId, clientSecret, redirectUri, scopes) {
         authorizationEndpoint = UTF8ToString(authorizationEndpoint);
         redirectUri = UTF8ToString(redirectUri);
         clientId = UTF8ToString(clientId);
+        clientSecret = UTF8ToString(clientSecret);
         tokenEndpoint = UTF8ToString(tokenEndpoint);
         const scope = UTF8ToString(scopes).split(' ');
-        
-        this.oAuth.setupClient(authorizationEndpoint, clientId, tokenEndpoint, redirectUri, scope);
-        this.oAuth.signIn();
+
+        this._oAuth.setupClient(authorizationEndpoint, clientId, clientSecret, tokenEndpoint, redirectUri, scope);
+        this._oAuth.signIn();
     },
     
     oAuthSignOut: function() {
-        // TODO: Send a signal to the js library
+        // At the moment, we do not store tokens; so nothing needs to be done
     },
-
 });
