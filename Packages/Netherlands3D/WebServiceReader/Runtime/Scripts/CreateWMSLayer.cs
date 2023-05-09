@@ -12,13 +12,9 @@ namespace Netherlands3D.Geoservice
     {
         [HideInInspector]
         public WMSImageLayer layer;
+
         public GameObject TilePrefab;
         private TileHandler tileHandler;
-
-        [Header("Events")]
-        public StringEvent OnWMSUrlDefined_String;
-        public BoolEvent ShowLayer_Bool;
-        public TriggerEvent UnloadWMSService;
 
         [System.Serializable]
         public class WMSLOD
@@ -42,19 +38,10 @@ namespace Netherlands3D.Geoservice
         void Start()
         {
             tileHandler = FindObjectOfType(typeof(TileHandler)) as TileHandler;
-            if (OnWMSUrlDefined_String)
-            {
-                OnWMSUrlDefined_String.AddListenerStarted(CreateLayer);
-            }  
-            if (UnloadWMSService)
-            {
-                UnloadWMSService.AddListenerStarted(UnloadLayer);
-            }
-            if (ShowLayer_Bool)
-            {
-                ShowLayer_Bool.AddListenerStarted(ShowLayer);
-            }
+            if (!tileHandler)
+                Debug.LogWarning("No TileHandler found. This script depends on a TileHandler.", this.gameObject);
         }
+
         /// <summary>
         /// turn the layer on or off
         /// </summary>
@@ -70,7 +57,10 @@ namespace Netherlands3D.Geoservice
             }
         }
 
-        private void UnloadLayer()
+        /// <summary>
+        /// Clears layer from tilehandler
+        /// </summary>
+        public void UnloadLayer()
         {
             Debug.Log("Removing WMS layer");
             tileHandler.RemoveLayer(layer);
@@ -78,8 +68,21 @@ namespace Netherlands3D.Geoservice
             layer = null;
         }
 
-        private void CreateLayer(string baseURL)
+        /// <summary>
+        /// Create a new layer using a WMS base url.
+        /// The following placeholders can be used:
+        /// {Width} and {Height} to determine requested image size.
+        /// {Xmin},{Ymin},{Xmax} and {Ymax} to set the boundingbox bottom left (xmin) and top right (ymax) coordinates.
+        /// </summary>
+        /// <param name="baseURL">The WMS base url. For example 'https://service.pdok.nl/hwh/luchtfotorgb/wms/v1_0?service=WMS&request=GETMAP&version=1.1.1&LAYERS=Actueel_orthoHR&Styles=Default&WIDTH={Width}&HEIGHT={Height}&format=image/jpeg&srs=EPSG:28992&bbox={Xmin},{Ymin},{Xmax},{Ymax}&transparent=true'</param>
+        public void CreateLayer(string baseURL)
         {
+            if (layer != null)
+            {
+
+                UnloadLayer();
+            }
+
             Debug.Log("Creating WMS layer");
             GameObject layerContainer = null;
 
