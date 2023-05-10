@@ -48,12 +48,14 @@ namespace Netherlands3D.Geoservice
         [SerializeField] private bool compressLoadedTextures = true;
         private bool DisplayState = true;
 
+        public TileHandler TileHandler { get => tileHandler; set => tileHandler = value; }
+
         void Start()
         {
-            if (!tileHandler)
+            if (!TileHandler)
             {
-                tileHandler = FindObjectOfType<TileHandler>();
-                if (!tileHandler)
+                TileHandler = FindObjectOfType<TileHandler>();
+                if (!TileHandler)
                     Debug.LogWarning("No TileHandler found. This script depends on a TileHandler.", this.gameObject);
             }
         }
@@ -79,7 +81,7 @@ namespace Netherlands3D.Geoservice
         public void UnloadLayer()
         {
             Debug.Log("Removing WMS layer");
-            tileHandler.RemoveLayer(layer);
+            TileHandler.RemoveLayer(layer);
             Destroy(layer.gameObject);
             layer = null;
         }
@@ -104,7 +106,7 @@ namespace Netherlands3D.Geoservice
 
             if (layer != null)
             {
-                tileHandler.RemoveLayer(layer);
+                TileHandler.RemoveLayer(layer);
                 layerContainer = layer.gameObject;
                 layer = null;
             }
@@ -120,7 +122,7 @@ namespace Netherlands3D.Geoservice
             layer.tileSize = tileSize;
 
             AddWMSLayerDataSets(baseURL);
-            tileHandler.AddLayer(layer);
+            TileHandler.AddLayer(layer);
 
             ShowLayer(DisplayState);
         }
