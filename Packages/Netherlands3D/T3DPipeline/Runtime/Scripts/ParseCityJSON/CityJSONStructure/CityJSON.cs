@@ -203,6 +203,8 @@ namespace Netherlands3D.T3DPipeline
         private static CoordinateSystem ParseCoordinateSystem(JSONNode coordinateSystemNode)
         {
             Debug.Log("Parsing coordinate system: " + coordinateSystemNode.Value);
+            if (coordinateSystemNode.Value == "urn:ogc:def:crs:EPSG::7415")
+                return CoordinateSystem.RD;
             if (coordinateSystemNode.Value == "urn:ogc:def:crs:EPSG::28992")
                 return CoordinateSystem.RD;
             if (coordinateSystemNode.Value == "urn:ogc:def:crs:EPSG::4979")
