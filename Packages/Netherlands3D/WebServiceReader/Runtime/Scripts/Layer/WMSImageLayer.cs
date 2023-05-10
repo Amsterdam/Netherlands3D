@@ -22,37 +22,15 @@ using Netherlands3D.TileSystem;
 using System;
 using Netherlands3D.Core;
 using UnityEngine.Networking;
-using UnityEngine.Rendering.Universal;
 
 namespace Netherlands3D.Geoservice
 {
     public class WMSImageLayer : Layer
     {    
         public bool compressLoadedTextures = false;
-        private bool prefabIsDecalProjector = false;
-        private GameObject tilePrefab;
-        public GameObject TilePrefab {
-            get
-            {
-                return tilePrefab;
-            }
-            set
-            {
-                tilePrefab = value;
-                var decalProjector = tilePrefab.GetComponent<DecalProjector>();
-                if(decalProjector != null)
-                {
-                    projectorMaterialAsset = decalProjector.material;
-                    prefabIsDecalProjector = true;
-                }
-                else
-                {
-                    prefabIsDecalProjector = false;
-                }
-            }
-        }
 
-        [SerializeField] private Material projectorMaterialAsset;
+        private TextureProjectorBase projectorPrefab;
+        public TextureProjectorBase ProjectorPrefab { get => projectorPrefab; set => projectorPrefab = value; }
 
         public override void HandleTile(TileChange tileChange, Action<TileChange> callback = null)
         {
@@ -100,7 +78,6 @@ namespace Netherlands3D.Geoservice
                 {
                     return;
                 }
-                ClearPreviousTexture(tile);
 
                 //destroy the gameobject
                 Destroy(tile.gameObject);
@@ -113,22 +90,16 @@ namespace Netherlands3D.Geoservice
             tile.unityLOD = 0;
             tile.tileKey = tileKey;
             tile.layer = transform.gameObject.GetComponent<Layer>();
-            tile.gameObject = Instantiate(TilePrefab);
+            tile.gameObject = Instantiate(ProjectorPrefab.gameObject);
             tile.gameObject.name = tileKey.x + "-" + tileKey.y;
             tile.gameObject.transform.parent = transform.gameObject.transform;
             tile.gameObject.layer = tile.gameObject.transform.parent.gameObject.layer;
             Vector2Int origin = new Vector2Int(tileKey.x+(tileSize/2), tileKey.y + (tileSize / 2));
             tile.gameObject.transform.position = CoordConvert.RDtoUnity(origin);
-            var sizeVector = new Vector3(tileSize, tileSize, tileSize);
 
-            if (prefabIsDecalProjector)
+            if (tile.gameObject.TryGetComponent<TextureProjectorBase>(out var projector))
             {
-                tile.gameObject.GetComponent<DecalProjector>().size = sizeVector;
-
-            }
-            else
-            {
-                tile.gameObject.transform.localScale = sizeVector;
+                projector.SetSize(tileSize, tileSize, tileSize);
             }
 
             return tile;
@@ -169,9 +140,10 @@ namespace Netherlands3D.Geoservice
 
                 Texture2D myTexture = ((DownloadHandlerTexture)webRequest.downloadHandler).texture;
                 if (compressLoadedTextures) myTexture.Compress(false);
+
                 myTexture.wrapMode = TextureWrapMode.Clamp;
 
-                ApplyTextureToMaterial(myTexture, tile);
+                SetProjectorTexture(tile,myTexture);
 
                 callback(tileChange);
             }
@@ -183,42 +155,18 @@ namespace Netherlands3D.Geoservice
         /// </summary>
         private void ClearPreviousTexture(Tile tile)
         {
-            Texture oldTexture;
-            if (prefabIsDecalProjector)
+            if (tile.gameObject.TryGetComponent<TextureProjectorBase>(out var projector))
             {
-                var projectorMaterial = tile.gameObject.GetComponent<DecalProjector>().material;
-                oldTexture = projectorMaterial.mainTexture;
-
-                if(projectorMaterial != projectorMaterialAsset)
-                    Destroy(projectorMaterial);
-            }
-            else
-            {
-                oldTexture = tile.gameObject.GetComponent<MeshRenderer>().material.mainTexture;
-            }
-            if (oldTexture != null)
-            {
-                Destroy(oldTexture);
+                projector.ClearTexture();
             }
         }
 
-        private void ApplyTextureToMaterial(Texture2D myTexture, Tile tile)
+        private void SetProjectorTexture(Tile tile, Texture2D myTexture)
         {
-            Material material;
-            if (prefabIsDecalProjector)
+            if (tile.gameObject.TryGetComponent<TextureProjectorBase>(out var projector))
             {
-                var projector = tile.gameObject.GetComponent<DecalProjector>();
-                var materialInstance = new Material(projectorMaterialAsset);
-
-                material = materialInstance;
-                projector.material = material;
+                projector.SetTexture(myTexture);
             }
-            else
-            {
-                material = tile.gameObject.GetComponent<MeshRenderer>().material;
-            }
-
-            material.mainTexture = myTexture;
             tile.gameObject.SetActive(true);
         }
     }

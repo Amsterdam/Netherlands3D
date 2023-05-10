@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3883320769536567203}
   - component: {fileID: 2182191336397338675}
+  - component: {fileID: 4500353898809890024}
   m_Layer: 0
   m_Name: DecalProjectorPrefab
   m_TagString: Untagged
@@ -56,3 +57,16 @@ MonoBehaviour:
   m_Offset: {x: 0, y: 0, z: 500}
   m_Size: {x: 1000, y: 1000, z: 1000}
   m_FadeFactor: 1
+--- !u!114 &4500353898809890024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8605441521365290572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 035e888fc4a96fb40b69129b857c880a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projector: {fileID: 2182191336397338675}

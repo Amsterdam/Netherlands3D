@@ -26,7 +26,7 @@ namespace Netherlands3D.Geoservice
         [HideInInspector]
         public WMSImageLayer layer;
 
-        public GameObject TilePrefab;
+        public TextureProjectorBase projectorPrefab;
         private TileHandler tileHandler;
 
         [System.Serializable]
@@ -133,7 +133,7 @@ namespace Netherlands3D.Geoservice
                 dataSet.path = datasetURL;
                 dataSet.maximumDistance = wmsLOD.maximumDistance;
 
-                layer.TilePrefab = TilePrefab;
+                layer.ProjectorPrefab = projectorPrefab;
                 layer.Datasets.Add(dataSet);
             }
         }

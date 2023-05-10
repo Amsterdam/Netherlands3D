@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   layer: {fileID: 0}
-  TilePrefab: {fileID: 5158941830003718476, guid: 616c1bd220ce58340aca5b841fcbb4d3, type: 3}
+  projectorPrefab: {fileID: -4832976049876314616, guid: 616c1bd220ce58340aca5b841fcbb4d3, type: 3}
   wmsLods:
   - textureSize: 16
     maximumDistance: 6000
