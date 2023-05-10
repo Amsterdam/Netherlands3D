@@ -26,15 +26,13 @@ namespace Netherlands3D.Geoservice
         [HideInInspector]
         public WMSImageLayer layer;
 
-        public TextureProjectorBase projectorPrefab;
-        private TileHandler tileHandler;
-
         [System.Serializable]
         public class WMSLOD
         {
             public int textureSize;
             public float maximumDistance;
         }
+
         [Header("WMS texture sizes")]
         [SerializeField]
         private WMSLOD[] wmsLods = new WMSLOD[3]
@@ -44,15 +42,20 @@ namespace Netherlands3D.Geoservice
             new WMSLOD() { textureSize = 2048, maximumDistance = 1000 }
         };
 
+        [SerializeField] private TileHandler tileHandler;
+        [SerializeField] public TextureProjectorBase projectorPrefab;
         [SerializeField] private int tileSize = 1500;
         [SerializeField] private bool compressLoadedTextures = true;
         private bool DisplayState = true;
 
         void Start()
         {
-            tileHandler = FindObjectOfType(typeof(TileHandler)) as TileHandler;
             if (!tileHandler)
-                Debug.LogWarning("No TileHandler found. This script depends on a TileHandler.", this.gameObject);
+            {
+                tileHandler = FindObjectOfType<TileHandler>();
+                if (!tileHandler)
+                    Debug.LogWarning("No TileHandler found. This script depends on a TileHandler.", this.gameObject);
+            }
         }
 
         /// <summary>
