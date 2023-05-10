@@ -24,5 +24,6 @@ jobs:
     - name: Run dotnet format
       uses: xt0rted/dotnet-format@v1
       with:
-        only-changed-files: "true"
+# enable again in the final version; but now nothing is checked
+#        only-changed-files: "true"
         action: "check"
