@@ -13,17 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
-    - name: Add dotnet-format problem matcher
-      uses: xt0rted/dotnet-format-problem-matcher@v1
-
-    - name: Restore dotnet tools
-      uses: xt0rted/dotnet-tool-restore@v1
-
-    - name: Run dotnet format
-      uses: xt0rted/dotnet-format@v1
+    - name: Install dotnet
+      uses: actions/setup-dotnet@v3
       with:
-# enable again in the final version; but now nothing is checked
-#        only-changed-files: "true"
-        action: "check"
+        dotnet-version: '3.1.x'
+
+    - name: Run dotnet-format
+      uses: zyactions/dotnet-format@v1
+      with:
+        workspace: Netherlands3D.sln
+        verify-no-changes: true
+        implicit-restore: true
