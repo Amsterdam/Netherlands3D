@@ -122,12 +122,15 @@ namespace Netherlands3D.WMS
             Tile tile = tiles[tileKey];
 
             string url = Datasets[tiles[tileKey].unityLOD].path;
-            url = url.Replace("{Xmin}", tileChange.X.ToString());
-            url = url.Replace("{Ymin}", tileChange.Y.ToString()); ;
-            url = url.Replace("{Xmax}", (tileChange.X + tileSize).ToString());
-            url = url.Replace("{Ymax}", (tileChange.Y + tileSize).ToString());
+            var urlTemplate = new WMSImageUrlTemplate(url);
+            var requestUrl = urlTemplate.GetUrl(
+                tileChange.X,
+                tileChange.Y,
+                tileChange.X + tileSize,
+                tileChange.Y + tileSize
+            );
 
-            var webRequest = UnityWebRequestTexture.GetTexture(url, compressLoadedTextures == false);
+            var webRequest = UnityWebRequestTexture.GetTexture(requestUrl, compressLoadedTextures == false);
             tile.runningWebRequest = webRequest;
             yield return webRequest.SendWebRequest();
 

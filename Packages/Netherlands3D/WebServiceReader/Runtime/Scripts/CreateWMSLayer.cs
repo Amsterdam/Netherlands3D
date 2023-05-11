@@ -23,7 +23,7 @@ using Netherlands3D.Rendering;
 
 namespace Netherlands3D.WMS
 {
-    public class CreateWMSLayer : MonoBehaviour
+    public partial class CreateWMSLayer : MonoBehaviour
     {
         [HideInInspector] public WMSImageLayer layer;
 
@@ -127,20 +127,22 @@ namespace Netherlands3D.WMS
             layer.compressLoadedTextures = compressLoadedTextures;
             layer.tileSize = tileSize;
 
-            AddWMSLayerDataSets(baseURL);
+            var wmsUrlTemplate = new WMSImageUrlTemplate(baseURL);
+            AddWMSLayerDataSets(wmsUrlTemplate);
+
             TileHandler.AddLayer(layer);
 
             ShowLayer(DisplayState);
         }
 
-        private void AddWMSLayerDataSets(string baseURL)
+        private void AddWMSLayerDataSets(WMSImageUrlTemplate wmsUrlTemplate)
         {
             for (int i = 0; i < wmsLods.Length; i++)
             {
                 var wmsLOD = wmsLods[i];
                 DataSet dataSet = new DataSet();
-                string datasetURL = baseURL.Replace("{Width}", wmsLOD.textureSize.ToString());
-                datasetURL = datasetURL.Replace("{Height}", wmsLOD.textureSize.ToString());
+
+                string datasetURL = wmsUrlTemplate.GetUrl(wmsLOD.textureSize, wmsLOD.textureSize, false);
                 dataSet.path = datasetURL;
                 dataSet.maximumDistance = wmsLOD.maximumDistance;
 
