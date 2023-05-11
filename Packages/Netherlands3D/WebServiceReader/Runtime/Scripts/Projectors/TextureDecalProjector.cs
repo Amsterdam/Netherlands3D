@@ -20,30 +20,34 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class TextureDecalProjector : TextureProjectorBase
+namespace Netherlands3D.Rendering
 {
-    [SerializeField] private DecalProjector projector;
-
-    public override void SetSize(Vector3 size) {
-        projector.size = size;
-    }
-
-    public override void SetTexture(Texture2D texture)
+    public class TextureDecalProjector : TextureProjectorBase
     {
-        base.SetTexture(texture);
+        [SerializeField] private DecalProjector projector;
 
-        if (!materialInstance)
+        public override void SetSize(Vector3 size)
         {
-            materialInstance = new Material(projector.material);
-            projector.material = materialInstance;
+            projector.size = size;
         }
 
-        materialInstance.mainTexture = texture;
-    }
+        public override void SetTexture(Texture2D texture)
+        {
+            base.SetTexture(texture);
 
-    public override void ClearTexture()
-    {
-        if(texture)
-            Destroy(texture);
+            if (!materialInstance)
+            {
+                materialInstance = new Material(projector.material);
+                projector.material = materialInstance;
+            }
+
+            materialInstance.mainTexture = texture;
+        }
+
+        public override void ClearTexture()
+        {
+            if (texture)
+                Destroy(texture);
+        }
     }
 }

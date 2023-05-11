@@ -21,9 +21,11 @@ using UnityEngine;
 using Netherlands3D.TileSystem;
 using System;
 using Netherlands3D.Core;
+using Netherlands3D.Rendering;
 using UnityEngine.Networking;
+using UnityEngine.Events;
 
-namespace Netherlands3D.Geoservice
+namespace Netherlands3D.WMS
 {
     public class WMSImageLayer : Layer
     {    
@@ -31,6 +33,8 @@ namespace Netherlands3D.Geoservice
 
         private TextureProjectorBase projectorPrefab;
         public TextureProjectorBase ProjectorPrefab { get => projectorPrefab; set => projectorPrefab = value; }
+
+        public UnityEvent<LogType, string> onLogMessage = new();
 
         public override void HandleTile(TileChange tileChange, Action<TileChange> callback = null)
         {
@@ -111,7 +115,7 @@ namespace Netherlands3D.Geoservice
 
             if (!tiles.ContainsKey(tileKey))
             {
-                Debug.Log("Tile key does not exist", this.gameObject);
+                onLogMessage.Invoke(LogType.Warning, "Tile key does not exist");
                 yield break;
             }
 

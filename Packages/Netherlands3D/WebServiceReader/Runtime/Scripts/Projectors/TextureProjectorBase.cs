@@ -19,33 +19,47 @@
 using System;
 using UnityEngine;
 
-
-public class TextureProjectorBase : MonoBehaviour
+namespace Netherlands3D.Rendering
 {
-    protected Texture2D texture;
-    protected private Material materialInstance;
-
-    public virtual void SetSize(Vector3 size) { }
-    public virtual void SetSize(float x, float y, float z) {
-        SetSize(new Vector3(x,y,z));
-    }
-    public virtual void SetTexture(Texture2D texture)
+    public class TextureProjectorBase : MonoBehaviour
     {
-        //Always start by clearing previous texture from memory
-        if (this.texture) Destroy(this.texture);
-    }
+        protected Texture2D texture;
+        protected private Material materialInstance;
 
-    public virtual void ClearTexture()
-    {
-        if(texture)
-            Destroy(texture);
-    }
+        /// <summary>
+        /// Sets the size of the projection area by scaling the renderer object
+        /// </summary>
+        /// <param name="size">Box size of projector</param>
+        public virtual void SetSize(Vector3 size) { }
+        public virtual void SetSize(float x, float y, float z)
+        {
+            SetSize(new Vector3(x, y, z));
+        }
 
-    public void OnDestroy()
-    {
-        ClearTexture();
+        /// <summary>
+        /// Replace the projection texture on this projector
+        /// </summary>
+        public virtual void SetTexture(Texture2D texture)
+        {
+            //Always start by clearing previous texture from memory
+            if (this.texture) Destroy(this.texture);
+        }
 
-        if (materialInstance)
-            Destroy(materialInstance);
+        /// <summary>
+        /// Clear current projector texture from memory
+        /// </summary>
+        public virtual void ClearTexture()
+        {
+            if (texture)
+                Destroy(texture);
+        }
+
+        public void OnDestroy()
+        {
+            ClearTexture();
+
+            if (materialInstance)
+                Destroy(materialInstance);
+        }
     }
 }

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 583877081527190281}
   - component: {fileID: 7017030482294701140}
   - component: {fileID: 7299460120781480905}
+  - component: {fileID: 1930878767484273093}
   m_Layer: 8
   m_Name: WMSLayerManager
   m_TagString: Untagged
@@ -51,6 +52,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   layer: {fileID: 0}
   projectorPrefab: {fileID: -4832976049876314616, guid: 616c1bd220ce58340aca5b841fcbb4d3, type: 3}
+  tileSize: 1500
+  compressLoadedTextures: 1
   wmsLods:
   - textureSize: 16
     maximumDistance: 6000
@@ -58,8 +61,22 @@ MonoBehaviour:
     maximumDistance: 3000
   - textureSize: 2048
     maximumDistance: 1000
-  tileSize: 1500
-  compressLoadedTextures: 1
+  tileHandler: {fileID: 0}
+  onLogMessage:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1930878767484273093}
+        m_TargetAssemblyTypeName: Netherlands3D.Logging.Logger, Netherlands3D.Core.Runtime
+        m_MethodName: Log
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1938667534738047687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,3 +227,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9509dbe4ef5ec594ebc4e3f4c2e47b5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1930878767484273093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7579283517297871930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df5edcf5a07dec94b8414e0a6ef4e219, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  logMessageColor: {r: 1, g: 0, b: 0.9532509, a: 1}

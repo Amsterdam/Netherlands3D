@@ -20,31 +20,27 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class TextureRendererProjector : TextureProjectorBase
+namespace Netherlands3D.Rendering
 {
-    [SerializeField] private Renderer projectorRenderer;
-
-    /// <summary>
-    /// Sets the size of the projection area
-    /// </summary>
-    /// <param name="size">Box size of projector</param>
-    public override void SetSize(Vector3 size) {
-        transform.localScale = size;
-    }
-
-    /// <summary>
-    /// Replace the projection texture on this projector
-    /// </summary>
-    /// <param name="texture"></param>
-    public override void SetTexture(Texture2D texture)
+    public class TextureRendererProjector : TextureProjectorBase
     {
-        base.SetTexture(texture);
+        [SerializeField] private Renderer projectorRenderer;
 
-        if (!materialInstance)
+        public override void SetSize(Vector3 size)
         {
-            materialInstance = projectorRenderer.material;
+            transform.localScale = size;
         }
 
-        materialInstance.mainTexture = texture;
+        public override void SetTexture(Texture2D texture)
+        {
+            base.SetTexture(texture);
+
+            if (!materialInstance)
+            {
+                materialInstance = projectorRenderer.material;
+            }
+
+            materialInstance.mainTexture = texture;
+        }
     }
 }

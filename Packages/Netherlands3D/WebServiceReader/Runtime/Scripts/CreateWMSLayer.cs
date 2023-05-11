@@ -17,14 +17,20 @@
 */
 
 using UnityEngine;
+using UnityEngine.Events;
 using Netherlands3D.TileSystem;
+using Netherlands3D.Rendering;
 
-namespace Netherlands3D.Geoservice
+namespace Netherlands3D.WMS
 {
     public class CreateWMSLayer : MonoBehaviour
     {
-        [HideInInspector]
-        public WMSImageLayer layer;
+        [HideInInspector] public WMSImageLayer layer;
+
+        [SerializeField] public TextureProjectorBase projectorPrefab;
+        [SerializeField] private int tileSize = 1500;
+        [SerializeField] private bool compressLoadedTextures = true;
+        private bool DisplayState = true;
 
         [System.Serializable]
         public class WMSLOD
@@ -42,13 +48,12 @@ namespace Netherlands3D.Geoservice
             new WMSLOD() { textureSize = 2048, maximumDistance = 1000 }
         };
 
+       
+        [Header("Optional")]
+        [Tooltip("If empty, the first TileHandler found will be used.")]
         [SerializeField] private TileHandler tileHandler;
-        [SerializeField] public TextureProjectorBase projectorPrefab;
-        [SerializeField] private int tileSize = 1500;
-        [SerializeField] private bool compressLoadedTextures = true;
-        private bool DisplayState = true;
-
         public TileHandler TileHandler { get => tileHandler; set => tileHandler = value; }
+        public UnityEvent<LogType, string> onLogMessage = new();
 
         void Start()
         {
@@ -56,7 +61,7 @@ namespace Netherlands3D.Geoservice
             {
                 TileHandler = FindObjectOfType<TileHandler>();
                 if (!TileHandler)
-                    Debug.LogWarning("No TileHandler found. This script depends on a TileHandler.", this.gameObject);
+                    onLogMessage.Invoke(LogType.Warning, "No TileHandler found. This script depends on a TileHandler.");
             }
         }
 
@@ -67,7 +72,8 @@ namespace Netherlands3D.Geoservice
         public void ShowLayer(bool OnOff)
         {
             DisplayState = OnOff;
-            Debug.Log("Show layer " + OnOff);
+            onLogMessage.Invoke(LogType.Log, $"Show layer {OnOff}");
+
             if (layer)
             {
                 layer.isEnabled = OnOff;
@@ -80,7 +86,7 @@ namespace Netherlands3D.Geoservice
         /// </summary>
         public void UnloadLayer()
         {
-            Debug.Log("Removing WMS layer");
+            onLogMessage.Invoke(LogType.Log, "Removing WMS layer");
             TileHandler.RemoveLayer(layer);
             Destroy(layer.gameObject);
             layer = null;
@@ -101,7 +107,7 @@ namespace Netherlands3D.Geoservice
                 UnloadLayer();
             }
 
-            Debug.Log("Creating WMS layer");
+            onLogMessage.Invoke(LogType.Log, "Creating WMS layer");
             GameObject layerContainer = null;
 
             if (layer != null)
