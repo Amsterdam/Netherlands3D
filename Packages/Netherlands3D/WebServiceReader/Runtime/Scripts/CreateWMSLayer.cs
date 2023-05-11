@@ -72,7 +72,7 @@ namespace Netherlands3D.WMS
         public void ShowLayer(bool OnOff)
         {
             DisplayState = OnOff;
-            onLogMessage.Invoke(LogType.Log, $"Show layer {OnOff}");
+            onLogMessage.Invoke(LogType.Log, $"Show layer: {OnOff}");
 
             if (layer)
             {
@@ -144,6 +144,7 @@ namespace Netherlands3D.WMS
                 dataSet.path = datasetURL;
                 dataSet.maximumDistance = wmsLOD.maximumDistance;
 
+                layer.name = datasetURL;
                 layer.ProjectorPrefab = projectorPrefab;
                 layer.Datasets.Add(dataSet);
             }
