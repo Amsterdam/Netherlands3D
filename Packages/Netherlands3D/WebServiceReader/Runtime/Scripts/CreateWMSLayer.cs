@@ -1,39 +1,36 @@
-using System.Collections;
-using System.Collections.Generic;
+/*
+*  Copyright (C) X Gemeente
+*                X Amsterdam
+*                X Economic Services Departments
+*
+*  Licensed under the EUPL, Version 1.2 or later (the "License");
+*  You may not use this work except in compliance with the License.
+*  You may obtain a copy of the License at:
+*
+*    https://github.com/Amsterdam/Netherlands3D/blob/main/LICENSE.txt
+*
+*  Unless required by applicable law or agreed to in writing, software
+*  distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+*  implied. See the License for the specific language governing
+*  permissions and limitations under the License.
+*/
+
 using UnityEngine;
-using Netherlands3D.Events;
+using UnityEngine.Events;
 using Netherlands3D.TileSystem;
-using UnityEngine.Rendering;
+using Netherlands3D.Rendering;
 
-
-namespace Netherlands3D.Geoservice
+namespace Netherlands3D.WMS
 {
-    public class CreateWMSLayer : MonoBehaviour
+    public partial class CreateWMSLayer : MonoBehaviour
     {
-        [HideInInspector]
-        public WMSImageLayer layer;
-        public GameObject TilePrefab;
-        private TileSystem.TileHandler tileHandler;
-        [SerializeField]
-        private int buildingStencilID;
-        [SerializeField]
-        private int terrainStencilID;
+        [HideInInspector] public WMSImageLayer layer;
 
-        [Header("Events")]
-        public StringEvent OnWMSUrlDefined_String;
-        public BoolEvent AleenOpMaaiveld_Bool;
-        public BoolEvent ShowLayer_Bool;
-        public TriggerEvent ShowWMSOnBuildings;
-        public TriggerEvent ShowWMSOnTerrain;
-        public TriggerEvent ShowWMSOnBuildingsAndTerrain;
-        public TriggerEvent UnloadWMSService;
-
-        [Header("URP RenderObjects")]
-        
-        public Object RenderObjectTerrainAsTarget;
-        public Object RenderObjectTerrainNOTAsTarget;
-        public Object RenderObjectBuildingsAsTarget;
-        public Object RenderObjectBuildingsNOTAsTarget;
+        [SerializeField] public TextureProjectorBase projectorPrefab;
+        [SerializeField] private int tileSize = 1500;
+        [SerializeField] private bool compressLoadedTextures = true;
+        private bool DisplayState = true;
 
         [System.Serializable]
         public class WMSLOD
@@ -41,6 +38,7 @@ namespace Netherlands3D.Geoservice
             public int textureSize;
             public float maximumDistance;
         }
+
         [Header("WMS texture sizes")]
         [SerializeField]
         private WMSLOD[] wmsLods = new WMSLOD[3]
@@ -50,44 +48,23 @@ namespace Netherlands3D.Geoservice
             new WMSLOD() { textureSize = 2048, maximumDistance = 1000 }
         };
 
-        [SerializeField]
-        private int tileSize = 1500;
-        [SerializeField] private bool compressLoadedTextures = true;
-        private bool OnlyOnTerrain_Memory = false;
-        private bool DisplayState = true;
+       
+        [Header("Optional")]
+        [Tooltip("If empty, the first TileHandler found will be used.")]
+        [SerializeField] private TileHandler tileHandler;
+        public TileHandler TileHandler { get => tileHandler; set => tileHandler = value; }
+        public UnityEvent<LogType, string> onLogMessage = new();
 
         void Start()
         {
-            tileHandler = FindObjectOfType(typeof(TileSystem.TileHandler)) as TileSystem.TileHandler;
-            if (OnWMSUrlDefined_String)
+            if (!TileHandler)
             {
-                OnWMSUrlDefined_String.AddListenerStarted(CreateWMS_Layer);
-            }
-            if (ShowWMSOnBuildings)
-            {
-                ShowWMSOnBuildings.AddListenerStarted(showWMSOnBuildings);
-            }
-            if (ShowWMSOnTerrain)
-            {
-                ShowWMSOnTerrain.AddListenerStarted(showWMSOnTerrain);
-            }
-            if (ShowWMSOnBuildingsAndTerrain)
-            {
-                ShowWMSOnBuildingsAndTerrain.AddListenerStarted(showWMSOnBuildingsAndTerrain);
-            }
-            if (UnloadWMSService)
-            {
-                UnloadWMSService.AddListenerStarted(UnloadLayer);
-            }
-            if (AleenOpMaaiveld_Bool)
-            {
-                AleenOpMaaiveld_Bool.AddListenerStarted(ShowOnlyOnTerrain);
-            }
-            if (ShowLayer_Bool)
-            {
-                ShowLayer_Bool.AddListenerStarted(ShowLayer);
+                TileHandler = FindObjectOfType<TileHandler>();
+                if (!TileHandler)
+                    onLogMessage.Invoke(LogType.Warning, "No TileHandler found. This script depends on a TileHandler.");
             }
         }
+
         /// <summary>
         /// turn the layer on or off
         /// </summary>
@@ -95,6 +72,8 @@ namespace Netherlands3D.Geoservice
         public void ShowLayer(bool OnOff)
         {
             DisplayState = OnOff;
+            onLogMessage.Invoke(LogType.Log, $"Show layer: {OnOff}");
+
             if (layer)
             {
                 layer.isEnabled = OnOff;
@@ -102,86 +81,51 @@ namespace Netherlands3D.Geoservice
             }
         }
 
-        private void UnloadLayer()
+        /// <summary>
+        /// Clears layer from tilehandler
+        /// </summary>
+        public void UnloadLayer()
         {
-            tileHandler.RemoveLayer(layer);
+            onLogMessage.Invoke(LogType.Log, "Removing WMS layer");
+            TileHandler.RemoveLayer(layer);
             Destroy(layer.gameObject);
             layer = null;
         }
 
-        private void ShowOnlyOnTerrain(bool toggleValue)
+        /// <summary>
+        /// Create a new layer using a WMS base url
+        /// </summary>
+        public void CreateLayer(string baseURL)
         {
-            
-            OnlyOnTerrain_Memory = toggleValue;
-            if (toggleValue)
+            if (layer != null)
             {
-                showWMSOnTerrain();
-            }
-            else
-            {
-                showWMSOnBuildingsAndTerrain();
-            }
-        }
 
-        private void showWMSOnBuildings()
-        {
-            if (layer)
-            {
-               layer.ProjectOnBuildings(buildingStencilID);
-                            }
-        }
-        private void showWMSOnTerrain()
-        {
+                UnloadLayer();
+            }
 
-            if (RenderObjectTerrainAsTarget)
-            {
-                //RenderObjectTerrainAsTarget.hideFlags = 
-            }
-            if (layer)
-            {
-                layer.ProjectOnTerrain(terrainStencilID);
-            }
-        }
-        private void showWMSOnBuildingsAndTerrain()
-        {
-            if (layer)
-            {
-                layer.ProjectOnBoth(buildingStencilID, terrainStencilID);
-            }
-        }
-
-        private void CreateWMS_Layer(string baseURL)
-        {
-            Debug.Log("Create WMS layer");
-            GameObject layercontainer = null;
+            onLogMessage.Invoke(LogType.Log, "Creating WMS layer");
+            GameObject layerContainer = null;
 
             if (layer != null)
             {
-                tileHandler.RemoveLayer(layer);
-                layercontainer = layer.gameObject;
+                TileHandler.RemoveLayer(layer);
+                layerContainer = layer.gameObject;
                 layer = null;
             }
 
-            if (layercontainer == null)
+            if (layerContainer == null)
             {
-                layercontainer = new GameObject("WMSLayer");
-                layercontainer.layer = this.gameObject.layer;
-                layercontainer.transform.parent = transform;
+                layerContainer = new GameObject("WMSLayer");
+                layerContainer.layer = this.gameObject.layer;
+                layerContainer.transform.parent = transform;
             }
-            layer = layercontainer.AddComponent<WMSImageLayer>();
+            layer = layerContainer.AddComponent<WMSImageLayer>();
             layer.compressLoadedTextures = compressLoadedTextures;
             layer.tileSize = tileSize;
-            if (OnlyOnTerrain_Memory)
-            {
-                showWMSOnTerrain();
-            }
-            else
-            {
-                showWMSOnBuildingsAndTerrain();
-            }
 
             AddWMSLayerDataSets(baseURL);
-            tileHandler.AddLayer(layer);
+
+            TileHandler.AddLayer(layer);
 
             ShowLayer(DisplayState);
         }
@@ -192,15 +136,17 @@ namespace Netherlands3D.Geoservice
             {
                 var wmsLOD = wmsLods[i];
                 DataSet dataSet = new DataSet();
-                string datasetURL = baseURL.Replace("{Width}", wmsLOD.textureSize.ToString());
-                datasetURL = datasetURL.Replace("{Height}", wmsLOD.textureSize.ToString());
+
+                var wmsUrlTemplate = new WMSImageUrlTemplate(baseURL, wmsLOD.textureSize, wmsLOD.textureSize);
+                string datasetURL = wmsUrlTemplate.Url;
+
                 dataSet.path = datasetURL;
                 dataSet.maximumDistance = wmsLOD.maximumDistance;
 
-                layer.TilePrefab = TilePrefab;
+                layer.name = datasetURL;
+                layer.ProjectorPrefab = projectorPrefab;
                 layer.Datasets.Add(dataSet);
             }
         }
-
     }
 }

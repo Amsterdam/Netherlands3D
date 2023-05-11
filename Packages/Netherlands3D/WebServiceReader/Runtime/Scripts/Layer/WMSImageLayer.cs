@@ -1,55 +1,72 @@
+/*
+*  Copyright (C) X Gemeente
+*                X Amsterdam
+*                X Economic Services Departments
+*
+*  Licensed under the EUPL, Version 1.2 or later (the "License");
+*  You may not use this work except in compliance with the License.
+*  You may obtain a copy of the License at:
+*
+*    https://github.com/Amsterdam/Netherlands3D/blob/main/LICENSE.txt
+*
+*  Unless required by applicable law or agreed to in writing, software
+*  distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+*  implied. See the License for the specific language governing
+*  permissions and limitations under the License.
+*/
+
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Netherlands3D.TileSystem;
 using System;
 using Netherlands3D.Core;
+using Netherlands3D.Rendering;
 using UnityEngine.Networking;
+using UnityEngine.Events;
 
-namespace Netherlands3D.Geoservice
+namespace Netherlands3D.WMS
 {
     public class WMSImageLayer : Layer
-    {
-        
-        private int BuildingStencilID=0;
-        private int TerrainStencilID = 0;
-        [SerializeField]
-        private int activeStencilID = 0;
-        private int activeStencilMask = 255;
+    {    
         public bool compressLoadedTextures = false;
-        public GameObject TilePrefab;
+
+        private TextureProjectorBase projectorPrefab;
+        public TextureProjectorBase ProjectorPrefab { get => projectorPrefab; set => projectorPrefab = value; }
+
+        public UnityEvent<LogType, string> onLogMessage = new();
+
         public override void HandleTile(TileChange tileChange, Action<TileChange> callback = null)
         {
             var tileKey = new Vector2Int(tileChange.X, tileChange.Y);
 
-            if (tileChange.action== TileAction.Create)
+            switch (tileChange.action)
             {
-                Tile newTile = CreateNewTile(tileKey);
-                tiles.Add(tileKey, newTile);
-                newTile.gameObject.SetActive(false);
-                //retrieve the image and put it on the tile
-                tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
-            }
-            if (tileChange.action == TileAction.Upgrade)
-            {
-                tiles[tileKey].unityLOD++;
-                tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
-            }
-            if (tileChange.action == TileAction.Downgrade)
-            {
-                tiles[tileKey].unityLOD--;
-                tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
-            }
+                case TileAction.Create:
+                    {
+                        Tile newTile = CreateNewTile(tileKey);
+                        tiles.Add(tileKey, newTile);
+                        newTile.gameObject.SetActive(false);
+                        //retrieve the image and put it on the tile
+                        tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
+                        break;
+                    }
 
-            if (tileChange.action == TileAction.Remove)
-            {
-                InteruptRunningProcesses(tileKey);
-                RemoveGameObjectFromTile(tileKey);
-                tiles.Remove(tileKey);
-                callback(tileChange);
-                return;
+                case TileAction.Upgrade:
+                    tiles[tileKey].unityLOD++;
+                    tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
+                    break;
+                case TileAction.Downgrade:
+                    tiles[tileKey].unityLOD--;
+                    tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
+                    break;
+                case TileAction.Remove:
+                    InteruptRunningProcesses(tileKey);
+                    RemoveGameObjectFromTile(tileKey);
+                    tiles.Remove(tileKey);
+                    callback(tileChange);
+                    return;
             }
-            
         }
 
         private void RemoveGameObjectFromTile(Vector2Int tileKey)
@@ -65,134 +82,101 @@ namespace Netherlands3D.Geoservice
                 {
                     return;
                 }
-                //destroy the image
-                Texture tex= tile.gameObject.GetComponent<MeshRenderer>().material.GetTexture("_MainTex");
-                tile.gameObject.GetComponent<MeshRenderer>().material.SetTexture("_MainTex",null);
-                Destroy(tex);
 
                 //destroy the gameobject
-                Destroy(tiles[tileKey].gameObject);
+                Destroy(tile.gameObject);
             }
         }
 
         private Tile CreateNewTile(Vector2Int tileKey)
         {
-            Tile tile = new Tile();
+            Tile tile = new();
             tile.unityLOD = 0;
             tile.tileKey = tileKey;
             tile.layer = transform.gameObject.GetComponent<Layer>();
-            tile.gameObject = Instantiate(TilePrefab);
+            tile.gameObject = Instantiate(ProjectorPrefab.gameObject);
             tile.gameObject.name = tileKey.x + "-" + tileKey.y;
             tile.gameObject.transform.parent = transform.gameObject.transform;
             tile.gameObject.layer = tile.gameObject.transform.parent.gameObject.layer;
             Vector2Int origin = new Vector2Int(tileKey.x+(tileSize/2), tileKey.y + (tileSize / 2));
             tile.gameObject.transform.position = CoordConvert.RDtoUnity(origin);
-            
+
+            if (tile.gameObject.TryGetComponent<TextureProjectorBase>(out var projector))
+            {
+                projector.SetSize(tileSize, tileSize, tileSize);
+            }
+
             return tile;
         }
 
         IEnumerator DownloadTexture(TileChange tileChange, Action<TileChange> callback = null)
         {
             var tileKey = new Vector2Int(tileChange.X, tileChange.Y);
+
+            if (!tiles.ContainsKey(tileKey))
+            {
+                onLogMessage.Invoke(LogType.Warning, "Tile key does not exist");
+                yield break;
+            }
+
+            Tile tile = tiles[tileKey];
+
             string url = Datasets[tiles[tileKey].unityLOD].path;
-            url = url.Replace("{Xmin}", tileChange.X.ToString());
-            url = url.Replace("{Ymin}", tileChange.Y.ToString()); ;
-            url = url.Replace("{Xmax}", (tileChange.X+tileSize).ToString());
-            url = url.Replace("{Ymax}", (tileChange.Y + tileSize).ToString());
-            
-            var webRequest = UnityWebRequestTexture.GetTexture(url, compressLoadedTextures == false);
-            tiles[tileKey].runningWebRequest = webRequest;
+            var urlTemplate = new WMSImageUrlTemplate(url);
+            var imageUrl = urlTemplate.GetUrl(
+                tileChange.X,
+                tileChange.Y,
+                tileChange.X + tileSize,
+                tileChange.Y + tileSize
+            );
+
+            var webRequest = UnityWebRequestTexture.GetTexture(imageUrl, compressLoadedTextures == false);
+            tile.runningWebRequest = webRequest;
             yield return webRequest.SendWebRequest();
 
-            if (!tiles.ContainsKey(tileKey)) yield break;
-
-            tiles[tileKey].runningWebRequest = null;
+            tile.runningWebRequest = null;
 
             if (webRequest.result != UnityWebRequest.Result.Success)
             {
+                Debug.LogWarning($"Could not download {imageUrl}");
+
                 RemoveGameObjectFromTile(tileKey);
                 callback(tileChange);
             }
             else
             {
-                //remove old Texture if it exists
-                Texture OldTexture = tiles[tileKey].gameObject.GetComponent<MeshRenderer>().material.GetTexture("_MainTex");
-                if (OldTexture!=null)
-                {
-                    Destroy(OldTexture);
-                }
+                ClearPreviousTexture(tile);
 
                 Texture2D myTexture = ((DownloadHandlerTexture)webRequest.downloadHandler).texture;
-                if(compressLoadedTextures) myTexture.Compress(false);
-                myTexture.wrapMode = TextureWrapMode.Clamp;
-                Tile tile = tiles[tileKey];
+                if (compressLoadedTextures) myTexture.Compress(false);
 
-                Material material = tile.gameObject.GetComponent<MeshRenderer>().material;
-                material.SetTexture("_MainTex", myTexture);
-                //material.SetFloat("_StencilRef", activeStencilID);
-                //material.SetFloat("_ReadMask", activeStencilMask);
-                tile.gameObject.SetActive(true);
+                myTexture.wrapMode = TextureWrapMode.Clamp;
+
+                SetProjectorTexture(tile,myTexture);
+
                 callback(tileChange);
             }
-
-                yield return null;
+            yield return null;
         }
 
-        public void ProjectOnBuildings(int buildingStencilID)
+        /// <summary>
+        /// Clear existing texture from tile projector
+        /// </summary>
+        private void ClearPreviousTexture(Tile tile)
         {
-            if (BuildingStencilID==0)
+            if (tile.gameObject.TryGetComponent<TextureProjectorBase>(out var projector))
             {
-                BuildingStencilID = buildingStencilID;
-                
+                projector.ClearTexture();
             }
-            activeStencilMask = 255;
-            activeStencilID = BuildingStencilID;
-            setProjectorStencilSettings();
-
         }
-        public void ProjectOnTerrain(int terrainStencilID)
+
+        private void SetProjectorTexture(Tile tile, Texture2D myTexture)
         {
-            if (TerrainStencilID == 0)
+            if (tile.gameObject.TryGetComponent<TextureProjectorBase>(out var projector))
             {
-                TerrainStencilID = terrainStencilID;
-
+                projector.SetTexture(myTexture);
             }
-            activeStencilMask = 255;
-            activeStencilID = TerrainStencilID;
-            setProjectorStencilSettings();
-
+            tile.gameObject.SetActive(true);
         }
-        public void ProjectOnBoth(int buildingStencilID, int terrainStencilID)
-        {
-            if (BuildingStencilID == 0)
-            {
-                BuildingStencilID = buildingStencilID;
-            }
-            if (TerrainStencilID == 0)
-            {
-                TerrainStencilID = terrainStencilID;
-            }
-
-
-            int difference = BuildingStencilID ^ TerrainStencilID;
-            //int difference = Mathf.Abs(BuildingStencilID - TerrainStencilID);
-            //difference = (int)Mathf.Ceil(Mathf.Log(difference, 2));
-            //difference = (int)Mathf.Pow(2, difference);
-            activeStencilMask = 255 - difference;
-
-            activeStencilID = BuildingStencilID;
-            setProjectorStencilSettings();
-        }
-
-        private void setProjectorStencilSettings()
-        {
-
-            foreach (var tile in tiles)
-            {
-               // tile.Value.gameObject.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_StencilRef", activeStencilID);
-               // tile.Value.gameObject.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_ReadMask", activeStencilMask);
-            }
-        }
-
     }
 }
