@@ -8,6 +8,7 @@ using Netherlands3D.Events;
 using System.Globalization;
 using Netherlands3D.Core;
 using System.Collections.Generic;
+using Netherlands3D.Coordinates;
 using SimpleJSON;
 
 [RequireComponent(typeof(TMP_InputField))]
@@ -200,7 +201,7 @@ public class AddressSearch : MonoBehaviour
         double.TryParse(lonLat[0], NumberStyles.Any, CultureInfo.InvariantCulture, out double lon);
         double.TryParse(lonLat[1], NumberStyles.Any, CultureInfo.InvariantCulture, out double lat);
 
-        return CoordConvert.WGS84toUnity(lon, lat);
+        return CoordinateConverter.WGS84toUnity(lon, lat);
     }
 
     IEnumerator LerpCamera(GameObject targetObj, Vector3 endPos, Quaternion endRot, float duration)

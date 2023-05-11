@@ -15,6 +15,8 @@
 *  implied. See the License for the specific language governing
 *  permissions and limitations under the License.
 */
+
+using Netherlands3D.Coordinates;
 using Netherlands3D.Core;
 using Netherlands3D.Events;
 using UnityEngine;
@@ -34,8 +36,8 @@ namespace Netherlands3D.SelectionTools
         private void ConvertToRD(Bounds bounds)
         {
             //Convert bounds to RD coordinates on a 2D map
-            var bottomLeft = CoordConvert.UnitytoRD(bounds.min);
-            var topRight = CoordConvert.UnitytoRD(bounds.max);
+            var bottomLeft = CoordinateConverter.UnitytoRD(bounds.min);
+            var topRight = CoordinateConverter.UnitytoRD(bounds.max);
 
             boundingBoxRDEvent.InvokeStarted(new double[] { bottomLeft.x, bottomLeft.y, topRight.x, topRight.y });
         }

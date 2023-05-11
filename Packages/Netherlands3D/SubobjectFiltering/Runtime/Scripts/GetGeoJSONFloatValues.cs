@@ -20,6 +20,7 @@ using Netherlands3D.Events;
 using Netherlands3D.Utilities;
 using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.Coordinates;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -74,7 +75,7 @@ public class GetGeoJSONFloatValues : MonoBehaviour
 	private void OnDrawGizmos()
 	{
 		Gizmos.color = new Color(0, 1, 0, 0.3f);
-		var center = CoordConvert.RDtoUnity(new Vector3RD(bboxByCameraBounds.CenterX, bboxByCameraBounds.CenterY, 0));
+		var center = CoordinateConverter.RDtoUnity(new Vector3RD(bboxByCameraBounds.CenterX, bboxByCameraBounds.CenterY, 0));
 		float height = (float)(bboxByCameraBounds.MaxY - bboxByCameraBounds.MinY);
 		float width = (float)(bboxByCameraBounds.MaxX - bboxByCameraBounds.MinX);
 

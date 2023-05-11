@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.Coordinates;
 using UnityEngine;
 using Netherlands3D.Core;
 using SimpleJSON;
@@ -31,7 +32,7 @@ namespace Netherlands3D.Traffic.Simulation
         /// <param name="json">The json data</param>
         public Road(JSONNode json)
         {
-            coordinate = CoordConvert.WGS84toUnity(json["geometry"]["lon"], json["geometry"]["lat"]);
+            coordinate = CoordinateConverter.WGS84toUnity(json["geometry"]["lon"], json["geometry"]["lat"]);
             name = json["tags"]["name"];
 
             // Loop through points
@@ -59,8 +60,8 @@ namespace Netherlands3D.Traffic.Simulation
             public Point(double longitude, double latitude, Vector3 roadCoord)
             {
                 coordinate = new Vector3((float)longitude, 0, (float)latitude);
-                coordinate.y = CoordConvert.zeroGroundLevelY;
-                coordinateUnity = CoordConvert.WGS84toUnity(longitude, latitude);
+                coordinate.y = CoordinateConverter.zeroGroundLevelY;
+                coordinateUnity = CoordinateConverter.WGS84toUnity(longitude, latitude);
             }
         }
     }

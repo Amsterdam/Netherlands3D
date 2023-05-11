@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Netherlands3D.TileSystem;
 using System;
+using Netherlands3D.Coordinates;
 using Netherlands3D.Core;
 using UnityEngine.Networking;
 
@@ -10,7 +11,7 @@ namespace Netherlands3D.Geoservice
 {
     public class WMSImageLayer : Layer
     {
-        
+
         private int BuildingStencilID=0;
         private int TerrainStencilID = 0;
         [SerializeField]
@@ -49,7 +50,7 @@ namespace Netherlands3D.Geoservice
                 callback(tileChange);
                 return;
             }
-            
+
         }
 
         private void RemoveGameObjectFromTile(Vector2Int tileKey)
@@ -86,8 +87,8 @@ namespace Netherlands3D.Geoservice
             tile.gameObject.transform.parent = transform.gameObject.transform;
             tile.gameObject.layer = tile.gameObject.transform.parent.gameObject.layer;
             Vector2Int origin = new Vector2Int(tileKey.x+(tileSize/2), tileKey.y + (tileSize / 2));
-            tile.gameObject.transform.position = CoordConvert.RDtoUnity(origin);
-            
+            tile.gameObject.transform.position = CoordinateConverter.RDtoUnity(origin);
+
             return tile;
         }
 
@@ -99,7 +100,7 @@ namespace Netherlands3D.Geoservice
             url = url.Replace("{Ymin}", tileChange.Y.ToString()); ;
             url = url.Replace("{Xmax}", (tileChange.X+tileSize).ToString());
             url = url.Replace("{Ymax}", (tileChange.Y + tileSize).ToString());
-            
+
             var webRequest = UnityWebRequestTexture.GetTexture(url, compressLoadedTextures == false);
             tiles[tileKey].runningWebRequest = webRequest;
             yield return webRequest.SendWebRequest();
@@ -143,7 +144,7 @@ namespace Netherlands3D.Geoservice
             if (BuildingStencilID==0)
             {
                 BuildingStencilID = buildingStencilID;
-                
+
             }
             activeStencilMask = 255;
             activeStencilID = BuildingStencilID;

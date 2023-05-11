@@ -15,10 +15,11 @@
 *  implied. See the License for the specific language governing
 *  permissions and limitations under the License.
 */
+
 using System;
-using UnityEngine;
+using Netherlands3D.Coordinates;
 using Netherlands3D.Events;
-using Netherlands3D.Core;
+using UnityEngine;
 
 namespace Netherlands3D.Sun
 {
@@ -95,8 +96,8 @@ namespace Netherlands3D.Sun
 
         private void GetLocation()
         {
-            var rdSceneCenter = CoordConvert.relativeCenterRD;
-            var wgs84SceneCenter = CoordConvert.RDtoWGS84(rdSceneCenter.x, rdSceneCenter.y);
+            var rdSceneCenter = CoordinateConverter.relativeCenterRD;
+            var wgs84SceneCenter = CoordinateConverter.RDtoWGS84(rdSceneCenter.x, rdSceneCenter.y);
             longitude = (float)wgs84SceneCenter.lon;
             latitude = (float)wgs84SceneCenter.lat;
         }
@@ -251,6 +252,6 @@ namespace Netherlands3D.Sun
             angles.y = (float)azi * Mathf.Rad2Deg;
 
             sunDirectionalLight.transform.localRotation = Quaternion.Euler(angles);
-        }        
+        }
     }
 }

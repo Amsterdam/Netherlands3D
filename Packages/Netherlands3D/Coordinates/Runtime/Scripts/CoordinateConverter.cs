@@ -1,124 +1,46 @@
-﻿/* Copyright(C)  X Gemeente
-                 X Amsterdam
-                 X Economic Services Departments
-Licensed under the EUPL, Version 1.2 or later (the "License");
-You may not use this work except in compliance with the License. You may obtain a copy of the License at:
-https://joinup.ec.europa.eu/software/page/eupl
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-implied. See the License for the specific language governing permissions and limitations under the License.
+﻿/*
+*  Copyright (C) X Gemeente
+*                X Amsterdam
+*                X Economic Services Departments
+*
+*  Licensed under the EUPL, Version 1.2 or later (the "License");
+*  You may not use this work except in compliance with the License.
+*  You may obtain a copy of the License at:
+*
+*    https://github.com/Amsterdam/3DAmsterdam/blob/master/LICENSE.txt
+*
+*  Unless required by applicable law or agreed to in writing, software
+*  distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+*  implied. See the License for the specific language governing
+*  permissions and limitations under the License.
 */
 
 using System;
 using UnityEngine;
 using UnityEngine.Events;
-using Netherlands3D.Events;
 
 /// <summary>
 /// Convert coordinates between Unity, WGS84 and RD(EPSG7415)
 /// <!-- accuracy: WGS84 to RD  X <0.01m, Y <0.02m H <0.03m, tested in Amsterdam with PCNapTrans-->
 /// <!-- accuracy: RD to WGS84  X <0.01m, Y <0.02m H <0.03m, tested in Amsterdam with PCNapTrans-->
 /// </summary>
-namespace Netherlands3D.Core
+namespace Netherlands3D.Coordinates
 {
-    /// <summary>
-    /// Supported coordinate systems
-    /// </summary>
-    public enum CoordinateSystem
-    {
-        Unity,
-        WGS84,
-        RD
-    }
-
-    /// <summary>
-    /// Vector2 width Double values to represent RD-coordinates (X,Y)
-    /// </summary>
-    [System.Serializable]
-    public struct Vector2RD
-    {
-        public double x;
-        public double y;
-        
-        public Vector2RD(double X, double Y)
-        {
-            x = X;
-            y = Y;
-        }
-
-        public bool IsInThousands 
-        {
-            get 
-            {
-                Debug.Log($"x:{x} y:{y}");
-                return x % 1000 == 0 && y % 1000 == 0;
-            }
-        }   
-    }
-
-    /// <summary>
-    /// Vector3 width Double values to represent RD-coordinates (X,Y,H)
-    /// </summary>
-    public struct Vector3RD
-    {
-        public double x;
-        public double y;
-        public double z;
-        public Vector3RD(double X, double Y, double Z)
-        {
-            x = X;
-            y = Y;
-            z = Z;
-        }
-
-        public override string ToString()
-        {
-            return $"x:{x} y:{y} z:{z}";
-        }
-    }
-
-    /// <summary>
-    /// Vector3 width Double values to represent WGS84-coordinates (Lon,Lat,H)
-    /// </summary>
-    public struct Vector3WGS
-    {
-        public double lat;
-        public double lon;
-        public double h;
-        public Vector3WGS(double Lon, double Lat, double H)
-        {
-            lat = Lat;
-            lon = Lon;
-            h = H;
-        }
-    }
-    public struct Vector3ECEF
-    {
-        public double X;
-        public double Y;
-        public double Z;
-        public Vector3ECEF(double x, double y, double z)
-        {
-            X = x;
-            Y = y;
-            Z = z;
-        }
-    }
-
-    public static class CoordConvert
+    public static class CoordinateConverter
     {
         private static byte[] RDCorrectionX = Resources.Load<TextAsset>("x2c").bytes;
         private static byte[] RDCorrectionY = Resources.Load<TextAsset>("y2c").bytes;
         private static byte[] RDCorrectionZ = Resources.Load<TextAsset>("nlgeo04").bytes;
 
-        private static Vector3RD output = new Vector3RD();
+        private static Vector3RD output = new();
         public static float zeroGroundLevelY = 0;
 
-        private static Vector2RD relativeCenterRDCoordinate = new Vector2RD();
-        
+        private static Vector2RD relativeCenterRDCoordinate = new();
+
         public static Vector3ECEF relativeCenterECEF;
-        public static Vector2RD relativeCenterRD { 
-            get => relativeCenterRDCoordinate; 
+        public static Vector2RD relativeCenterRD {
+            get => relativeCenterRDCoordinate;
             set
             {
                 Vector2RD change = new Vector2RD(value.x - relativeCenterRDCoordinate.x, value.y - relativeCenterRDCoordinate.y);
@@ -129,11 +51,10 @@ namespace Netherlands3D.Core
                 relativeCenterRDCoordinate = value;
             }
         }
-        
-        public static bool ecefIsSet;
-        public static UnityEvent prepareForOriginShift = new UnityEvent();
+
+        public static UnityEvent prepareForOriginShift = new();
         public class CenterChangedEvent : UnityEvent<Vector3> { }
-        public static CenterChangedEvent relativeOriginChanged = new CenterChangedEvent();
+        public static CenterChangedEvent relativeOriginChanged = new();
 
         public static void MoveAndRotateWorld(Vector3 cameraPosition)
         {
@@ -156,11 +77,9 @@ namespace Netherlands3D.Core
         /// <returns>Vector3 Unity-Coordinate (y=0)</returns>
         public static Vector3 WGS84toUnity(Vector2 coordinate)
         {
-            Vector3 output = new Vector3();
-            output = WGS84toUnity(coordinate.x, coordinate.y);
-           
-            return output;
+            return WGS84toUnity(coordinate.x, coordinate.y);
         }
+
         /// <summary>
         /// Converts WGS84-coordinate to UnityCoordinate
         /// </summary>
@@ -171,8 +90,10 @@ namespace Netherlands3D.Core
             Vector3 output = WGS84toUnity(coordinate.x, coordinate.y);
             double heightCorrection = RDCorrection(coordinate.x, coordinate.y, "Z", RDCorrectionZ);
             output.y = (float)(coordinate.z - heightCorrection);
+
             return output;
         }
+
         /// <summary>
         /// Converts WGS84-coordinate to UnityCoordinate
         /// </summary>
@@ -185,6 +106,7 @@ namespace Netherlands3D.Core
             output.y = (float)( coordinate.h - heightCorrection);
             return output;
         }
+
         /// <summary>
         /// Converts WGS84-coordinate to UnityCoordinate
         /// </summary>
@@ -215,6 +137,7 @@ namespace Netherlands3D.Core
         {
             return RDtoUnity(coordinaat.x, coordinaat.y, coordinaat.z);
         }
+
         /// <summary>
         /// Convert RD-coordinate to Unity-Coordinate
         /// </summary>
@@ -242,9 +165,9 @@ namespace Netherlands3D.Core
         /// <returns>Unity-Coordinate</returns>
         public static Vector3 RDtoUnity(Vector2 coordinate)
         {
-            Vector3 output = RDtoUnity(coordinate.x, coordinate.y,0);
-            return output;
+            return RDtoUnity(coordinate.x, coordinate.y,0);
         }
+
         /// <summary>
         /// Convert RD-coordinate to Unity-coordinate
         /// </summary>
@@ -254,17 +177,16 @@ namespace Netherlands3D.Core
         /// <returns>Unity-Coordinate</returns>
         public static Vector3 RDtoUnity(double X, double Y, double Z)
         {
-            Vector3 output = new Vector3()
+            return new Vector3()
             {
                 x = (float)(X - relativeCenterRD.x),
                 y = (float)(Z + zeroGroundLevelY),
                 z = (float)(Y - relativeCenterRD.y)
-            };   
-            return output;
+            };
         }
 
         /// <summary>
-        /// Converts Unity-Coordinate to WGS84-Coordinate 
+        /// Converts Unity-Coordinate to WGS84-Coordinate
         /// </summary>
         /// <param name="coordinaat">Unity-coordinate XHZ</param>
         /// <returns>WGS-coordinate</returns>
@@ -276,6 +198,7 @@ namespace Netherlands3D.Core
             output.h = vectorRD.z + hoogteCorrectie;
             return output;
         }
+
         /// <summary>
         /// Converts Unity-Coordinate to RD-coordinate
         /// </summary>
@@ -291,7 +214,6 @@ namespace Netherlands3D.Core
             return RD;
         }
 
-
         /// <summary>
         /// Converts RD-coordinate to WGS84-cordinate using the "benaderingsformules" from http://home.solcon.nl/pvanmanen/Download/Transformatieformules.pdf
         /// and X, Y, and Z correctiongrids
@@ -299,7 +221,7 @@ namespace Netherlands3D.Core
         /// <param name="x">RD-coordinate X</param>
         /// <param name="y">RD-coordinate Y</param>
         /// <returns>WGS84-coordinate</returns>
-        /// 
+        ///
         //setup coefficients for lattitude-calculation
         private static double[] Kp = new double[] { 0, 2, 0, 2, 0, 2, 1, 4, 2, 4, 1 };
         private static double[] Kq = new double[] { 1, 0, 2, 1, 3, 2, 0, 0, 3, 1, 1 };
@@ -350,6 +272,7 @@ namespace Netherlands3D.Core
             //output height missing
             return output;
         }
+
         /// <summary>
         /// Converts WGS84-coordinate to RD-coordinate using the "benaderingsformules" from http://home.solcon.nl/pvanmanen/Download/Transformatieformules.pdf
         /// and X, Y, and Z correctiongrids
@@ -357,7 +280,7 @@ namespace Netherlands3D.Core
         /// <param name="lon">Longitude (East-West)</param>
         /// <param name="lat">Lattitude (South-North)</param>
         /// <returns>RD-coordinate xyH</returns>
-        /// 
+        ///
         //setup coefficients for X-calculation
         private static double[] Rp = new double[] { 0, 1, 2, 0, 1, 3, 1, 0, 2 };
         private static double[] Rq = new double[] { 1, 1, 1, 3, 0, 1, 3, 2, 3 };
@@ -417,7 +340,7 @@ namespace Netherlands3D.Core
         private static double semimajorAxis = 6378137;
         private static double flattening = 0.003352810681183637418;
         private static double eccentricity = 0.0818191910428;
-
+        public static bool ecefIsSet;
 
         public static Quaternion ecefRotionToUp()
         {
@@ -464,8 +387,10 @@ namespace Netherlands3D.Core
             ecef.X = -temppoint.x + relativeCenterECEF.X;
             ecef.Y = -temppoint.z + relativeCenterECEF.Y;
             ecef.Z = temppoint.y + relativeCenterECEF.Z;
+
             return ecef;
         }
+
         public static Vector3ECEF WGS84toECEF(Vector3WGS wgsCoordinate)
         {
             Vector3ECEF result = new Vector3ECEF();
@@ -480,9 +405,9 @@ namespace Netherlands3D.Core
 
             return result;
         }
+
         public static Vector3WGS ECEFtoWGS84(Vector3ECEF ecefCoordinate)
         {
-            
             double eta = Math.Pow(eccentricity, 2) / (1 - Math.Pow(eccentricity, 2));
             double b = semimajorAxis * (1 - flattening);
             double p = Math.Sqrt(Math.Pow(ecefCoordinate.X, 2) + Math.Pow(ecefCoordinate.Y, 2));
@@ -496,7 +421,6 @@ namespace Netherlands3D.Core
 
             return result;
         }
-
 
         public static Vector3 RotationToUnityUP(Vector3WGS position)
         {
@@ -520,15 +444,12 @@ namespace Netherlands3D.Core
         /// <returns>true if coordinate is valid</returns>
         public static bool RDIsValid(Vector3RD coordinaat)
         {
-            if (coordinaat.x > -7000 && coordinaat.x < 300000)
-            {
-                if (coordinaat.y > 289000 && coordinaat.y < 629000)
-                {
-                    return true;
-                }
-            }
-            return false;
+            if (!(coordinaat.x > -7000) || !(coordinaat.x < 300000)) return false;
+            if (!(coordinaat.y > 289000) || !(coordinaat.y < 629000)) return false;
+
+            return true;
         }
+
         /// <summary>
         /// checks if WGS-coordinate is valid
         /// </summary>
@@ -541,6 +462,7 @@ namespace Netherlands3D.Core
             if (coordinaat.lon > 180) { isValid = false; }
             if (coordinaat.lat < -90) { isValid = false; }
             if (coordinaat.lat > 90) { isValid = false; }
+
             return isValid;
         }
 
@@ -559,7 +481,7 @@ namespace Netherlands3D.Core
             if (direction == "X")
             {
                 //txt = RDCorrectionX;
-                value = -0.185;    
+                value = -0.185;
             }
             else if (direction == "Y")
             {
@@ -572,7 +494,7 @@ namespace Netherlands3D.Core
                 //txt = RDCorrectionZ;
             }
 
-            
+
             //byte[] bytes = txt.bytes;
 
             double Xmin;
@@ -623,7 +545,6 @@ namespace Netherlands3D.Core
             }
             else
             {
-                
                 float myFloat = System.BitConverter.ToSingle(bytes, 56 + (dataNumber * 4));
                 value += myFloat;
             }
@@ -631,6 +552,5 @@ namespace Netherlands3D.Core
 
             return value;
         }
-
     }
 }
