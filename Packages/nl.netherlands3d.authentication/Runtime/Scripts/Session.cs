@@ -29,7 +29,12 @@ namespace Netherlands3D.Authentication
         private string clientId;
 
         [SerializeField]
-        [Tooltip("The client secret, as defined with the OAuth app for the associated provider")]
+        [
+            Tooltip(
+                "The client secret, as defined with the OAuth app for the associated provider or left empty if your "
+                + "provider doesn't want one"
+            )
+        ]
         private string clientSecret;
 
         /// <remarks>

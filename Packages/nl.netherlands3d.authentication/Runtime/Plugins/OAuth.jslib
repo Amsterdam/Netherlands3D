@@ -37,13 +37,19 @@
             this.setupClient = (authorizationEndpoint, clientId, clientSecret, tokenEndpoint, redirectUri, scope) => {
                 const {host, protocol} = new URL(authorizationEndpoint);
 
-                this._client = new OAuth2Client.OAuth2Client({
+                let clientConfig = {
                     server: `${protocol}//${host}`,
                     clientId,
-                    clientSecret,
                     tokenEndpoint,
                     authorizationEndpoint
-                });
+                };
+                
+                // Some clients want the secret, others don't. So: let's give it when we have it
+                if (clientSecret) {
+                    clientConfig.clientSecret = clientSecret;
+                }
+                
+                this._client = new OAuth2Client.OAuth2Client(clientConfig);
                 this.redirectUri = redirectUri;
                 this.scope = scope;
 
