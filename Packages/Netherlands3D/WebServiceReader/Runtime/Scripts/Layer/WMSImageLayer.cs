@@ -40,32 +40,32 @@ namespace Netherlands3D.WMS
         {
             var tileKey = new Vector2Int(tileChange.X, tileChange.Y);
 
-            if (tileChange.action== TileAction.Create)
+            switch (tileChange.action)
             {
-                Tile newTile = CreateNewTile(tileKey);
-                tiles.Add(tileKey, newTile);
-                newTile.gameObject.SetActive(false);
-                //retrieve the image and put it on the tile
-                tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
-            }
-            if (tileChange.action == TileAction.Upgrade)
-            {
-                tiles[tileKey].unityLOD++;
-                tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
-            }
-            if (tileChange.action == TileAction.Downgrade)
-            {
-                tiles[tileKey].unityLOD--;
-                tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
-            }
+                case TileAction.Create:
+                    {
+                        Tile newTile = CreateNewTile(tileKey);
+                        tiles.Add(tileKey, newTile);
+                        newTile.gameObject.SetActive(false);
+                        //retrieve the image and put it on the tile
+                        tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
+                        break;
+                    }
 
-            if (tileChange.action == TileAction.Remove)
-            {
-                InteruptRunningProcesses(tileKey);
-                RemoveGameObjectFromTile(tileKey);
-                tiles.Remove(tileKey);
-                callback(tileChange);
-                return;
+                case TileAction.Upgrade:
+                    tiles[tileKey].unityLOD++;
+                    tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
+                    break;
+                case TileAction.Downgrade:
+                    tiles[tileKey].unityLOD--;
+                    tiles[tileKey].runningCoroutine = StartCoroutine(DownloadTexture(tileChange, callback));
+                    break;
+                case TileAction.Remove:
+                    InteruptRunningProcesses(tileKey);
+                    RemoveGameObjectFromTile(tileKey);
+                    tiles.Remove(tileKey);
+                    callback(tileChange);
+                    return;
             }
         }
 
