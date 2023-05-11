@@ -123,14 +123,14 @@ namespace Netherlands3D.WMS
 
             string url = Datasets[tiles[tileKey].unityLOD].path;
             var urlTemplate = new WMSImageUrlTemplate(url);
-            var requestUrl = urlTemplate.GetUrl(
+            var imageUrl = urlTemplate.GetUrl(
                 tileChange.X,
                 tileChange.Y,
                 tileChange.X + tileSize,
                 tileChange.Y + tileSize
             );
 
-            var webRequest = UnityWebRequestTexture.GetTexture(requestUrl, compressLoadedTextures == false);
+            var webRequest = UnityWebRequestTexture.GetTexture(imageUrl, compressLoadedTextures == false);
             tile.runningWebRequest = webRequest;
             yield return webRequest.SendWebRequest();
 
@@ -138,6 +138,8 @@ namespace Netherlands3D.WMS
 
             if (webRequest.result != UnityWebRequest.Result.Success)
             {
+                Debug.LogWarning($"Could not download {imageUrl}");
+
                 RemoveGameObjectFromTile(tileKey);
                 callback(tileChange);
             }

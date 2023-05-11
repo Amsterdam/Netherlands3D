@@ -24,11 +24,11 @@ namespace Netherlands3D.WMS
     public class WMSImageUrlTemplate
     {
         //Mandatory bbox parameters
-        public const string bboxXMin = "{XMin}";
-        public const string bboxYMin = "{YMin}";
+        public const string bboxXMin = "{Xmin}";
+        public const string bboxYMin = "{Ymin}";
 
-        public const string bboxXMax = "{XMax}";
-        public const string bboxYMax = "{YMax}";
+        public const string bboxXMax = "{Xmax}";
+        public const string bboxYMax = "{Ymax}";
 
         //Optional
         public const string widthPlaceholder = "{Width}";
@@ -44,8 +44,10 @@ namespace Netherlands3D.WMS
         {
             if (!HasBboxCoordinates(url))
             {
-                throw new ArgumentException("The WMS Url is invalid", nameof(url));
+                throw new ArgumentException($"The WMS Url template is invalid: {url}. Please check if it contains {bboxXMin},{bboxYMin},{bboxXMax} and {bboxYMax}", nameof(url));
             }
+
+            this.url = url;
 
             //Apply new default height if parameters exist
             if (HasSize(url) && defaultWidth > 0 && defaultHeight > 0)

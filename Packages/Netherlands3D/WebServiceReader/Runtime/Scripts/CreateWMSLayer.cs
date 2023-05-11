@@ -93,12 +93,8 @@ namespace Netherlands3D.WMS
         }
 
         /// <summary>
-        /// Create a new layer using a WMS base url.
-        /// The following placeholders can be used:
-        /// {Width} and {Height} to determine requested image size.
-        /// {Xmin},{Ymin},{Xmax} and {Ymax} to set the boundingbox bottom left (xmin) and top right (ymax) coordinates.
+        /// Create a new layer using a WMS base url
         /// </summary>
-        /// <param name="baseURL">The WMS base url. For example 'https://service.pdok.nl/hwh/luchtfotorgb/wms/v1_0?service=WMS&request=GETMAP&version=1.1.1&LAYERS=Actueel_orthoHR&Styles=Default&WIDTH={Width}&HEIGHT={Height}&format=image/jpeg&srs=EPSG:28992&bbox={Xmin},{Ymin},{Xmax},{Ymax}&transparent=true'</param>
         public void CreateLayer(string baseURL)
         {
             if (layer != null)
@@ -127,22 +123,23 @@ namespace Netherlands3D.WMS
             layer.compressLoadedTextures = compressLoadedTextures;
             layer.tileSize = tileSize;
 
-            var wmsUrlTemplate = new WMSImageUrlTemplate(baseURL);
-            AddWMSLayerDataSets(wmsUrlTemplate);
+            AddWMSLayerDataSets(baseURL);
 
             TileHandler.AddLayer(layer);
 
             ShowLayer(DisplayState);
         }
 
-        private void AddWMSLayerDataSets(WMSImageUrlTemplate wmsUrlTemplate)
+        private void AddWMSLayerDataSets(string baseURL)
         {
             for (int i = 0; i < wmsLods.Length; i++)
             {
                 var wmsLOD = wmsLods[i];
                 DataSet dataSet = new DataSet();
 
-                string datasetURL = wmsUrlTemplate.GetUrl(wmsLOD.textureSize, wmsLOD.textureSize, false);
+                var wmsUrlTemplate = new WMSImageUrlTemplate(baseURL, wmsLOD.textureSize, wmsLOD.textureSize);
+                string datasetURL = wmsUrlTemplate.Url;
+
                 dataSet.path = datasetURL;
                 dataSet.maximumDistance = wmsLOD.maximumDistance;
 
