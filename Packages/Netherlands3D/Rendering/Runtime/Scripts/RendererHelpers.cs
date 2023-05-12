@@ -27,6 +27,12 @@ namespace Netherlands3D.Rendering
     {
         private const string fieldName = "m_RendererDataList";
 
+        /// <summary>
+        /// Toggle stencil reference of a render feature to 0 (disabled) to 1 (enabled) using a layername.
+        /// If you want to use a feature name use <see cref="EnableStencilByFeatureName(string, bool)"/>
+        /// </summary>
+        /// <param name="layerName">Layername used to render the target Render feature</param>
+        /// <param name="enable">Enable stencil rendering to reference 1</param>
         public static void EnableStencilByLayerName(string layerName, bool enable)
         {
             var pipeline = ((UniversalRenderPipelineAsset)GraphicsSettings.renderPipelineAsset);
@@ -47,6 +53,12 @@ namespace Netherlands3D.Rendering
             }
         }
 
+        /// <summary>
+        /// Toggle stencil reference of a render feature to 0 (disabled) to 1 (enabled) using a featurename.
+        /// If you want to use a layername name use <see cref="EnableStencilByLayerName(string, bool)"/>
+        /// </summary>
+        /// <param name="featureName">Featurename used to render the target Render feature</param>
+        /// <param name="enable">Enable stencil rendering to reference 1</param>
         public static void EnableStencilByFeatureName(string featureName, bool enable)
         {
             var pipeline = ((UniversalRenderPipelineAsset)GraphicsSettings.renderPipelineAsset);
