@@ -48,7 +48,9 @@ namespace Netherlands3D.Rendering
                 {
                     renderObjSetting.settings.stencilSettings.stencilReference = (enable) ? 1 : 0;
                     _scriptableRendererData.SetDirty();
+#if UNITY_EDITOR
                     Debug.Log(renderObjSetting.name + " set stencil set to " + renderObjSetting.settings.stencilSettings.stencilReference);
+#endif
                 }
             }
         }
@@ -71,7 +73,9 @@ namespace Netherlands3D.Rendering
                 {
                     renderObjSetting.settings.stencilSettings.stencilReference = (enable) ? 1 : 0;
                     _scriptableRendererData.SetDirty();
+#if UNITY_EDITOR
                     Debug.Log(renderObjSetting.name + " set stencil set to " + renderObjSetting.settings.stencilSettings.stencilReference);
+#endif
                 }
             }
         }
