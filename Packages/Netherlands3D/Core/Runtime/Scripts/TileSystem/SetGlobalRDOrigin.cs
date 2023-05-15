@@ -61,7 +61,6 @@ namespace Netherlands3D.Core
         {
             CoordinateConverter.zeroGroundLevelY = zeroGroundLevelY;
             CoordinateConverter.relativeCenterRD = relativeCenterRD;
-            CoordinateConverter.ecefIsSet = false;
 
             Vector3WGS origin_wgs = CoordinateConverter.UnitytoWGS84(Vector3.zero);
 

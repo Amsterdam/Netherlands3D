@@ -19,7 +19,7 @@
 namespace Netherlands3D.Coordinates
 {
     /// <summary>
-    /// Vector3 width Double values to represent RD-coordinates (X,Y,H)
+    /// Vector3 with Double values to represent RD-coordinates (X,Y,H)
     /// </summary>
     public struct Vector3RD
     {

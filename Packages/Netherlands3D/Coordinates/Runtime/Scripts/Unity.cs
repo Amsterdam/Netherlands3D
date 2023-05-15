@@ -1,0 +1,71 @@
+﻿/*
+*  Copyright (C) X Gemeente
+*                X Amsterdam
+*                X Economic Services Departments
+*
+*  Licensed under the EUPL, Version 1.2 or later (the "License");
+*  You may not use this work except in compliance with the License.
+*  You may obtain a copy of the License at:
+*
+*    https://github.com/Amsterdam/3DAmsterdam/blob/master/LICENSE.txt
+*
+*  Unless required by applicable law or agreed to in writing, software
+*  distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+*  implied. See the License for the specific language governing
+*  permissions and limitations under the License.
+*/
+
+using UnityEngine;
+
+namespace Netherlands3D.Coordinates
+{
+    /// <summary>
+    /// Convert coordinates between Unity, ECEF, WGS84 and RD(EPSG7415)
+    /// <!-- accuracy: WGS84 to RD  X <0.01m, Y <0.02m H <0.03m, tested in Amsterdam with PCNapTrans-->
+    /// <!-- accuracy: RD to WGS84  X <0.01m, Y <0.02m H <0.03m, tested in Amsterdam with PCNapTrans-->
+    /// </summary>
+    public static class Unity
+    {
+        public static Vector3ECEF ToECEF(Vector3 point)
+        {
+            var temppoint = Quaternion.Inverse(ECEF.RotationToUp()) * point;
+            Vector3ECEF ecef = new Vector3ECEF();
+            ecef.X = -temppoint.x + ECEF.relativeCenter.X;
+            ecef.Y = -temppoint.z + ECEF.relativeCenter.Y;
+            ecef.Z = temppoint.y + ECEF.relativeCenter.Z;
+
+            return ecef;
+        }
+
+        /// <summary>
+        /// Converts Unity-Coordinate to RD-coordinate
+        /// </summary>
+        /// <param name="coordinates">Unity-Coordinate</param>
+        /// <returns>RD-coordinate</returns>
+        public static Vector3RD ToEPSG7415(Vector3 coordinates)
+        {
+            return new Vector3RD
+            {
+                x = coordinates.x + EPSG7415.relativeCenter.x,
+                y = coordinates.z + EPSG7415.relativeCenter.y,
+                z = coordinates.y - EPSG7415.zeroGroundLevelY
+            };
+        }
+
+        /// <summary>
+        /// Converts Unity-Coordinate to WGS84-Coordinate
+        /// </summary>
+        /// <param name="coordinates">Unity-coordinate XHZ</param>
+        /// <returns>WGS-coordinate</returns>
+        public static Vector3WGS ToWGS84(Vector3 coordinates)
+        {
+            Vector3RD vectorRD = ToEPSG7415(coordinates);
+            Vector3WGS output = EPSG7415.ToWGS84(vectorRD.x,vectorRD.y);
+            double hoogteCorrectie = EPSG7415.RDCorrection(output.lon, output.lat, "Z", EPSG7415.RDCorrectionZ);
+            output.h = vectorRD.z + hoogteCorrectie;
+
+            return output;
+        }
+    }
+}
