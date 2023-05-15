@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using SimpleJSON;
@@ -228,20 +228,16 @@ namespace Netherlands3D.Tiles3D
         {
             Tile tile = new Tile();
             tile.transform = new double[16] { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
+
             tile.boundingVolume = new BoundingVolume();
-            tile.boundingVolume.boundingVolumeType = BoundingVolumeType.Region;
-            tile.boundingVolume.values = new double[6];
-            JSONNode regionNode = node["boundingVolume"]["region"];
-            for (int i = 0; i < 6; i++)
-            {
-                tile.boundingVolume.values[i] = regionNode[i].AsDouble;
-            }
-            tile.CalculateBounds();
-            tile.geometricError = node["geometricError"].AsFloat;
+            JSONNode boundingVolumeNode = node["boundingVolume"];
+            ParseBoundingVolume(tile, boundingVolumeNode);
+
+            tile.geometricError = double.Parse(node["geometricError"].Value);
             tile.refine = node["refine"].Value;
             JSONNode childrenNode = node["children"];
             tile.children = new List<Tile>();
-            if (childrenNode!=null)
+            if (childrenNode != null)
             {
                 for (int i = 0; i < childrenNode.Count; i++)
                 {
@@ -249,14 +245,63 @@ namespace Netherlands3D.Tiles3D
                 }
             }
             JSONNode contentNode = node["content"];
-            if (contentNode!=null)
+            if (contentNode != null)
             {
                 tile.hascontent = true;
-                
+
                 tile.contentUri = contentNode["uri"].Value;
             }
 
             return tile;
+        }
+
+        private void ParseBoundingVolume(Tile tile, JSONNode boundingVolumeNode)
+        {
+            if (boundingVolumeNode != null)
+            {
+                Dictionary<string, BoundingVolumeType> boundingVolumeTypes = new()
+                {
+                    { "region", BoundingVolumeType.Region },
+                    { "box", BoundingVolumeType.Box },
+                    { "sphere", BoundingVolumeType.Sphere }
+                };
+
+                foreach (KeyValuePair<string, BoundingVolumeType> kvp in boundingVolumeTypes)
+                {
+                    JSONNode volumeNode = boundingVolumeNode[kvp.Key];
+                    if (volumeNode != null)
+                    {
+                        int length = GetBoundingVolumeLength(kvp.Value);
+                        if (volumeNode.Count == length)
+                        {
+                            tile.boundingVolume.values = new double[length];
+                            for (int i = 0; i < length; i++)
+                            {
+                                tile.boundingVolume.values[i] = volumeNode[i].AsDouble;
+                            }
+                            tile.boundingVolume.boundingVolumeType = kvp.Value;
+                            break; // Exit the loop after finding the first valid bounding volume
+                        }
+                    }
+                }
+            }
+
+            tile.CalculateBounds();
+        }
+
+        private int GetBoundingVolumeLength(BoundingVolumeType type)
+        {
+            switch (type)
+            {
+                case BoundingVolumeType.Region:
+                    return 6;
+                case BoundingVolumeType.Box:
+                    return 12;
+                case BoundingVolumeType.Sphere:
+                    return 4;
+                default:
+                    return 0;
+            }
         }
 
         private void AlignWithUnityWorld()
@@ -371,7 +416,7 @@ namespace Netherlands3D.Tiles3D
                 var child = visibleTiles[i];
                 var closestPointOnBounds = child.ContentBounds.ClosestPoint(currentMainCamera.transform.position); //Returns original point when inside the bounds
 
-                var tileScreenSpaceError = (sseComponent * child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
+                var tileScreenSpaceError = (sseComponent * (float)child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
                 child.screenSpaceError = tileScreenSpaceError;
                 if (tileScreenSpaceError <= maximumScreenSpaceError || !child.IsInViewFrustrum(currentMainCamera))
                 {
@@ -388,7 +433,7 @@ namespace Netherlands3D.Tiles3D
                 if (visibleTiles.Contains(tile)) continue;
 
                 var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
-                var tileScreenSpaceError = (sseComponent * tile.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
+                var tileScreenSpaceError = (sseComponent * (float)tile.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
                 tile.screenSpaceError = tileScreenSpaceError;
                 if (tile.geometricError <= sseComponent && tile.content)
                 {
