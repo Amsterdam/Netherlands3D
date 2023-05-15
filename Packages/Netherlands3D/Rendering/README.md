@@ -18,14 +18,12 @@ The renderer contains the following render features:
 
 - Buildings - Render feature to render your buildings layer inc. rendering to stencil mask
 
-- Projector - A render feature for the RendererProjectorPrefab
+- Projector - Render feature for the RendererProjectorPrefab
 
-- Decal - A render feature for the DecalProjectorPrefab with large decal rendering distance, and set to Screen Space to be supported by WebGL builds
-
-
-
-
-
-
-
-
+- Decal - Render feature for the DecalProjectorPrefab with large decal rendering distance, and set to Screen Space to be supported by WebGL builds
+  
+  
+  
+  
+  
+  
