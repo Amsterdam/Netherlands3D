@@ -8,6 +8,10 @@
         {
             "url": "https://3d.test.kadaster.nl/3dtiles/2020/terrain/tileset.json",
             "maximumScreenSpaceError": 5
+        },
+        {
+            "url": "https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyDmUdUQUPBphTIFolsQ4e-dT_SMfLgqp74",
+            "maximumScreenSpaceError": 5
         }
     ]
 }
