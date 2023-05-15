@@ -12,8 +12,7 @@ Please note that this package depends on the following Netherlands3D packages:
   
   
 
-Add the CreateWMSLayer to an object in your scene. 
-A TileHandler is required, but does not necesserali need to be on the same object. You can reference the TileHandler in the Optional part of the script. Leaving it empty will cause the script to look up a TileHandler during runtime.
+Add the CreateWMSLayer to an object in your scene. A TileHandler is required, but does not necessarily need to be on the same object. You can reference the TileHandler in the Optional part of the script. Leaving it empty will cause the script to look up a TileHandler during runtime.
 
 Set 'Projector Prefab' to one of the Projector prefabs in the Prefabs folder of the package:
 
@@ -29,4 +28,4 @@ Wms Lods is an array of different LOD levels for different render distances. The
 
 
 
-The Samples contain an example scene showing you this setup as a finished scene.
+The Samples contain an example scene showing you this setup as a finished scene. In this example the CreateWMSLayer is placed on the TileHandler object itself.
