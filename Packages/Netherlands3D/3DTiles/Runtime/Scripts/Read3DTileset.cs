@@ -159,6 +159,10 @@ namespace Netherlands3D.Tiles3D
                 else
                 {
                     tile.content.uri = absolutePath + tile.contentUri;
+                    if(tile.content.uri.Contains(".json"))
+                    {
+                        StartCoroutine(LoadNestedDataSet(tile, tile.content.uri));
+                    }
                 }
 
                 //Request tile content update via optional prioritiser, or load directly
@@ -170,6 +174,24 @@ namespace Netherlands3D.Tiles3D
                 {
                     tile.content.Load();
                 }
+            }
+        }
+
+        private IEnumerator LoadNestedDataSet(Tile tile, string datasetPath)
+        {
+            UnityWebRequest www = UnityWebRequest.Get(datasetPath);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                string jsonstring = www.downloadHandler.text;
+
+                JSONNode node = JSON.Parse(jsonstring)["root"];
+                ReadExplicitNode(node, tile);
             }
         }
 
@@ -210,7 +232,8 @@ namespace Netherlands3D.Tiles3D
             switch (tilingMethod)
             {
                 case TilingMethod.explicitTiling:
-                    root = ReadExplicitNode(rootnode);
+                    Tile rootTile = new Tile();
+                    root = ReadExplicitNode(rootnode, rootTile);
                     StartCoroutine(LoadInView());
                     break;
                 case TilingMethod.implicitTiling:
@@ -224,11 +247,9 @@ namespace Netherlands3D.Tiles3D
         /// <summary>
         /// Recursive reading of tile nodes to build the tiles tree
         /// </summary>
-        private Tile ReadExplicitNode(JSONNode node)
+        private Tile ReadExplicitNode(JSONNode node, Tile tile)
         {
-            Tile tile = new Tile();
             tile.transform = new double[16] { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
-
             tile.boundingVolume = new BoundingVolume();
             JSONNode boundingVolumeNode = node["boundingVolume"];
             ParseBoundingVolume(tile, boundingVolumeNode);
@@ -241,7 +262,8 @@ namespace Netherlands3D.Tiles3D
             {
                 for (int i = 0; i < childrenNode.Count; i++)
                 {
-                    tile.children.Add(ReadExplicitNode(childrenNode[i]));
+                    var childTile = new Tile();
+                    tile.children.Add(ReadExplicitNode(childrenNode[i], childTile));
                 }
             }
             JSONNode contentNode = node["content"];
