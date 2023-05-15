@@ -1,8 +1,8 @@
 WMS Texture Projection
 ===============
 
-This package contains a TileHandler layer that loads tiles as projected textures from a WMS service.
-Supporting scripts allow you to add the layer to an existing TileHandler with LOD steps with different texture sizes for different distances.
+This package includes a TileHandler layer that loads tiles as projected textures from a WMS service.
+Supporting scripts allow you to add the layer to an existing TileHandler with LOD steps, offering different texture sizes for various distances.
 
 Please note that this package depends on the following Netherlands3D packages:
 
@@ -12,20 +12,22 @@ Please note that this package depends on the following Netherlands3D packages:
   
   
 
-Add the CreateWMSLayer to an object in your scene. A TileHandler is required, but does not necessarily need to be on the same object. You can reference the TileHandler in the Optional part of the script. Leaving it empty will cause the script to look up a TileHandler during runtime.
+To utilize this package, follow these steps:
 
-Set 'Projector Prefab' to one of the Projector prefabs in the Prefabs folder of the package:
+1. Add the CreateWMSLayer script to an object in your scene. A TileHandler is required but does not necessarily need to be on the same object. You can reference the TileHandler in the Optional section of the script. Leaving it empty will prompt the script to look up a TileHandler during runtime.
 
-- DecalProjectorPrefab - Using a Unity URP DecalProjector. This depends on the Decal render feature from the Rendering package.
+2. Set the 'Projector Prefab' to one of the Projector prefabs located in the Prefabs folder of the package:
+   
+   - DecalProjectorPrefab: Uses a Unity URP DecalProjector. This depends on the Decal render feature from the Rendering package.
+   
+   - RendererProjectorPrefab: Uses a custom shader and MeshRenderer. This depends on the stencil rendering features from the Rendering package.
 
-- RendererProjectorPrefab - Using a custom shader and MeshRenderer. This depends on the stencil rendering features from the Rendering package
+3. The default Tile Size is set to 1500. You can modify it to your preferred tile size in meters.
 
-Tile Size defaults to 1500. You can change it to the prefered tile size (meters).
+4. By default, the "Compress Loaded Textures" option is enabled. Disabling it will enhance performance but increase memory usage.
 
-The Compress Loaded Textures option defaults to enabled. Disabling will improve performance but increase memory usage.
+5. "Wms Lods" is an array of different LOD levels for various render distances. The texture size is measured in pixels. It is recommended to use power-of-two sizes. Ensure that the texture size does not exceed the supported output size of your WMS service, as it will not improve quality but only increase texture memory usage.
 
-Wms Lods is an array of different LOD levels for different render distances. The texture size is in pixels. It is recommended to use power-of-two sizes. Make sure the texture size is not larger then the supported output size of your WMS service as it would not increase quality, only texure memory usage.
+The package also includes a sample scene demonstrating the setup described above. In the example scene, the CreateWMSLayer is placed on the TileHandler object itself.
 
 
-
-The Samples contain an example scene showing you this setup as a finished scene. In this example the CreateWMSLayer is placed on the TileHandler object itself.
