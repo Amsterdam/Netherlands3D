@@ -16,6 +16,8 @@ namespace Netherlands3D.Tiles3D
     {
         public string tilesetUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json";
         private string absolutePath = "";
+        private string keyVariable = "";
+        private string sessionVariable = "";
 
         public Tile root;
         public double[] transformValues;
@@ -32,7 +34,7 @@ namespace Netherlands3D.Tiles3D
         public int maxScreenHeightInPixels = 1080;
         public int maximumScreenSpaceError = 5;
 
-        private float sseComponent = -1;
+        [SerializeField] private double sseComponent = -1;
         private List<Tile> visibleTiles = new List<Tile>();
 
         [SerializeField] private TilePrioritiser tilePrioritiser;
@@ -59,7 +61,19 @@ namespace Netherlands3D.Tiles3D
                 tilePrioritiser.SetCamera(currentCamera);
             }
 
-            absolutePath = tilesetUrl.Replace(tilesetFilename, "");
+            //TODO
+            absolutePath = tilesetUrl.Replace(tilesetFilename, "");  
+            var splitKey = absolutePath.Split("?key=");
+            if (splitKey.Length > 1)
+            {
+                absolutePath = splitKey[0];
+                keyVariable = "&key=" + splitKey[1];
+            }
+            if (absolutePath.Contains("googleapis"))
+            {
+                absolutePath = "https://tile.googleapis.com";
+            }
+
             StartCoroutine(LoadTileset());
 
             CoordConvert.relativeOriginChanged.AddListener(RelativeCenterChanged);
@@ -156,23 +170,72 @@ namespace Netherlands3D.Tiles3D
                 {
                     tile.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", tile.X.ToString()).Replace("{x}", tile.Y.ToString()).Replace("{y}", tile.Z.ToString());
                 }
-                else
+                else if (tilingMethod == TilingMethod.explicitTiling)
                 {
                     tile.content.uri = absolutePath + tile.contentUri;
+<<<<<<< Updated upstream
+=======
+                    //Content may be nested json tree instead of glb
+                    if (tile.contentUri.Contains(".json"))
+                    {
+                        if(tile.content.uri.Contains("session=")){
+                            sessionVariable = "&session=" + tile.content.uri.Split("?session=")[1];
+                        }
+                        var nestedJsonPath = absolutePath + tile.contentUri + keyVariable + sessionVariable;
+                        if(tile.children.Count == 0) StartCoroutine(LoadNestedDataSet(tile, nestedJsonPath));
+
+                        tile.content.uri = nestedJsonPath;
+                    }
+                    else
+                    {
+                        //Model
+                        tile.content.uri = absolutePath + tile.contentUri + keyVariable + sessionVariable;
+
+                        if(tile.hascontent && tile.content.uri.Contains(".glb"))
+                        {
+                            Debug.Log("LOAD THIS " + tile.content.uri);
+                        }
+                    }
+>>>>>>> Stashed changes
                 }
 
-                //Request tile content update via optional prioritiser, or load directly
-                if (usingPrioritiser && !tile.requestedUpdate)
+                if (!tile.content.uri.Contains(".json")) 
                 {
-                    tilePrioritiser.RequestUpdate(tile);
-                }
-                else
-                {
-                    tile.content.Load();
+                    //Request tile content update via optional prioritiser, or load directly
+                    if (usingPrioritiser && !tile.requestedUpdate)
+                    {
+                        tilePrioritiser.RequestUpdate(tile);
+                    }
+                    else
+                    {
+                        tile.content.Load();
+                    }
                 }
             }
         }
 
+<<<<<<< Updated upstream
+=======
+        private IEnumerator LoadNestedDataSet(Tile tile, string datasetPath)
+        {
+            UnityWebRequest www = UnityWebRequest.Get(datasetPath);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(www.error);
+                Debug.Log(datasetPath);
+            }
+            else
+            {
+                string jsonstring = www.downloadHandler.text;
+
+                JSONNode node = JSON.Parse(jsonstring)["root"];
+                ReadExplicitNode(node, tile);
+            }
+        }
+
+>>>>>>> Stashed changes
         private void RequestDispose(Tile tile)
         {
             if (usingPrioritiser && !tile.requestedDispose)
@@ -372,7 +435,16 @@ namespace Netherlands3D.Tiles3D
                 var closestPointOnBounds = child.ContentBounds.ClosestPoint(currentMainCamera.transform.position); //Returns original point when inside the bounds
 
                 var tileScreenSpaceError = (sseComponent * child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
+<<<<<<< Updated upstream
+=======
+                if (double.IsPositiveInfinity(tileScreenSpaceError))
+                {
+                    tileScreenSpaceError = float.MaxValue;
+                }
+
+>>>>>>> Stashed changes
                 child.screenSpaceError = tileScreenSpaceError;
+
                 if (tileScreenSpaceError <= maximumScreenSpaceError || !child.IsInViewFrustrum(currentMainCamera))
                 {
                     RequestDispose(child);
@@ -387,19 +459,33 @@ namespace Netherlands3D.Tiles3D
             {
                 if (visibleTiles.Contains(tile)) continue;
 
+                var tileHasNestedJson = (tile.contentUri.Contains(".json"));
                 var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
                 var tileScreenSpaceError = (sseComponent * tile.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
+<<<<<<< Updated upstream
+=======
+                if (double.IsPositiveInfinity(tileScreenSpaceError))
+                {
+                    tileScreenSpaceError = float.MaxValue;
+                }
+
+>>>>>>> Stashed changes
                 tile.screenSpaceError = tileScreenSpaceError;
                 if (tile.geometricError <= sseComponent && tile.content)
                 {
                     RequestDispose(tile);
                 }
-                else if (tileScreenSpaceError > maximumScreenSpaceError && tile.IsInViewFrustrum(currentCamera))
+                else if ((tileHasNestedJson || (tileScreenSpaceError > maximumScreenSpaceError)) && tile.IsInViewFrustrum(currentCamera))
                 {
                     //Check for children ( and if closest child can refine ). Closest child would have same closest point as parent on bounds, so simply divide pixelError by 2
-                    var canRefineToChildren = tile.children.Count > 0 && (tileScreenSpaceError / 2.0f > maximumScreenSpaceError);
-                    if (canRefineToChildren)
+                    var canRefineToChildren = (tileScreenSpaceError / 2.0f > maximumScreenSpaceError);
+                    if (canRefineToChildren || tileHasNestedJson)
                     {
+                        if (tileHasNestedJson)
+                        {
+                            RequestUpdate(tile);
+                            visibleTiles.Add(tile);
+                        }
                         yield return LoadInViewRecursively(tile, currentCamera);
                     }
                     else if (tile.hascontent && !canRefineToChildren)
@@ -424,12 +510,12 @@ namespace Netherlands3D.Tiles3D
 
             if (currentCamera.orthographic)
             {
-                sseComponent = screenHeight / currentCamera.orthographicSize;
+                sseComponent = (double)screenHeight / (double)currentCamera.orthographicSize;
             }
             else
             {
                 var coverage = 2 * Mathf.Tan((Mathf.Deg2Rad * currentCamera.fieldOfView) / 2);
-                sseComponent = screenHeight / coverage;
+                sseComponent = (double)screenHeight / (double)coverage;
             }
         }
 

@@ -16,15 +16,20 @@ namespace Netherlands3D.Tiles3D
         public int childrenCountDelayingDispose = 0;
         public Tile parent;
 
-        [NonSerialized] public List<Tile> children = new List<Tile>();
+        public List<Tile> children = new List<Tile>();
 
         public double[] transform;
+<<<<<<< Updated upstream
         public float geometricError;
         public float screenSpaceError;
+=======
+        public double geometricError;
+        public double screenSpaceError;
+>>>>>>> Stashed changes
 
         public string refine;
         public BoundingVolume boundingVolume;
-        public string contentUri;
+        public string contentUri = "";
         public Content content;
 
         public int priority = 0;
@@ -109,8 +114,14 @@ namespace Netherlands3D.Tiles3D
             var ecefMin = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[0] * 180.0f) / Mathf.PI, (boundingVolume.values[1] * 180.0f) / Mathf.PI, boundingVolume.values[4]));
             var ecefMax = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[2] * 180.0f) / Mathf.PI, (boundingVolume.values[3] * 180.0f) / Mathf.PI, boundingVolume.values[5]));
 
+<<<<<<< Updated upstream
             var unityMin = CoordConvert.ECEFToUnity(ecefMin);
             var unityMax = CoordConvert.ECEFToUnity(ecefMax);
+=======
+                    Vector3 extents = new Vector3(xAxis.magnitude, yAxis.magnitude, zAxis.magnitude);
+                    bounds.center = boxCenter;
+                    bounds.size = extents * 2;
+>>>>>>> Stashed changes
 
             bounds.size = Vector3.zero;
             bounds.center = unityMin;

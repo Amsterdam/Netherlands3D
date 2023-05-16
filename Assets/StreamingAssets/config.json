@@ -2,11 +2,15 @@
     "viewerVersion": "2.0.0",
     "tilesets": [
         {
+<<<<<<< Updated upstream
             "url": "https://3d.test.kadaster.nl/3dtiles/2020/buildings/tileset.json",
             "maximumScreenSpaceError": 5
         },
         {
             "url": "https://3d.test.kadaster.nl/3dtiles/2020/terrain/tileset.json",
+=======
+            "url": "https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyAeqe4utT4N29QGFA89an_C3mnnuZlw0Xs",
+>>>>>>> Stashed changes
             "maximumScreenSpaceError": 5
         }
     ]

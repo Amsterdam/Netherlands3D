@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -162,7 +162,7 @@ namespace Netherlands3D.Tiles3D
             foreach (var tile in PrioritisedTiles)
             {
                 var priorityScore = 0.0f;
-                priorityScore += DistanceScore(tile);
+                priorityScore += (float)DistanceScore(tile);
                 priorityScore += InViewCenterScore(tile.ContentBounds.center, screenCenterScore);
 
                 tile.priority = (int)priorityScore;
@@ -217,9 +217,9 @@ namespace Netherlands3D.Tiles3D
         /// <param name="maxDistance">The distance where score becomes 0</param>
         /// <param name="maxScore">Max score for closest object</param>
         /// <returns></returns>
-        public float DistanceScore(Tile tile)
+        public double DistanceScore(Tile tile)
         {
-            return tile.screenSpaceError * screenSpaceErrorScoreMultiplier;
+            return tile.screenSpaceError * (double)screenSpaceErrorScoreMultiplier;
         }
 
         public override void SetCamera(Camera currentMainCamera)
