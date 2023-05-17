@@ -18,7 +18,6 @@
 
 using System;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Netherlands3D.Coordinates
 {
@@ -35,20 +34,24 @@ namespace Netherlands3D.Coordinates
             set => EPSG7415.relativeCenter = value;
         }
 
-        public static UnityEvent prepareForOriginShift = new();
-        public class CenterChangedEvent : UnityEvent<Vector3> { }
-        public static CenterChangedEvent relativeOriginChanged = new();
-
-        public static void MoveAndRotateWorld(Vector3 cameraPosition)
+        public static Coordinate ConvertTo(Coordinate coordinate, int targetCrs)
         {
-            prepareForOriginShift.Invoke();
+            // Nothing to do if the coordinate system didn't change.
+            if (coordinate.CoordinateSystem == targetCrs) return coordinate;
 
-            var flatCameraPosition = new Vector3(cameraPosition.x, 0, cameraPosition.z);
-            ECEF.relativeCenter = WGS84toECEF(UnitytoWGS84(flatCameraPosition));
+            return coordinate.CoordinateSystem switch
+            {
+                (int)CoordinateSystem.WGS84 => WGS84.ConvertTo(coordinate, targetCrs),
+                (int)CoordinateSystem.RD => EPSG7415.ConvertTo(coordinate, targetCrs),
+                (int)CoordinateSystem.EPSG_4936 => EPSG4936.ConvertTo(coordinate, targetCrs),
+                _ => throw new ArgumentOutOfRangeException(
+                    $"Conversion between CRS ${coordinate.CoordinateSystem} and ${targetCrs} is not yet supported")
+            };
+        }
 
-            var offset = new Vector3(-cameraPosition.x, 0, -cameraPosition.z);
-
-            relativeOriginChanged.Invoke(offset);
+        public static Coordinate ConvertTo(Coordinate coordinate, CoordinateSystem targetCrs)
+        {
+            return ConvertTo(coordinate, (int)targetCrs);
         }
 
         /// <summary>
@@ -159,7 +162,7 @@ namespace Netherlands3D.Coordinates
         /// </summary>
         /// <param name="coordinate">Unity-coordinate XHZ</param>
         /// <returns>WGS-coordinate</returns>
-        [Obsolete("UnitytoWGS84() is deprecated, please use Unity.WGS84()")]
+        [Obsolete("UnitytoWGS84() is deprecated, please use Unity.ToWGS84()")]
         public static Vector3WGS UnitytoWGS84(Vector3 coordinate)
         {
             return Unity.ToWGS84(coordinate);
@@ -183,7 +186,7 @@ namespace Netherlands3D.Coordinates
         /// <param name="x">RD-coordinate X</param>
         /// <param name="y">RD-coordinate Y</param>
         /// <returns>WGS84-coordinate</returns>
-        [Obsolete("RDtoWGS84() is deprecated, please use EPSG7415.ToWGS84()")]
+        [Obsolete("RDtoWGS84() is deprecated, please use ConvertTo()")]
         public static Vector3WGS RDtoWGS84(double x, double y, double nap = 0)
         {
             return EPSG7415.ToWGS84(x, y, nap);
@@ -197,7 +200,7 @@ namespace Netherlands3D.Coordinates
         /// <param name="lat">Lattitude (South-North)</param>
         /// <returns>RD-coordinate xyH</returns>
         ///
-        [Obsolete("WGS84toRD() is deprecated, please use WGS84.ToEPSG7415()")]
+        [Obsolete("WGS84toRD() is deprecated, please use ConvertTo()")]
         public static Vector3RD WGS84toRD(double lon, double lat)
         {
             return WGS84.ToEPSG7415(lon, lat);
@@ -206,13 +209,13 @@ namespace Netherlands3D.Coordinates
         [Obsolete("ecefRotionToUp() is deprecated, please use ECEF.RotationToUp()")]
         public static Quaternion ecefRotionToUp()
         {
-            return ECEF.RotationToUp();
+            return EPSG4936.RotationToUp();
         }
 
         [Obsolete("ECEFToUnity() is deprecated, please use ECEF.ToUnity()")]
         public static Vector3 ECEFToUnity(Vector3ECEF coordinate)
         {
-            return ECEF.ToUnity(coordinate);
+            return EPSG4936.ToUnity(coordinate);
         }
 
         [Obsolete("UnityToECEF() is deprecated, please use Unity.ToECEF()")]
@@ -221,16 +224,16 @@ namespace Netherlands3D.Coordinates
             return Unity.ToECEF(point);
         }
 
-        [Obsolete("WGS84toECEF() is deprecated, please use WGS84.ToECEF()")]
+        [Obsolete("WGS84toECEF() is deprecated, please use ConvertTo()")]
         public static Vector3ECEF WGS84toECEF(Vector3WGS wgsCoordinate)
         {
             return WGS84.ToECEF(wgsCoordinate);
         }
 
-        [Obsolete("ECEFtoWGS84() is deprecated, please use ECEF.ToWGS84()")]
+        [Obsolete("ECEFtoWGS84() is deprecated, please use ConvertTo()")]
         public static Vector3WGS ECEFtoWGS84(Vector3ECEF coordinate)
         {
-            return ECEF.ToWGS84(coordinate);
+            return EPSG4936.ToWGS84(coordinate);
         }
 
         [Obsolete("RotationToUnityUP() is deprecated, please use WGS84.RotationToUp()")]

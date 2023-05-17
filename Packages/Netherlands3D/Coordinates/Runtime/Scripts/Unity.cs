@@ -29,11 +29,11 @@ namespace Netherlands3D.Coordinates
     {
         public static Vector3ECEF ToECEF(Vector3 point)
         {
-            var temppoint = Quaternion.Inverse(ECEF.RotationToUp()) * point;
+            var temppoint = Quaternion.Inverse(EPSG4936.RotationToUp()) * point;
             Vector3ECEF ecef = new Vector3ECEF();
-            ecef.X = -temppoint.x + ECEF.relativeCenter.X;
-            ecef.Y = -temppoint.z + ECEF.relativeCenter.Y;
-            ecef.Z = temppoint.y + ECEF.relativeCenter.Z;
+            ecef.X = -temppoint.x + EPSG4936.relativeCenter.X;
+            ecef.Y = -temppoint.z + EPSG4936.relativeCenter.Y;
+            ecef.Z = temppoint.y + EPSG4936.relativeCenter.Z;
 
             return ecef;
         }

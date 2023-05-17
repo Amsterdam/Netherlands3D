@@ -50,7 +50,7 @@ namespace Netherlands3D.Coordinates
             {
                 Vector2RD change = new Vector2RD(value.x - relativeCenterCoordinate.x, value.y - relativeCenterCoordinate.y);
 
-                ECEF.relativeCenter = WGS84.ToECEF(ToWGS84(value.x, value.y));
+                EPSG4936.relativeCenter = WGS84.ToECEF(ToWGS84(value.x, value.y));
 
                 //TODO: rotation from earth centered earth fixed
                 relativeCenterCoordinate = value;
@@ -242,6 +242,36 @@ namespace Netherlands3D.Coordinates
                 y = (float)(z + zeroGroundLevelY),
                 z = (float)(y - relativeCenter.y)
             };
+        }
+
+        public static Coordinate ConvertTo(Coordinate coordinate, int targetCrs)
+        {
+            if (coordinate.CoordinateSystem != (int)CoordinateSystem.EPSG_7415)
+            {
+                throw new ArgumentOutOfRangeException(
+                    $"Invalid coordinate received, this class cannot convert CRS ${coordinate.CoordinateSystem}"
+                );
+            }
+
+            var vector3 = new Vector3RD(coordinate.Points[0], coordinate.Points[1], coordinate.Points[2]);
+
+            switch (targetCrs)
+            {
+                case (int)CoordinateSystem.Unity:
+                {
+                    var result = ToUnity(vector3);
+                    return new Coordinate(targetCrs, result.x, result.y, result.z);
+                }
+                case (int)CoordinateSystem.WGS84:
+                {
+                    var result = ToWGS84(vector3.x, vector3.y, vector3.z);
+                    return new Coordinate(targetCrs, result.lon, result.lat, result.h);
+                }
+            }
+
+            throw new ArgumentOutOfRangeException(
+                $"Conversion between CRS ${coordinate.CoordinateSystem} and ${targetCrs} is not yet supported"
+            );
         }
 
         /// <summary>

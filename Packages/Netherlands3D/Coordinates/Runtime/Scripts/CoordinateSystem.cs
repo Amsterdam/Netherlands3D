@@ -23,8 +23,13 @@ namespace Netherlands3D.Coordinates
     /// </summary>
     public enum CoordinateSystem
     {
-        Unity,
-        WGS84,
-        RD
+        Unity = -1, // Deprecated, Unity should not be considered a coordinate system but a translation by the MovingOrigin
+        EPSG_3857 = 3857, // WGS 84 / Pseudo-Mercator
+        EPSG_4936 = 4936, // ETRS98-ECEF
+        EPSG_7415 = 7415,
+
+        // Commonly used aliases
+        WGS84 = EPSG_3857, // As an alias for WGS84, we assume the ArcGIS/Google Maps variety
+        RD = EPSG_7415, // As an alias for RD, we assume RD Amersfoort New + NAP / RD3D
     }
 }

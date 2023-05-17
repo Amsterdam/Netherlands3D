@@ -43,13 +43,13 @@ namespace Netherlands3D.Coordinates
         {
             yield return new WaitForEndOfFrame();
 
-            CoordinateConverter.prepareForOriginShift.AddListener(SaveOrigin);
-            CoordinateConverter.relativeOriginChanged.AddListener(MoveToNewOrigin);
+            MovingOrigin.prepareForOriginShift.AddListener(SaveOrigin);
+            MovingOrigin.relativeOriginChanged.AddListener(MoveToNewOrigin);
         }
 
         private void OnDestroy()
         {
-            CoordinateConverter.relativeOriginChanged.RemoveListener(MoveToNewOrigin);
+            MovingOrigin.relativeOriginChanged.RemoveListener(MoveToNewOrigin);
         }
 
         private void MoveToNewOrigin(Vector3 offset)

@@ -186,5 +186,40 @@ namespace Netherlands3D.Coordinates
 
             return rotation;
         }
+
+        public static Coordinate ConvertTo(Coordinate coordinate, int targetCrs)
+        {
+            if (coordinate.CoordinateSystem != (int)CoordinateSystem.EPSG_3857)
+            {
+                throw new ArgumentOutOfRangeException(
+                    $"Invalid coordinate received, this class cannot convert CRS ${coordinate.CoordinateSystem}"
+                );
+            }
+
+            var vector3 = new Vector3WGS(coordinate.Points[0], coordinate.Points[1], coordinate.Points[2]);
+
+            switch (targetCrs)
+            {
+                case (int)CoordinateSystem.Unity:
+                {
+                    var result = ToUnity(vector3);
+                    return new Coordinate(targetCrs, result.x, result.y, result.z);
+                }
+                case (int)CoordinateSystem.EPSG_7415:
+                {
+                    var result = ToEPSG7415(vector3.lon, vector3.lat);
+                    return new Coordinate(targetCrs, result.x, result.y, result.z);
+                }
+                case (int)CoordinateSystem.EPSG_4936:
+                {
+                    var result = ToECEF(vector3);
+                    return new Coordinate(targetCrs, result.X, result.Y, result.Z);
+                }
+            }
+
+            throw new ArgumentOutOfRangeException(
+                $"Conversion between CRS ${coordinate.CoordinateSystem} and ${targetCrs} is not yet supported"
+            );
+        }
     }
 }

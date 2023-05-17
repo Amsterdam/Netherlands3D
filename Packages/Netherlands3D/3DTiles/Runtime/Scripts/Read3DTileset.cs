@@ -63,7 +63,7 @@ namespace Netherlands3D.Tiles3D
             absolutePath = tilesetUrl.Replace(tilesetFilename, "");
             StartCoroutine(LoadTileset());
 
-            CoordinateConverter.relativeOriginChanged.AddListener(RelativeCenterChanged);
+            MovingOrigin.relativeOriginChanged.AddListener(RelativeCenterChanged);
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace Netherlands3D.Tiles3D
         {
             transform.SetPositionAndRotation(
                 CoordinateConverter.ECEFToUnity(positionECEF),
-                CoordinateConverter.ecefRotionToUp()
+                EPSG4936.RotationToUp()
             );
         }
 
