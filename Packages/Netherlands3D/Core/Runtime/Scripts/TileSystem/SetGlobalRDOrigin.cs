@@ -36,7 +36,7 @@ namespace Netherlands3D.Core
                     runningCameraDistanceCheck = null;
                 }
 
-                if(value == true)
+                if(value == true && this.gameObject.activeSelf)
                     runningCameraDistanceCheck = StartCoroutine(MaxCameraDistance());
 
                 movingOrigin = value;
@@ -54,6 +54,15 @@ namespace Netherlands3D.Core
 
             CoordConvert.zeroGroundLevelY = zeroGroundLevelY;
             CoordConvert.relativeCenterRD = relativeCenterRD;
+        }
+
+        private void OnDisable()
+        {
+            if (runningCameraDistanceCheck != null)
+            {
+                StopCoroutine(runningCameraDistanceCheck);
+                runningCameraDistanceCheck = null;
+            }
         }
 
         private void OnValidate()

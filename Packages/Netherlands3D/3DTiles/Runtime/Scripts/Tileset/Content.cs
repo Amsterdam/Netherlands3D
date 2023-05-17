@@ -1,6 +1,8 @@
-﻿using GLTFast;
+using GLTFast;
 using Netherlands3D.B3DM;
+using SimpleJSON;
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
@@ -14,13 +16,12 @@ namespace Netherlands3D.Tiles3D
 
         public GameObject contentGameObject;
 
-        private UnityWebRequest runningWebRequest;
         private Coroutine runningContentRequest;
 
         private Tile parentTile;
         public Tile ParentTile { get => parentTile; set => parentTile = value; }
 
-        public UnityEvent doneDownloading = new UnityEvent();
+        public UnityEvent doneDownloading = new();
 
         private GltfImport gltf;
 
@@ -77,10 +78,46 @@ namespace Netherlands3D.Tiles3D
         /// </summary>
         public void Load()
         {
+            if (State == ContentLoadState.DOWNLOADING || State == ContentLoadState.DOWNLOADED)
+                return;
+
             State = ContentLoadState.DOWNLOADING;
-            runningContentRequest = StartCoroutine(
-                ImportB3DMGltf.ImportBinFromURL(uri, GotGltfContent)
-            );
+
+            if (uri.Contains(".json"))
+            {
+                if (parentTile.children.Count == 0)
+                {
+                    runningContentRequest = StartCoroutine(
+                        LoadNestedDataSet(parentTile, uri)
+                    );
+                }
+            }
+            else
+            {
+                runningContentRequest = StartCoroutine(
+                    ImportB3DMGltf.ImportBinFromURL(uri, GotGltfContent)
+                );
+            }
+        }
+
+        private IEnumerator LoadNestedDataSet(Tile tile, string datasetPath)
+        {
+            UnityWebRequest www = UnityWebRequest.Get(datasetPath);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                string jsonstring = www.downloadHandler.text;
+
+                JSONNode node = JSON.Parse(jsonstring)["root"];
+                Read3DTileset.ReadExplicitNode(node, tile);
+            }
+
+            State = ContentLoadState.DOWNLOADED;
         }
 
         /// <summary>
@@ -118,7 +155,7 @@ namespace Netherlands3D.Tiles3D
             doneDownloading.RemoveAllListeners();
 
             //Direct abort of downloads
-            if (State == ContentLoadState.DOWNLOADING)
+            if (State == ContentLoadState.DOWNLOADING && runningContentRequest != null)
             {
                 StopCoroutine(runningContentRequest);
             }

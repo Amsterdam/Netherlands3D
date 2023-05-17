@@ -8,13 +8,17 @@ using UnityEngine.Networking;
 using System.Threading.Tasks;
 using GLTFast;
 using System;
-
+#if UNITY_EDITOR
+using System.IO.Compression;
+#endif
 namespace Netherlands3D.B3DM
 {
     public class ImportB3DMGltf
     {
         private static CustomCertificateValidation customCertificateHandler = new CustomCertificateValidation();
         private static ImportSettings importSettings = new ImportSettings() { AnimationMethod = AnimationMethod.None };
+
+        private static int exp = 1;
 
         /// <summary>
         /// Helps bypassing expired certificate warnings.
@@ -39,8 +43,9 @@ namespace Netherlands3D.B3DM
         public static IEnumerator ImportBinFromURL(string url, Action<GltfImport> callbackGltf, bool bypassCertificateValidation = false)
         {
             var webRequest = UnityWebRequest.Get(url);
+            webRequest.SetRequestHeader("Accept-Encoding", "gzip");
 
-            if(bypassCertificateValidation)
+            if (bypassCertificateValidation)
                 webRequest.certificateHandler = customCertificateHandler; //Not safe; but solves breaking curl error
 
             yield return webRequest.SendWebRequest();
@@ -52,13 +57,51 @@ namespace Netherlands3D.B3DM
             }
             else
             {
-                byte[] bytes = webRequest.downloadHandler.data;
+                byte[] bytes;
+
+#if UNITY_EDITOR && !UNITY_WEBGL
+                string contentEncoding = webRequest.GetResponseHeader("Content-Encoding");
+                bool isGzipped = !string.IsNullOrEmpty(contentEncoding) && contentEncoding.ToLower().Contains("gzip");
+                if (isGzipped)
+                {
+                    Debug.Log("Response data is gzipped");
+                    using MemoryStream compressedStream = new MemoryStream(webRequest.downloadHandler.data);
+
+                    if(exp > 0)
+                    {
+                        exp--;
+                        var path = Application.dataPath + Path.GetFileName(url);
+                        File.WriteAllBytes(path, webRequest.downloadHandler.data);
+                        Debug.Log("Check " + path);
+                    }
+
+                    using GZipStream gzipStream = new GZipStream(compressedStream, CompressionMode.Decompress);
+                    using MemoryStream decompressedStream = new MemoryStream();
+
+                    gzipStream.CopyTo(decompressedStream);
+                    bytes = decompressedStream.ToArray();
+                }
+                else
+                {
+                    bytes = webRequest.downloadHandler.data;
+                }
+#else
+                bytes = webRequest.downloadHandler.data;
+#endif
+
                 var memory = new ReadOnlyMemory<byte>(bytes);
 
-                if (Path.GetExtension(url).Equals(".b3dm"))
+                if (url.Contains(".b3dm"))
                 {
                     var memoryStream = new MemoryStream(bytes);
                     bytes = B3dmReader.ReadB3dmGlbContentOnly(memoryStream);
+                    if (exp > 0)
+                    {
+                        exp--;
+                        var path = Application.dataPath + Path.GetFileName(url.Replace(".b3dm",".glb"));
+                        File.WriteAllBytes(path, bytes);
+                        Debug.Log("Check " + path);
+                    }
                 }
 
                 yield return ParseFromBytes(bytes, url, callbackGltf);

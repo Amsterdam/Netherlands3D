@@ -47,6 +47,13 @@ namespace Netherlands3D.Tiles3D
 
         private const string tilesetFilename = "tileset.json";
 
+        private static readonly Dictionary<string, BoundingVolumeType> boundingVolumeTypes = new()
+        {
+            { "region", BoundingVolumeType.Region },
+            { "box", BoundingVolumeType.Box },
+            { "sphere", BoundingVolumeType.Sphere }
+        };
+
         private void OnEnable()
         {
             currentCamera = Camera.main;
@@ -158,40 +165,19 @@ namespace Netherlands3D.Tiles3D
                 }
                 else
                 {
-                    tile.content.uri = absolutePath + tile.contentUri;
-                    if(tile.content.uri.Contains(".json"))
-                    {
-                        StartCoroutine(LoadNestedDataSet(tile, tile.content.uri));
-                    }
+                    tile.content.uri = absolutePath + tile.contentUri.Replace("../","");
                 }
 
                 //Request tile content update via optional prioritiser, or load directly
-                if (usingPrioritiser && !tile.requestedUpdate)
+                if (usingPrioritiser)
                 {
-                    tilePrioritiser.RequestUpdate(tile);
+                    if(!tile.requestedUpdate)
+                        tilePrioritiser.RequestUpdate(tile);
                 }
                 else
                 {
                     tile.content.Load();
                 }
-            }
-        }
-
-        private IEnumerator LoadNestedDataSet(Tile tile, string datasetPath)
-        {
-            UnityWebRequest www = UnityWebRequest.Get(datasetPath);
-            yield return www.SendWebRequest();
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log(www.error);
-            }
-            else
-            {
-                string jsonstring = www.downloadHandler.text;
-
-                JSONNode node = JSON.Parse(jsonstring)["root"];
-                ReadExplicitNode(node, tile);
             }
         }
 
@@ -247,7 +233,7 @@ namespace Netherlands3D.Tiles3D
         /// <summary>
         /// Recursive reading of tile nodes to build the tiles tree
         /// </summary>
-        private Tile ReadExplicitNode(JSONNode node, Tile tile)
+        public static Tile ReadExplicitNode(JSONNode node, Tile tile)
         {
             tile.transform = new double[16] { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
             tile.boundingVolume = new BoundingVolume();
@@ -257,6 +243,7 @@ namespace Netherlands3D.Tiles3D
             tile.geometricError = double.Parse(node["geometricError"].Value);
             tile.refine = node["refine"].Value;
             JSONNode childrenNode = node["children"];
+
             tile.children = new List<Tile>();
             if (childrenNode != null)
             {
@@ -277,17 +264,10 @@ namespace Netherlands3D.Tiles3D
             return tile;
         }
 
-        private void ParseBoundingVolume(Tile tile, JSONNode boundingVolumeNode)
+        public static void ParseBoundingVolume(Tile tile, JSONNode boundingVolumeNode)
         {
             if (boundingVolumeNode != null)
             {
-                Dictionary<string, BoundingVolumeType> boundingVolumeTypes = new()
-                {
-                    { "region", BoundingVolumeType.Region },
-                    { "box", BoundingVolumeType.Box },
-                    { "sphere", BoundingVolumeType.Sphere }
-                };
-
                 foreach (KeyValuePair<string, BoundingVolumeType> kvp in boundingVolumeTypes)
                 {
                     JSONNode volumeNode = boundingVolumeNode[kvp.Key];
@@ -311,7 +291,7 @@ namespace Netherlands3D.Tiles3D
             tile.CalculateBounds();
         }
 
-        private int GetBoundingVolumeLength(BoundingVolumeType type)
+        public static int GetBoundingVolumeLength(BoundingVolumeType type)
         {
             switch (type)
             {
@@ -398,13 +378,13 @@ namespace Netherlands3D.Tiles3D
                 //If camera changed, recalculate what tiles are be in view
                 currentCamera.transform.GetPositionAndRotation(out currentCameraPosition, out currentCameraRotation);
 
-                if (CameraChanged())
+                if (true || CameraChanged())
                 {
                     lastCameraAngle = (currentCamera.orthographic ? currentCamera.orthographicSize : currentCamera.fieldOfView);
                     currentCamera.transform.GetPositionAndRotation(out lastCameraPosition, out lastCameraRotation);
 
                     SetSSEComponent(currentCamera);
-                    DisposeTilesOutsideView(currentCamera);
+                    //DisposeTilesOutsideView(currentCamera);
 
                     yield return LoadInViewRecursively(root, currentCamera);
                 }
@@ -465,8 +445,9 @@ namespace Netherlands3D.Tiles3D
                 {
                     //Check for children ( and if closest child can refine ). Closest child would have same closest point as parent on bounds, so simply divide pixelError by 2
                     var canRefineToChildren = tile.children.Count > 0 && (tileScreenSpaceError / 2.0f > maximumScreenSpaceError);
-                    if (canRefineToChildren)
+                    if (true || canRefineToChildren)
                     {
+                        RequestUpdate(tile);
                         yield return LoadInViewRecursively(tile, currentCamera);
                     }
                     else if (tile.hascontent && !canRefineToChildren)
@@ -501,39 +482,13 @@ namespace Netherlands3D.Tiles3D
         }
 
 #if UNITY_EDITOR
-        /// <summary>
-        /// Editor only methods for loading all tiles from context menu
-        /// </summary>
-        [ContextMenu("Load all content")]
-        private void LoadAll()
-        {
-            StartCoroutine(LoadAllTileContent());
-        }
-        private IEnumerator LoadAllTileContent()
-        {
-            yield return new WaitForEndOfFrame();
-            yield return LoadContentInChildren(root);
-        }
-        private IEnumerator LoadContentInChildren(Tile tile)
-        {
-            foreach (var child in tile.children)
-            {
-                if (child.hascontent)
-                {
-                    RequestUpdate(child);
-                }
-                yield return new WaitForEndOfFrame();
-                yield return LoadContentInChildren(child);
-            }
-        }
-
         [ContextMenu("Download entire dataset")]
         public void DownloadEntireDataset()
         {
-            StartCoroutine(DownloadTileSet());
+            StartCoroutine(DownloadImplicitTilingTileSet());
         }
 
-        private IEnumerator DownloadTileSet()
+        private IEnumerator DownloadImplicitTilingTileSet()
         {
             //Main tileset json
             UnityWebRequest webRequest = UnityWebRequest.Get(tilesetUrl);
@@ -573,6 +528,7 @@ namespace Netherlands3D.Tiles3D
 
             Debug.Log("<color=green>All done!</color>");
         }
+#endif
 
         private IEnumerator DownloadContent(Tile parentTile, string folder)
         {
@@ -605,7 +561,6 @@ namespace Netherlands3D.Tiles3D
                 yield return DownloadContent(tile, folder);
             }
         }
-#endif
 
     }
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -114,7 +114,7 @@ namespace Netherlands3D.Tiles3D
                     var tile = delayedDisposeList[i];
                     foreach (var child in tile.children)
                     {
-                        if (child.content.State != Content.ContentLoadState.DOWNLOADING)
+                        if (child.content && child.content.State != Content.ContentLoadState.DOWNLOADING)
                         {
                             tile.childrenCountDelayingDispose--;
                         }
