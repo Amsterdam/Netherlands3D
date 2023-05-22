@@ -30,9 +30,20 @@ If you imported a Netherlands3D package and like to update the package, or pick 
 
 We highly recommend picking a specific release version for your project, to make sure the package will stay the same until you deliberately choose to update.
 
-## Hosting a WebGL Netherlands3D application
+## Running a WebGL Netherlands3D application
 
 If your project uses the TileHandler, and you would like to use the compressed binary tile files (ending in .br) in a WebGL build, you need to make sure your host server (remote or localhost) has the 'Content-Encoding' header set to 'br' for all files that have the .br file extention.
+
+### Local
+
+To develop and test the WebGL locally, it is recommended to build your WebGL output into the Build folder. You can 
+either use the "Build and Run" option, or you can start a local webserver that runs the application on 
+http://localhost:8080 by running `./bin/start-server.bat` or `./bin/start-server.sh`.
+
+Starting the webserver this way will make it easier to test authentication with the Authentication package because the 
+URL is predictable and can be configured as the redirect url when setting up an OAuth app.
+
+### Hosted
 
 The Unity documentation has some example server configurations to get started:
 https://docs.unity3d.com/Manual/webgl-server-configuration-code-samples.html
