@@ -17,8 +17,6 @@ namespace Netherlands3D.B3DM
         private static CustomCertificateValidation customCertificateHandler = new CustomCertificateValidation();
         private static ImportSettings importSettings = new ImportSettings() { AnimationMethod = AnimationMethod.None };
 
-        private static int exp = 2;
-
         /// <summary>
         /// Helps bypassing expired certificate warnings.
         /// Use with caution, and only with servers you trust.
@@ -62,24 +60,9 @@ namespace Netherlands3D.B3DM
                 if (url.Contains(".b3dm"))
                 {
                     var memoryStream = new MemoryStream(bytes);
-                    if (exp > 0)
-                    {
-                        exp--;
-                        var path = Application.dataPath + Path.GetFileName(url);
-                        File.WriteAllBytes(path, bytes);
-                        Debug.Log("CHECK URL:  " + url);
-                        Debug.Log("WRITTEN B3DM " + path);
-                    }
 
                     var b3dm = B3dmReader.ReadB3dm(memoryStream);
                     bytes = b3dm.GlbData;
-                    if (exp > 0)
-                    {
-                        exp--;
-                        var path = Application.dataPath + Path.GetFileName(url.Replace(".b3dm",".glb"));
-                        File.WriteAllBytes(path, bytes);
-                        Debug.Log("WRITTEN GLB " + path);
-                    }
                 }
 
                 yield return ParseFromBytes(bytes, url, callbackGltf);
@@ -144,7 +127,7 @@ namespace Netherlands3D.B3DM
             }
             else
             {
-                Debug.LogError("Loading glTF failed!");
+                Debug.LogError($"Loading glTF failed! -> {sourcePath}");
                 callbackGltf?.Invoke(null);
                 gltf.Dispose();
             }

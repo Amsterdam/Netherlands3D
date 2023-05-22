@@ -4,12 +4,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [5.0.4] - 2023-03-30
+### Fixed
+- Texture transform offset is calculated correctly now
+
+## [5.0.3] - 2023-03-29
+### Fixed
+- Update licensing (internal only)
+
+## [5.0.2] - 2023-03-03
+### Fixed
+- Define constraints for KTX package (internal only)
+
+## [5.0.1] - 2023-03-02
 ### Changed
 - (Export) Texture coordinates are now flipped vertically, similar to how it's performed at import. This ensures round-trip consistency (#342).
 ### Fixed
 - (Export) Invalid blend indices or blend weights are not exported anymore (as skinning is not supported yet; #556)
 - Compiler error when using .NET Framework on 2021.3 and newer (#550)
+- `GltfBoundsAsset`'s instantiation settings are applied now
+- `GltfBoundsAsset`'s `BoxCollider` is positioned correctly, even if GameObject is not at scene origin (#565)
 
 ## [5.0.0] - 2022-12-09
 This release contains multiple breaking changes. Please read the [upgrade guide](xref:doc-upgrade-guides#upgrade-to-50) for details.

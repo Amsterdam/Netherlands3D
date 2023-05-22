@@ -514,9 +514,9 @@ namespace Netherlands3D.Tiles3D
             
             var fullPath = (tile.contentUri.StartsWith("/")) ? rootPath + relativeContentUrl : absolutePath + relativeContentUrl;
 
-            UriBuilder uriBuilder = new UriBuilder(fullPath);
+            //Combine query to pass on session id and API key (Google Maps 3DTiles API style)
+            UriBuilder uriBuilder = new(fullPath);
             NameValueCollection contentQueryParameters = HttpUtility.ParseQueryString(uriBuilder.Query);
-            Debug.Log($"Content query params for {fullPath}: {contentQueryParameters}");
             foreach (string key in contentQueryParameters.Keys)
             {
                 if (!queryParameters.AllKeys.Contains(key))
@@ -525,11 +525,11 @@ namespace Netherlands3D.Tiles3D
                 }
             }
 
-            Debug.Log("Combined query params : " + contentQueryParameters);
-
             uriBuilder.Query = queryParameters.ToString();
+            var url = uriBuilder.ToString();
+            Debug.LogWarning(url);
 
-            return uriBuilder.Uri.ToString();
+            return url;
         }
 
         private bool GetCanRefineToChildren(Tile tile)
