@@ -96,6 +96,11 @@
       "path": "Traffic/Samples~/Traffic Example"
     },
     {
+      "displayName": "WMS Texture Projection",
+      "description": "TileHandler layer and supporting scripts for projecting WMS textures onto geometry",
+      "path": "WMSTextureProjection/Samples~"
+    },
+    {
       "displayName": "Web Service Reader",
       "description": "Web Service Reader to read WMS' and WFS' from urls",
       "path": "WebServiceReader/Samples~/WebServiceReaderSamples"

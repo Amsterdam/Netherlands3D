@@ -2595,19 +2595,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.04948717
+      value: -0.04947672
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.011476751
+      value: -0.011474361
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9728886
+      value: 0.97288895
       objectReference: {fileID: 0}
     - target: {fileID: 7539193515803747148, guid: 4ba44a31ba5f45f42b49235f06111c10, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.22562619
+      value: -0.2256269
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3710,6 +3710,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
