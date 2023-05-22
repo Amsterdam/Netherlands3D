@@ -691,10 +691,20 @@ namespace Netherlands3D.TileSystem
         public string Description;
         public string geoLOD;
         public string path;
+        public string pathQuery;
         public float maximumDistance;
         [HideInInspector]
         public float maximumDistanceSquared;
         public bool enabled = true;
+
+
+        public string url
+        {
+            get
+            {
+                return path + pathQuery;
+            }
+        }
     }
 
     public class Tile

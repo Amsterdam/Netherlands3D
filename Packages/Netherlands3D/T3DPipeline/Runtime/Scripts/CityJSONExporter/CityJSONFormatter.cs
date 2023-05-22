@@ -36,7 +36,7 @@ namespace Netherlands3D.T3DPipeline
             metadata = new JSONObject();
             presentLoDs = new JSONObject();
 
-            metadata.Add("referenceSystem", "urn:ogc:def:crs:EPSG::28992");
+            metadata.Add("referenceSystem", "urn:ogc:def:crs:EPSG::7415");
 
             rootObject["type"] = "CityJSON";
             rootObject["version"] = "1.0";
