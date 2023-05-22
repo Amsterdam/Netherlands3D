@@ -516,9 +516,18 @@ namespace Netherlands3D.Tiles3D
 
             UriBuilder uriBuilder = new UriBuilder(fullPath);
             NameValueCollection contentQueryParameters = HttpUtility.ParseQueryString(uriBuilder.Query);
-            contentQueryParameters.Add(this.queryParameters);
+            Debug.Log($"Content query params for {fullPath}: {contentQueryParameters}");
+            foreach (string key in contentQueryParameters.Keys)
+            {
+                if (!queryParameters.AllKeys.Contains(key))
+                {
+                    queryParameters.Add(key, contentQueryParameters[key]);
+                }
+            }
 
-            uriBuilder.Query = contentQueryParameters.ToString();
+            Debug.Log("Combined query params : " + contentQueryParameters);
+
+            uriBuilder.Query = queryParameters.ToString();
 
             return uriBuilder.Uri.ToString();
         }
