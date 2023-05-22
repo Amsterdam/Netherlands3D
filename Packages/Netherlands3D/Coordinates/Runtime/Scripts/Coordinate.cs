@@ -27,7 +27,7 @@ namespace Netherlands3D.Coordinates
         /// The CoordinateSystem is defined as an int and not as CoordinateSystem enum so that third-parties can
         /// add their own EPSG conversions that are not (yet) included in the enum.
         /// </remarks>
-        public int CoordinateSystem;
+        public readonly int CoordinateSystem;
 
         /// <summary>
         /// Array representing all points for this coordinate.
@@ -35,7 +35,7 @@ namespace Netherlands3D.Coordinates
         /// Since some coordinate only feature 2 points and some 3, and because coordinate system uses a different
         /// unit and meaning for a point; we have chosen to abstract this into an array with either 2 or 3 points.
         /// </summary>
-        public double[] Points;
+        public readonly double[] Points;
 
         public Coordinate(CoordinateSystem coordinateSystem, params double[] points)
         {
