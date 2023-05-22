@@ -16,6 +16,7 @@
 *  permissions and limitations under the License.
 */
 
+using System;
 using UnityEngine;
 
 namespace Netherlands3D.Coordinates
@@ -66,6 +67,50 @@ namespace Netherlands3D.Coordinates
             output.h = vectorRD.z + hoogteCorrectie;
 
             return output;
+        }
+
+        public static Coordinate ConvertTo(Coordinate coordinate, int targetCrs)
+        {
+            if (coordinate.CoordinateSystem != (int)CoordinateSystem.Unity)
+            {
+                throw new ArgumentOutOfRangeException(
+                    $"Invalid coordinate received, this class cannot convert CRS ${coordinate.CoordinateSystem}"
+                );
+            }
+
+            var vector3 = coordinate.ToVector3();
+
+            switch (targetCrs)
+            {
+                case (int)CoordinateSystem.WGS84:
+                {
+                    var result = ToWGS84(vector3);
+                    return new Coordinate(targetCrs, result.lon, result.lat, result.h);
+                }
+                case (int)CoordinateSystem.EPSG_7415:
+                {
+                    var result = ToEPSG7415(vector3);
+                    return new Coordinate(targetCrs, result.x, result.y, result.z);
+                }
+                case (int)CoordinateSystem.EPSG_4936:
+                {
+                    var result = ToECEF(vector3);
+                    return new Coordinate(targetCrs, result.X, result.Y, result.Z);
+                }
+            }
+
+            throw new ArgumentOutOfRangeException(
+                $"Conversion between CRS ${coordinate.CoordinateSystem} and ${targetCrs} is not yet supported"
+            );
+        }
+
+        public static Vector3 ToVector3(this Coordinate coordinate)
+        {
+            return new Vector3(
+                (float)coordinate.Points[0],
+                (float)coordinate.Points[1],
+                (float)coordinate.Points[2]
+            );
         }
     }
 }

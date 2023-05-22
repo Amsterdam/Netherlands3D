@@ -221,5 +221,14 @@ namespace Netherlands3D.Coordinates
                 $"Conversion between CRS ${coordinate.CoordinateSystem} and ${targetCrs} is not yet supported"
             );
         }
+
+        public static Vector3WGS ToVector3WGS(this Coordinate coordinate)
+        {
+            return new Vector3WGS(
+                coordinate.Points[0],
+                coordinate.Points[1],
+                coordinate.Points[2]
+            );
+        }
     }
 }

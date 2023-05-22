@@ -288,5 +288,14 @@ namespace Netherlands3D.Coordinates
 
             return true;
         }
+
+        public static Vector3RD ToVector3RD(this Coordinate coordinate)
+        {
+            return new Vector3RD(
+                coordinate.Points[0],
+                coordinate.Points[1],
+                coordinate.Points[2]
+            );
+        }
     }
 }
