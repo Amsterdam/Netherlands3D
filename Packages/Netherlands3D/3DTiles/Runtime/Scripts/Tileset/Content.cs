@@ -1,5 +1,6 @@
 using GLTFast;
 using Netherlands3D.B3DM;
+using Netherlands3D.Core;
 using SimpleJSON;
 using System;
 using System.Collections;
@@ -83,41 +84,9 @@ namespace Netherlands3D.Tiles3D
 
             State = ContentLoadState.DOWNLOADING;
 
-            if (uri.Contains(".json"))
-            {
-                if (parentTile.children.Count == 0)
-                {
-                    runningContentRequest = StartCoroutine(
-                        LoadNestedDataSet(parentTile, uri)
-                    );
-                }
-            }
-            else
-            {
-                runningContentRequest = StartCoroutine(
-                    ImportB3DMGltf.ImportBinFromURL(uri, GotGltfContent)
-                );
-            }
-        }
-
-        private IEnumerator LoadNestedDataSet(Tile tile, string datasetPath)
-        {
-            UnityWebRequest www = UnityWebRequest.Get(datasetPath);
-            yield return www.SendWebRequest();
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log(www.error);
-            }
-            else
-            {
-                string jsonstring = www.downloadHandler.text;
-
-                JSONNode node = JSON.Parse(jsonstring)["root"];
-                Read3DTileset.ReadExplicitNode(node, tile);
-            }
-
-            State = ContentLoadState.DOWNLOADED;
+            runningContentRequest = StartCoroutine(
+                ImportB3DMGltf.ImportBinFromURL(uri, GotGltfContent)
+            );
         }
 
         /// <summary>
@@ -140,11 +109,23 @@ namespace Netherlands3D.Tiles3D
                 }
 
                 this.contentGameObject = gameObject;
-                this.contentGameObject.transform.SetParent(this.gameObject.transform, true);
-                this.contentGameObject.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+                this.contentGameObject.transform.SetParent(transform, false);
+                
+                this.contentGameObject.AddComponent<MovingOriginFollower>();
+
+                ApplyOrientation();
             }
 
             doneDownloading.Invoke();
+        }
+
+        private void ApplyOrientation()
+        {
+            var tilePositionOrigin = new Vector3ECEF(parentTile.transform[12], parentTile.transform[13], parentTile.transform[14]);
+            this.contentGameObject.transform.SetPositionAndRotation(
+                CoordConvert.ECEFToUnity(tilePositionOrigin),
+                CoordConvert.ecefRotionToUp()
+            );
         }
 
         /// <summary>

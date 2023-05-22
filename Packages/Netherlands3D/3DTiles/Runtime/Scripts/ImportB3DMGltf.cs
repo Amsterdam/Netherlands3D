@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Netherlands3D.Events;
 using System.IO;
-using B3dm.Tile;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
 using GLTFast;
@@ -18,7 +17,7 @@ namespace Netherlands3D.B3DM
         private static CustomCertificateValidation customCertificateHandler = new CustomCertificateValidation();
         private static ImportSettings importSettings = new ImportSettings() { AnimationMethod = AnimationMethod.None };
 
-        private static int exp = 1;
+        private static int exp = 2;
 
         /// <summary>
         /// Helps bypassing expired certificate warnings.
@@ -43,7 +42,6 @@ namespace Netherlands3D.B3DM
         public static IEnumerator ImportBinFromURL(string url, Action<GltfImport> callbackGltf, bool bypassCertificateValidation = false)
         {
             var webRequest = UnityWebRequest.Get(url);
-            webRequest.SetRequestHeader("Accept-Encoding", "gzip");
 
             if (bypassCertificateValidation)
                 webRequest.certificateHandler = customCertificateHandler; //Not safe; but solves breaking curl error
@@ -57,50 +55,30 @@ namespace Netherlands3D.B3DM
             }
             else
             {
-                byte[] bytes;
-
-#if UNITY_EDITOR && !UNITY_WEBGL
-                string contentEncoding = webRequest.GetResponseHeader("Content-Encoding");
-                bool isGzipped = !string.IsNullOrEmpty(contentEncoding) && contentEncoding.ToLower().Contains("gzip");
-                if (isGzipped)
-                {
-                    Debug.Log("Response data is gzipped");
-                    using MemoryStream compressedStream = new MemoryStream(webRequest.downloadHandler.data);
-
-                    if(exp > 0)
-                    {
-                        exp--;
-                        var path = Application.dataPath + Path.GetFileName(url);
-                        File.WriteAllBytes(path, webRequest.downloadHandler.data);
-                        Debug.Log("Check " + path);
-                    }
-
-                    using GZipStream gzipStream = new GZipStream(compressedStream, CompressionMode.Decompress);
-                    using MemoryStream decompressedStream = new MemoryStream();
-
-                    gzipStream.CopyTo(decompressedStream);
-                    bytes = decompressedStream.ToArray();
-                }
-                else
-                {
-                    bytes = webRequest.downloadHandler.data;
-                }
-#else
-                bytes = webRequest.downloadHandler.data;
-#endif
+                byte[] bytes = webRequest.downloadHandler.data;
 
                 var memory = new ReadOnlyMemory<byte>(bytes);
 
                 if (url.Contains(".b3dm"))
                 {
                     var memoryStream = new MemoryStream(bytes);
-                    bytes = B3dmReader.ReadB3dmGlbContentOnly(memoryStream);
+                    if (exp > 0)
+                    {
+                        exp--;
+                        var path = Application.dataPath + Path.GetFileName(url);
+                        File.WriteAllBytes(path, bytes);
+                        Debug.Log("CHECK URL:  " + url);
+                        Debug.Log("WRITTEN B3DM " + path);
+                    }
+
+                    var b3dm = B3dmReader.ReadB3dm(memoryStream);
+                    bytes = b3dm.GlbData;
                     if (exp > 0)
                     {
                         exp--;
                         var path = Application.dataPath + Path.GetFileName(url.Replace(".b3dm",".glb"));
                         File.WriteAllBytes(path, bytes);
-                        Debug.Log("Check " + path);
+                        Debug.Log("WRITTEN GLB " + path);
                     }
                 }
 
@@ -128,7 +106,7 @@ namespace Netherlands3D.B3DM
                 //Retrieve the glb from the b3dm
                 var b3dmFileStream = File.OpenRead(filepath);
                 var b3dm = B3dmReader.ReadB3dm(b3dmFileStream);
-                bytes = new MemoryStream(b3dm.GlbData).ToArray();
+                bytes = b3dm.GlbData;
 
 #if UNITY_EDITOR
                 if (writeGlbNextToB3dm)

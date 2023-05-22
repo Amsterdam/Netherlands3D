@@ -951,6 +951,7 @@ namespace GLTFast
             if (m_GltfRoot == null)
             {
                 Debug.LogError("JsonParsingFailed");
+                Debug.LogWarning(json);
                 m_Logger?.Error(LogCode.JsonParsingFailed);
                 return false;
             }

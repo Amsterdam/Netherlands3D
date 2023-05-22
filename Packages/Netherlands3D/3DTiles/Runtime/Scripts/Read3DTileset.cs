@@ -6,6 +6,9 @@ using UnityEngine.Networking;
 using System;
 using Netherlands3D.Core;
 using System.IO;
+using System.Linq;
+using Codice.Utils;
+using System.Collections.Specialized;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -16,6 +19,8 @@ namespace Netherlands3D.Tiles3D
     {
         public string tilesetUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json";
         private string absolutePath = "";
+        private string rootPath = "";
+        private NameValueCollection queryParameters;
 
         public Tile root;
         public double[] transformValues;
@@ -32,7 +37,7 @@ namespace Netherlands3D.Tiles3D
         public int maxScreenHeightInPixels = 1080;
         public int maximumScreenSpaceError = 5;
 
-        private float sseComponent = -1;
+        [SerializeField] private float sseComponent = -1;
         private List<Tile> visibleTiles = new List<Tile>();
 
         [SerializeField] private TilePrioritiser tilePrioritiser;
@@ -45,7 +50,7 @@ namespace Netherlands3D.Tiles3D
         private Quaternion currentCameraRotation;
         private float lastCameraAngle = 60;
 
-        private const string tilesetFilename = "tileset.json";
+        private string tilesetFilename = "tileset.json";
 
         private static readonly Dictionary<string, BoundingVolumeType> boundingVolumeTypes = new()
         {
@@ -66,10 +71,33 @@ namespace Netherlands3D.Tiles3D
                 tilePrioritiser.SetCamera(currentCamera);
             }
 
-            absolutePath = tilesetUrl.Replace(tilesetFilename, "");
+            ExtractDatasetPaths();
+
             StartCoroutine(LoadTileset());
 
             CoordConvert.relativeOriginChanged.AddListener(RelativeCenterChanged);
+        }
+
+        private void ExtractDatasetPaths()
+        {
+            Uri uri = new(tilesetUrl);
+            absolutePath = tilesetUrl.Substring(0,tilesetUrl.LastIndexOf("/")+1);
+            rootPath = uri.GetLeftPart(UriPartial.Authority);
+
+            queryParameters = HttpUtility.ParseQueryString(uri.Query);
+            Debug.Log("Query params: " + queryParameters.ToString());
+
+            foreach (string segment in uri.Segments)
+            {
+                if (segment.EndsWith(".json"))
+                {
+                    tilesetFilename = segment;
+                    Debug.Log($"Dataset filename: {tilesetFilename}");
+                    Debug.Log($"Absolute path: {absolutePath}");
+                    Debug.Log($"Root path: {rootPath}");
+                    break;
+                }
+            }
         }
 
         /// <summary>
@@ -109,9 +137,6 @@ namespace Netherlands3D.Tiles3D
 
         private void RelativeCenterChanged(Vector3 cameraOffset)
         {
-            //Point set up from new origin
-            AlignWithUnityWorld();
-
             //Flag all calculated bounds to be recalculated when tile bounds is requested
             RecalculateAllTileBounds(root);
         }
@@ -159,14 +184,7 @@ namespace Netherlands3D.Tiles3D
             {
                 tile.content = gameObject.AddComponent<Content>();
                 tile.content.ParentTile = tile;
-                if (tilingMethod == TilingMethod.implicitTiling)
-                {
-                    tile.content.uri = absolutePath + implicitTilingSettings.contentUri.Replace("{level}", tile.X.ToString()).Replace("{x}", tile.Y.ToString()).Replace("{y}", tile.Z.ToString());
-                }
-                else
-                {
-                    tile.content.uri = absolutePath + tile.contentUri.Replace("../","");
-                }
+                tile.content.uri = GetFullContentUri(tile);;
 
                 //Request tile content update via optional prioritiser, or load directly
                 if (usingPrioritiser)
@@ -208,18 +226,17 @@ namespace Netherlands3D.Tiles3D
             JSONNode implicitTilingNode = rootnode["implicitTiling"];
             if (implicitTilingNode != null)
             {
-                tilingMethod = TilingMethod.implicitTiling;
-                
+                tilingMethod = TilingMethod.implicitTiling;           
             }
 
             //setup location and rotation
-            positionECEF = new Vector3ECEF(transformValues[12], transformValues[13], transformValues[14]);
-            AlignWithUnityWorld();
             switch (tilingMethod)
             {
                 case TilingMethod.explicitTiling:
                     Tile rootTile = new Tile();
                     root = ReadExplicitNode(rootnode, rootTile);
+                    root.screenSpaceError = float.MaxValue;
+
                     StartCoroutine(LoadInView());
                     break;
                 case TilingMethod.implicitTiling:
@@ -235,7 +252,6 @@ namespace Netherlands3D.Tiles3D
         /// </summary>
         public static Tile ReadExplicitNode(JSONNode node, Tile tile)
         {
-            tile.transform = new double[16] { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
             tile.boundingVolume = new BoundingVolume();
             JSONNode boundingVolumeNode = node["boundingVolume"];
             ParseBoundingVolume(tile, boundingVolumeNode);
@@ -257,7 +273,6 @@ namespace Netherlands3D.Tiles3D
             if (contentNode != null)
             {
                 tile.hascontent = true;
-
                 tile.contentUri = contentNode["uri"].Value;
             }
 
@@ -306,14 +321,6 @@ namespace Netherlands3D.Tiles3D
             }
         }
 
-        private void AlignWithUnityWorld()
-        {
-            transform.SetPositionAndRotation(
-                CoordConvert.ECEFToUnity(positionECEF), 
-                CoordConvert.ecefRotionToUp()
-            );
-        }
-
         private void ReadImplicitTiling(JSONNode rootnode)
         {
             implicitTilingSettings = new ImplicitTilingSettings();
@@ -321,10 +328,10 @@ namespace Netherlands3D.Tiles3D
             switch (refine)
             {
                 case "REPLACE":
-                    implicitTilingSettings.refinementtype = RefinementType.Replace;
+                    implicitTilingSettings.refinementType = RefinementType.Replace;
                     break;
                 case "ADD":
-                    implicitTilingSettings.refinementtype = RefinementType.Add;
+                    implicitTilingSettings.refinementType = RefinementType.Add;
                     break;
                 default:
                     break;
@@ -378,14 +385,15 @@ namespace Netherlands3D.Tiles3D
                 //If camera changed, recalculate what tiles are be in view
                 currentCamera.transform.GetPositionAndRotation(out currentCameraPosition, out currentCameraRotation);
 
-                if (true || CameraChanged())
+                if (CameraChanged())
                 {
                     lastCameraAngle = (currentCamera.orthographic ? currentCamera.orthographicSize : currentCamera.fieldOfView);
                     currentCamera.transform.GetPositionAndRotation(out lastCameraPosition, out lastCameraRotation);
 
                     SetSSEComponent(currentCamera);
-                    //DisposeTilesOutsideView(currentCamera);
+                    DisposeTilesOutsideView(currentCamera);
 
+                    root.IsInViewFrustrum(currentCamera);
                     yield return LoadInViewRecursively(root, currentCamera);
                 }
 
@@ -409,18 +417,17 @@ namespace Netherlands3D.Tiles3D
         /// Check for tiles in our visibile tiles list that moved out of the view / max distance.
         /// Request dispose for tiles that moved out of view
         /// </summary>
-        /// <param name="currentMainCamera">Camera to use for visibility check</param>
-        private void DisposeTilesOutsideView(Camera currentMainCamera)
+        /// <param name="currentCamera">Camera to use for visibility check</param>
+        private void DisposeTilesOutsideView(Camera currentCamera)
         {
             //Clean up list op previously loaded tiles outside of view
             for (int i = visibleTiles.Count - 1; i >= 0; i--)
             {
                 var child = visibleTiles[i];
-                var closestPointOnBounds = child.ContentBounds.ClosestPoint(currentMainCamera.transform.position); //Returns original point when inside the bounds
+                var closestPointOnBounds = child.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
+                CalculateTileScreenSpaceError(child, currentCamera, closestPointOnBounds);
 
-                var tileScreenSpaceError = (sseComponent * (float)child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
-                child.screenSpaceError = tileScreenSpaceError;
-                if (tileScreenSpaceError <= maximumScreenSpaceError || !child.IsInViewFrustrum(currentMainCamera))
+                if (child.screenSpaceError <= maximumScreenSpaceError || !child.IsInViewFrustrum(currentCamera))
                 {
                     RequestDispose(child);
                     visibleTiles.RemoveAt(i);
@@ -428,35 +435,108 @@ namespace Netherlands3D.Tiles3D
             }
         }
 
+        private void CalculateTileScreenSpaceError(Tile child, Camera currentMainCamera, Vector3 closestPointOnBounds)
+        {
+            var sse = (sseComponent * (float)child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
+            if (sse == float.PositiveInfinity || sse == 0)
+                sse = float.MaxValue;
+            child.screenSpaceError = sse;
+        }
+
         private IEnumerator LoadInViewRecursively(Tile parentTile, Camera currentCamera)
         {
+            yield return LoadNestedTileset(parentTile);
+
             foreach (var tile in parentTile.children)
             {
                 if (visibleTiles.Contains(tile)) continue;
 
                 var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
-                var tileScreenSpaceError = (sseComponent * (float)tile.geometricError) / Vector3.Distance(currentCamera.transform.position, closestPointOnBounds);
-                tile.screenSpaceError = tileScreenSpaceError;
+                CalculateTileScreenSpaceError(tile, currentCamera, closestPointOnBounds);
+
                 if (tile.geometricError <= sseComponent && tile.content)
                 {
                     RequestDispose(tile);
                 }
-                else if (tileScreenSpaceError > maximumScreenSpaceError && tile.IsInViewFrustrum(currentCamera))
+                else
                 {
                     //Check for children ( and if closest child can refine ). Closest child would have same closest point as parent on bounds, so simply divide pixelError by 2
-                    var canRefineToChildren = tile.children.Count > 0 && (tileScreenSpaceError / 2.0f > maximumScreenSpaceError);
-                    if (true || canRefineToChildren)
+                    var canRefineToChildren = GetCanRefineToChildren(tile);
+
+                    if (canRefineToChildren)
                     {
-                        RequestUpdate(tile);
                         yield return LoadInViewRecursively(tile, currentCamera);
                     }
-                    else if (tile.hascontent && !canRefineToChildren)
+                    else if(!tile.contentUri.Contains(".json") && tile.contentUri.Length > 0)
                     {
                         RequestUpdate(tile);
                         visibleTiles.Add(tile);
                     }
                 }
             }
+        }
+
+        private IEnumerator LoadNestedTileset(Tile tile)
+        {
+            if (tile.contentUri.Contains(".json"))
+            {
+                string path = GetFullContentUri(tile);
+                Debug.Log($"Nested {path}");
+                UnityWebRequest www = UnityWebRequest.Get(path);
+                yield return www.SendWebRequest();
+
+                if (www.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(www.error);
+                }
+                else
+                {
+                    string jsonstring = www.downloadHandler.text;
+
+                    JSONNode node = JSON.Parse(jsonstring)["root"];
+                    ReadExplicitNode(node, tile);
+                }
+            }
+            else
+            {
+                Debug.LogWarning(tile.contentUri);
+            }
+        }
+
+        private string GetFullContentUri(Tile tile)
+        {
+            var relativeContentUrl = tile.contentUri;
+
+            if (tilingMethod == TilingMethod.implicitTiling)
+            {
+                relativeContentUrl = (implicitTilingSettings.contentUri.Replace("{level}", tile.X.ToString()).Replace("{x}", tile.Y.ToString()).Replace("{y}", tile.Z.ToString()));
+            }
+            
+            var fullPath = (tile.contentUri.StartsWith("/")) ? rootPath + relativeContentUrl : absolutePath + relativeContentUrl;
+
+            UriBuilder uriBuilder = new UriBuilder(fullPath);
+            NameValueCollection contentQueryParameters = HttpUtility.ParseQueryString(uriBuilder.Query);
+            contentQueryParameters.Add(this.queryParameters);
+
+            uriBuilder.Query = contentQueryParameters.ToString();
+
+            return uriBuilder.Uri.ToString();
+        }
+
+        private bool GetCanRefineToChildren(Tile tile)
+        {
+            if ((tile.screenSpaceError > maximumScreenSpaceError && tile.IsInViewFrustrum(currentCamera))){
+
+                if (tilingMethod == TilingMethod.implicitTiling)
+                {
+                    return tile.children.Count > 0 && (tile.screenSpaceError / 2.0f > maximumScreenSpaceError);
+                }
+                else if (tilingMethod == TilingMethod.explicitTiling)
+                {
+                    return tile.contentUri.Contains(".json") || tile.contentUri.Length == 0;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -480,88 +560,6 @@ namespace Netherlands3D.Tiles3D
                 sseComponent = screenHeight / coverage;
             }
         }
-
-#if UNITY_EDITOR
-        [ContextMenu("Download entire dataset")]
-        public void DownloadEntireDataset()
-        {
-            StartCoroutine(DownloadImplicitTilingTileSet());
-        }
-
-        private IEnumerator DownloadImplicitTilingTileSet()
-        {
-            //Main tileset json
-            UnityWebRequest webRequest = UnityWebRequest.Get(tilesetUrl);
-            yield return webRequest.SendWebRequest();
-            var folder = EditorUtility.SaveFolderPanel("Save tileset to folder", "", "");
-            if (webRequest.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log(webRequest.error);
-            }
-            else
-            {
-                string jsonstring = webRequest.downloadHandler.text;
-                File.WriteAllText(folder + "/" + tilesetFilename, jsonstring);
-            }
-
-            //Subtree(s)
-            var subtreePath = implicitTilingSettings.subtreeUri.Replace("{level}", "0")
-                                                               .Replace("{x}", "0")
-                                                               .Replace("{y}", "0");
-
-            string subtreeURL = tilesetUrl.Replace(tilesetFilename, subtreePath);
-
-            webRequest = UnityWebRequest.Get(subtreeURL);
-            yield return webRequest.SendWebRequest();
-            if (webRequest.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log(webRequest.error);
-            }
-            else
-            {
-                var data = webRequest.downloadHandler.data;
-
-                var newFile = new FileInfo(folder + "/" + subtreePath);
-                newFile.Directory.Create();
-                File.WriteAllBytes(folder + "/" + subtreePath, data);
-            }
-
-            Debug.Log("<color=green>All done!</color>");
-        }
-#endif
-
-        private IEnumerator DownloadContent(Tile parentTile, string folder)
-        {
-            foreach (var tile in parentTile.children)
-            {
-                if (tile.hascontent)
-                {
-                    var tileContentPath = implicitTilingSettings.contentUri.Replace("{level}", tile.X.ToString()).Replace("{x}", tile.Y.ToString()).Replace("{y}", tile.Z.ToString());
-                    var contentUrl = absolutePath + tileContentPath;
-                    UnityWebRequest www = UnityWebRequest.Get(contentUrl);
-                    yield return www.SendWebRequest();
-
-                    if (www.result != UnityWebRequest.Result.Success)
-                    {
-                        Debug.Log(www.error);
-                    }
-                    else
-                    {
-                        var data = www.downloadHandler.data;
-                        var localContentPath = folder + "/" + tileContentPath;
-                        Debug.Log("Saving " + localContentPath);
-
-                        var newFile = new FileInfo(localContentPath);
-                        newFile.Directory.Create();
-
-                        File.WriteAllBytes(localContentPath, data);
-                    }
-                }
-                yield return new WaitForEndOfFrame();
-                yield return DownloadContent(tile, folder);
-            }
-        }
-
     }
 
     public enum TilingMethod
@@ -584,7 +582,7 @@ namespace Netherlands3D.Tiles3D
     [System.Serializable]
     public class ImplicitTilingSettings
     {
-        public RefinementType refinementtype;
+        public RefinementType refinementType;
         public SubdivisionScheme subdivisionScheme;
         public int subtreeLevels;
         public string subtreeUri;

@@ -16,15 +16,16 @@ namespace Netherlands3D.Tiles3D
         public int childrenCountDelayingDispose = 0;
         public Tile parent;
 
-        [NonSerialized] public List<Tile> children = new List<Tile>();
+        [SerializeField] public List<Tile> children = new List<Tile>();
 
-        public double[] transform;
+        public double[] transform = new double[16] { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
         public double geometricError;
-        public float screenSpaceError;
+        public float screenSpaceError = float.MaxValue;
 
         public string refine;
         public BoundingVolume boundingVolume;
-        public string contentUri;
+        public bool inView = false;
+        public string contentUri = "";
         public Content content;
 
         public int priority = 0;
@@ -100,7 +101,9 @@ namespace Netherlands3D.Tiles3D
         {
             if (!boundsAvailable) CalculateBounds();
 
-            return ofCamera.InView(ContentBounds);
+            inView = ofCamera.InView(ContentBounds);
+
+            return inView;
         }
 
         public void CalculateBounds()
@@ -115,9 +118,9 @@ namespace Netherlands3D.Tiles3D
                     var zAxis = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[9], boundingVolume.values[10], boundingVolume.values[11]));
 
                     Vector3 extents = new Vector3(xAxis.magnitude, yAxis.magnitude, zAxis.magnitude);
-                    bounds.size = extents * 2;
                     bounds.size = Vector3.zero;
                     bounds.center = boxCenter;
+                    bounds.size = extents * 2;
 
                     break;
                 case BoundingVolumeType.Sphere:

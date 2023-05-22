@@ -36,7 +36,9 @@ public class MovingOriginFollower : MonoBehaviour
 
     private void MoveToNewOrigin(Vector3 offset)
     {
-        transform.position = CoordConvert.ECEFToUnity(ecefPosition);
-
+        transform.SetPositionAndRotation(
+            CoordConvert.ECEFToUnity(ecefPosition),
+            CoordConvert.ecefRotionToUp()
+        );
     }
 }

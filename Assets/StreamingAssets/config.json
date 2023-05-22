@@ -10,7 +10,7 @@
             "maximumScreenSpaceError": 5
         },
         {
-            "url": "https://www.3drotterdam.nl/datasource-data/8b5d0ded-a222-4e44-bc70-2992bc2192fc/tileset.json",
+            "url": "https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyAeqe4utT4N29QGFA89an_C3mnnuZlw0Xs",
             "maximumScreenSpaceError": 5
         }
     ]

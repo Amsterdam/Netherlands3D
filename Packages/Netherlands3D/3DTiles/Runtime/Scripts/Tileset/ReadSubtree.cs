@@ -71,10 +71,6 @@ namespace Netherlands3D.Tiles3D
             int localIndex = parentNortonIndex * 4;
             int levelstart = LevelStartIndex + (int)Mathf.Pow(4, tile.X);
             int childOne = levelstart + localIndex;
-            //if (childOne>subtree.TileAvailability.Length)
-            //{
-            //    return;
-            //}
 
             AddChild(tile, localIndex, levelstart, 0);
             AddChild(tile, localIndex, levelstart, 1);
