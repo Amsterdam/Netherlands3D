@@ -178,13 +178,13 @@ namespace Netherlands3D.Tiles3D
             }
         }
 
-        private void RequestUpdate(Tile tile)
+        private void RequestContentUpdate(Tile tile)
         {
             if (!tile.content)
             {
                 tile.content = gameObject.AddComponent<Content>();
                 tile.content.ParentTile = tile;
-                tile.content.uri = GetFullContentUri(tile);;
+                tile.content.uri = GetFullContentUri(tile);
 
                 //Request tile content update via optional prioritiser, or load directly
                 if (usingPrioritiser)
@@ -201,6 +201,8 @@ namespace Netherlands3D.Tiles3D
 
         private void RequestDispose(Tile tile)
         {
+            if (!tile.content) return;
+
             if (usingPrioritiser && !tile.requestedDispose)
             {
                 tilePrioritiser.RequestDispose(tile);
@@ -454,7 +456,8 @@ namespace Netherlands3D.Tiles3D
                 var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
                 CalculateTileScreenSpaceError(tile, currentCamera, closestPointOnBounds);
 
-                if (tile.geometricError <= sseComponent && tile.content)
+                //Smaller geometric error? Too detailed for our current view so Dispose!
+                if (tile.geometricError <= sseComponent)
                 {
                     RequestDispose(tile);
                 }
@@ -469,7 +472,7 @@ namespace Netherlands3D.Tiles3D
                     }
                     else if(!tile.contentUri.Contains(".json") && tile.contentUri.Length > 0)
                     {
-                        RequestUpdate(tile);
+                        RequestContentUpdate(tile);
                         visibleTiles.Add(tile);
                     }
                 }
