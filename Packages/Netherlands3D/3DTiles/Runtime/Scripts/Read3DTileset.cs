@@ -7,8 +7,8 @@ using System;
 using Netherlands3D.Core;
 using System.IO;
 using System.Linq;
-using Codice.Utils;
 using System.Collections.Specialized;
+using System.Web;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -84,6 +84,7 @@ namespace Netherlands3D.Tiles3D
         {
             Uri uri = new(tilesetUrl);
             absolutePath = tilesetUrl.Substring(0,tilesetUrl.LastIndexOf("/")+1);
+
             rootPath = uri.GetLeftPart(UriPartial.Authority);
 
             queryParameters = HttpUtility.ParseQueryString(uri.Query);
@@ -141,7 +142,7 @@ namespace Netherlands3D.Tiles3D
         {
             if (root == null) return;
 
-            ApplyOrientationBasedOnRootTransform(root);
+            ApplyRootOrientation();
 
             //Flag all calculated bounds to be recalculated when tile bounds is requested
             RecalculateAllTileBounds(root);
@@ -152,7 +153,7 @@ namespace Netherlands3D.Tiles3D
         /// and make sure the up is set correctly
         /// </summary>
         /// <param name="root">The root tile</param>
-        private void ApplyOrientationBasedOnRootTransform(Tile root)
+        private void ApplyRootOrientation()
         {
             var tilePositionOrigin = new Vector3ECEF(root.transform[12], root.transform[13], root.transform[14]);
             this.transform.SetPositionAndRotation(
@@ -260,8 +261,7 @@ namespace Netherlands3D.Tiles3D
                     Tile rootTile = new Tile();
                     root = ReadExplicitNode(rootnode, rootTile);
                     root.screenSpaceError = float.MaxValue;
-                    ApplyOrientationBasedOnRootTransform(root);
-
+                    ApplyRootOrientation();
                     StartCoroutine(LoadInView());
                     break;
                 case TilingMethod.implicitTiling:
@@ -391,13 +391,13 @@ namespace Netherlands3D.Tiles3D
 
             Debug.Log("Load subtree: " + subtreeURL);
             subtreeReader.DownloadSubtree(subtreeURL, implicitTilingSettings, ReturnTiles);
-
-            ApplyOrientationBasedOnRootTransform(root);
         }
 
         private void ReturnTiles(Tile rootTile)
         {
             root = rootTile;
+            ApplyRootOrientation();
+
             StartCoroutine(LoadInView());
         }
 
@@ -420,7 +420,7 @@ namespace Netherlands3D.Tiles3D
                     currentCamera.transform.GetPositionAndRotation(out lastCameraPosition, out lastCameraRotation);
 
                     SetSSEComponent(currentCamera);
-                    //DisposeTilesOutsideView(currentCamera);
+                    DisposeTilesOutsideView(currentCamera);
 
                     root.IsInViewFrustrum(currentCamera);
                     yield return LoadInViewRecursively(root, currentCamera);
@@ -456,7 +456,7 @@ namespace Netherlands3D.Tiles3D
                 var closestPointOnBounds = child.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
                 CalculateTileScreenSpaceError(child, currentCamera, closestPointOnBounds);
 
-                if (child.screenSpaceError <= maximumScreenSpaceError || !child.IsInViewFrustrum(currentCamera))
+                if ((child.screenSpaceError <= maximumScreenSpaceError && child.ChildrenHaveContent()) || !child.IsInViewFrustrum(currentCamera))
                 {
                     RequestDispose(child);
                     visibleTiles.RemoveAt(i);
@@ -517,31 +517,38 @@ namespace Netherlands3D.Tiles3D
 
         private IEnumerator LoadNestedTileset(Tile tile)
         {
-            if (tile.contentUri.Contains(".json") && !tile.nestedTilesLoaded)
+            if (tilingMethod == TilingMethod.explicitTiling)
             {
-                string path = GetFullContentUri(tile);
-                Debug.Log($"Nested {path}");
-                UnityWebRequest www = UnityWebRequest.Get(path);
-                yield return www.SendWebRequest();
-
-                if (www.result != UnityWebRequest.Result.Success)
+                if (tile.contentUri.Contains(".json") && !tile.nestedTilesLoaded)
                 {
-                    Debug.Log(www.error);
+                    string nestedJsonPath = GetFullContentUri(tile);
+                    Debug.Log($"Nested {nestedJsonPath}");
+                    UnityWebRequest www = UnityWebRequest.Get(nestedJsonPath);
+                    yield return www.SendWebRequest();
+
+                    if (www.result != UnityWebRequest.Result.Success)
+                    {
+                        Debug.Log(www.error);
+                    }
+                    else
+                    {
+                        string jsonstring = www.downloadHandler.text;
+                        tile.nestedTilesLoaded = true;
+
+                        JSONNode node = JSON.Parse(jsonstring)["root"];
+                        ReadExplicitNode(node, tile);
+
+                        nestedTreeLoaded = true;
+                    }
                 }
-                else
+                else if (tile.contentUri.Length == 0)
                 {
-                    string jsonstring = www.downloadHandler.text;
-                    tile.nestedTilesLoaded = true;
-
-                    JSONNode node = JSON.Parse(jsonstring)["root"];
-                    ReadExplicitNode(node, tile);
-
-                    nestedTreeLoaded = true;
+                    Debug.LogWarning(tile.contentUri);
                 }
             }
-            else if(tile.contentUri.Length == 0)
+            else if (tilingMethod == TilingMethod.implicitTiling)
             {
-                Debug.LogWarning(tile.contentUri);
+                //Possible future nested subtree support.
             }
         }
 
@@ -553,7 +560,10 @@ namespace Netherlands3D.Tiles3D
             {
                 relativeContentUrl = (implicitTilingSettings.contentUri.Replace("{level}", tile.X.ToString()).Replace("{x}", tile.Y.ToString()).Replace("{y}", tile.Z.ToString()));
             }
-            
+
+            //RDam specific temp fix.
+            relativeContentUrl = relativeContentUrl.Replace("../", "");
+
             var fullPath = (tile.contentUri.StartsWith("/")) ? rootPath + relativeContentUrl : absolutePath + relativeContentUrl;
 
             //Combine query to pass on session id and API key (Google Maps 3DTiles API style)
@@ -598,7 +608,7 @@ namespace Netherlands3D.Tiles3D
         {
             if(usingPrioritiser) maxScreenHeightInPixels = tilePrioritiser.MaxScreenHeightInPixels;
 
-            var screenHeight = Mathf.Min(maxScreenHeightInPixels,Screen.height);
+            var screenHeight = (maxScreenHeightInPixels > 0) ? Mathf.Min(maxScreenHeightInPixels,Screen.height) : Screen.height;
 
             if (currentCamera.orthographic)
             {

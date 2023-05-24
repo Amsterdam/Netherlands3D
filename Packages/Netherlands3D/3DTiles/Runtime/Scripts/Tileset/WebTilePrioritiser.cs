@@ -191,7 +191,7 @@ namespace Netherlands3D.Tiles3D
                 {
                     downloadAvailable--;
                     tile.content.Load();
-                    tile.content.doneDownloading.AddListener(TileCompletedLoading);
+                    tile.content.onDoneDownloading.AddListener(TileCompletedLoading);
                 }
             }
         }

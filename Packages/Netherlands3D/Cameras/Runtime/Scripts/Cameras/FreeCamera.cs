@@ -28,6 +28,7 @@ public class FreeCamera : MonoBehaviour
     [SerializeField] private float dragOnPlaneThreshold = 0.5f;
     [SerializeField] private bool dragToMoveCamera = true;
     [SerializeField] private bool multiplySpeedBasedOnHeight = true;
+    [SerializeField] private bool dynamicFarClipRange = false;
 
     [Header("Speeds")]
     [SerializeField] private float moveSpeed = 1.0f;
@@ -314,10 +315,21 @@ public class FreeCamera : MonoBehaviour
 
     void Update()
 	{
+        if (dynamicFarClipRange)
+            DynamicFarClip();
+
         EaseDragTarget();
         Clamp();
 
         if (cameraComponent.orthographic) OrtographicLimitations();
+    }
+
+    private void DynamicFarClip()
+    {
+        var screenRay = cameraComponent.ScreenPointToRay(Vector2.one);
+        worldPlane.Raycast(screenRay, out float distance);
+
+        cameraComponent.farClipPlane = distance + 1000;
     }
 
     /// <summary>

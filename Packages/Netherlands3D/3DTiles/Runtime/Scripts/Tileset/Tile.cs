@@ -80,6 +80,18 @@ namespace Netherlands3D.Tiles3D
             return childcount;
         }
 
+        public bool ChildrenHaveContent()
+        {
+            if (children.Count > 0) { 
+                foreach (var child in children)
+                {
+                    if (!child.content || child.content.State != Content.ContentLoadState.DOWNLOADED) return false;
+                    break;
+                }
+            }
+            return true;
+        }
+
         public int GetNestingDepth()
         {
             int maxDepth = 1;

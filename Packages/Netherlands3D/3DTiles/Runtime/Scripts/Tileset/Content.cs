@@ -20,7 +20,7 @@ namespace Netherlands3D.Tiles3D
         [SerializeField] private Tile parentTile;
         public Tile ParentTile { get => parentTile; set => parentTile = value; }
 
-        public UnityEvent doneDownloading = new();
+        public UnityEvent onDoneDownloading = new();
 
         private GltfImport gltf;
 
@@ -111,7 +111,7 @@ namespace Netherlands3D.Tiles3D
                 this.gameObject.AddComponent<MovingOriginFollower>();
             }
 
-            doneDownloading.Invoke();
+            onDoneDownloading.Invoke();
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace Netherlands3D.Tiles3D
         /// </summary>
         public void Dispose()
         {
-            doneDownloading.RemoveAllListeners();
+            onDoneDownloading.RemoveAllListeners();
 
             //Direct abort of downloads
             if (State == ContentLoadState.DOWNLOADING && runningContentRequest != null)
