@@ -120,7 +120,7 @@ namespace Netherlands3D.Tiles3D
                     Vector3 extents = new Vector3(xAxis.magnitude, yAxis.magnitude, zAxis.magnitude);
                     bounds.size = Vector3.zero;
                     bounds.center = boxCenter;
-                    bounds.size = extents * 2;
+                    bounds.size = extents;
 
                     break;
                 case BoundingVolumeType.Sphere:
