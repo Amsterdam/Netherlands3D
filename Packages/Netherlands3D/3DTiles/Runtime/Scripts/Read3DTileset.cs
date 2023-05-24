@@ -483,7 +483,7 @@ namespace Netherlands3D.Tiles3D
 
         private IEnumerator LoadNestedTileset(Tile tile)
         {
-            if (tile.contentUri.Contains(".json"))
+            if (tile.contentUri.Contains(".json") && !tile.nestedTilesLoaded)
             {
                 string path = GetFullContentUri(tile);
                 Debug.Log($"Nested {path}");
@@ -497,6 +497,7 @@ namespace Netherlands3D.Tiles3D
                 else
                 {
                     string jsonstring = www.downloadHandler.text;
+                    tile.nestedTilesLoaded = true;
 
                     JSONNode node = JSON.Parse(jsonstring)["root"];
                     ReadExplicitNode(node, tile);

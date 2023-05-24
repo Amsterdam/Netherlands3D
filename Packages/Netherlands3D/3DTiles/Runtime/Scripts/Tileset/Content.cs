@@ -103,7 +103,7 @@ namespace Netherlands3D.Tiles3D
                 {
                     await gltf.InstantiateSceneAsync(transform, i);
                 }
-
+                this.gameObject.name = uri;
                 this.gameObject.AddComponent<MovingOriginFollower>();
 
                 ApplyOrientation();

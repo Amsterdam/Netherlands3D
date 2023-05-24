@@ -35,6 +35,7 @@ namespace Netherlands3D.Tiles3D
 
         public bool requestedDispose = false;
         public bool requestedUpdate = false;
+        internal bool nestedTilesLoaded = false;
 
         public Bounds ContentBounds
         {
