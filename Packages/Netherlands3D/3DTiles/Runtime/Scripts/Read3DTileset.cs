@@ -182,7 +182,9 @@ namespace Netherlands3D.Tiles3D
         {
             if (!tile.content)
             {
-                tile.content = gameObject.AddComponent<Content>();
+                var newContentGameObject = new GameObject($"{tile.X},{tile.Y},{tile.Z} content");
+                newContentGameObject.transform.SetParent(transform, false);
+                tile.content = newContentGameObject.AddComponent<Content>();
                 tile.content.ParentTile = tile;
                 tile.content.uri = GetFullContentUri(tile);
 
@@ -463,7 +465,7 @@ namespace Netherlands3D.Tiles3D
                 }
                 else
                 {
-                    //Check for children ( and if closest child can refine ). Closest child would have same closest point as parent on bounds, so simply divide pixelError by 2
+                    //Check for children ( and if closest child can refine ). Closest child would have same closest point as parent on bounds
                     var canRefineToChildren = GetCanRefineToChildren(tile);
 
                     if (canRefineToChildren)
@@ -537,7 +539,13 @@ namespace Netherlands3D.Tiles3D
 
         private bool GetCanRefineToChildren(Tile tile)
         {
-            if ((tile.screenSpaceError > maximumScreenSpaceError && tile.IsInViewFrustrum(currentCamera))){
+            var tileIsInView = tile.IsInViewFrustrum(currentCamera);
+            if (!tileIsInView)
+            {
+                Debug.Log("Tile not in view with content url: " + tile.contentUri);
+            }
+
+            if (tile.screenSpaceError > maximumScreenSpaceError && tileIsInView){
 
                 if (tilingMethod == TilingMethod.implicitTiling)
                 {

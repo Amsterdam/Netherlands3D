@@ -15,11 +15,9 @@ namespace Netherlands3D.Tiles3D
     {
         public string uri = "";
 
-        public GameObject contentGameObject;
-
         private Coroutine runningContentRequest;
 
-        private Tile parentTile;
+        [SerializeField] private Tile parentTile;
         public Tile ParentTile { get => parentTile; set => parentTile = value; }
 
         public UnityEvent doneDownloading = new();
@@ -100,18 +98,13 @@ namespace Netherlands3D.Tiles3D
             if (gltf != null)
             {
                 this.gltf = gltf;
-
                 var scenes = gltf.SceneCount;
-                var gameObject = new GameObject($"{parentTile.X},{parentTile.Y},{parentTile.Z} gltf scenes:{scenes}");
                 for (int i = 0; i < scenes; i++)
                 {
-                    await gltf.InstantiateSceneAsync(gameObject.transform, i);
+                    await gltf.InstantiateSceneAsync(transform, i);
                 }
 
-                this.contentGameObject = gameObject;
-                this.contentGameObject.transform.SetParent(transform, false);
-                
-                this.contentGameObject.AddComponent<MovingOriginFollower>();
+                this.gameObject.AddComponent<MovingOriginFollower>();
 
                 ApplyOrientation();
             }
@@ -122,7 +115,7 @@ namespace Netherlands3D.Tiles3D
         private void ApplyOrientation()
         {
             var tilePositionOrigin = new Vector3ECEF(parentTile.transform[12], parentTile.transform[13], parentTile.transform[14]);
-            this.contentGameObject.transform.SetPositionAndRotation(
+            this.transform.SetPositionAndRotation(
                 CoordConvert.ECEFToUnity(tilePositionOrigin),
                 CoordConvert.ecefRotionToUp()
             );
@@ -142,12 +135,11 @@ namespace Netherlands3D.Tiles3D
             }
             State = ContentLoadState.NOTLOADING;
 
-            if (contentGameObject)
+            if (gltf != null)
             {
                 gltf.Dispose();
-                Destroy(contentGameObject);
             }
-            Destroy(this);
+            Destroy(this.gameObject);
         }
     }
 }
