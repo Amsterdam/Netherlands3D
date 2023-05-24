@@ -102,23 +102,16 @@ namespace Netherlands3D.Tiles3D
                 for (int i = 0; i < scenes; i++)
                 {
                     await gltf.InstantiateSceneAsync(transform, i);
+                    var scene = transform.GetChild(0).transform;
+                    var scenePosition = scene.localPosition;
+                    scene.localPosition = Vector3.zero;
+                    transform.localPosition = scenePosition;
                 }
                 this.gameObject.name = uri;
                 this.gameObject.AddComponent<MovingOriginFollower>();
-
-                ApplyOrientation();
             }
 
             doneDownloading.Invoke();
-        }
-
-        private void ApplyOrientation()
-        {
-            var tilePositionOrigin = new Vector3ECEF(parentTile.transform[12], parentTile.transform[13], parentTile.transform[14]);
-            this.transform.SetPositionAndRotation(
-                CoordConvert.ECEFToUnity(tilePositionOrigin),
-                CoordConvert.ecefRotionToUp()
-            );
         }
 
         /// <summary>

@@ -119,6 +119,11 @@ public static class CameraExtensions
 
     public static bool InView(this Camera camera, Bounds bounds)
     {
+        //If camera is inside bounds we see it.
+        if (bounds.Contains(camera.transform.position))
+            return true;
+
+        //Else check if frustum intersects
         GeometryUtility.CalculateFrustumPlanes(camera, cameraFrustumPlanes);
         return GeometryUtility.TestPlanesAABB(cameraFrustumPlanes, bounds);
     }

@@ -118,10 +118,22 @@ namespace Netherlands3D.Tiles3D
                     var yAxis = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[6], boundingVolume.values[7], boundingVolume.values[8]));
                     var zAxis = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[9], boundingVolume.values[10], boundingVolume.values[11]));
 
-                    Vector3 extents = new Vector3(xAxis.magnitude, yAxis.magnitude, zAxis.magnitude);
+                    var xAxisExt = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] + boundingVolume.values[3], boundingVolume.values[1] + boundingVolume.values[4], boundingVolume.values[2] + boundingVolume.values[5]));
+                    var yAxisExt = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] + boundingVolume.values[6], boundingVolume.values[1] + boundingVolume.values[7], boundingVolume.values[2] + boundingVolume.values[8]));
+                    var zAxisExt = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] + boundingVolume.values[9], boundingVolume.values[1] + boundingVolume.values[10], boundingVolume.values[2] + boundingVolume.values[11]));
+
+                    var xAxisExtInv = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] - boundingVolume.values[3], boundingVolume.values[1] - boundingVolume.values[4], boundingVolume.values[2] - boundingVolume.values[5]));
+                    var yAxisExtInv = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] - boundingVolume.values[6], boundingVolume.values[1] - boundingVolume.values[7], boundingVolume.values[2] - boundingVolume.values[8]));
+                    var zAxisExtInv = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] - boundingVolume.values[9], boundingVolume.values[1] - boundingVolume.values[10], boundingVolume.values[2] - boundingVolume.values[11]));
+
                     bounds.size = Vector3.zero;
                     bounds.center = boxCenter;
-                    bounds.size = extents;
+                    bounds.Encapsulate(xAxisExt);
+                    bounds.Encapsulate(yAxisExt);
+                    bounds.Encapsulate(zAxisExt);
+                    bounds.Encapsulate(xAxisExtInv);
+                    bounds.Encapsulate(yAxisExtInv);
+                    bounds.Encapsulate(zAxisExtInv);
 
                     break;
                 case BoundingVolumeType.Sphere:

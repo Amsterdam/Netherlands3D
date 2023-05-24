@@ -52,6 +52,8 @@ namespace Netherlands3D.Tiles3D
 
         private string tilesetFilename = "tileset.json";
 
+        private bool nestedTreeLoaded = false;
+
         private static readonly Dictionary<string, BoundingVolumeType> boundingVolumeTypes = new()
         {
             { "region", BoundingVolumeType.Region },
@@ -137,8 +139,26 @@ namespace Netherlands3D.Tiles3D
 
         private void RelativeCenterChanged(Vector3 cameraOffset)
         {
+            if (root == null) return;
+
+            ApplyOrientationBasedOnRootTransform(root);
+
             //Flag all calculated bounds to be recalculated when tile bounds is requested
             RecalculateAllTileBounds(root);
+        }
+
+        /// <summary>
+        /// Move the center ( 0,0,0 ) of the tileset to the proper unity position
+        /// and make sure the up is set correctly
+        /// </summary>
+        /// <param name="root">The root tile</param>
+        private void ApplyOrientationBasedOnRootTransform(Tile root)
+        {
+            var tilePositionOrigin = new Vector3ECEF(root.transform[12], root.transform[13], root.transform[14]);
+            this.transform.SetPositionAndRotation(
+                CoordConvert.ECEFToUnity(tilePositionOrigin),
+                CoordConvert.ecefRotionToUp()
+            );
         }
 
         /// <summary>
@@ -240,6 +260,7 @@ namespace Netherlands3D.Tiles3D
                     Tile rootTile = new Tile();
                     root = ReadExplicitNode(rootnode, rootTile);
                     root.screenSpaceError = float.MaxValue;
+                    ApplyOrientationBasedOnRootTransform(root);
 
                     StartCoroutine(LoadInView());
                     break;
@@ -370,6 +391,8 @@ namespace Netherlands3D.Tiles3D
 
             Debug.Log("Load subtree: " + subtreeURL);
             subtreeReader.DownloadSubtree(subtreeURL, implicitTilingSettings, ReturnTiles);
+
+            ApplyOrientationBasedOnRootTransform(root);
         }
 
         private void ReturnTiles(Tile rootTile)
@@ -389,13 +412,15 @@ namespace Netherlands3D.Tiles3D
                 //If camera changed, recalculate what tiles are be in view
                 currentCamera.transform.GetPositionAndRotation(out currentCameraPosition, out currentCameraRotation);
 
-                if (CameraChanged())
+                if (nestedTreeLoaded || CameraChanged())
                 {
+                    nestedTreeLoaded = false;
+
                     lastCameraAngle = (currentCamera.orthographic ? currentCamera.orthographicSize : currentCamera.fieldOfView);
                     currentCamera.transform.GetPositionAndRotation(out lastCameraPosition, out lastCameraRotation);
 
                     SetSSEComponent(currentCamera);
-                    DisposeTilesOutsideView(currentCamera);
+                    //DisposeTilesOutsideView(currentCamera);
 
                     root.IsInViewFrustrum(currentCamera);
                     yield return LoadInViewRecursively(root, currentCamera);
@@ -459,23 +484,32 @@ namespace Netherlands3D.Tiles3D
                 CalculateTileScreenSpaceError(tile, currentCamera, closestPointOnBounds);
 
                 //Smaller geometric error? Too detailed for our current view so Dispose!
-                if (tile.geometricError <= sseComponent)
+                if (tile.geometricError <= sseComponent && tile.content)
                 {
                     RequestDispose(tile);
                 }
                 else
                 {
-                    //Check for children ( and if closest child can refine ). Closest child would have same closest point as parent on bounds
+                    var tileIsInView = tile.IsInViewFrustrum(currentCamera);
+                    
+                    //Check for children ( and if closest child can refine )
                     var canRefineToChildren = GetCanRefineToChildren(tile);
 
-                    if (canRefineToChildren)
+                    if (tileIsInView)
                     {
-                        yield return LoadInViewRecursively(tile, currentCamera);
+                        if (canRefineToChildren)
+                        {
+                            yield return LoadInViewRecursively(tile, currentCamera);
+                        }
+                        else if (!canRefineToChildren && !tile.contentUri.Contains(".json") && tile.contentUri.Length > 0)
+                        {
+                            RequestContentUpdate(tile);
+                            visibleTiles.Add(tile);
+                        }
                     }
-                    else if(!tile.contentUri.Contains(".json") && tile.contentUri.Length > 0)
+                    else if(tile.content)
                     {
-                        RequestContentUpdate(tile);
-                        visibleTiles.Add(tile);
+                        RequestDispose(tile);
                     }
                 }
             }
@@ -501,9 +535,11 @@ namespace Netherlands3D.Tiles3D
 
                     JSONNode node = JSON.Parse(jsonstring)["root"];
                     ReadExplicitNode(node, tile);
+
+                    nestedTreeLoaded = true;
                 }
             }
-            else
+            else if(tile.contentUri.Length == 0)
             {
                 Debug.LogWarning(tile.contentUri);
             }
@@ -533,20 +569,13 @@ namespace Netherlands3D.Tiles3D
 
             uriBuilder.Query = queryParameters.ToString();
             var url = uriBuilder.ToString();
-            Debug.LogWarning(url);
 
             return url;
         }
 
         private bool GetCanRefineToChildren(Tile tile)
         {
-            var tileIsInView = tile.IsInViewFrustrum(currentCamera);
-            if (!tileIsInView)
-            {
-                Debug.Log("Tile not in view with content url: " + tile.contentUri);
-            }
-
-            if (tile.screenSpaceError > maximumScreenSpaceError && tileIsInView){
+            if (tile.screenSpaceError > maximumScreenSpaceError){
 
                 if (tilingMethod == TilingMethod.implicitTiling)
                 {
@@ -554,7 +583,7 @@ namespace Netherlands3D.Tiles3D
                 }
                 else if (tilingMethod == TilingMethod.explicitTiling)
                 {
-                    return tile.contentUri.Contains(".json") || tile.contentUri.Length == 0;
+                    return tile.children.Count > 0 || tile.contentUri.Contains(".json");
                 }
             }
             return false;
