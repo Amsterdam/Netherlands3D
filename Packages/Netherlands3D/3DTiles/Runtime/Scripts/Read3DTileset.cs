@@ -5,10 +5,9 @@ using SimpleJSON;
 using UnityEngine.Networking;
 using System;
 using Netherlands3D.Core;
-using System.IO;
 using System.Linq;
+using System.Text;
 using System.Collections.Specialized;
-using System.Web;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -24,7 +23,6 @@ namespace Netherlands3D.Tiles3D
 
         public Tile root;
         public double[] transformValues;
-        private Vector3ECEF positionECEF;
 
         TilingMethod tilingMethod = TilingMethod.explicitTiling;
 
@@ -86,10 +84,8 @@ namespace Netherlands3D.Tiles3D
             absolutePath = tilesetUrl.Substring(0,tilesetUrl.LastIndexOf("/")+1);
 
             rootPath = uri.GetLeftPart(UriPartial.Authority);
-
-            queryParameters = HttpUtility.ParseQueryString(uri.Query);
-            Debug.Log("Query params: " + queryParameters.ToString());
-
+            queryParameters = ParseQueryString(uri.Query);
+            Debug.Log($"Query url {ToQueryString(queryParameters)}");
             foreach (string segment in uri.Segments)
             {
                 if (segment.EndsWith(".json"))
@@ -101,6 +97,33 @@ namespace Netherlands3D.Tiles3D
                     break;
                 }
             }
+        }
+
+        /// <summary>
+        /// TODO: Use existing nl3d query parser / or move to Uri extention?
+        /// </summary>
+        /// <param name="queryString">?param=value&otherparam=othervalue</param>
+        public NameValueCollection ParseQueryString(string queryString)
+        {
+            // Remove leading '?' if present
+            if (queryString.StartsWith("?"))
+                queryString = queryString.Substring(1);
+
+            NameValueCollection queryParameters = new NameValueCollection();
+
+            string[] querySegments = queryString.Split('&');
+            for (int i = 0; i < querySegments.Length; i++)
+            {
+                string[] parts = querySegments[i].Split('=');
+                if (parts.Length > 1)
+                {
+                    string key = UnityWebRequest.UnEscapeURL(parts[0]);
+                    string value = UnityWebRequest.UnEscapeURL(parts[1]);
+                    queryParameters.Add(key, value);
+                }
+            }
+
+            return queryParameters;
         }
 
         /// <summary>
@@ -188,7 +211,7 @@ namespace Netherlands3D.Tiles3D
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                Debug.Log(www.error);
+                Debug.Log($"Could not load tileset from url:{tilesetUrl} Error:{www.error}");
             }
             else
             {
@@ -522,7 +545,6 @@ namespace Netherlands3D.Tiles3D
                 if (tile.contentUri.Contains(".json") && !tile.nestedTilesLoaded)
                 {
                     string nestedJsonPath = GetFullContentUri(tile);
-                    Debug.Log($"Nested {nestedJsonPath}");
                     UnityWebRequest www = UnityWebRequest.Get(nestedJsonPath);
                     yield return www.SendWebRequest();
 
@@ -540,10 +562,6 @@ namespace Netherlands3D.Tiles3D
 
                         nestedTreeLoaded = true;
                     }
-                }
-                else if (tile.contentUri.Length == 0)
-                {
-                    Debug.LogWarning(tile.contentUri);
                 }
             }
             else if (tilingMethod == TilingMethod.implicitTiling)
@@ -568,7 +586,7 @@ namespace Netherlands3D.Tiles3D
 
             //Combine query to pass on session id and API key (Google Maps 3DTiles API style)
             UriBuilder uriBuilder = new(fullPath);
-            NameValueCollection contentQueryParameters = HttpUtility.ParseQueryString(uriBuilder.Query);
+            NameValueCollection contentQueryParameters = ParseQueryString(uriBuilder.Query);
             foreach (string key in contentQueryParameters.Keys)
             {
                 if (!queryParameters.AllKeys.Contains(key))
@@ -576,11 +594,37 @@ namespace Netherlands3D.Tiles3D
                     queryParameters.Add(key, contentQueryParameters[key]);
                 }
             }
-
-            uriBuilder.Query = queryParameters.ToString();
+          
+            uriBuilder.Query = ToQueryString(queryParameters);
             var url = uriBuilder.ToString();
-
             return url;
+        }
+
+        private string ToQueryString(NameValueCollection queryParameters)
+        {
+            if (queryParameters.Count == 0) return "";
+
+            StringBuilder queryString = new StringBuilder();
+            for (int i = 0; i < queryParameters.Count; i++)
+            {
+                string key = queryParameters.GetKey(i);
+                string[] values = queryParameters.GetValues(i);
+
+                if (!string.IsNullOrEmpty(key) && values != null)
+                {
+                    for (int j = 0; j < values.Length; j++)
+                    {
+                        string value = values[j];
+
+                        if (queryString.Length > 0)
+                            queryString.Append("&");
+
+                        queryString.AppendFormat("{0}={1}", Uri.EscapeDataString(key), Uri.EscapeDataString(value));
+                    }
+                }
+            }
+            
+            return "?" + queryString.ToString();
         }
 
         private bool GetCanRefineToChildren(Tile tile)
