@@ -479,7 +479,7 @@ namespace Netherlands3D.Tiles3D
                 var closestPointOnBounds = child.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
                 CalculateTileScreenSpaceError(child, currentCamera, closestPointOnBounds);
 
-                if ((child.screenSpaceError <= maximumScreenSpaceError && child.ChildrenHaveContent()) || !child.IsInViewFrustrum(currentCamera))
+                if ((child.screenSpaceError <= maximumScreenSpaceError && child.ChildrenHaveContent() && child.refine == "REPLACE") || !child.IsInViewFrustrum(currentCamera))
                 {
                     RequestDispose(child);
                     visibleTiles.RemoveAt(i);
@@ -506,33 +506,30 @@ namespace Netherlands3D.Tiles3D
                 var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
                 CalculateTileScreenSpaceError(tile, currentCamera, closestPointOnBounds);
 
-                //Smaller geometric error? Too detailed for our current view so Dispose!
-                if (tile.geometricError <= sseComponent && tile.content)
+                //Smaller geometric error or out of view? Too detailed for our current view so Dispose and stop going down the tree.
+                var tileIsInView = tile.IsInViewFrustrum(currentCamera);
+                var tooDetailed = tile.geometricError <= sseComponent;
+                var canBeAdded = tile.refine == "ADD";
+                var tileHas3DContent = tile.contentUri.Length > 0 && !tile.contentUri.Contains(".json");
+                if ((tooDetailed || !tileIsInView) && tile.content)
                 {
                     RequestDispose(tile);
+                    yield break;
                 }
-                else
-                {
-                    var tileIsInView = tile.IsInViewFrustrum(currentCamera);
-                    
-                    //Check for children ( and if closest child can refine )
-                    var canRefineToChildren = GetCanRefineToChildren(tile);
 
-                    if (tileIsInView)
+                if (tileIsInView)
+                {
+                    var canRefineToChildren = GetCanRefineToChildren(tile);
+                    if (!canRefineToChildren && tileHas3DContent)
                     {
-                        if (canRefineToChildren)
-                        {
-                            yield return LoadInViewRecursively(tile, currentCamera);
-                        }
-                        else if (!canRefineToChildren && !tile.contentUri.Contains(".json") && tile.contentUri.Length > 0)
-                        {
-                            RequestContentUpdate(tile);
-                            visibleTiles.Add(tile);
-                        }
+                        RequestContentUpdate(tile);
+                        visibleTiles.Add(tile);
+
+                        if(!canBeAdded) yield break;
                     }
-                    else if(tile.content)
+                    if (canRefineToChildren)
                     {
-                        RequestDispose(tile);
+                        yield return LoadInViewRecursively(tile, currentCamera);
                     }
                 }
             }

@@ -17,6 +17,7 @@ public static class B3dmReader
 
         var glbLength = b3dmHeader.ByteLength - b3dmHeader.Length;
         var glbBuffer = reader.ReadBytes(glbLength);
+
         // remove the trailing glb padding characters if any
         glbBuffer = glbBuffer.TakeWhile((v, index) => glbBuffer.Skip(index).Any(w => (w != 0x20))).ToArray();
 

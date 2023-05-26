@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 using System.Threading.Tasks;
 using GLTFast;
 using System;
+using SimpleJSON;
 #if UNITY_EDITOR
 using System.IO.Compression;
 #endif
@@ -37,7 +38,7 @@ namespace Netherlands3D.B3DM
         /// <param name="webRequest">Provide </param>
         /// <param name="bypassCertificateValidation"></param>
         /// <returns></returns>
-        public static IEnumerator ImportBinFromURL(string url, Action<GltfImport> callbackGltf, bool bypassCertificateValidation = false)
+        public static IEnumerator ImportBinFromURL(string url, Action<ParsedGltf> callbackGltf, bool bypassCertificateValidation = false)
         {
             var webRequest = UnityWebRequest.Get(url);
 
@@ -54,8 +55,8 @@ namespace Netherlands3D.B3DM
             else
             {
                 byte[] bytes = webRequest.downloadHandler.data;
-
                 var memory = new ReadOnlyMemory<byte>(bytes);
+                double[] rtcCenter = null;
 
                 if (url.Contains(".b3dm"))
                 {
@@ -63,13 +64,30 @@ namespace Netherlands3D.B3DM
 
                     var b3dm = B3dmReader.ReadB3dm(memoryStream);
                     bytes = b3dm.GlbData;
+
+                    //Optional RTC_CENTER from b3DM header
+                    if(b3dm.FeatureTableJson.Length > 0)
+                    {
+                        JSONNode rootnode = JSON.Parse(b3dm.FeatureTableJson);
+                        var rtcCenterValues =  rootnode["RTC_CENTER"];
+                        rtcCenter = new double[3];
+                        if (rtcCenterValues != null)
+                        {
+                            for (int i = 0; i < 3; i++)
+                            {
+                                rtcCenter[i] = rtcCenterValues[i].AsDouble;
+                            }
+                        }
+                    }
                 }
 
-                yield return ParseFromBytes(bytes, url, callbackGltf);
+                yield return ParseFromBytes(bytes, url, callbackGltf, rtcCenter);
             }
 
             webRequest.Dispose();
         }
+
+
 
         /// <summary>
         /// Import binary .glb,.gltf data or get it from a .b3dm
@@ -115,7 +133,7 @@ namespace Netherlands3D.B3DM
         /// <param name="sourcePath">Sourcepath is required to be able to load files with external dependencies like textures etc.</param>
         /// <param name="callbackGltf">The callback containing the GltfImport result</param>
         /// <returns></returns>
-        private static async Task ParseFromBytes(byte[] glbBuffer, string sourcePath, Action<GltfImport> callbackGltf)
+        private static async Task ParseFromBytes(byte[] glbBuffer, string sourcePath, Action<ParsedGltf> callbackGltf, double[] rtcCenter = null)
         {
             //Use our parser (in this case GLTFFast to read the binary data and instantiate the Unity objects in the scene)
             var gltf = new GltfImport();
@@ -123,7 +141,12 @@ namespace Netherlands3D.B3DM
 
             if (success)
             {
-                callbackGltf?.Invoke(gltf);
+                var parsedGltf = new ParsedGltf()
+                {
+                    gltfImport = gltf,
+                    rtcCenter = rtcCenter
+                };
+                callbackGltf?.Invoke(parsedGltf);
             }
             else
             {
@@ -133,4 +156,11 @@ namespace Netherlands3D.B3DM
             }
         }
     }
+}
+
+[Serializable]
+public class ParsedGltf
+{
+    public GltfImport gltfImport;
+    public double[] rtcCenter = null;
 }

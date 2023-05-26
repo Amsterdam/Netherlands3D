@@ -90,11 +90,13 @@ namespace Netherlands3D.Tiles3D
         /// <summary>
         /// After parsing gltf content spawn gltf scenes
         /// </summary>
-        private async void GotGltfContent(GltfImport gltf)
+        private async void GotGltfContent(ParsedGltf parsedGltf)
         {
             if (this == null) return;
 
             State = ContentLoadState.DOWNLOADED;
+
+            var gltf = parsedGltf.gltfImport;
             if (gltf != null)
             {
                 this.gltf = gltf;
@@ -106,6 +108,14 @@ namespace Netherlands3D.Tiles3D
                     var scenePosition = scene.localPosition;
                     scene.localPosition = Vector3.zero;
                     transform.localPosition = scenePosition;
+
+                    if (parsedGltf.rtcCenter != null)
+                    {
+                        Debug.Log($"Move to {parsedGltf.rtcCenter[0]},{parsedGltf.rtcCenter[1]},{parsedGltf.rtcCenter[2]}");
+                        var unityFromEcef = CoordConvert.ECEFToUnity(new Vector3ECEF(parsedGltf.rtcCenter[0], parsedGltf.rtcCenter[1], parsedGltf.rtcCenter[2]));
+                        transform.localPosition = unityFromEcef;
+                        transform.SetParent(null);
+                    }
                 }
                 this.gameObject.name = uri;
                 this.gameObject.AddComponent<MovingOriginFollower>();
