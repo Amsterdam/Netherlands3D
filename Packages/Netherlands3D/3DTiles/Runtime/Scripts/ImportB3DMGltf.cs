@@ -66,19 +66,7 @@ namespace Netherlands3D.B3DM
                     bytes = b3dm.GlbData;
 
                     //Optional RTC_CENTER from b3DM header
-                    if(b3dm.FeatureTableJson.Length > 0)
-                    {
-                        JSONNode rootnode = JSON.Parse(b3dm.FeatureTableJson);
-                        var rtcCenterValues =  rootnode["RTC_CENTER"];
-                        rtcCenter = new double[3];
-                        if (rtcCenterValues != null)
-                        {
-                            for (int i = 0; i < 3; i++)
-                            {
-                                rtcCenter[i] = rtcCenterValues[i].AsDouble;
-                            }
-                        }
-                    }
+                    rtcCenter = GetRTCCenter(rtcCenter, b3dm);
                 }
 
                 yield return ParseFromBytes(bytes, url, callbackGltf, rtcCenter);
@@ -87,7 +75,24 @@ namespace Netherlands3D.B3DM
             webRequest.Dispose();
         }
 
+        private static double[] GetRTCCenter(double[] rtcCenter, B3dm b3dm)
+        {
+            if (b3dm.FeatureTableJson.Length > 0)
+            {
+                JSONNode rootnode = JSON.Parse(b3dm.FeatureTableJson);
+                var rtcCenterValues = rootnode["RTC_CENTER"];
+                rtcCenter = new double[3];
+                if (rtcCenterValues != null)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        rtcCenter[i] = rtcCenterValues[i].AsDouble;
+                    }
+                }
+            }
 
+            return rtcCenter;
+        }
 
         /// <summary>
         /// Import binary .glb,.gltf data or get it from a .b3dm
