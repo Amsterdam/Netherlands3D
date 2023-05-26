@@ -497,36 +497,49 @@ namespace Netherlands3D.Tiles3D
 
         private IEnumerator LoadInViewRecursively(Tile parentTile, Camera currentCamera)
         {
+            //Make sure we loaded the chilren from possible nested tree
             yield return LoadNestedTileset(parentTile);
+            yield return null;
 
             foreach (var tile in parentTile.children)
             {
                 if (visibleTiles.Contains(tile)) continue;
+                yield return null;
 
                 var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
                 CalculateTileScreenSpaceError(tile, currentCamera, closestPointOnBounds);
 
                 //Smaller geometric error or out of view? Too detailed for our current view so Dispose and stop going down the tree.
                 var tileIsInView = tile.IsInViewFrustrum(currentCamera);
-                var tooDetailed = tile.geometricError <= sseComponent;
-                var canBeAdded = tile.refine == "ADD";
+                var enoughDetail = tile.geometricError <= sseComponent;
+                var replace = (parentTile.refine == "REPLACE");
                 var tileHas3DContent = tile.contentUri.Length > 0 && !tile.contentUri.Contains(".json");
-                if ((tooDetailed || !tileIsInView) && tile.content)
+
+                //Not in view? abort!
+                if (!tileIsInView || !enoughDetail)
                 {
-                    RequestDispose(tile);
-                    yield break;
+                    if (tile.content)
+                        RequestDispose(tile);
                 }
-
-                if (tileIsInView)
+                else
                 {
-                    var canRefineToChildren = GetCanRefineToChildren(tile);
-                    if (!canRefineToChildren && tileHas3DContent)
+                    if (enoughDetail)
                     {
-                        RequestContentUpdate(tile);
-                        visibleTiles.Add(tile);
+                        if (tileHas3DContent)
+                        {
+                            RequestContentUpdate(tile);
+                            visibleTiles.Add(tile);
 
-                        if(!canBeAdded) yield break;
+                            if (replace)
+                            {
+                                RequestDispose(parentTile);
+                                continue; //Abort looking further for more nested children
+                            }
+                        }
                     }
+
+                    var canRefineToChildren = GetCanRefineToChildren(tile);
+                    //Go down the tree if we do not have enough detail yet
                     if (canRefineToChildren)
                     {
                         yield return LoadInViewRecursively(tile, currentCamera);

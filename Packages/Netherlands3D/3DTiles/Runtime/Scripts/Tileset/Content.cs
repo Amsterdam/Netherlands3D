@@ -111,7 +111,6 @@ namespace Netherlands3D.Tiles3D
 
                     if (parsedGltf.rtcCenter != null)
                     {
-                        Debug.Log($"Move to {parsedGltf.rtcCenter[0]},{parsedGltf.rtcCenter[1]},{parsedGltf.rtcCenter[2]}");
                         var unityFromEcef = CoordConvert.ECEFToUnity(new Vector3ECEF(parsedGltf.rtcCenter[0], parsedGltf.rtcCenter[1], parsedGltf.rtcCenter[2]));
                         transform.localPosition = unityFromEcef;
                         transform.SetParent(null);
