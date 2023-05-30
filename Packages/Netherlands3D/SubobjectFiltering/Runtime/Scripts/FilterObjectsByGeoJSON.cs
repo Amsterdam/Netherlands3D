@@ -20,6 +20,7 @@ using Netherlands3D.Events;
 using Netherlands3D.Utilities;
 using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.Coordinates;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -59,7 +60,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	private Coroutine runningRequest;
 	private UnityWebRequest runningWebRequest;
 
-	public bool LoadedAllResultsForArea { 
+	public bool LoadedAllResultsForArea {
 		get {
 			return loadedResultsForArea;
 		}
@@ -71,7 +72,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Request operator comparison type. 
+	/// Request operator comparison type.
 	/// We compare to filter after retrieving the data, but these can be used in the Filter of the WFS request too.
 	/// </summary>
 	public enum ComparisonOperator
@@ -92,7 +93,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	private void OnDrawGizmos()
 	{
 		Gizmos.color = new Color(0, 1, 0, 0.3f);
-		var center = CoordConvert.RDtoUnity(new Vector3RD(bboxByCameraBounds.CenterX, bboxByCameraBounds.CenterY,0));
+		var center = CoordinateConverter.RDtoUnity(new Vector3RD(bboxByCameraBounds.CenterX, bboxByCameraBounds.CenterY,0));
 		float height = (float)(bboxByCameraBounds.MaxY - bboxByCameraBounds.MinY);
 		float width = (float)(bboxByCameraBounds.MaxX - bboxByCameraBounds.MinX);
 
@@ -153,7 +154,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 		{
 			yield return new WaitForEndOfFrame();
 		}
-		
+
 		UpdateBoundsByCameraExtent();
 
 		var bbox = $"{bboxByCameraBounds.MinX},{bboxByCameraBounds.MinY},{bboxByCameraBounds.MaxX},{bboxByCameraBounds.MaxY}";
@@ -224,7 +225,7 @@ public class FilterObjectsByGeoJSON : MonoBehaviour
 	{
 		Dictionary<string, float> stringAndFloat = new Dictionary<string, float>();
 		for (int i = 0; i < retrievedFloats.Count; i++)
-		{	
+		{
 			var value = retrievedFloats[i];
 			var id = retrievedIDs[i];
 			if(!stringAndFloat.ContainsKey(id) && ComparesToFilter(value))

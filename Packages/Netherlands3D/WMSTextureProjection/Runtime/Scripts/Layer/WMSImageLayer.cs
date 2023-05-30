@@ -20,6 +20,7 @@ using System.Collections;
 using UnityEngine;
 using Netherlands3D.TileSystem;
 using System;
+using Netherlands3D.Coordinates;
 using Netherlands3D.Core;
 using Netherlands3D.Rendering;
 using UnityEngine.Networking;
@@ -28,7 +29,7 @@ using UnityEngine.Events;
 namespace Netherlands3D.WMS
 {
     public class WMSImageLayer : Layer
-    {    
+    {
         public bool compressLoadedTextures = false;
 
         private TextureProjectorBase projectorPrefab;
@@ -99,7 +100,7 @@ namespace Netherlands3D.WMS
             tile.gameObject.transform.parent = transform.gameObject.transform;
             tile.gameObject.layer = tile.gameObject.transform.parent.gameObject.layer;
             Vector2Int origin = new Vector2Int(tileKey.x+(tileSize/2), tileKey.y + (tileSize / 2));
-            tile.gameObject.transform.position = CoordConvert.RDtoUnity(origin);
+            tile.gameObject.transform.position = CoordinateConverter.RDtoUnity(origin);
 
             if (tile.gameObject.TryGetComponent<TextureProjectorBase>(out var projector))
             {

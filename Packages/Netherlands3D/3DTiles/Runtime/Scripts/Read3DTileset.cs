@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 using System;
 using Netherlands3D.Core;
 using System.IO;
+using Netherlands3D.Coordinates;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -62,7 +63,7 @@ namespace Netherlands3D.Tiles3D
             absolutePath = tilesetUrl.Replace(tilesetFilename, "");
             StartCoroutine(LoadTileset());
 
-            CoordConvert.relativeOriginChanged.AddListener(RelativeCenterChanged);
+            MovingOrigin.relativeOriginChanged.AddListener(RelativeCenterChanged);
         }
 
         /// <summary>
@@ -186,7 +187,7 @@ namespace Netherlands3D.Tiles3D
         }
 
         private void ReadTileset(JSONNode rootnode)
-        {   
+        {
             transformValues = new double[16] {1.0, 0.0, 0.0, 0.0,0.0, 1.0, 0.0, 0.0,0.0, 0.0, 1.0, 0.0,0.0, 0.0, 0.0, 1.0 };
             JSONNode transformNode = rootnode["transform"];
             if (transformNode!=null)
@@ -196,12 +197,12 @@ namespace Netherlands3D.Tiles3D
                     transformValues[i] = transformNode[i].AsDouble;
                 }
             }
-            
+
             JSONNode implicitTilingNode = rootnode["implicitTiling"];
             if (implicitTilingNode != null)
             {
                 tilingMethod = TilingMethod.implicitTiling;
-                
+
             }
 
             //setup location and rotation
@@ -252,7 +253,7 @@ namespace Netherlands3D.Tiles3D
             if (contentNode!=null)
             {
                 tile.hascontent = true;
-                
+
                 tile.contentUri = contentNode["uri"].Value;
             }
 
@@ -262,8 +263,8 @@ namespace Netherlands3D.Tiles3D
         private void AlignWithUnityWorld()
         {
             transform.SetPositionAndRotation(
-                CoordConvert.ECEFToUnity(positionECEF), 
-                CoordConvert.ecefRotionToUp()
+                CoordinateConverter.ECEFToUnity(positionECEF),
+                EPSG4936.RotationToUp()
             );
         }
 
@@ -351,10 +352,10 @@ namespace Netherlands3D.Tiles3D
         /// </summary>
         private bool CameraChanged()
         {
-            return 
-                (currentCamera.orthographic == true && lastCameraAngle != currentCamera.orthographicSize) || 
-                (currentCamera.orthographic == false && lastCameraAngle != currentCamera.fieldOfView) || 
-                lastCameraPosition != currentCameraPosition || 
+            return
+                (currentCamera.orthographic == true && lastCameraAngle != currentCamera.orthographicSize) ||
+                (currentCamera.orthographic == false && lastCameraAngle != currentCamera.fieldOfView) ||
+                lastCameraPosition != currentCameraPosition ||
                 lastCameraRotation != currentCameraRotation;
         }
 

@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
+using Netherlands3D.Coordinates;
 using UnityEngine;
 using UnityEngine.Networking;
 using TMPro;
@@ -136,7 +137,7 @@ public class WFSHandler : MonoBehaviour
         else
         {
             string result = request.downloadHandler.text;
-            action.Invoke(result); 
+            action.Invoke(result);
         }
     }
     private IEnumerator HandleFeatureJSON(GeoJSON geoJSON)
@@ -195,7 +196,7 @@ public class WFSHandler : MonoBehaviour
         {
             case GeoJSON.GeoJSONGeometryType.Point:
                 double[] geoPointDouble = geoJSON.GetGeometryPoint2DDouble();
-                pointEvent.InvokeStarted(CoordConvert.RDtoUnity(geoPointDouble[0], geoPointDouble[1], -10));
+                pointEvent.InvokeStarted(CoordinateConverter.RDtoUnity(geoPointDouble[0], geoPointDouble[1], -10));
                 break;
             case GeoJSON.GeoJSONGeometryType.MultiPoint:
                 MultiPointHandler pointHandler = new MultiPointHandler();

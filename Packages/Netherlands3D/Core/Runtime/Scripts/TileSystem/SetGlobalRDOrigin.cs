@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using Netherlands3D.Coordinates;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -26,7 +27,7 @@ namespace Netherlands3D.Core
         private bool movingOrigin = false;
         [SerializeField]
         private float maxCameraDistanceFromOrigin = 5000;
-        public bool MovingOrigin { 
+        public bool MovingOrigin {
             get => movingOrigin;
             set
             {
@@ -52,17 +53,16 @@ namespace Netherlands3D.Core
                 CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             }
 
-            CoordConvert.zeroGroundLevelY = zeroGroundLevelY;
-            CoordConvert.relativeCenterRD = relativeCenterRD;
+            CoordinateConverter.zeroGroundLevelY = zeroGroundLevelY;
+            CoordinateConverter.relativeCenterRD = relativeCenterRD;
         }
 
         private void OnValidate()
         {
-            CoordConvert.zeroGroundLevelY = zeroGroundLevelY;
-            CoordConvert.relativeCenterRD = relativeCenterRD;
-            CoordConvert.ecefIsSet = false;
+            CoordinateConverter.zeroGroundLevelY = zeroGroundLevelY;
+            CoordinateConverter.relativeCenterRD = relativeCenterRD;
 
-            Vector3WGS origin_wgs = CoordConvert.UnitytoWGS84(Vector3.zero);
+            Vector3WGS origin_wgs = CoordinateConverter.UnitytoWGS84(Vector3.zero);
 
             MovingOrigin = movingOrigin;
         }
@@ -75,7 +75,7 @@ namespace Netherlands3D.Core
                 offset.y = 0;
                 if (offset.magnitude > maxCameraDistanceFromOrigin)
                 {
-                    CoordConvert.MoveAndRotateWorld(offset);
+                    Coordinates.MovingOrigin.MoveAndRotateWorld(offset);
                 }
                 yield return new WaitForEndOfFrame();
             }
@@ -88,7 +88,7 @@ namespace Netherlands3D.Core
         void OnDrawGizmosSelected()
         {
             Handles.color = Color.yellow;
-            Handles.Label(Vector3.zero, $"    RD: {CoordConvert.relativeCenterRD.x},{CoordConvert.relativeCenterRD.y}");
+            Handles.Label(Vector3.zero, $"    RD: {CoordinateConverter.relativeCenterRD.x},{CoordinateConverter.relativeCenterRD.y}");
         }
 #endif
     }

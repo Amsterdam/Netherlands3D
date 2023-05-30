@@ -1,6 +1,7 @@
 ﻿using Netherlands3D.Core;
 using System;
 using System.Collections.Generic;
+using Netherlands3D.Coordinates;
 using UnityEngine;
 
 namespace Netherlands3D.Tiles3D
@@ -106,11 +107,11 @@ namespace Netherlands3D.Tiles3D
         public void CalculateBounds()
         {
             //Array order: west, south, east, north, minimum height, maximum height
-            var ecefMin = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[0] * 180.0f) / Mathf.PI, (boundingVolume.values[1] * 180.0f) / Mathf.PI, boundingVolume.values[4]));
-            var ecefMax = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[2] * 180.0f) / Mathf.PI, (boundingVolume.values[3] * 180.0f) / Mathf.PI, boundingVolume.values[5]));
+            var ecefMin = CoordinateConverter.WGS84toECEF(new Vector3WGS((boundingVolume.values[0] * 180.0f) / Mathf.PI, (boundingVolume.values[1] * 180.0f) / Mathf.PI, boundingVolume.values[4]));
+            var ecefMax = CoordinateConverter.WGS84toECEF(new Vector3WGS((boundingVolume.values[2] * 180.0f) / Mathf.PI, (boundingVolume.values[3] * 180.0f) / Mathf.PI, boundingVolume.values[5]));
 
-            var unityMin = CoordConvert.ECEFToUnity(ecefMin);
-            var unityMax = CoordConvert.ECEFToUnity(ecefMax);
+            var unityMin = CoordinateConverter.ECEFToUnity(ecefMin);
+            var unityMax = CoordinateConverter.ECEFToUnity(ecefMax);
 
             bounds.size = Vector3.zero;
             bounds.center = unityMin;

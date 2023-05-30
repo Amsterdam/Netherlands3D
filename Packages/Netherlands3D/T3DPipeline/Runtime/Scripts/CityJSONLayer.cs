@@ -5,6 +5,7 @@ using Netherlands3D.Core;
 using UnityEngine.Networking;
 using System;
 using System.Linq;
+using Netherlands3D.Coordinates;
 using UnityEngine.Rendering;
 using Netherlands3D.T3DPipeline;
 using Netherlands3D.Events;
@@ -224,7 +225,7 @@ namespace Netherlands3D.TileSystem
             container = Instantiate(containerPrefab, transform);
             container.name = tileChange.X.ToString() + "-" + tileChange.Y.ToString();
             container.layer = container.transform.parent.gameObject.layer;
-            container.transform.position = CoordConvert.RDtoUnity(new Vector2(tileChange.X + (tileSize / 2), tileChange.Y + (tileSize / 2)));
+            container.transform.position = CoordinateConverter.RDtoUnity(new Vector2(tileChange.X + (tileSize / 2), tileChange.Y + (tileSize / 2)));
 
             container.SetActive(isEnabled);
             container.GetComponent<CityJSON>().ParseCityJSON(cityJSON);

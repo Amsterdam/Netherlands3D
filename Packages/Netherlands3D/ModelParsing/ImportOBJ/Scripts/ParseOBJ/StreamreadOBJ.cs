@@ -4,6 +4,7 @@ using UnityEngine;
 using Netherlands3D.Core;
 using System.IO;
 using System.Text;
+using Netherlands3D.Coordinates;
 
 namespace Netherlands3D.ModelParsing
 {
@@ -54,7 +55,7 @@ namespace Netherlands3D.ModelParsing
 
         private bool RDCoordinates = false;
         private bool flipFaceDirection = false; // set to true if windingOrder in obj-file is not the standard CounterClockWise
-        private bool flipYZ = false; // set to true if Y and Z axes in the obj have been flipped	
+        private bool flipYZ = false; // set to true if Y and Z axes in the obj have been flipped
         public bool ObjectUsesRDCoordinates { get => RDCoordinates; set => RDCoordinates = value; }
         public bool FlipYZ { get => flipYZ; set => flipYZ = value; }
         public bool FlipFaceDirection { get => flipFaceDirection; set => flipFaceDirection = value; }
@@ -184,7 +185,7 @@ namespace Netherlands3D.ModelParsing
         IEnumerator StreamReadFile(string filename, System.Action<bool> callback)
         {
             Debug.Log("StreamReadFile: " + filename);
-            
+
             vertices.SetupWriting("vertices");
             normals.SetupWriting("normals");
             uvs.SetupWriting("uvs");
@@ -339,7 +340,7 @@ namespace Netherlands3D.ModelParsing
 
                     }
                     else if (readChar == 'v')
-                    {// could be v, vt or vn. 
+                    {// could be v, vt or vn.
                         if (NextChar(out readChar))
                         {
                             readChar = makeCharLowerCase(readChar);
@@ -607,11 +608,11 @@ namespace Netherlands3D.ModelParsing
                     Vector3 coord;
                     if (flipYZ)
                     {
-                        coord = CoordConvert.RDtoUnity(new Vector3(x, z, y));
+                        coord = CoordinateConverter.RDtoUnity(new Vector3(x, z, y));
                     }
                     else
                     {
-                        coord = CoordConvert.RDtoUnity(new Vector3(x, y, z));
+                        coord = CoordinateConverter.RDtoUnity(new Vector3(x, y, z));
                     }
                     vertices.Add(coord.x, coord.y, coord.z);
                     return;
@@ -630,12 +631,12 @@ namespace Netherlands3D.ModelParsing
         }
         void CheckForRD(float x, float y, float z)
         {
-            if (CoordConvert.RDIsValid(new Vector3RD(x, z, y)))
+            if (CoordinateConverter.RDIsValid(new Vector3RD(x, z, y)))
             {
                 ObjectUsesRDCoordinates = true;
                 FlipYZ = true;
             }
-            else if (CoordConvert.RDIsValid(new Vector3RD(x, y, z)))
+            else if (CoordinateConverter.RDIsValid(new Vector3RD(x, y, z)))
             {
                 ObjectUsesRDCoordinates = true;
                 FlipYZ = false;
