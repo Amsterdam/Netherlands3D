@@ -78,7 +78,7 @@ namespace Netherlands3D.Coordinates
             double DeltaX = (x+correctionX - refRDX) * Math.Pow(10, -5);
             double DeltaY = (y+correctionY - refRDY) * Math.Pow(10, -5);
 
-            //calculate lattitude
+            //calculate latitude
             double Deltalat = 0;
             for (int i = 0; i < Kpq.Length; i++)
             {
@@ -115,21 +115,15 @@ namespace Netherlands3D.Coordinates
         public static Double RDCorrection(double x, double y, string direction, byte[] bytes)
         {
             double value = 0;
-            //TextAsset txt;
 
             if (direction == "X")
             {
-                //txt = RDCorrectionX;
                 value = -0.185;
             }
             else if (direction == "Y")
             {
-                //txt = RDCorrectionY;
                 value = -0.232;
             }
-            //DeltaH tussen wGS en NAP
-            //txt = RDCorrectionZ;
-            //byte[] bytes = txt.bytes;
 
             double Xmin;
             double Xmax;
@@ -182,7 +176,6 @@ namespace Netherlands3D.Coordinates
                 float myFloat = BitConverter.ToSingle(bytes, 56 + (dataNumber * 4));
                 value += myFloat;
             }
-            //datanummer = 1500;
 
             return value;
         }

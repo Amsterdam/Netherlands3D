@@ -16,8 +16,11 @@
 *  permissions and limitations under the License.
 */
 
+using System;
+
 namespace Netherlands3D.Coordinates
 {
+	[Serializable]
     public struct Coordinate
     {
         /// <summary>
