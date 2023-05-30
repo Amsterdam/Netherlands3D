@@ -1,14 +1,5 @@
 {
   "dependencies": {
-    "com.atteneder.draco": {
-      "version": "https://github.com/atteneder/DracoUnity.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.burst": "1.8.4"
-      },
-      "hash": "2fb796c3cbd1d85fc76957422259b9af624d3741"
-    },
     "com.atteneder.ktx": {
       "version": "https://github.com/atteneder/KtxUnity.git",
       "depth": 0,

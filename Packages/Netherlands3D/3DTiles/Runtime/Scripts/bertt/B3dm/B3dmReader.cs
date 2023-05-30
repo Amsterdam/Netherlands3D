@@ -5,14 +5,12 @@ using System.Text;
 
 public static class B3dmReader
 {
-    private static Encoding encoding = Encoding.GetEncoding("Windows-1252");
-
     public static B3dm ReadB3dm(BinaryReader reader)
     {
         var b3dmHeader = new B3dmHeader(reader);
-        var featureTableJson = encoding.GetString(reader.ReadBytes(b3dmHeader.FeatureTableJsonByteLength));
+        var featureTableJson = Encoding.UTF8.GetString(reader.ReadBytes(b3dmHeader.FeatureTableJsonByteLength));
         var featureTableBytes = reader.ReadBytes(b3dmHeader.FeatureTableBinaryByteLength);
-        var batchTableJson = encoding.GetString(reader.ReadBytes(b3dmHeader.BatchTableJsonByteLength));
+        var batchTableJson = Encoding.UTF8.GetString(reader.ReadBytes(b3dmHeader.BatchTableJsonByteLength));
         var batchTableBytes = reader.ReadBytes(b3dmHeader.BatchTableBinaryByteLength);
 
         var glbLength = b3dmHeader.ByteLength - b3dmHeader.Length;

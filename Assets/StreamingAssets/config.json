@@ -1,13 +1,11 @@
 {
     "viewerVersion": "2.0.0",
     "tilesets": [
-        {
-            "url": "https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyAeqe4utT4N29QGFA89an_C3mnnuZlw0Xs",
-            "maximumScreenSpaceError": 5
-        },
 		{
-            "url": "https://3da-o-cdn.azureedge.net/data/rotterdam3dtiles/tileset.json",
+            "url": "http://localhost:8080/tileset.json",
             "maximumScreenSpaceError": 5
         }
     ]
 }
+
+
