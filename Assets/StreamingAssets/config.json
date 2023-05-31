@@ -2,7 +2,7 @@
     "viewerVersion": "2.0.0",
     "tilesets": [
 		{
-            "url": "http://localhost:8080/tileset.json",
+            "url": "https://3da-o-cdn.azureedge.net/data/rotterdam3dtiles/tileset.json",
             "maximumScreenSpaceError": 5
         }
     ]
