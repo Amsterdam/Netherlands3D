@@ -187,7 +187,7 @@ mergeInto(LibraryManager.library, {
 
             var dbRequest = transaction.objectStore("FILE_DATA").get(indexedFilePath);
             dbRequest.onsuccess = function (e) {                
-                var blob = new Blob([e.target.result], { type: 'application/octetstream' });
+                var blob = new Blob([e.target.result.contents], { type: 'application/octetstream' });
 				var url = window.URL.createObjectURL(blob);
 				var onlyFileName = fileNameString.replace(/^.*[\\\/]/, '');
 				const a = document.createElement("a");
