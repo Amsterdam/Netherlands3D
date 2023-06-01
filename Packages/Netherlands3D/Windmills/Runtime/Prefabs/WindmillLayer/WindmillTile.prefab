@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8732468831737499691}
   - component: {fileID: 6970985901844830760}
   m_Layer: 0
-  m_Name: WindmillCityJson
+  m_Name: WindmillTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

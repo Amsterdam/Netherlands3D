@@ -376,6 +376,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8601746673670394497}
   - component: {fileID: 6327966342072211590}
+  - component: {fileID: 3188448741145959515}
   m_Layer: 0
   m_Name: WindmillModel
   m_TagString: Untagged
@@ -412,9 +413,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82dc298e1a66497a9c68398430a75397, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onCityObjectVisualized: {fileID: 11400000, guid: 75872d7a7b4094523810f7573daf726c, type: 2}
+  rotationSpeed: 10
+  status: 0
+  axisHeight: 120
+  rotorDiameter: 120
+  defaultHeight: 120
+  defaultDiameter: 120
   windmillBase: {fileID: 5002815276990863768}
   windmillAxis: {fileID: 1616105725222511744}
   windmillRotorConnection: {fileID: 1170638866416191924}
   windmillRotor: {fileID: 3741948184948289494}
-  rotationSpeed: 10
+--- !u!114 &3188448741145959515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8940871946186639419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7516254497b4797b7d6d8618596522b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onCityObjectVisualized: {fileID: 11400000, guid: 75872d7a7b4094523810f7573daf726c, type: 2}

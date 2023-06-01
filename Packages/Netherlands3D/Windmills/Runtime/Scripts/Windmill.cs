@@ -1,89 +1,97 @@
-using System.Linq;
-using Netherlands3D.Events;
-using Netherlands3D.T3DPipeline;
 using UnityEngine;
 
 namespace Netherlands3D.Windmills
 {
     public class Windmill : MonoBehaviour
     {
-        private const string AXIS_HEIGHT_KEY = "asHoogte";
-        private const string ROTOR_DIAMETER_KEY = "rotorDiameter";
-        private const string STATUS_KEY = "status";
+        public float RotorDiameter
+        {
+            get => rotorDiameter;
+            set
+            {
+                rotorDiameter = value;
+                Resize();
+            }
+        }
 
-        public float RotorDiameter { get; private set; }
-        public float AxisHeight { get; private set; }
-        public WindmillStatus Status { get; private set; }
+        public float AxisHeight
+        {
+            get => axisHeight;
+            set
+            {
+                axisHeight = value;
+                Resize();
+            }
+        }
 
+        public WindmillStatus Status
+        {
+            get => status;
+            set
+            {
+                status = value;
+                Resize();
+            }
+        }
 
-        [SerializeField] private GameObjectEvent onCityObjectVisualized;
+        [Header("Settings")]
+        [SerializeField] private float rotationSpeed = 10f;
+        [SerializeField] private WindmillStatus status;
+        [SerializeField] private float axisHeight = 120f;
+        [SerializeField] private float rotorDiameter = 120f;
+        [SerializeField] private float defaultHeight = 120f;
+        [SerializeField] private float defaultDiameter = 120f;
 
+        [Header("Models")]
         [SerializeField] private GameObject windmillBase;
         [SerializeField] private GameObject windmillAxis;
-        private Vector3 axisBasePosition;
         [SerializeField] private GameObject windmillRotorConnection;
         [SerializeField] private GameObject windmillRotor;
-        [SerializeField] private float rotationSpeed = 10f;
 
-        float fallbackHeight = 120f;
-        float fallbackDiameter = 120f;
+        private Vector3 axisBasePosition;
 
         private void Awake()
         {
             axisBasePosition = windmillAxis.transform.localPosition;
         }
 
-        private void OnEnable()
+        private void Start()
         {
-            onCityObjectVisualized.AddListenerStarted(Initialize);
+            // Do initial resize, in case properties were set in inspector
+            Resize();
         }
 
-        public void Initialize(GameObject obj)
+        private void Resize()
         {
-            if (obj != transform.parent.gameObject)
-                return;
-
-            var cityObject = obj.GetComponent<CityObject>();
-
-            AxisHeight = cityObject.Attributes.First(attribute => attribute.Key == AXIS_HEIGHT_KEY).Value;
-            RotorDiameter = cityObject.Attributes.First(attribute => attribute.Key == ROTOR_DIAMETER_KEY).Value;
-            Status = ParseStatus(cityObject.Attributes.First(attribute => attribute.Key == STATUS_KEY).Value);
-
-            if (Status == WindmillStatus.Planned)
+            if (axisHeight == 0)
             {
-                if (AxisHeight == 0 || RotorDiameter == 0)
-                {
-                    print("Windmill " + cityObject.Id +
-                          " has no height or diameter, using fallback height and diameter");
-                    AxisHeight = fallbackHeight;
-                    RotorDiameter = fallbackDiameter;
-                }
+                Debug.LogWarning($"Windmill {name} has no height, using fallback height");
+                axisHeight = defaultHeight;
             }
 
-            windmillBase.transform.localScale = new Vector3(AxisHeight / 10, AxisHeight / 10, AxisHeight);
-            windmillAxis.transform.localPosition = new Vector3(axisBasePosition.x, AxisHeight, axisBasePosition.z);
-            windmillAxis.transform.localScale = AxisHeight * 0.1f * Vector3.one;
-            windmillRotor.transform.localScale = new Vector3(RotorDiameter / 2, RotorDiameter / 2, RotorDiameter / 2);
+            if (rotorDiameter == 0)
+            {
+                Debug.LogWarning($"Windmill {name} has no diameter, using fallback diameter");
+                rotorDiameter = defaultDiameter;
+            }
+
+            var rotorScale = rotorDiameter * 0.5f;
+            var baseScale = axisHeight * 0.1f;
+
+            windmillBase.transform.localScale = new Vector3(baseScale, baseScale, axisHeight);
+            windmillAxis.transform.localPosition = new Vector3(axisBasePosition.x, axisHeight, axisBasePosition.z);
+            windmillAxis.transform.localScale = baseScale * Vector3.one;
             windmillRotor.transform.position = windmillRotorConnection.transform.position;
-        }
-
-        private static WindmillStatus ParseStatus(string statusString)
-        {
-            if (statusString.ToLower() == "in bedrijf")
-                return WindmillStatus.Active;
-            if (statusString.ToLower() == "toekomstig")
-                return WindmillStatus.Planned;
-            if (statusString.ToLower() == "gesaneerd")
-                return WindmillStatus.Removed;
-
-            return WindmillStatus.Unknown;
+            windmillRotor.transform.localScale = rotorScale * Vector3.one;
         }
 
         private void Update()
         {
-            Debug.DrawLine(windmillRotor.transform.position,
-                windmillRotor.transform.position + windmillRotor.transform.forward);
-            windmillRotor.transform.Rotate(Vector3.up, Time.deltaTime * rotationSpeed, Space.Self);
+            var windmillRotorTransform = windmillRotor.transform;
+            var windmillRotorPosition = windmillRotorTransform.position;
+            Debug.DrawLine(windmillRotorPosition, windmillRotorPosition + windmillRotorTransform.forward);
+
+            windmillRotorTransform.Rotate(Vector3.up, Time.deltaTime * rotationSpeed, Space.Self);
         }
     }
 }
