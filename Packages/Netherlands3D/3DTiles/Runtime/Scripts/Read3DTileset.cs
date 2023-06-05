@@ -21,7 +21,7 @@ namespace Netherlands3D.Tiles3D
         private string rootPath = "";
         private NameValueCollection queryParameters;
 
-        public Tile root;
+        [HideInInspector] public Tile root;
         public double[] transformValues;
 
         TilingMethod tilingMethod = TilingMethod.explicitTiling;
@@ -501,48 +501,46 @@ namespace Netherlands3D.Tiles3D
             yield return LoadNestedTileset(parentTile);
             yield return null;
 
-            foreach (var tile in parentTile.children)
+            foreach (var childTile in parentTile.children)
             {
-                if (visibleTiles.Contains(tile)) continue;
+                if (visibleTiles.Contains(childTile)) continue;
                 yield return null;
 
-                var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
-                CalculateTileScreenSpaceError(tile, currentCamera, closestPointOnBounds);
+                var closestPointOnBounds = childTile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
+                CalculateTileScreenSpaceError(childTile, currentCamera, closestPointOnBounds);
 
                 //Smaller geometric error or out of view? Too detailed for our current view so Dispose and stop going down the tree.
-                var tileIsInView = tile.IsInViewFrustrum(currentCamera);
-                var enoughDetail = tile.geometricError <= sseComponent;
+                var tileIsInView = childTile.IsInViewFrustrum(currentCamera);
+                var enoughDetail = childTile.geometricError <= sseComponent;
+                var enoughDetailInParent = parentTile.geometricError <= sseComponent;
                 var replace = (parentTile.refine == "REPLACE");
-                var tileHas3DContent = tile.contentUri.Length > 0 && !tile.contentUri.Contains(".json");
+                var tileHas3DContent = childTile.contentUri.Length > 0 && !childTile.contentUri.Contains(".json");
 
                 //Not in view? abort!
-                if (!tileIsInView || !enoughDetail)
+                if (enoughDetailInParent || !tileIsInView)
                 {
-                    if (tile.content)
-                        RequestDispose(tile);
+                    if (childTile.content)
+                        RequestDispose(childTile);
                 }
                 else
                 {
-                    if (enoughDetail)
+                    if (enoughDetail && tileHas3DContent)
                     {
-                        if (tileHas3DContent)
-                        {
-                            RequestContentUpdate(tile);
-                            visibleTiles.Add(tile);
+                        RequestContentUpdate(childTile);
+                        visibleTiles.Add(childTile);
 
-                            if (replace)
-                            {
-                                RequestDispose(parentTile);
-                                continue; //Abort looking further for more nested children
-                            }
+                        if (replace)
+                        {
+                            RequestDispose(parentTile);
+                            //continue; //Abort looking further for more nested children
                         }
                     }
 
-                    var canRefineToChildren = GetCanRefineToChildren(tile);
+                    var canRefineToChildren = GetCanRefineToChildren(childTile);
                     //Go down the tree if we do not have enough detail yet
                     if (canRefineToChildren)
                     {
-                        yield return LoadInViewRecursively(tile, currentCamera);
+                        yield return LoadInViewRecursively(childTile, currentCamera);
                     }
                 }
             }

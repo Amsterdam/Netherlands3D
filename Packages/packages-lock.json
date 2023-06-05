@@ -1,5 +1,13 @@
 {
   "dependencies": {
+    "com.atteneder.draco": {
+      "version": "file:DracoUnity",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.burst": "1.4.11"
+      }
+    },
     "com.atteneder.ktx": {
       "version": "https://github.com/atteneder/KtxUnity.git",
       "depth": 0,

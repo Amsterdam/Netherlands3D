@@ -329,7 +329,7 @@ public class FreeCamera : MonoBehaviour
         var screenRay = cameraComponent.ScreenPointToRay(Vector2.one);
         worldPlane.Raycast(screenRay, out float distance);
 
-        cameraComponent.farClipPlane = distance + 1000;
+        cameraComponent.farClipPlane = distance + 5000;
     }
 
     /// <summary>
