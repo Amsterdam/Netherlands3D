@@ -532,7 +532,7 @@ namespace Netherlands3D.Tiles3D
                         if (replace)
                         {
                             RequestDispose(parentTile);
-                            //continue; //Abort looking further for more nested children
+                            continue; //Abort looking further for more nested children
                         }
                     }
 
