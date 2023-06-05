@@ -210,6 +210,18 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "eu.netherlands3d.gltfast": {
+      "version": "5.0.3",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.jsonserialize": "1.0.0",
+        "com.unity.modules.unitywebrequest": "1.0.0",
+        "com.unity.mathematics": "1.2.6",
+        "com.unity.burst": "1.6.6"
+      },
+      "url": "https://package.openupm.com"
+    },
     "nl.netherlands3d": {
       "version": "file:Netherlands3D",
       "depth": 0,
@@ -219,7 +231,8 @@
         "com.unity.inputsystem": "1.3.0",
         "com.unity.render-pipelines.universal": "1.3.0",
         "com.unity.nuget.newtonsoft-json": "3.1.0",
-        "com.unity.meshopt.decompress": "0.1.0-preview.5"
+        "com.unity.meshopt.decompress": "0.1.0-preview.5",
+        "eu.netherlands3d.gltfast": "5.0.3"
       }
     },
     "nl.netherlands3d.authentication": {
