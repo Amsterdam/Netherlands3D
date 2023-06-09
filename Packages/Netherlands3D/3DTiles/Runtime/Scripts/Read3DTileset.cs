@@ -21,7 +21,7 @@ namespace Netherlands3D.Tiles3D
         private string rootPath = "";
         private NameValueCollection queryParameters;
 
-        [HideInInspector] public Tile root;
+        public Tile root;
         public double[] transformValues;
 
         TilingMethod tilingMethod = TilingMethod.explicitTiling;
@@ -281,6 +281,7 @@ namespace Netherlands3D.Tiles3D
             switch (tilingMethod)
             {
                 case TilingMethod.explicitTiling:
+                    Debug.Log("Explicit tiling");
                     Tile rootTile = new Tile();
                     root = ReadExplicitNode(rootnode, rootTile);
                     root.screenSpaceError = float.MaxValue;
@@ -288,6 +289,7 @@ namespace Netherlands3D.Tiles3D
                     StartCoroutine(LoadInView());
                     break;
                 case TilingMethod.implicitTiling:
+                    Debug.Log("Implicit tiling");
                     ReadImplicitTiling(rootnode);
                     break;
                 default:
@@ -512,9 +514,12 @@ namespace Netherlands3D.Tiles3D
                 //Smaller geometric error or out of view? Too detailed for our current view so Dispose and stop going down the tree.
                 var tileIsInView = childTile.IsInViewFrustrum(currentCamera);
                 var enoughDetail = childTile.geometricError <= sseComponent;
-                var enoughDetailInParent = parentTile.geometricError <= sseComponent;
+
+                var childHas3DContent = childTile.contentUri.Length > 0 && !childTile.contentUri.Contains(".json");
+                var parentHas3DContent = parentTile.contentUri.Length > 0 && !parentTile.contentUri.Contains(".json");
+
+                var enoughDetailInParent = parentHas3DContent && (parentTile.geometricError <= sseComponent);
                 var replace = (parentTile.refine == "REPLACE");
-                var tileHas3DContent = childTile.contentUri.Length > 0 && !childTile.contentUri.Contains(".json");
 
                 //Not in view? abort!
                 if (enoughDetailInParent || !tileIsInView)
@@ -524,7 +529,7 @@ namespace Netherlands3D.Tiles3D
                 }
                 else
                 {
-                    if (enoughDetail && tileHas3DContent)
+                    if (enoughDetail && childHas3DContent)
                     {
                         RequestContentUpdate(childTile);
                         visibleTiles.Add(childTile);
@@ -537,6 +542,8 @@ namespace Netherlands3D.Tiles3D
                     }
 
                     var canRefineToChildren = GetCanRefineToChildren(childTile);
+                    childTile.canRefine = canRefineToChildren;
+
                     //Go down the tree if we do not have enough detail yet
                     if (canRefineToChildren)
                     {

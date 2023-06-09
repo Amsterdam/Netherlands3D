@@ -24,7 +24,10 @@ namespace Netherlands3D.Tiles3D
 
         public string refine;
         public BoundingVolume boundingVolume;
+
         public bool inView = false;
+        public bool canRefine = false;
+
         public string contentUri = "";
         public Content content;
 
