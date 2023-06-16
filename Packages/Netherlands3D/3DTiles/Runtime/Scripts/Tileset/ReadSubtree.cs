@@ -85,7 +85,7 @@ namespace Netherlands3D.Tiles3D
 
         private void AddChild(Tile parentTile, int localIndex, int LevelStartIndex, int childNumber)
         {
-            if (subtree.TileAvailability[localIndex + LevelStartIndex + childNumber])
+            if (subtree.TileAvailabiltyConstant == 1 || subtree.TileAvailability[localIndex + LevelStartIndex + childNumber])
             {
                 Tile childTile = new Tile();
                 childTile.parent = parentTile;
