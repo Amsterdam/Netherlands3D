@@ -52,7 +52,7 @@ namespace Netherlands3D.Tiles3D
                 tile.Y = 0;
                 tile.Z = 0;
                 tile.geometricError = settings.geometricError;
-                tile.hascontent = subtree.ContentAvailability[0];
+                tile.hascontent = (subtree.ContentAvailabiltyConstant == 1) || (subtree.ContentAvailability != null && subtree.ContentAvailability[0]);
 
                 tile.boundingVolume = new BoundingVolume
                 {
@@ -98,7 +98,8 @@ namespace Netherlands3D.Tiles3D
                     childTile.Z += 1;
                 }
                 childTile.geometricError = parentTile.geometricError / 2f;
-                childTile.hascontent = subtree.ContentAvailability[localIndex + LevelStartIndex + childNumber];
+
+                childTile.hascontent = (subtree.ContentAvailabiltyConstant == 1) || (subtree.ContentAvailability != null && subtree.ContentAvailability[localIndex + LevelStartIndex + childNumber]);
 
                 childTile.boundingVolume = new BoundingVolume();
                 childTile.boundingVolume.boundingVolumeType = parentTile.boundingVolume.boundingVolumeType;
