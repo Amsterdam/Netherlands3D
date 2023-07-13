@@ -207,7 +207,7 @@ namespace Netherlands3D.SelectionTools
 
         public void ReselectPolygon(List<Vector3> points)
         {
-            Debug.Log("reselecting", gameObject);
+            //Debug.Log("reselecting", gameObject);
 
             ClearPolygon(true);
             for (int i = 0; i < points.Count; i++)
@@ -607,7 +607,7 @@ namespace Netherlands3D.SelectionTools
 
         private void FinishPolygon(bool invokeNewPolygonEvent)
         {
-            Debug.Log($"Make selection.");
+            //Debug.Log($"Make selection.");
             polygonLineRenderer.startColor = polygonLineRenderer.endColor = closedLoopLineColor;
 
             UpdateLine();
