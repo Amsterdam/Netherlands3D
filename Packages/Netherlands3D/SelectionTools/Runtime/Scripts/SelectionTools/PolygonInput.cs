@@ -207,8 +207,6 @@ namespace Netherlands3D.SelectionTools
 
         public void ReselectPolygon(List<Vector3> points)
         {
-            //Debug.Log("reselecting", gameObject);
-
             ClearPolygon(true);
             for (int i = 0; i < points.Count; i++)
             {
@@ -436,7 +434,6 @@ namespace Netherlands3D.SelectionTools
             //Added at start? finish and select
             if (positions.Count == 0)
             {
-                //Debug.Log("Placing first point at " + pointPosition);
                 previewLineRenderer.enabled = true;
                 selectionStartPosition = pointPosition;
                 positions.Add(pointPosition);
@@ -457,7 +454,6 @@ namespace Netherlands3D.SelectionTools
             }
             else
             {
-                //Debug.Log("Adding new point.");
                 positions.Add(pointPosition);
                 if (createHandles)
                     CreateHandle(positions.Count - 1);
@@ -607,7 +603,6 @@ namespace Netherlands3D.SelectionTools
 
         private void FinishPolygon(bool invokeNewPolygonEvent)
         {
-            //Debug.Log($"Make selection.");
             polygonLineRenderer.startColor = polygonLineRenderer.endColor = closedLoopLineColor;
 
             UpdateLine();
