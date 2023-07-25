@@ -9,6 +9,7 @@ using System.Xml;
 using UnityEngine;
 using UnityEngine.Networking;
 using TMPro;
+using UnityEngine.Events;
 
 public class WFSHandler : MonoBehaviour
 {
@@ -33,6 +34,8 @@ public class WFSHandler : MonoBehaviour
     [SerializeField] private Vector3ListEvent multiPointEvent;
     [SerializeField] private GameObjectEvent wfsParentEvent;
     [SerializeField] private ColorEvent lineColorEvent;
+
+    [SerializeField] private UnityEvent<List<WFSFeature>> wfsFeatureListEvent;
 
     [Header("Listen Events")]
     [SerializeField] private StringEvent startIndexEvent;
@@ -105,7 +108,8 @@ public class WFSHandler : MonoBehaviour
     private void CreateWFS(string baseUrl)
     {
         if (ActiveWFS != null)
-            ActiveWFS.wfsGetCapabilitiesProcessedEvent.RemoveAllListeners();
+            //ActiveWFS.
+            //ActiveWFS.wfsGetCapabilitiesProcessedEvent.RemoveAllListeners();
 
         ActiveWFS = new WFS(baseUrl);
         //ActiveWFS = wfs;
@@ -113,8 +117,10 @@ public class WFSHandler : MonoBehaviour
         ClearSpawnedMeshItems();
         resetReaderEvent.InvokeStarted();
 
-        ActiveWFS.RequestWFSGetCapabilities();
-        ActiveWFS.wfsGetCapabilitiesProcessedEvent.AddListener(OnWFSDataProcessed);
+        //ActiveWFS.getCapabilitiesReceived.AddListener((object o, List<WFSFeature> l) => wfsFeatureListEvent.Invoke(l));
+        //ActiveWFS.RequestWFSGetCapabilities(this);
+
+        //ActiveWFS.wfsGetCapabilitiesProcessedEvent.AddListener(OnWFSDataProcessed);
     }
 
     private void OnWFSDataProcessed()
@@ -138,7 +144,8 @@ public class WFSHandler : MonoBehaviour
     {
         if (!ParseFields() || (ActiveWFS == null))
             return;
-
+        //ActiveWFS.featureDataReceived.RemoveAllListeners();
+        //ActiveWFS.featureDataReceived.AddListener(FeatureCallback);
         ActiveWFS.wfsFeatureDataReceivedEvent.RemoveAllListeners(); //todo: also do this when selecting a new feature
         ActiveWFS.wfsFeatureDataReceivedEvent.AddListener(FeatureCallback);
         ActiveWFS.GetFeature();
@@ -174,6 +181,7 @@ public class WFSHandler : MonoBehaviour
 
     private void LinkEventsForGeoJSONProcessing(WFSFeatureData featureData)
     {
+        //ActiveWFS.fea
         ActiveWFS.RemoveAllListenersFeatureProcessed();
 
         switch (featureData.GeometryType)

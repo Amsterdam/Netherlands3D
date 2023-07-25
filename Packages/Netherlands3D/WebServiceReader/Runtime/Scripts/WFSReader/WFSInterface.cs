@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Netherlands3D.WFSHandlers;
+using UnityEngine.Events;
 
 public class WFSInterface : MonoBehaviour
 {
@@ -16,18 +18,20 @@ public class WFSInterface : MonoBehaviour
 
     [Header("Invoked Events")]
     //[SerializeField] private StringEvent getFeatureEvent;
+    //[SerializeField] private UnityEvent<List<WFSFeature>> wfsFeatureListEvent;
     [SerializeField] private ObjectEvent setActiveFeatureEvent;
     [Header("Listen Events")]
     [SerializeField] private ObjectEvent wfsDataEvent;
     [SerializeField] private ObjectEvent activateFeatureEvent;
 
     //private WFSFeature activeFeature;
-    private WFS activatedWFS;
+    //private WFS2 activatedWFS;
 
     // Start is called before the first frame update
     void Start()
     {
-        wfsDataEvent.AddListenerStarted((object wfs) => BuildWFSInterface((WFS)wfs));
+        //wfsFeatureListEvent.AddListener(BuildWFSInterface);
+        //wfsDataEvent.AddListenerStarted((object wfs) => BuildWFSInterface((WFS2)wfs));
         activateFeatureEvent.AddListenerStarted((object feature) => BuildFilterInterface((WFSFeature)feature));
     }
 
@@ -77,12 +81,12 @@ public class WFSInterface : MonoBehaviour
         print("completed BuildINterface() in " + (endTime-startTime)*1000 + "ms");
     }
 
-    private void BuildWFSInterface(WFS wfs)
+    private void BuildWFSInterface(List<WFSFeature> wfsFeatureData)
     {
         var startTime = Time.realtimeSinceStartupAsDouble;
         print("starting BuildWFSInterface()" + startTime);
         ResetInterface();
-        foreach (WFSFeature feature in wfs.features)
+        foreach (WFSFeature feature in wfsFeatureData)
         {
             Button b = Instantiate(featureButtonPrefab, featureContentParent);
             b.GetComponentInChildren<TextMeshProUGUI>().text = feature.FeatureName;
@@ -95,7 +99,7 @@ public class WFSInterface : MonoBehaviour
             );
 
             //b.onClick.AddListener(() => getFeatureEvent.Invoke(feature.FeatureName));
-            activatedWFS = wfs;
+            //activatedWFS = wfs;
         }
 
         var endTime = Time.realtimeSinceStartupAsDouble;
