@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ToggleSpriteSwap : MonoBehaviour
 {
-
     [SerializeField] private Toggle toggle;
     [SerializeField] private Image imageToSwap;
     [SerializeField] private Sprite startSprite;
@@ -14,19 +12,16 @@ public class ToggleSpriteSwap : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if(toggle == null)
+        if (toggle == null)
         {
-            throw new System.NullReferenceException("Toggle hasn't been set in the inspector!");
+            throw new NullReferenceException("Toggle hasn't been set in the inspector!");
         }
+
         toggle.onValueChanged.AddListener(SwapSprites);
-
-
     }
 
     private void SwapSprites(bool isActive)
     {
         imageToSwap.sprite = isActive ? startSprite : swappedSprite;
     }
-
-
 }
