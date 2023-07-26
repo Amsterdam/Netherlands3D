@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Netherlands3D.Events;
+using UnityEngine;
 
 public class StringNumberParser : MonoBehaviour
 {
@@ -10,18 +8,17 @@ public class StringNumberParser : MonoBehaviour
 
     public void ParseToInteger(string integerString)
     {
-        if(int.TryParse(integerString, out int parsedInt))
+        if (int.TryParse(integerString, out int parsedInt))
         {
             intEvent.InvokeStarted(parsedInt);
         }
     }
+
     public void ParseToFloat(string floatString)
     {
-        if(float.TryParse(floatString, out float parsedFloat))
+        if (float.TryParse(floatString, out float parsedFloat))
         {
             floatEvent.InvokeStarted(parsedFloat);
         }
-
     }
-    
 }

@@ -138,6 +138,7 @@
     "com.unity.nuget.newtonsoft-json": "3.1.0",
     "com.unity.meshopt.decompress": "0.1.0-preview.5",
     "eu.netherlands3d.gltfast": "5.0.3",
-    "eu.netherlands3d.coordinates": "1.0.1"
+    "eu.netherlands3d.coordinates": "1.1.0",
+    "eu.netherlands3d.sun": "1.0.0"
   }
 }
