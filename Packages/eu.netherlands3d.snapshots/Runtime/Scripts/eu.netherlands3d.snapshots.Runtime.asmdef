@@ -1,9 +1,7 @@
 {
-    "name": "Netherlands3D.Runtime.Snapshots",
-    "rootNamespace": "",
-    "references": [
-        "GUID:9ca88277166fea644a31588b4f943acc"
-    ],
+    "name": "eu.netherlands3d.snapshots.Runtime",
+    "rootNamespace": "Netherlands3D.Snapshots",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

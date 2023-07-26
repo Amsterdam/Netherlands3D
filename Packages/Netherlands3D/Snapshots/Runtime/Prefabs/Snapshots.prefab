@@ -45,12 +45,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 3940005848846984674}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: abd5a8cda7029114799865d968337b87, type: 3}
+  m_Script: {fileID: 11500000, guid: 27246137428f452e83ae2fa404ff1301, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   snapshotLayers:
     serializedVersion: 2
-    m_Bits: 2147483647
+    m_Bits: 4294967295
   snapshotSaved:
     m_PersistentCalls:
       m_Calls: []

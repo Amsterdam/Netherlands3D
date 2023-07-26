@@ -211,7 +211,7 @@
       }
     },
     "eu.netherlands3d.coordinates": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -229,6 +229,12 @@
       },
       "url": "https://package.openupm.com"
     },
+    "eu.netherlands3d.snapshots": {
+      "version": "file:eu.netherlands3d.snapshots",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "nl.netherlands3d": {
       "version": "file:Netherlands3D",
       "depth": 0,
@@ -240,7 +246,8 @@
         "com.unity.nuget.newtonsoft-json": "3.1.0",
         "com.unity.meshopt.decompress": "0.1.0-preview.5",
         "eu.netherlands3d.gltfast": "5.0.3",
-        "eu.netherlands3d.coordinates": "1.0.0"
+        "eu.netherlands3d.coordinates": "1.1.0",
+        "eu.netherlands3d.snapshots": "1.0.0"
       }
     },
     "nl.netherlands3d.authentication": {
