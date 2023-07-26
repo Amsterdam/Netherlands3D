@@ -81,7 +81,7 @@ namespace Netherlands3D.Snapshots
 
         public LayerMask SnapshotLayers { get => snapshotLayers; set => snapshotLayers = value;}
 
-        private void Awake()
+        private void Start()
         {
             if (!sourceCamera) sourceCamera = Camera.main;
         }

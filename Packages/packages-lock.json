@@ -235,6 +235,14 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "eu.netherlands3d.sun": {
+      "version": "file:eu.netherlands3d.sun",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "eu.netherlands3d.coordinates": "1.1.0"
+      }
+    },
     "nl.netherlands3d": {
       "version": "file:Netherlands3D",
       "depth": 0,
@@ -247,7 +255,8 @@
         "com.unity.meshopt.decompress": "0.1.0-preview.5",
         "eu.netherlands3d.gltfast": "5.0.3",
         "eu.netherlands3d.coordinates": "1.1.0",
-        "eu.netherlands3d.snapshots": "1.0.0"
+        "eu.netherlands3d.snapshots": "1.0.0",
+        "eu.netherlands3d.sun": "1.0.0"
       }
     },
     "nl.netherlands3d.authentication": {
