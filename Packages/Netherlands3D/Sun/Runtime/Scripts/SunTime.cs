@@ -79,6 +79,7 @@ namespace Netherlands3D.Sun
         [SerializeField] private DateTimeEvent dateTimeUpdate;
         [SerializeField] private DateTimeEvent singleTriggerDateTimeEvent;
         [SerializeField] private FloatEvent sendAnimationSpeed;
+        public DateTime TimeOfDay { get => time; set => time = value; }
 
         private void Start()
         {

@@ -1,7 +1,7 @@
 {
     "name": "eu.netherlands3d.snapshots.Runtime",
     "rootNamespace": "Netherlands3D.Snapshots",
-    "references": [],
+    "references": ["Netherlands3D.Sun.Runtime"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
