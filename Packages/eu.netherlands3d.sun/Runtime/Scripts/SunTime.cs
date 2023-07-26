@@ -84,16 +84,23 @@ namespace Netherlands3D.Sun
             frameStep = (frameStep + 1) % frameSteps;
         }
 
+#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             var position = this.transform.position;
             Gizmos.color = Color.yellow;
             Gizmos.DrawRay(position, position - sunDirectionalLight.transform.forward * gizmoRayLength);
         }
+#endif
 
         public void ToggleAnimation(bool animate)
         {
             this.animate = animate;
+        }
+
+        public DateTime GetTime()
+        {
+            return time;
         }
 
         public void SetTime(DateTime time)
