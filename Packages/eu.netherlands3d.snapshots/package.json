@@ -1,0 +1,21 @@
+{
+  "name": "eu.netherlands3d.snapshots",
+  "displayName": "Netherlands3D - Snapshots",
+  "version": "1.0.0",
+  "unity": "2022.2",
+  "description": "This package provides the means to do screen captures / snapshots for Netherlands3D",
+  "keywords": [
+    "snapshots",
+    "screenshots",
+    "screen-captures",
+    "netherlands3d"
+  ],
+  "license": "EUPL-1.2",
+  "documentationUrl": "https://github.com/Amsterdam/Netherlands3D/blob/main/Packages/eu.netherlands3d.snapshots/README.md",
+  "licensesUrl": "https://github.com/Amsterdam/Netherlands3D/blob/main/Packages/eu.netherlands3d.snapshots/LICENSE.txt",
+  "changelogURL": "https://github.com/Amsterdam/Netherlands3D/blob/main/Packages/eu.netherlands3d.snapshots/CHANGELOG.md",
+  "author": {
+    "name": "Netherlands3D",
+    "url": "https://netherlands3d.eu"
+  }
+}
