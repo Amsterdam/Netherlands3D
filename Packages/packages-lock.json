@@ -229,6 +229,15 @@
       },
       "url": "https://package.openupm.com"
     },
+    "eu.netherlands3d.periodic-snapshots": {
+      "version": "file:PeriodicSnapshots",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "eu.netherlands3d.sun": "1.0.0",
+        "eu.netherlands3d.snapshots": "1.0.0"
+      }
+    },
     "eu.netherlands3d.snapshots": {
       "version": "file:eu.netherlands3d.snapshots",
       "depth": 0,

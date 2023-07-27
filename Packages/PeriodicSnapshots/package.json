@@ -1,0 +1,26 @@
+{
+  "name": "eu.netherlands3d.periodic-snapshots",
+  "displayName": "Netherlands3D - Periodic Snapshots",
+  "version": "1.0.0",
+  "unity": "2022.2",
+  "description": "This package provides the means to do take a series of snapshots for specific moments throughout the year",
+  "keywords": [
+    "snapshots",
+    "screenshots",
+    "screen-captures",
+    "netherlands3d",
+    "reporting"
+  ],
+  "license": "EUPL-1.2",
+  "documentationUrl": "https://github.com/Amsterdam/Netherlands3D/blob/main/Packages/eu.netherlands3d.periodic-snapshots/README.md",
+  "licensesUrl": "https://github.com/Amsterdam/Netherlands3D/blob/main/Packages/eu.netherlands3d.periodic-snapshots/LICENSE.txt",
+  "changelogURL": "https://github.com/Amsterdam/Netherlands3D/blob/main/Packages/eu.netherlands3d.periodic-snapshots/CHANGELOG.md",
+  "author": {
+    "name": "Netherlands3D",
+    "url": "https://netherlands3d.eu"
+  },
+  "dependencies": {
+    "eu.netherlands3d.sun": "1.0.0",
+    "eu.netherlands3d.snapshots": "1.0.0"
+  }
+}
