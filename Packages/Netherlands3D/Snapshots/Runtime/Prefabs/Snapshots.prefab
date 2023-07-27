@@ -1,46 +1,78 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3940005848846984674
-GameObject:
+--- !u!1001 &7233336306473322173
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3940005848846984675}
-  - component: {fileID: 3940005848846984673}
-  - component: {fileID: 3940005848846984672}
-  - component: {fileID: 3940005848846984687}
-  - component: {fileID: 3940005848846984686}
-  - component: {fileID: 3205503241566519891}
-  m_Layer: 0
-  m_Name: Snapshots
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3940005848846984675
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3940005848846984674}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3940005848846984673
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5966231008024666974, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5966231008024666974, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5966231008024666974, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5966231008024666974, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5966231008024666975, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      propertyPath: m_Name
+      value: Snapshots
+      objectReference: {fileID: 0}
+    - target: {fileID: 7933574906005034542, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      propertyPath: onProgress.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7933574906005034542, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      propertyPath: onProgress.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 11400000, guid: 5ec0a9f132b109c4a829cd53685b5303, type: 2}
+    - target: {fileID: 7933574906005034542, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      propertyPath: onProgress.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7933574906005034542, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      propertyPath: onProgress.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: InvokeStarted
+      objectReference: {fileID: 0}
+    - target: {fileID: 7933574906005034542, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      propertyPath: onProgress.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Netherlands3D.Events.FloatEvent, eu.netherlands3d.event-system.Runtime
+      objectReference: {fileID: 0}
+    - target: {fileID: 7933574906005034542, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      propertyPath: onProgress.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5966231008024666975, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -4496860696340268987}
+    - targetCorrespondingSourceObject: {fileID: 5966231008024666975, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -321246016074214029}
+    - targetCorrespondingSourceObject: {fileID: 5966231008024666975, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1980394114113314813}
+    - targetCorrespondingSourceObject: {fileID: 5966231008024666975, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3027207103308251399}
+  m_SourcePrefab: {fileID: 100100000, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+--- !u!114 &3940005848846984673 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 5966231008024666972, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+  m_PrefabInstance: {fileID: 7233336306473322173}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3940005848846984674}
   m_Enabled: 1
@@ -48,14 +80,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27246137428f452e83ae2fa404ff1301, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  snapshotLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  snapshotSaved:
-    m_PersistentCalls:
-      m_Calls: []
-  sourceCamera: {fileID: 0}
---- !u!114 &3940005848846984672
+--- !u!1 &3940005848846984674 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5966231008024666975, guid: 284367d2433d7f943813c6c5b764aebf, type: 3}
+  m_PrefabInstance: {fileID: 7233336306473322173}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-4496860696340268987
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -83,7 +113,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &3940005848846984687
+--- !u!114 &-321246016074214029
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -111,7 +141,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &3940005848846984686
+--- !u!114 &1980394114113314813
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,7 +169,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &3205503241566519891
+--- !u!114 &3027207103308251399
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

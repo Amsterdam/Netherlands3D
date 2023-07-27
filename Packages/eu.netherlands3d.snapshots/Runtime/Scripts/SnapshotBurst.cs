@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
-using Netherlands3D.Snapshots;
 using Netherlands3D.Sun;
 using UnityEngine;
 using UnityEngine.Events;
@@ -86,7 +85,8 @@ namespace Netherlands3D.Snapshots
 
 #if UNITY_WEBGL && !UNITY_EDITOR
             var archivePath = FetchArchivePath(timestamp);
-            DownloadSnapshot(File.ReadAllBytes(archivePath), bytes.Length, Path.GetFileName(archivePath));
+            var bytes = File.ReadAllBytes(archivePath);
+            DownloadSnapshot(bytes, bytes.Length, Path.GetFileName(archivePath));
 #endif
         }
 
@@ -94,7 +94,7 @@ namespace Netherlands3D.Snapshots
         {
             onStartGenerating.Invoke();
 
-            var cachedTimeOfDay = sunTime.TimeOfDay;
+            var cachedTimeOfDay = sunTime.GetTime();
             for (var index = 0; index < moments.Count; index++)
             {
                 onProgress.Invoke(1f / moments.Count * (index + 1));

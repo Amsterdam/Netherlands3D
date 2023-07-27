@@ -233,7 +233,9 @@
       "version": "file:eu.netherlands3d.snapshots",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "eu.netherlands3d.sun": "1.0.0"
+      }
     },
     "eu.netherlands3d.sun": {
       "version": "file:eu.netherlands3d.sun",

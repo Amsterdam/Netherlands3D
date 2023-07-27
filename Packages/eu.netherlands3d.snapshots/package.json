@@ -19,6 +19,6 @@
     "url": "https://netherlands3d.eu"
   },
   "dependencies": {
-    "eu.netherlands.sun": "1.0.0"
+    "eu.netherlands3d.sun": "1.0.0"
   }
 }
