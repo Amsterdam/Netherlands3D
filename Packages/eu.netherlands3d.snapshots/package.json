@@ -17,8 +17,5 @@
   "author": {
     "name": "Netherlands3D",
     "url": "https://netherlands3d.eu"
-  },
-  "dependencies": {
-    "eu.netherlands3d.sun": "1.0.0"
   }
 }

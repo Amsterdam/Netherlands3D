@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5966231008024666974}
   - component: {fileID: 5966231008024666972}
-  - component: {fileID: 7933574906005034542}
   m_Layer: 0
   m_Name: Snapshots
   m_TagString: Untagged
@@ -31,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5966231008024666972
 MonoBehaviour:
@@ -55,80 +54,3 @@ MonoBehaviour:
   snapshotLayers:
     serializedVersion: 2
     m_Bits: 2007
---- !u!114 &7933574906005034542
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5966231008024666975}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c4d96e62dd34bb782226b46c375eaaf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sourceCamera: {fileID: 0}
-  sunTime: {fileID: 0}
-  snapshotWidth: 1024
-  snapshotHeight: 768
-  snapshotLayers:
-    serializedVersion: 2
-    m_Bits: 2007
-  moments:
-  - name: 21-12 10:00
-    day: 21
-    month: 12
-    hour: 10
-  - name: 21-12 12:00
-    day: 21
-    month: 12
-    hour: 12
-  - name: 21-12 15:00
-    day: 21
-    month: 12
-    hour: 15
-  - name: 21-12 17:00
-    day: 21
-    month: 12
-    hour: 17
-  - name: 21-6 10:00
-    day: 21
-    month: 6
-    hour: 10
-  - name: 21-6 12:00
-    day: 21
-    month: 6
-    hour: 12
-  - name: 21-6 15:00
-    day: 21
-    month: 6
-    hour: 15
-  - name: 21-6 17:00
-    day: 21
-    month: 6
-    hour: 17
-  - name: 21-9 10:00
-    day: 21
-    month: 9
-    hour: 10
-  - name: 21-9 12:00
-    day: 21
-    month: 9
-    hour: 12
-  - name: 21-9 15:00
-    day: 21
-    month: 9
-    hour: 15
-  - name: 21-9 17:00
-    day: 21
-    month: 9
-    hour: 17
-  onStartGenerating:
-    m_PersistentCalls:
-      m_Calls: []
-  onProgress:
-    m_PersistentCalls:
-      m_Calls: []
-  onFinishedGenerating:
-    m_PersistentCalls:
-      m_Calls: []

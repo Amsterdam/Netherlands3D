@@ -10,7 +10,7 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Snapshots
 {
-    public class SnapshotBurst : MonoBehaviour
+    public class PeriodicSnapshots : MonoBehaviour
     {
         [DllImport("__Internal")]
         private static extern void DownloadSnapshot(byte[] array, int byteLength, string fileName);
@@ -103,8 +103,10 @@ namespace Netherlands3D.Snapshots
             }
             sunTime.SetTime(cachedTimeOfDay);
 
-            var archiveFileName = FetchArchivePath(timestamp);
-            ZipFile.CreateFromDirectory(path, archiveFileName);
+            var archiveFilePath = FetchArchivePath(timestamp);
+            if (File.Exists(archiveFilePath)) File.Delete(archiveFilePath);
+
+            ZipFile.CreateFromDirectory(path, archiveFilePath);
             Directory.Delete(path, true);
 
             // Make sure no rounding errors occur and set it to 1f

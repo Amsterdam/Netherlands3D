@@ -1,0 +1,17 @@
+{
+    "name": "eu.netherlands3d.periodic-snapshots.Runtime",
+    "rootNamespace": "Netherlands3D.Snapshots",
+    "references": [
+        "GUID:ff46a91157ebbe046be220a0ddbacb01",
+        "GUID:ab927a7f481373442a8ee26564bcd9ef"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
