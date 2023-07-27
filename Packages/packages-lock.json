@@ -236,12 +236,13 @@
       "dependencies": {}
     },
     "eu.netherlands3d.sun": {
-      "version": "file:eu.netherlands3d.sun",
-      "depth": 0,
-      "source": "embedded",
+      "version": "1.0.0",
+      "depth": 1,
+      "source": "registry",
       "dependencies": {
         "eu.netherlands3d.coordinates": "1.1.0"
-      }
+      },
+      "url": "https://package.openupm.com"
     },
     "nl.netherlands3d": {
       "version": "file:Netherlands3D",
