@@ -141,6 +141,7 @@
     "eu.netherlands3d.coordinates": "1.1.0",
     "eu.netherlands3d.snapshots": "1.0.0",
     "eu.netherlands3d.sun": "1.0.0",
-    "eu.netherlands3d.periodic-snapshots": "1.0.0"
+    "eu.netherlands3d.periodic-snapshots": "1.0.0",
+    "eu.netherlands3d.filebrowser": "1.3.0"
   }
 }
