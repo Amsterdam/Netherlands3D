@@ -217,6 +217,13 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
+    "eu.netherlands3d.filebrowser": {
+      "version": "1.3.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
     "eu.netherlands3d.gltfast": {
       "version": "5.0.3",
       "depth": 0,
@@ -269,7 +276,8 @@
         "eu.netherlands3d.coordinates": "1.1.0",
         "eu.netherlands3d.snapshots": "1.0.0",
         "eu.netherlands3d.sun": "1.0.0",
-        "eu.netherlands3d.periodic-snapshots": "1.0.0"
+        "eu.netherlands3d.periodic-snapshots": "1.0.0",
+        "eu.netherlands3d.filebrowser": "1.3.0"
       }
     },
     "nl.netherlands3d.authentication": {
