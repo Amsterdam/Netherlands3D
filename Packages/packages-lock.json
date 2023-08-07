@@ -236,6 +236,15 @@
       },
       "url": "https://package.openupm.com"
     },
+    "eu.netherlands3d.obj-importer": {
+      "version": "1.0.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "eu.netherlands3d.coordinates": "1.1.0"
+      },
+      "url": "https://package.openupm.com"
+    },
     "eu.netherlands3d.periodic-snapshots": {
       "version": "1.0.0",
       "depth": 1,
@@ -277,7 +286,8 @@
         "eu.netherlands3d.snapshots": "1.0.0",
         "eu.netherlands3d.sun": "1.0.0",
         "eu.netherlands3d.periodic-snapshots": "1.0.0",
-        "eu.netherlands3d.filebrowser": "1.3.0"
+        "eu.netherlands3d.filebrowser": "1.3.0",
+        "eu.netherlands3d.obj-importer": "1.0.0"
       }
     },
     "nl.netherlands3d.authentication": {
