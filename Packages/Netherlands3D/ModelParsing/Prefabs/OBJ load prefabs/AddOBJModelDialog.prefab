@@ -628,13 +628,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 2709633927497753323}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b23f1e9413fceb84ba191d39f7658924, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a728a3527b1f334390e5bfd25ce6aa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileInputName: fileInput
-  fileExtentions: obj,mtl
-  multiSelect: 1
-  eventFileLoaderFileImported: {fileID: 11400000, guid: 84b363a7049a9a04db505bfc5d96eb13, type: 2}
+  fileExtentions: obj
+  multiSelect: 0
+  onFilesSelected:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 84b363a7049a9a04db505bfc5d96eb13, type: 2}
+        m_TargetAssemblyTypeName: Netherlands3D.Events.StringEvent, eu.netherlands3d.event-system.Runtime
+        m_MethodName: InvokeStarted
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &3124628517697156575
 GameObject:
   m_ObjectHideFlags: 0
@@ -766,7 +779,7 @@ GameObject:
   - component: {fileID: 8910429713240130598}
   - component: {fileID: 2954068333674448836}
   m_Layer: 5
-  m_Name: AddOBJModel
+  m_Name: AddOBJModelDialog
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -788,7 +801,7 @@ RectTransform:
   - {fileID: 6245951423256752805}
   - {fileID: 7860642033421793295}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
