@@ -75,7 +75,7 @@ namespace Netherlands3D.Tiles3D
 
             StartCoroutine(LoadTileset());
 
-            CoordConvert.relativeOriginChanged.AddListener(RelativeCenterChanged);
+            //CoordConvert.relativeOriginChanged.AddListener(RelativeCenterChanged);
         }
 
         private void ExtractDatasetPaths()
@@ -513,12 +513,12 @@ namespace Netherlands3D.Tiles3D
 
                 //Smaller geometric error or out of view? Too detailed for our current view so Dispose and stop going down the tree.
                 var tileIsInView = childTile.IsInViewFrustrum(currentCamera);
-                var enoughDetail = childTile.geometricError <= sseComponent;
+                var enoughDetail = childTile.screenSpaceError <= maximumScreenSpaceError;
 
                 var childHas3DContent = childTile.contentUri.Length > 0 && !childTile.contentUri.Contains(".json");
                 var parentHas3DContent = parentTile.contentUri.Length > 0 && !parentTile.contentUri.Contains(".json");
 
-                var enoughDetailInParent = parentHas3DContent && (parentTile.geometricError <= sseComponent);
+                var enoughDetailInParent = parentHas3DContent && (parentTile.screenSpaceError <= maximumScreenSpaceError);
                 var replace = (parentTile.refine == "REPLACE");
 
                 //Not in view? abort!
@@ -574,7 +574,6 @@ namespace Netherlands3D.Tiles3D
 
                         JSONNode node = JSON.Parse(jsonstring)["root"];
                         ReadExplicitNode(node, tile);
-
                         nestedTreeLoaded = true;
                     }
                 }
