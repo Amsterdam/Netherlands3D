@@ -152,6 +152,7 @@ public class FreeCamera : MonoBehaviour
         var meshRenderer = focusObject.GetComponentInChildren<MeshRenderer>();
         if(meshRenderer)
         {
+            this.transform.position = meshRenderer.bounds.center;
             this.transform.Translate(Vector3.back * meshRenderer.bounds.size.magnitude * focusDistanceMultiplier, Space.Self);
         }
         else
@@ -400,7 +401,6 @@ public class FreeCamera : MonoBehaviour
     /// <param name="amount">Zoom delta where 1 is towards, and -1 is backing up from zoompoint</param>
 	public void ZoomToPointer(float amount)
 	{
-        dragging = false;
         rotatingAroundPoint = false;
 
         CalculateSpeed();

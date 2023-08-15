@@ -5,6 +5,7 @@ using Netherlands3D.Core;
 using UnityEngine.Networking;
 using System;
 using System.Linq;
+using Netherlands3D.Coordinates;
 using UnityEngine.Rendering;
 
 namespace Netherlands3D.TileSystem
@@ -90,17 +91,14 @@ namespace Netherlands3D.TileSystem
             string url = Datasets[index].path;
             if (Datasets[index].path.StartsWith("https://") || Datasets[index].path.StartsWith("file://"))
             {
-                url = Datasets[index].path;
-            }
-
-            url = url.ReplaceXY(tileChange.X, tileChange.Y);
-
-            //On WebGL we request brotli encoded files instead. We might want to base this on browser support.
-
+                //On WebGL we request brotli encoded files instead. We might want to base this on browser support.
 #if !UNITY_EDITOR && UNITY_WEBGL
-			if(brotliCompressedExtention.Length>0)
-				url += brotliCompressedExtention;
+		        if(brotliCompressedExtention.Length>0 && !Datasets[index].path.EndsWith(brotliCompressedExtention))
+    				Datasets[index].path += brotliCompressedExtention;
 #endif
+                url = Datasets[index].url;
+            }
+            url = url.ReplaceXY(tileChange.X, tileChange.Y);
 
             var webRequest = UnityWebRequest.Get(url);
 #if !UNITY_EDITOR && UNITY_WEBGL && ADD_BROTLI_ACCEPT_ENCODING_HEADER
@@ -198,20 +196,21 @@ namespace Netherlands3D.TileSystem
             container = new GameObject();
 
             container.name = tileChange.X.ToString() + "-" + tileChange.Y.ToString();
-            container.transform.parent = transform.gameObject.transform;
-            container.layer = container.transform.parent.gameObject.layer;
-            container.transform.position = CoordConvert.RDtoUnity(new Vector2(tileChange.X + (tileSize / 2), tileChange.Y + (tileSize / 2)));
+            container.transform.position = CoordinateConverter.RDtoUnity(new Vector2(tileChange.X + (tileSize / 2), tileChange.Y + (tileSize / 2)));
 
             container.SetActive(isEnabled);
 
             mesh = BinaryMeshConversion.ReadBinaryMesh(binaryMeshData, out int[] submeshIndices);
 
 #if !UNITY_EDITOR && UNITY_WEBGL
-			if(brotliCompressedExtention.Length>0)
+		    if(brotliCompressedExtention.Length>0 && source.EndsWith(brotliCompressedExtention))
 				source = source.Replace(brotliCompressedExtention,"");
 #endif
             mesh.name = source;
             container.AddComponent<MeshFilter>().sharedMesh = mesh;
+
+            container.transform.parent = transform.gameObject.transform; //set parent after adding meshFilter to not cause SubObjects to give a missing component exception
+            container.layer = container.transform.parent.gameObject.layer;
 
             meshRenderer = container.AddComponent<MeshRenderer>();
             List<Material> materialList = new List<Material>();

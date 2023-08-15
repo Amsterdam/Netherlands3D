@@ -177,5 +177,12 @@ namespace Netherlands3D.T3DPipeline
         {
             throw new System.NotImplementedException();
         }
+
+        public void CreateBoundaryObjectFromMesh(Mesh mesh)
+        {
+            var multiSurface = new CityMultiOrCompositeSurface();
+            multiSurface.FromMesh(mesh);
+            BoundaryObject = multiSurface;
+        }
     }
 }

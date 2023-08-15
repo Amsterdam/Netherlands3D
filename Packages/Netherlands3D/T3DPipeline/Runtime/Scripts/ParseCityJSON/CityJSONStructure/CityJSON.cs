@@ -1,6 +1,6 @@
-using Netherlands3D.Core;
 using System.Collections.Generic;
 using System.Linq;
+using Netherlands3D.Coordinates;
 using SimpleJSON;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -203,6 +203,8 @@ namespace Netherlands3D.T3DPipeline
         private static CoordinateSystem ParseCoordinateSystem(JSONNode coordinateSystemNode)
         {
             Debug.Log("Parsing coordinate system: " + coordinateSystemNode.Value);
+            if (coordinateSystemNode.Value == "urn:ogc:def:crs:EPSG::7415")
+                return CoordinateSystem.RD;
             if (coordinateSystemNode.Value == "urn:ogc:def:crs:EPSG::28992")
                 return CoordinateSystem.RD;
             if (coordinateSystemNode.Value == "urn:ogc:def:crs:EPSG::4979")
@@ -245,8 +247,8 @@ namespace Netherlands3D.T3DPipeline
             {
                 var relativeCenterRD = (MinExtent + MaxExtent) / 2;
                 Debug.Log("Setting Relative RD Center to: " + relativeCenterRD);
-                CoordConvert.zeroGroundLevelY = 0;// (float)relativeCenterRD.z;
-                CoordConvert.relativeCenterRD = new Vector2RD(relativeCenterRD.x, relativeCenterRD.y);
+                CoordinateConverter.zeroGroundLevelY = 0;// (float)relativeCenterRD.z;
+                CoordinateConverter.relativeCenterRD = new Vector2RD(relativeCenterRD.x, relativeCenterRD.y);
             }
         }
     }

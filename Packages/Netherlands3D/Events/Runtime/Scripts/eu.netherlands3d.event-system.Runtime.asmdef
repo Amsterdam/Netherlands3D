@@ -1,0 +1,14 @@
+{
+    "name": "eu.netherlands3d.event-system.Runtime",
+    "rootNamespace": "Netherlands3D.Events",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

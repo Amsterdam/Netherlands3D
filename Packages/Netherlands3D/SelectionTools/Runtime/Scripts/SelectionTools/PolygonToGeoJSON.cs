@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Netherlands3D.Coordinates;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,7 +28,7 @@ public class PolygonToGeoJSON : MonoBehaviour
         for (int i = 0; i < polygon.Count; i++)
         {
             var position = polygon[i];
-            var rdCoordinate = CoordConvert.UnitytoWGS84(position);
+            var rdCoordinate = CoordinateConverter.UnitytoWGS84(position);
 
             stringBuilder.AppendLine($"[{rdCoordinate.lon},{rdCoordinate.lat}]");
             if (i != polygon.Count - 1) stringBuilder.Append(",");

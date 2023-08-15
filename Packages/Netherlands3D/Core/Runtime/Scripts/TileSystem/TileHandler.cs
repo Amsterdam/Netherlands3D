@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Netherlands3D.Core;
 using System.Linq;
+using Netherlands3D.Coordinates;
 using UnityEngine.Networking;
 using UnityEditor;
 using Netherlands3D.Events;
@@ -56,7 +57,7 @@ namespace Netherlands3D.TileSystem
         /// <summary>
         /// contains, for each tilesize in tileSizes, al list with tilecoordinates an distance to camera
         /// X,Y is bottom-left coordinate of tile in RD (for example 121000,480000)
-        /// Z is distance-squared to camera in m 
+        /// Z is distance-squared to camera in m
         /// </summary>
         private List<List<Vector3Int>> tileDistances = new List<List<Vector3Int>>();
         private List<Vector3Int> tileList = new List<Vector3Int>();
@@ -68,7 +69,7 @@ namespace Netherlands3D.TileSystem
 
         /// <summary>
         /// dictionary with tilechanges that are curently being processed
-        /// Key: 
+        /// Key:
         ///		X,Y is bottom-left coordinate of tile in RD (for example 121000,480000)
         ///		Z is the Layerindex of the tile
         /// </summary>
@@ -327,7 +328,7 @@ namespace Netherlands3D.TileSystem
             else
             {
                 useRadialDistanceCheck = true;
-                var cameraRD = CoordConvert.UnitytoRD(Camera.main.transform.position);
+                var cameraRD = CoordinateConverter.UnitytoRD(Camera.main.transform.position);
                 cameraExtent = new Extent(
                     cameraRD.x - groundLevelClipRange,
                     cameraRD.y - groundLevelClipRange,
@@ -347,7 +348,7 @@ namespace Netherlands3D.TileSystem
 
         private Vector3Int GetRDCameraPosition()
         {
-            var cameraPositionRD = CoordConvert.UnitytoRD(Camera.main.transform.position);
+            var cameraPositionRD = CoordinateConverter.UnitytoRD(Camera.main.transform.position);
             Vector3Int cameraPosition = new Vector3Int();
             cameraPosition.x = (int)cameraPositionRD.x;
             cameraPosition.y = (int)cameraPositionRD.y;
@@ -418,7 +419,7 @@ namespace Netherlands3D.TileSystem
                         Vector3Int tileID = new Vector3Int(x, y, tileSize);
                         if (filterByCameraFrustum && !useRadialDistanceCheck)
                         {
-                            tileBounds.SetMinMax(CoordConvert.RDtoUnity(new Vector2(x, y)), CoordConvert.RDtoUnity(new Vector2(x + tileSize, y + tileSize)));
+                            tileBounds.SetMinMax(CoordinateConverter.RDtoUnity(new Vector2(x, y)), CoordinateConverter.RDtoUnity(new Vector2(x + tileSize, y + tileSize)));
                             if (GeometryUtility.TestPlanesAABB(cameraFrustumPlanes, tileBounds))
                             {
                                 tileList.Add(new Vector3Int(x, y, (int)GetTileDistanceSquared(tileID, cameraPosition)));
@@ -442,7 +443,7 @@ namespace Netherlands3D.TileSystem
             {
                 foreach (var tile in tileList)
                 {
-                    Gizmos.DrawWireCube(CoordConvert.RDtoUnity(new Vector3(tile.x + 500, tile.y + 500, 0)), new Vector3(1000, 100, 1000));
+                    Gizmos.DrawWireCube(CoordinateConverter.RDtoUnity(new Vector3(tile.x + 500, tile.y + 500, 0)), new Vector3(1000, 100, 1000));
                 }
             }
         }
@@ -691,10 +692,20 @@ namespace Netherlands3D.TileSystem
         public string Description;
         public string geoLOD;
         public string path;
+        public string pathQuery;
         public float maximumDistance;
         [HideInInspector]
         public float maximumDistanceSquared;
         public bool enabled = true;
+
+
+        public string url
+        {
+            get
+            {
+                return path + pathQuery;
+            }
+        }
     }
 
     public class Tile

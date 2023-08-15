@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5114557758095723128}
-  - component: {fileID: 5114557758095723131}
+  - component: {fileID: 8116678601319995767}
   m_Layer: 0
   m_Name: UserFileUploads
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5114557758095723131
+--- !u!114 &8116678601319995767
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,8 +41,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 5114557758095723130}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2870e6887e286944e98342de1a18fde8, type: 3}
+  m_Script: {fileID: 11500000, guid: 8012dc4dd5fad8f488b2d4fc0fb364d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filesImportedEvent: {fileID: 11400000, guid: 16c1fcee2ce5c8a4c99c88dcd1b08721, type: 2}
-  clearDataBaseEvent: {fileID: 11400000, guid: e7d5f75271375d94b995dd90536228bd, type: 2}
+  sendMessageObjectName: UserFileUploads
+  filesImportedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 16c1fcee2ce5c8a4c99c88dcd1b08721, type: 2}
+        m_TargetAssemblyTypeName: Netherlands3D.Events.StringEvent, eu.netherlands3d.event-system.Runtime
+        m_MethodName: InvokeStarted
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

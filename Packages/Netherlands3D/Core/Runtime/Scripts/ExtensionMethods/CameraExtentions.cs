@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Netherlands3D.Coordinates;
 using Netherlands3D.Core;
 
 public static class CameraExtensions
@@ -13,6 +14,16 @@ public static class CameraExtensions
     private static Vector2 topRight = new Vector2(1, 1);
     private static Vector2 bottomRight = new Vector2(1, 0);
     private static Vector2 bottomLeft = new Vector2(0, 0);
+
+    private static Plane[] cameraFrustumPlanes = new Plane[6]
+	{
+		new Plane(), //Left
+		new Plane(), //Right
+		new Plane(), //Down
+		new Plane(), //Up
+		new Plane(), //Near
+		new Plane(), //Far
+	};
 
     public static Extent GetExtent(this Camera camera, float maximumViewDistance = 0)
     {
@@ -31,8 +42,8 @@ public static class CameraExtensions
         CalculateCornerExtents(camera, maximumViewDistance);
 
         // Convert min and max to WGS84 coordinates
-        var rdMin = CoordConvert.UnitytoRD(unityMin);
-        var rdMax = CoordConvert.UnitytoRD(unityMax);
+        var rdMin = CoordinateConverter.UnitytoRD(unityMin);
+        var rdMax = CoordinateConverter.UnitytoRD(unityMax);
 
         // Area that should be loaded
         var extent = new Extent(rdMin.x, rdMin.y, rdMax.x, rdMax.y);
@@ -105,5 +116,11 @@ public static class CameraExtensions
         var samplePoint = screenRay.GetPoint(Mathf.Min(maxSelectionDistanceFromCamera, distance));
 
         return samplePoint;
+    }
+
+    public static bool InView(this Camera camera, Bounds bounds)
+    {
+        GeometryUtility.CalculateFrustumPlanes(camera, cameraFrustumPlanes);
+        return GeometryUtility.TestPlanesAABB(cameraFrustumPlanes, bounds);
     }
 }

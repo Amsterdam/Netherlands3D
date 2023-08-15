@@ -13,12 +13,10 @@ namespace Netherlands3D.TileSystem
     public class ColorSubObjects : MonoBehaviour
     {
         private Dictionary<string, Color> idColors;
-        private Dictionary<Vector2Int, Dictionary<string, Color>> tileIdColors = new();
+        private Dictionary<Vector2Int, Dictionary<string, float>> tileIdFloats = new();
 
         [SerializeField]
         private bool disableOnStart = false;
-        //[SerializeField]
-        //private bool useManualIdColorInput;
 
         [Header("Listen to")]
         [SerializeField]
@@ -151,8 +149,8 @@ namespace Netherlands3D.TileSystem
 
         private void ClearTileData(Vector2Int tileKey)
         {
-            if (tileIdColors.ContainsKey(tileKey))
-                tileIdColors.Remove(tileKey);
+            if (tileIdFloats.ContainsKey(tileKey))
+                tileIdFloats.Remove(tileKey);
         }
 
         private void OnEnable()
@@ -166,10 +164,12 @@ namespace Netherlands3D.TileSystem
         public void SetMinRange(float value)
         {
             minimumValue = value;
+            UpdateColors(true);
         }
         public void SetMaxRange(float value)
         {
             maximumValue = value;
+            UpdateColors(true);
         }
 
         public void SetIDsAndColors(object idsAndColors)
@@ -185,17 +185,12 @@ namespace Netherlands3D.TileSystem
             var tileKey = tileIdFloats.Item1;
             var idFloats = tileIdFloats.Item2;
 
-            var tileIdColors = new Dictionary<string, Color>();
-            foreach (var keyValuePair in idFloats)
-            {
-                Color colorFromGradient = gradientContainer.gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, keyValuePair.Value));
-                tileIdColors.Add(keyValuePair.Key, colorFromGradient);
-            }
-            if (this.tileIdColors.ContainsKey(tileKey))
-                this.tileIdColors[tileKey] = tileIdColors;
+            if (this.tileIdFloats.ContainsKey(tileKey))
+                this.tileIdFloats[tileKey] = tileIdFloats.Item2;
             else
-                this.tileIdColors.Add(tileKey, tileIdColors);
+                this.tileIdFloats.Add(tileKey, tileIdFloats.Item2);
 
+            var tileIdColors = CalculateColors(idFloats);
             UpdateColorsByTileKey(tileIdFloats.Item1, tileIdColors);
         }
 
@@ -203,13 +198,14 @@ namespace Netherlands3D.TileSystem
         {
             this.enabled = true;
             var idFloats = (Dictionary<string, float>)idsAndFloats;
-            idColors = new Dictionary<string, Color>();
-            foreach (var keyValuePair in idFloats)
-            {
-                Color colorFromGradient = gradientContainer.gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, keyValuePair.Value));
-                idColors.Add(keyValuePair.Key, colorFromGradient);
-            }
+            //idColors = new Dictionary<string, Color>();
+            //foreach (var keyValuePair in idFloats)
+            //{
+            //    Color colorFromGradient = gradientContainer.gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, keyValuePair.Value));
+            //    idColors.Add(keyValuePair.Key, colorFromGradient);
+            //}
 
+            idColors = CalculateColors(idFloats);
             UpdateColors(true);
         }
 
@@ -250,16 +246,33 @@ namespace Netherlands3D.TileSystem
             //    foreach (var tileKeyDictionaryPair in tileIdColors)
             //        UpdateColorsByTileKey(tileKeyDictionaryPair.Key, tileKeyDictionaryPair.Value);
             //else
-                UpdateColors(false);
+            UpdateColors(false);
         }
 
         private void UpdateColors(bool applyToExistingSubObjects = false)
         {
             if (idColors != null)
                 UpdateColorsWithGlobalList(applyToExistingSubObjects);
-            if (tileIdColors.Count > 0)
-                foreach (var tileKeyDictionaryPair in tileIdColors)
-                    UpdateColorsByTileKey(tileKeyDictionaryPair.Key, tileKeyDictionaryPair.Value);
+
+            if (tileIdFloats.Count > 0)
+            {
+                foreach (var tileKeyDictionaryPair in tileIdFloats)
+                {
+                    var tileIdColors = CalculateColors(tileKeyDictionaryPair.Value);
+                    UpdateColorsByTileKey(tileKeyDictionaryPair.Key, tileIdColors);
+                }
+            }
+        }
+
+        private Dictionary<string, Color> CalculateColors(Dictionary<string, float> idFloats)
+        {
+            var tileIdColors = new Dictionary<string, Color>();
+            foreach (var keyValuePair in idFloats)
+            {
+                Color colorFromGradient = gradientContainer.gradient.Evaluate(Mathf.InverseLerp((float)minimumValue, (float)maximumValue, keyValuePair.Value));
+                tileIdColors.Add(keyValuePair.Key, colorFromGradient);
+            }
+            return tileIdColors;
         }
 
         private void UpdateColorsWithGlobalList(bool applyToExistingSubObjects = false)

@@ -1,3 +1,4 @@
+using Netherlands3D.Coordinates;
 using Netherlands3D.Core;
 using Netherlands3D.Utilities;
 using Netherlands3D.WFSHandlers;
@@ -281,7 +282,8 @@ public class WFS : IWebService
         {
             case GeoJSON.GeoJSONGeometryType.Point:
                 double[] geoPointDouble = geoJSON.GetGeometryPoint2DDouble();
-                pointEvent.Invoke(CoordConvert.RDtoUnity(geoPointDouble[0], geoPointDouble[1], -10));
+                var coord = CoordinateConverter.ConvertTo(new Coordinate(CoordinateSystem.RD, geoPointDouble[0], geoPointDouble[1], -10), CoordinateSystem.Unity);
+                pointEvent.Invoke(coord.ToVector3());
                 break;
             case GeoJSON.GeoJSONGeometryType.MultiPoint:
                 MultiPointHandler pointHandler = new MultiPointHandler();

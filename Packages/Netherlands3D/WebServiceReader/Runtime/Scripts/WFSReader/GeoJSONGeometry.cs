@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.Coordinates;
 using Netherlands3D.Core;
 using Netherlands3D.Utilities;
 using UnityEngine;
@@ -97,7 +98,8 @@ namespace Netherlands3D.WFSHandlers
                 case GeoJSON.GeoJSONGeometryType.Point:
                     double[] geoPointDouble = geoJSON.GetGeometryPoint2DDouble();
                     //pointEvent.Invoke(CoordConvert.RDtoUnity(geoPointDouble[0], geoPointDouble[1], -10));
-                    var point = CoordConvert.RDtoUnity(geoPointDouble[0], geoPointDouble[1], -10);
+                    var coord = CoordinateConverter.ConvertTo(new Coordinate(CoordinateSystem.RD, geoPointDouble[0], geoPointDouble[1], -10), CoordinateSystem.Unity);
+                    var point = coord.ToVector3();
                     this.points.Add(new PointGeometry(GeoJSON.GeoJSONGeometryType.Point, point));
                     break;
                 case GeoJSON.GeoJSONGeometryType.MultiPoint:

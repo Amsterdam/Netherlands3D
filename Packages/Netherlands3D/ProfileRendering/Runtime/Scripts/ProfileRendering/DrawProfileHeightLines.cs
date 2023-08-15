@@ -2,11 +2,12 @@ using Netherlands3D.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.Coordinates;
 using UnityEngine;
 using TMPro;
 using Netherlands3D.Core;
 
-namespace Netherlands3D.ProfileRendering { 
+namespace Netherlands3D.ProfileRendering {
     public class DrawProfileHeightLines : MonoBehaviour
     {
         [SerializeField] private FloatEvent sizeInWorld;
@@ -30,9 +31,9 @@ namespace Netherlands3D.ProfileRendering {
             for (int i = 0; i < childLines; i++)
             {
                 var childText = transform.GetChild(i).GetComponentInChildren<TextMeshProUGUI>();
-                var heightText = (lineHeight + CoordConvert.zeroGroundLevelY).ToString("F0");
+                var heightText = (lineHeight + CoordinateConverter.zeroGroundLevelY).ToString("F0");
                 childText.text = (heightText=="0") ? "NAP": heightText+"m";
-                
+
                 lineHeight -= stepSize;
             }
         }

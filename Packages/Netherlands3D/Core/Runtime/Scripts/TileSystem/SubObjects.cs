@@ -156,11 +156,6 @@ public partial class SubObjects : MonoBehaviour
 
         var metaDataName = mesh.name.Replace(".bin", "-data.bin");
 
-#if !UNITY_EDITOR && UNITY_WEBGL
-		if(brotliExtention.Length>0)
-			metaDataName += brotliExtention;
-#endif
-
         var webRequest = UnityWebRequest.Get(metaDataName);
 
         yield return webRequest.SendWebRequest();

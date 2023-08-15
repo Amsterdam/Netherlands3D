@@ -1,6 +1,7 @@
 using Netherlands3D.Core;
 using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.Coordinates;
 using UnityEngine;
 
 namespace Netherlands3D.Minimap

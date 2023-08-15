@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Netherlands3D.Coordinates;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
@@ -48,8 +49,8 @@ namespace Netherlands3D.TileSystem
 		{
 			tileHandler = gameObject.AddComponent<TileHandler>();
 
-			CoordConvert.relativeCenterRD = new Vector2RD(configuration.rdCenterX, configuration.rdCenterY);
-			CoordConvert.zeroGroundLevelY = configuration.groundYZero;
+			CoordinateConverter.relativeCenterRD = new Vector2RD(configuration.rdCenterX, configuration.rdCenterY);
+			CoordinateConverter.zeroGroundLevelY = configuration.groundYZero;
 
 			foreach (var binaryMeshLayer in configuration.binaryMeshLayers)
 			{
@@ -132,7 +133,7 @@ namespace Netherlands3D.TileSystem
 			Debug.Log($"Loading layers config file: {configPath}");
 #if UNITY_WEBGL && !UNITY_EDITOR
 			UnityWebRequest webRequest = UnityWebRequest.Get(configPath);
-        
+
 			yield return webRequest.SendWebRequest();
 			if (webRequest.result == UnityWebRequest.Result.Success)
 			{
