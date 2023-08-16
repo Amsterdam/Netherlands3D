@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.Utilities;
 using UnityEngine;
 
 public class WFSFeatureData
 {
+    public GeoJSON.GeoJSONGeometryType GeometryType { get; set; }
     private Dictionary<string, object> featureProperties = new();
 
     public bool AddFeatureProperty(string propertyName, object propertyValue)

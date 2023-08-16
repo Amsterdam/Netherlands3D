@@ -6,10 +6,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
-using Netherlands3D.Coordinates;
 using UnityEngine;
 using UnityEngine.Networking;
 using TMPro;
+using UnityEngine.Events;
 
 public class WFSHandler : MonoBehaviour
 {
@@ -35,6 +35,8 @@ public class WFSHandler : MonoBehaviour
     [SerializeField] private GameObjectEvent wfsParentEvent;
     [SerializeField] private ColorEvent lineColorEvent;
 
+    [SerializeField] private UnityEvent<List<WFSFeature>> wfsFeatureListEvent;
+
     [Header("Listen Events")]
     [SerializeField] private StringEvent startIndexEvent;
     [SerializeField] private StringEvent countEvent;
@@ -50,11 +52,9 @@ public class WFSHandler : MonoBehaviour
 
     [SerializeField] private DoubleArrayEvent boundingBoxDoubleArrayEvent;
 
-
-    private WFSFormatter formatter;
-    private WFSFeature activeFeature;
-    private WFSFeatureData featureData;
-    private float coroutineRunTime = 200f;
+    //private WFSFeature activeFeature;
+    //private WFSFeatureData featureData;
+    //private float coroutineRunTime = 200f;
     private float hue = 0.9f;
     private float saturation = 0.5f;
     private float brightness = 0.5f;
@@ -76,9 +76,9 @@ public class WFSHandler : MonoBehaviour
 
         // The addition of these functions to the events are only for testing and debugging purposes.
         // They should be removed or commented out later.
-        pointEvent.AddListenerStarted(TestPoint);
-        multiPointEvent.AddListenerStarted(TestMultiPoints);
-        drawLinesEvent.AddListenerStarted(TestMultiLine);
+        //pointEvent.AddListenerStarted(TestPoint);
+        //multiPointEvent.AddListenerStarted(TestMultiPoints);
+        //drawLinesEvent.AddListenerStarted(TestMultiLine);
     }
     private bool ParseFields()
     {
@@ -105,82 +105,155 @@ public class WFSHandler : MonoBehaviour
         maxYField.text = boundsArray[3].ToString();
     }
 
-    public void CreateWFS(string baseUrl)
+    private void CreateWFS(string baseUrl)
     {
+        if (ActiveWFS != null)
+            //ActiveWFS.
+            //ActiveWFS.wfsGetCapabilitiesProcessedEvent.RemoveAllListeners();
+
         ActiveWFS = new WFS(baseUrl);
+        //ActiveWFS = wfs;
+
         ClearSpawnedMeshItems();
         resetReaderEvent.InvokeStarted();
-        Debug.Log(ActiveWFS.GetCapabilities());
-        StartCoroutine(GetWebString(ActiveWFS.GetCapabilities(), ProcessWFS));
+
+        //ActiveWFS.getCapabilitiesReceived.AddListener((object o, List<WFSFeature> l) => wfsFeatureListEvent.Invoke(l));
+        //ActiveWFS.RequestWFSGetCapabilities(this);
+
+        //ActiveWFS.wfsGetCapabilitiesProcessedEvent.AddListener(OnWFSDataProcessed);
     }
+
+    private void OnWFSDataProcessed()
+    {
+        wfsDataEvent.InvokeStarted(ActiveWFS);
+    }
+
+    //private void GetWFSCapabilities(WFS wfs)
+    //{
+    //    var url = wfs.GetCapabilities();
+
+    //    Debug.Log("getting wfs capabilities at " + wfs.GetCapabilities());
+
+    //    //StartCoroutine(UrlReader.GetWebString(url, callback));
+    //    WebRequest.CreateWebRequest(url, ProcessWFS);
+    //}
+
+
+    //called by button in inspector
     public void GetFeature()
     {
-        if (!ParseFields())
+        if (!ParseFields() || (ActiveWFS == null))
             return;
+        //ActiveWFS.featureDataReceived.RemoveAllListeners();
+        //ActiveWFS.featureDataReceived.AddListener(FeatureCallback);
+        ActiveWFS.wfsFeatureDataReceivedEvent.RemoveAllListeners(); //todo: also do this when selecting a new feature
+        ActiveWFS.wfsFeatureDataReceivedEvent.AddListener(FeatureCallback);
+        ActiveWFS.GetFeature();
 
-        ActiveWFS.TypeName = activeFeature.FeatureName;
-        Debug.Log(ActiveWFS.GetFeatures());
-        StartCoroutine(GetWebString(ActiveWFS.GetFeatures(), (string s) => StartCoroutine(HandleFeatureJSON(new GeoJSON(s)))));
+        //ActiveWFS.TypeName = activeFeature.FeatureName;
+        //Debug.Log(ActiveWFS.GetFeatures());
+        //WebRequest.CreateWebRequest(ActiveWFS.GetFeatures(), FeatureCallback);
+        //StartCoroutine(UrlReader.GetWebString(ActiveWFS.GetFeatures(), (string s) => StartCoroutine(HandleFeatureJSON(new GeoJSON(s)))));
     }
-    public void SetActiveFeature(object activatedFeature)
+    public void SetActiveFeature(object activatedFeatureObject)
     {
-        activeFeature = (WFSFeature)activatedFeature;
+
+        var activatedFeature = (WFSFeature)activatedFeatureObject;
+        ActiveWFS.SetActiveFeature(activatedFeature.FeatureName);
     }
-    private IEnumerator GetWebString(string url, Action<string> action)
+
+    private void FeatureCallback(List<WFSFeatureData> featureDataList)
     {
-        UnityWebRequest request = UnityWebRequest.Get(url);
-        yield return request.SendWebRequest();
-        if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+        foreach (var featureData in featureDataList)
         {
-            Debug.LogError(request.error);
-        }
-        else
-        {
-            string result = request.downloadHandler.text;
-            action.Invoke(result);
-        }
-    }
-    private IEnumerator HandleFeatureJSON(GeoJSON geoJSON)
-    {
-        ShiftLineColor();
-        SpawnParent = new GameObject().transform;
-        SpawnParent.name = "WFS_ObjectParent";
-        wfsParentEvent.InvokeStarted(SpawnParent.gameObject);
+            SpawnParent = new GameObject().transform;
+            SpawnParent.name = "WFS_ObjectParent";
+            wfsParentEvent.InvokeStarted(SpawnParent.gameObject);
 
-        DateTime dateTime = DateTime.UtcNow;
+            LinkEventsForGeoJSONProcessing(featureData);
+            //    var geoJSON = new GeoJSON(geoJSONString);
+            //    ProcessFeatureJSONPerFrame(geoJSON);
 
-        Debug.Log("Handling Feature JSON!");
-        if (geoJSON.FindFirstFeature())
-        {
-            Debug.Log("Hadn't found first feature! Doing it now!");
-
-            featureData = new WFSFeatureData();
-            featureData.TransferDictionary(geoJSON.GetProperties());
-            activeFeature.AddNewFeatureData(featureData);
-
-            EvaluateGeoType(geoJSON);
-
-
-        }
-        while (geoJSON.GotoNextFeature())
-        {
-            Debug.Log("Evaluating next feature!");
-
-            featureData = new WFSFeatureData();
-            featureData.TransferDictionary(geoJSON.GetProperties());
-            activeFeature.AddNewFeatureData(featureData);
-
-            EvaluateGeoType(geoJSON);
-
-            if ((DateTime.UtcNow - dateTime).Milliseconds > coroutineRunTime)
-            {
-                yield return null;
-                dateTime = DateTime.UtcNow;
-            }
         }
         if (propertyFeatureEvent)
-            propertyFeatureEvent.InvokeStarted(activeFeature);
+            propertyFeatureEvent.InvokeStarted(ActiveWFS.ActiveFeature);
     }
+
+    private void LinkEventsForGeoJSONProcessing(WFSFeatureData featureData)
+    {
+        //ActiveWFS.fea
+        ActiveWFS.RemoveAllListenersFeatureProcessed();
+
+        switch (featureData.GeometryType)
+        {
+            case GeoJSON.GeoJSONGeometryType.Point:
+                ActiveWFS.AddListenerFeatureProcessed(pointEvent.InvokeStarted);
+                break;
+            case GeoJSON.GeoJSONGeometryType.MultiPoint:
+                ActiveWFS.AddListenerFeatureProcessed(multiPointEvent.InvokeStarted);
+                break;
+            case GeoJSON.GeoJSONGeometryType.LineString:
+                ActiveWFS.AddListenerFeatureProcessed(drawLineEvent.InvokeStarted);
+                break;
+            case GeoJSON.GeoJSONGeometryType.MultiLineString:
+                ActiveWFS.AddListenerFeatureProcessed(drawLinesEvent.InvokeStarted);
+                break;
+            case GeoJSON.GeoJSONGeometryType.Polygon:
+                ActiveWFS.AddListenerFeatureProcessed(drawPolygonEvent.InvokeStarted);
+                break;
+            case GeoJSON.GeoJSONGeometryType.MultiPolygon:
+                ActiveWFS.AddListenerFeatureProcessed(drawPolygonsEvent.InvokeStarted);
+                break;
+            case GeoJSON.GeoJSONGeometryType.GeometryCollection:
+                // String Event voor error.
+                throw new System.NotImplementedException("Geometry Type of type: 'GeometryCollection' is not currently supported");
+            //break;
+            default:
+                // String Event voor error.
+                throw new System.Exception("Geometry Type is either 'Undefined' or not found, cannot process like this!");
+        }
+    }
+
+    //private IEnumerator HandleFeatureJSON(GeoJSON geoJSON) // ???
+    //{
+    //    ShiftLineColor();
+    //    SpawnParent = new GameObject().transform;
+    //    SpawnParent.name = "WFS_ObjectParent";
+    //    wfsParentEvent.InvokeStarted(SpawnParent.gameObject);
+
+    //    DateTime dateTime = DateTime.UtcNow;
+
+    //    Debug.Log("Handling Feature JSON!");
+    //    if (geoJSON.FindFirstFeature())
+    //    {
+    //        Debug.Log("Hadn't found first feature! Doing it now!");
+
+    //        var featureData = new WFSFeatureData();
+    //        featureData.TransferDictionary(geoJSON.GetProperties());
+    //        activeFeature.AddNewFeatureData(featureData);
+
+    //        EvaluateGeoType(geoJSON);
+    //    }
+    //    while (geoJSON.GotoNextFeature())
+    //    {
+    //        Debug.Log("Evaluating next feature!");
+
+    //        var featureData = new WFSFeatureData();
+    //        featureData.TransferDictionary(geoJSON.GetProperties());
+    //        activeFeature.AddNewFeatureData(featureData);
+
+    //        EvaluateGeoType(geoJSON);
+
+    //        if ((DateTime.UtcNow - dateTime).Milliseconds > coroutineRunTime)
+    //        {
+    //            yield return null;
+    //            dateTime = DateTime.UtcNow;
+    //        }
+    //    }
+    //    if (propertyFeatureEvent)
+    //        propertyFeatureEvent.InvokeStarted(activeFeature);
+    //}
+
     private void SetStartIndex(string index)
     {
         int.TryParse(index, out ActiveWFS.StartIndex);
@@ -190,45 +263,46 @@ public class WFSHandler : MonoBehaviour
     {
         int.TryParse(count, out ActiveWFS.Count);
     }
-    private void EvaluateGeoType(GeoJSON geoJSON)
-    {
-        switch (geoJSON.GetGeometryType())
-        {
-            case GeoJSON.GeoJSONGeometryType.Point:
-                double[] geoPointDouble = geoJSON.GetGeometryPoint2DDouble();
-                pointEvent.InvokeStarted(CoordinateConverter.RDtoUnity(geoPointDouble[0], geoPointDouble[1], -10));
-                break;
-            case GeoJSON.GeoJSONGeometryType.MultiPoint:
-                MultiPointHandler pointHandler = new MultiPointHandler();
-                multiPointEvent.InvokeStarted(pointHandler.ProcessMultiPoint(geoJSON.GetMultiPoint()));
-                break;
-            case GeoJSON.GeoJSONGeometryType.LineString:
-                LineStringHandler lineStringHandler = new LineStringHandler();
-                //ShiftLineColor();
-                drawLineEvent.InvokeStarted(lineStringHandler.ProcessLineString(geoJSON.GetGeometryLineString()));
-                break;
-            case GeoJSON.GeoJSONGeometryType.MultiLineString:
-                MultiLineHandler multiLineHandler = new MultiLineHandler();
-                drawLinesEvent.InvokeStarted(multiLineHandler.ProcessMultiLine(geoJSON.GetMultiLine()));
-                break;
-            case GeoJSON.GeoJSONGeometryType.Polygon:
-                PolygonHandler polyHandler = new PolygonHandler();
-                drawPolygonEvent.InvokeStarted(polyHandler.ProcessPolygon(geoJSON.GetPolygon()));
-                break;
-            case GeoJSON.GeoJSONGeometryType.MultiPolygon:
-                MultiPolygonHandler multiPolyHandler = new MultiPolygonHandler();
-                drawPolygonsEvent.InvokeStarted(multiPolyHandler.GetMultiPoly(geoJSON.GetMultiPolygon()));
-                break;
-            case GeoJSON.GeoJSONGeometryType.GeometryCollection:
-                // String Event voor error.
-                throw new System.NotImplementedException("Geometry Type of type: 'GeometryCollection' is not currently supported");
-                //break;
-            default:
-                // String Event voor error.
-                throw new System.Exception("Geometry Type is either 'Undefined' or not found, cannot process like this!");
+    //private void EvaluateGeoType(GeoJSON geoJSON)
+    //{
+    //    switch (geoJSON.GetGeometryType())
+    //    {
+    //        case GeoJSON.GeoJSONGeometryType.Point:
+    //            double[] geoPointDouble = geoJSON.GetGeometryPoint2DDouble();
+    //            pointEvent.InvokeStarted(CoordConvert.RDtoUnity(geoPointDouble[0], geoPointDouble[1], -10));
+    //            break;
+    //        case GeoJSON.GeoJSONGeometryType.MultiPoint:
+    //            MultiPointHandler pointHandler = new MultiPointHandler();
+    //            multiPointEvent.InvokeStarted(pointHandler.ProcessMultiPoint(geoJSON.GetMultiPoint()));
+    //            break;
+    //        case GeoJSON.GeoJSONGeometryType.LineString:
+    //            LineStringHandler lineStringHandler = new LineStringHandler();
+    //            //ShiftLineColor();
+    //            drawLineEvent.InvokeStarted(lineStringHandler.ProcessLineString(geoJSON.GetGeometryLineString()));
+    //            break;
+    //        case GeoJSON.GeoJSONGeometryType.MultiLineString:
+    //            MultiLineHandler multiLineHandler = new MultiLineHandler();
+    //            drawLinesEvent.InvokeStarted(multiLineHandler.ProcessMultiLine(geoJSON.GetMultiLine()));
+    //            break;
+    //        case GeoJSON.GeoJSONGeometryType.Polygon:
+    //            PolygonHandler polyHandler = new PolygonHandler();
+    //            drawPolygonEvent.InvokeStarted(polyHandler.ProcessPolygon(geoJSON.GetPolygon()));
+    //            break;
+    //        case GeoJSON.GeoJSONGeometryType.MultiPolygon:
+    //            MultiPolygonHandler multiPolyHandler = new MultiPolygonHandler();
+    //            drawPolygonsEvent.InvokeStarted(multiPolyHandler.GetMultiPoly(geoJSON.GetMultiPolygon()));
+    //            break;
+    //        case GeoJSON.GeoJSONGeometryType.GeometryCollection:
+    //            // String Event voor error.
+    //            throw new System.NotImplementedException("Geometry Type of type: 'GeometryCollection' is not currently supported");
+    //        //break;
+    //        default:
+    //            // String Event voor error.
+    //            throw new System.Exception("Geometry Type is either 'Undefined' or not found, cannot process like this!");
 
-        }
-    }
+    //    }
+    //}
+
     private void ClearSpawnedMeshItems()
     {
         if (SpawnParent == null)
@@ -239,25 +313,7 @@ public class WFSHandler : MonoBehaviour
             Destroy(SpawnParent.GetChild(i).gameObject);
         }
     }
-    private void ProcessWFS(string xmlData)
-    {
-        XmlDocument xml = new XmlDocument();
-        xml.LoadXml(xmlData);
 
-        XmlElement serviceID = xml.DocumentElement["ows:ServiceIdentification"]["ows:ServiceType"];
-        if (serviceID != null && serviceID.InnerText.Contains("WFS"))
-        {
-            //print(serviceID.InnerText);
-            if (formatter == null)
-            {
-                formatter = new WFSFormatter();
-            }
-            ActiveWFS = formatter.ReadFromWFS(ActiveWFS, xml);
-            resetReaderEvent.InvokeStarted();
-            isWmsEvent.InvokeStarted(false);
-            wfsDataEvent.InvokeStarted(ActiveWFS);
-        }
-    }
     private void SetBoundingBoxMinX(string value)
     {
         ActiveWFS.BBox.MinX = float.Parse(value);
@@ -277,15 +333,15 @@ public class WFSHandler : MonoBehaviour
     private void ShiftLineColor()
     {
         hue += 0.1f;
-        if(hue > 1)
+        if (hue > 1)
         {
             hue = 0;
             saturation += 0.1f;
-            if(saturation > 1)
+            if (saturation > 1)
             {
                 saturation = 0;
                 brightness += 0.1f;
-                if(brightness > 1)
+                if (brightness > 1)
                 {
                     brightness = 0;
                 }
@@ -294,30 +350,30 @@ public class WFSHandler : MonoBehaviour
         lineColorEvent.InvokeStarted(Color.HSVToRGB(hue, saturation, brightness));
     }
 
-    private void TestMultiLine(List<List<Vector3>> multiLine)
-    {
-        //ShiftLineColor();
-        foreach(List<Vector3> lines in multiLine)
-        {
-            drawLineEvent.InvokeStarted(lines);
-        }
-    }
-    private void TestPoint(Vector3 pointCoord)
-    {
-        //Destroy(SpawnParent.gameObject);
-        //SpawnParent = new GameObject().transform;
-        //SpawnParent.name = "WFS_ObjectParent";
-        GameObject wfsPointObject = Instantiate(visualizer, pointCoord + Vector3.up * 100, Quaternion.identity, SpawnParent);
-    }
-    private void TestMultiPoints(List<Vector3> pointCoords)
-    {
-        //Destroy(SpawnParent.gameObject);
-        //SpawnParent = new GameObject().transform;
-        //SpawnParent.name = "WFS_ObjectParent";
-        foreach (Vector3 position in pointCoords)
-        {
-            GameObject wfsPointObject = Instantiate(visualizer, position + Vector3.up * 100, Quaternion.identity, SpawnParent);
-        }
-    }
+    //private void TestMultiLine(List<List<Vector3>> multiLine)
+    //{
+    //    //ShiftLineColor();
+    //    foreach (List<Vector3> lines in multiLine)
+    //    {
+    //        drawLineEvent.InvokeStarted(lines);
+    //    }
+    //}
+    //private void TestPoint(Vector3 pointCoord)
+    //{
+    //    //Destroy(SpawnParent.gameObject);
+    //    //SpawnParent = new GameObject().transform;
+    //    //SpawnParent.name = "WFS_ObjectParent";
+    //    GameObject wfsPointObject = Instantiate(visualizer, pointCoord + Vector3.up * 100, Quaternion.identity, SpawnParent);
+    //}
+    //private void TestMultiPoints(List<Vector3> pointCoords)
+    //{
+    //    //Destroy(SpawnParent.gameObject);
+    //    //SpawnParent = new GameObject().transform;
+    //    //SpawnParent.name = "WFS_ObjectParent";
+    //    foreach (Vector3 position in pointCoords)
+    //    {
+    //        GameObject wfsPointObject = Instantiate(visualizer, position + Vector3.up * 100, Quaternion.identity, SpawnParent);
+    //    }
+    //}
 
 }
