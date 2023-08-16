@@ -5,7 +5,7 @@ using Netherlands3D.Events;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Netherlands3D.Core
+namespace Netherlands3D.Web
 {
     public class WebRequest : MonoBehaviour
     {
