@@ -3,79 +3,28 @@ using System.Collections.Generic;
 using System.Xml;
 using Netherlands3D.Core;
 using Netherlands3D.Utilities;
+using Netherlands3D.Web;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Netherlands3D.WFSHandlers
 {
-    public class UrlBuilder
-    {
-        private UriBuilder _builder;
-
-        public UrlBuilder(string baseUrl)
-        {
-            _builder = new UriBuilder(baseUrl);
-        }
-
-        public void AddQueryParameter(string key, string value)
-        {
-            var encodedKey = Uri.EscapeDataString(key);
-            var encodedValue = Uri.EscapeDataString(value);
-            var query = _builder.Query;
-            if (query != null && query.Length > 1)
-            {
-                _builder.Query = $"{query.Substring(1)}&{encodedKey}={encodedValue}";
-            }
-            else
-            {
-                _builder.Query = $"{encodedKey}={encodedValue}";
-            }
-        }
-
-        public void AddQueryParameter(UrlQueryParameter parameter)
-        {
-            AddQueryParameter(parameter.Key, parameter.Value);
-        }
-
-        public override string ToString()
-        {
-            return _builder.ToString();
-        }
-    }
-
-    public struct UrlQueryParameter
-    {
-        public string Key;
-        public string Value;
-
-        public UrlQueryParameter(string key, string value)
-        {
-            Key = key;
-            Value = value;
-        }
-
-        public override string ToString()
-        {
-            return $"{Key}={Value}";
-        }
-    }
-
     public class WFS2
     {
         public string BaseUrl { get; private set; }
         public Dictionary<string, string> RequestHeaders { get; set; }
         public BoundingBox BBox;
 
-        public UrlQueryParameter serviceQuery = new UrlQueryParameter("SERVICE", "WFS");
-        public UrlQueryParameter getCapabilitiesQuery = new UrlQueryParameter("REQUEST", "GetCapabilities");
-        public UrlQueryParameter getFeatureQuery = new UrlQueryParameter("REQUEST", "GetFeature");
-        public UrlQueryParameter describeFeatureTypeQuery = new UrlQueryParameter("REQUEST", "DescribeFeatureType");
-        public UrlQueryParameter versionQuery = new UrlQueryParameter("VERSION", "2.0.0");
+        public UriQueryParameter serviceQuery = new("SERVICE", "WFS");
+        public UriQueryParameter getCapabilitiesQuery = new("REQUEST", "GetCapabilities");
+        public UriQueryParameter getFeatureQuery = new("REQUEST", "GetFeature");
+        public UriQueryParameter describeFeatureTypeQuery = new("REQUEST", "DescribeFeatureType");
+        public UriQueryParameter versionQuery = new("VERSION", "2.0.0");
         //public UrlQueryParameter typeNameQuery = new UrlQueryParameter("TYPENAME", "");
-        public UrlQueryParameter outputFormatQuery = new UrlQueryParameter("OUTPUTFORMAT", "geojson");
-        public UrlQueryParameter countQuery = new UrlQueryParameter("COUNT", "0");
-        public UrlQueryParameter startIndexQuery = new UrlQueryParameter("STARTINDEX", "0");
-        public UrlQueryParameter boundingBoxQuery => new UrlQueryParameter("bbox", $"{BBox.MinX},{BBox.MinY},{BBox.MaxX},{BBox.MaxY}");
+        public UriQueryParameter outputFormatQuery = new("OUTPUTFORMAT", "geojson");
+        public UriQueryParameter countQuery = new("COUNT", "0");
+        public UriQueryParameter startIndexQuery = new("STARTINDEX", "0");
+        public UriQueryParameter boundingBoxQuery => new("bbox", $"{BBox.MinX},{BBox.MinY},{BBox.MaxX},{BBox.MaxY}");
 
         public UnityEvent<object, List<WFSFeature>> getCapabilitiesReceived = new();
         public UnityEvent<object, List<WFSFeatureDescriptor>> featureDescriptorsReceived = new();
@@ -97,7 +46,7 @@ namespace Netherlands3D.WFSHandlers
 
         public string GetCapabilitiesURL()
         {
-            var url = new UrlBuilder(BaseUrl);
+            var url = new UriBuilder(BaseUrl);
             url.AddQueryParameter(serviceQuery);
             url.AddQueryParameter(getCapabilitiesQuery);
             return url.ToString();
@@ -105,11 +54,11 @@ namespace Netherlands3D.WFSHandlers
 
         public string GetFeatureURL(string typeName, List<string> propertyFilters)
         {
-            var url = new UrlBuilder(BaseUrl);
+            var url = new UriBuilder(BaseUrl);
             url.AddQueryParameter(serviceQuery);
             url.AddQueryParameter(versionQuery);
             url.AddQueryParameter(getFeatureQuery);
-            var typeNameQuery = new UrlQueryParameter("TYPENAME", typeName);
+            var typeNameQuery = new UriQueryParameter("TYPENAME", typeName);
             url.AddQueryParameter(typeNameQuery);
             url.AddQueryParameter(boundingBoxQuery);
             url.AddQueryParameter(outputFormatQuery);
@@ -139,7 +88,7 @@ namespace Netherlands3D.WFSHandlers
 
         private string DescribeFeatureTypeURL()
         {
-            var url = new UrlBuilder(BaseUrl);
+            var url = new UriBuilder(BaseUrl);
             url.AddQueryParameter(serviceQuery);
             url.AddQueryParameter(versionQuery);
             url.AddQueryParameter(describeFeatureTypeQuery);
@@ -163,7 +112,7 @@ namespace Netherlands3D.WFSHandlers
             if (serviceID != null && serviceID.InnerText.Contains("WFS"))
             {
                 var features = ReadFromWFS(xml, out var version);
-                versionQuery.Value = version;
+                versionQuery = new UriQueryParameter(versionQuery.Key, version);
                 getCapabilitiesReceived.Invoke(source, features);
             }
         }
