@@ -34,7 +34,6 @@ namespace Netherlands3D.SelectionTools
         [SerializeField] private Vector3ListEvent drawSinglePolygonEvent;
         [SerializeField] private StringEvent setDrawingObjectName;
         [SerializeField] private FloatEvent setExtrusionHeightEvent;
-        //[SerializeField] private GameObjectEvent polyParentEvent;
         [SerializeField] private Vector3ListEvent polygonEdited;
 
         private void Awake()
@@ -48,18 +47,16 @@ namespace Netherlands3D.SelectionTools
             if (drawPolygonEvent) drawPolygonEvent.AddListenerStarted(polygonVisualiser.CreatePolygons);
             if (drawSinglePolygonEvent) drawSinglePolygonEvent.AddListenerStarted(polygonVisualiser.CreateSinglePolygon);
             if (setExtrusionHeightEvent) setExtrusionHeightEvent.AddListenerStarted(polygonVisualiser.SetExtrusionHeight);
-            //if (polyParentEvent) polyParentEvent.AddListenerStarted((parentObject) => polygonVisualiser.geometryParent = parentObject.transform);
             if (polygonEdited) polygonEdited.AddListenerStarted(polygonVisualiser.UpdateSelectedPolygon);
         }
 
         private void OnDisable()
         {
-            if (setDrawingObjectName) setDrawingObjectName.RemoveAllListenersStarted();
-            if (drawPolygonEvent) drawPolygonEvent.RemoveAllListenersStarted();
-            if (drawSinglePolygonEvent) drawSinglePolygonEvent.RemoveAllListenersStarted();
-            if (setExtrusionHeightEvent) setExtrusionHeightEvent.RemoveAllListenersStarted();
-            //if (polyParentEvent) polyParentEvent.RemoveAllListenersStarted();
-            if (polygonEdited) polygonEdited.RemoveAllListenersStarted();
+            if (setDrawingObjectName) setDrawingObjectName.RemoveListenerStarted(polygonVisualiser.SetName);
+            if (drawPolygonEvent) drawPolygonEvent.RemoveListenerStarted(polygonVisualiser.CreatePolygons);
+            if (drawSinglePolygonEvent) drawSinglePolygonEvent.RemoveListenerStarted(polygonVisualiser.CreateSinglePolygon);
+            if (setExtrusionHeightEvent) setExtrusionHeightEvent.RemoveListenerStarted(polygonVisualiser.SetExtrusionHeight);
+            if (polygonEdited) polygonEdited.RemoveListenerStarted(polygonVisualiser.UpdateSelectedPolygon);
         }
     }
 }
