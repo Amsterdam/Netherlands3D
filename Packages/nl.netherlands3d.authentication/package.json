@@ -1,6 +1,6 @@
 {
   "name": "nl.netherlands3d.authentication",
-  "displayName": "Netherlands 3D - Authentication",
+  "displayName": "Netherlands3D - Authentication",
   "version": "1.0.0",
   "unity": "2022.2",
   "description": "This package provides an OAuth client for use with Netherlands3D.\nPlease see the README for instructions on installing and using this package.\n\nDepends on <b>https://github.com/cdmvision/authentication-unity.git#1.1.3</b>",
