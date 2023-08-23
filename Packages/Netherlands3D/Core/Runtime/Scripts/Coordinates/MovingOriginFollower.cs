@@ -36,6 +36,12 @@ public class MovingOriginFollower : MonoBehaviour
 
     private void MoveToNewOrigin(Vector3 offset)
     {
+        if (GetComponent<Camera>()!=null)
+        {
+            transform.position = CoordConvert.ECEFToUnity(ecefPosition);
+            return;
+        }
+
         transform.SetPositionAndRotation(
             CoordConvert.ECEFToUnity(ecefPosition),
             CoordConvert.ecefRotionToUp()

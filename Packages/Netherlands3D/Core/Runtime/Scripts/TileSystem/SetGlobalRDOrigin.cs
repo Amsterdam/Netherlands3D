@@ -85,7 +85,10 @@ namespace Netherlands3D.Core
                 if (offset.magnitude > maxCameraDistanceFromOrigin)
                 {
                     CoordConvert.MoveAndRotateWorld(offset);
+                    Camera.main.transform.position = Camera.main.transform.position - offset;
                 }
+
+                
                 yield return new WaitForEndOfFrame();
             }
         }

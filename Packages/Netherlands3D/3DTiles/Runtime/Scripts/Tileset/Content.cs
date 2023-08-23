@@ -22,6 +22,8 @@ namespace Netherlands3D.Tiles3D
 
         public UnityEvent onDoneDownloading = new();
 
+        
+
         private GltfImport gltf;
 
         public enum ContentLoadState
@@ -81,7 +83,15 @@ namespace Netherlands3D.Tiles3D
                 return;
 
             State = ContentLoadState.DOWNLOADING;
-
+            if (parentTile.parent != null)
+            {
+                parentTile.parent.IncrementLoadingChildren();
+                
+            }
+            foreach (var child in parentTile.children)
+            {
+                child.IncrementLoadingParents();
+            }
             runningContentRequest = StartCoroutine(
                 ImportB3DMGltf.ImportBinFromURL(uri, GotGltfContent)
             );
@@ -92,8 +102,32 @@ namespace Netherlands3D.Tiles3D
         /// </summary>
         private async void GotGltfContent(ParsedGltf parsedGltf)
         {
-            if (this == null) return;
+            if (this == null)
+            {
+                if (parentTile.parent!=null)
+                {
+                    parentTile.parent.DecrementLoadingChildren();
+                    
+                }
+                foreach (var child in parentTile.children)
+                {
+                    child.DecrementLoadingParents();
+                }
+                return;
+                
+            }
 
+                if (parentTile.parent != null)
+                {
+                    
+                    parentTile.parent.IncrementLoadedChildren();
+                    parentTile.parent.DecrementLoadingChildren();
+                }
+            foreach (var child in parentTile.children)
+            {
+                child.IncrementLoadedParents();
+                child.DecrementLoadingParents();
+            }
             State = ContentLoadState.DOWNLOADED;
 
             var gltf = parsedGltf.gltfImport;
@@ -133,13 +167,35 @@ namespace Netherlands3D.Tiles3D
             //Direct abort of downloads
             if (State == ContentLoadState.DOWNLOADING && runningContentRequest != null)
             {
+                if (parentTile.parent != null)
+                {
+                    parentTile.parent.DecrementLoadingChildren();
+                }
+                foreach (var child in parentTile.children)
+                {
+                    child.DecrementLoadingParents();
+                }
+
                 StopCoroutine(runningContentRequest);
+                return;
             }
             State = ContentLoadState.NOTLOADING;
 
             if (gltf != null)
             {
                 gltf.Dispose();
+
+                    if (parentTile.parent != null)
+                    {
+                        parentTile.parent.DecrementLoadedChildren();
+                    }
+                    foreach (var child in parentTile.children)
+                    {
+                        child.DecrementLoadedParents();
+                    }
+
+
+                
             }
             Destroy(this.gameObject);
         }

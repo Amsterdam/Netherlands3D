@@ -31,6 +31,12 @@ namespace Netherlands3D.Tiles3D
         public string contentUri = "";
         public Content content;
 
+        public int parentsLoadingCount;
+        public int parentsLoadedCount;
+        public int loadingChildrenCount;
+        public int loadedChildrenCount;
+
+
         public int priority = 0;
 
         private bool boundsAvailable = false;
@@ -111,6 +117,73 @@ namespace Netherlands3D.Tiles3D
         {
             unloaded,
             loaded
+        }
+
+        public void IncrementLoadingChildren()
+        {
+            loadingChildrenCount++;
+            if (parent!=null)
+            {
+                parent.IncrementLoadingChildren();
+            }
+        }
+        public void IncrementLoadingParents()
+        {
+            parentsLoadingCount++;
+            foreach (var child in children)
+            {
+                child.IncrementLoadingParents();
+            }
+        }
+
+        public void IncrementLoadedChildren()
+        {
+            loadedChildrenCount++;
+            if (parent != null)
+            {
+                parent.IncrementLoadedChildren();
+            }
+        }
+
+        public void IncrementLoadedParents()
+        {
+            parentsLoadedCount++;
+            foreach (var child in children)
+            {
+                child.IncrementLoadedParents();
+            }
+        }
+        public void DecrementLoadingParents()
+        {
+            parentsLoadingCount--;
+            foreach (var child in children)
+            {
+                child.DecrementLoadingParents();
+            }
+        }
+        public void DecrementLoadingChildren()
+        {
+            loadingChildrenCount--;
+            if (parent != null)
+            {
+                parent.DecrementLoadingChildren();
+            }
+        }
+        public void DecrementLoadedChildren()
+        {
+            loadedChildrenCount--;
+            if (parent != null)
+            {
+                parent.DecrementLoadedChildren();
+            }
+        }
+        public void DecrementLoadedParents()
+        {
+            parentsLoadedCount--;
+            foreach (var child in children)
+            {
+                child.DecrementLoadedParents();
+            }
         }
 
         public bool IsInViewFrustrum(Camera ofCamera)
