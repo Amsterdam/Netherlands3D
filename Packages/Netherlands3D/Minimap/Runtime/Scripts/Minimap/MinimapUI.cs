@@ -144,7 +144,7 @@ namespace Netherlands3D.Minimap
         /// <param name="useMousePosition"></param>
         public void ZoomIn(bool useMousePosition = true)
         {
-            if (zoomScale < maxZoomScale) return;
+            if (zoomScale >= maxZoomScale) return;
 
             zoomScale++;
             ZoomTowardsLocation(useMousePosition);
@@ -157,7 +157,7 @@ namespace Netherlands3D.Minimap
         /// <param name="useMousePosition"></param>
         public void ZoomOut(bool useMousePosition = true)
         {
-            if (zoomScale > minZoomScale) return;
+            if (zoomScale <= minZoomScale) return;
 
             zoomScale--;
             ZoomTowardsLocation(useMousePosition);
