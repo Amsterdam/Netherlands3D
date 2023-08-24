@@ -1,9 +1,8 @@
-using Netherlands3D.JavascriptConnection;
-using Netherlands3D.Core;
-using System;
 using System.Collections;
-using System.Collections.Generic;
+using Netherlands3D.Coordinates;
+using Netherlands3D.JavascriptConnection;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
@@ -17,9 +16,11 @@ namespace Netherlands3D.Minimap
         [Header("Values")]
         [Tooltip("The max zoomscale of the minimap")]
         [SerializeField] private float maxZoomScale = 6.0f;
+        [Tooltip("Should the minimap resize upon hover?")]
+        [SerializeField] private bool hoverResize = true;
         [Tooltip("The speed at which the minimap resizes on hover")]
         [SerializeField] private float hoverResizeSpeed = 10.0f;
-        [Tooltip("The new rect delta size when hoverd")]
+        [Tooltip("The new rect delta size when hovered")]
         [SerializeField] private Vector2 hoverSize;
 
         [Header("Components")]
@@ -98,7 +99,10 @@ namespace Netherlands3D.Minimap
             ChangePointerStyleHandler.ChangeCursor(ChangePointerStyleHandler.Style.POINTER);
 
             StopAllCoroutines();
-            StartCoroutine(HoverResize(hoverSize));
+            if (hoverResize)
+            {
+                StartCoroutine(HoverResize(hoverSize));
+            }
         }
 
         /// <summary>
@@ -111,7 +115,10 @@ namespace Netherlands3D.Minimap
             ChangePointerStyleHandler.ChangeCursor(ChangePointerStyleHandler.Style.AUTO);
 
             StopAllCoroutines();
-            StartCoroutine(HoverResize(defaultSizeDelta));
+            if (hoverResize)
+            {
+                StartCoroutine(HoverResize(defaultSizeDelta));
+            }
         }
 
         /// <summary>
@@ -137,12 +144,11 @@ namespace Netherlands3D.Minimap
         /// <param name="useMousePosition"></param>
         public void ZoomIn(bool useMousePosition = true)
         {
-            if(zoomScale < maxZoomScale)
-            {
-                zoomScale++;
-                ZoomTowardsLocation(useMousePosition);
-                wmtsMap.Zoomed((int)zoomScale);
-            }
+            if (zoomScale < maxZoomScale) return;
+
+            zoomScale++;
+            ZoomTowardsLocation(useMousePosition);
+            wmtsMap.Zoomed((int)zoomScale);
         }
 
         /// <summary>
@@ -151,12 +157,11 @@ namespace Netherlands3D.Minimap
         /// <param name="useMousePosition"></param>
         public void ZoomOut(bool useMousePosition = true)
         {
-            if(zoomScale > minZoomScale)
-            {
-                zoomScale--;
-                ZoomTowardsLocation(useMousePosition);
-                wmtsMap.Zoomed((int)zoomScale);
-            }
+            if (zoomScale > minZoomScale) return;
+
+            zoomScale--;
+            ZoomTowardsLocation(useMousePosition);
+            wmtsMap.Zoomed((int)zoomScale);
         }
 
         /// <summary>
@@ -226,10 +231,9 @@ namespace Netherlands3D.Minimap
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if(!dragging)
-            {
-                wmtsMap.ClickedMap(eventData);
-            }
+            if (dragging) return;
+
+            wmtsMap.ClickedMap(eventData);
         }
 
         #endregion Interfaces
