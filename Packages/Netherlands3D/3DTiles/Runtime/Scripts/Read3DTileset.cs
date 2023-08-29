@@ -16,6 +16,8 @@ namespace Netherlands3D.Tiles3D
     [RequireComponent(typeof(ReadSubtree))]
     public class Read3DTileset : MonoBehaviour
     {
+        
+
         public string tilesetUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json";
         private string absolutePath = "";
         private string rootPath = "";
@@ -224,14 +226,29 @@ namespace Netherlands3D.Tiles3D
 
         private void RequestContentUpdate(Tile tile)
         {
+            //tile.parent.IncrementLoadingChildren();
+            //foreach (var child in tile.children)
+            //{
+            //    child.IncrementLoadingParents();
+            //}
             if (!tile.content)
             {
                 var newContentGameObject = new GameObject($"{tile.X},{tile.Y},{tile.Z} content");
                 newContentGameObject.transform.SetParent(transform, false);
+                newContentGameObject.layer = 11;
                 tile.content = newContentGameObject.AddComponent<Content>();
                 tile.content.ParentTile = tile;
                 tile.content.uri = GetFullContentUri(tile);
 
+                if (tile.parent != null)
+                {
+                    tile.parent.IncrementLoadingChildren();
+
+                }
+                foreach (var child in tile.children)
+                {
+                    child.IncrementLoadingParents();
+                }
                 //Request tile content update via optional prioritiser, or load directly
                 if (usingPrioritiser)
                 {
@@ -248,7 +265,7 @@ namespace Netherlands3D.Tiles3D
         private void RequestDispose(Tile tile)
         {
             if (!tile.content) return;
-
+           
             if (usingPrioritiser && !tile.requestedDispose)
             {
                 tilePrioritiser.RequestDispose(tile);
@@ -439,9 +456,9 @@ namespace Netherlands3D.Tiles3D
                 //If camera changed, recalculate what tiles are be in view
                 currentCamera.transform.GetPositionAndRotation(out currentCameraPosition, out currentCameraRotation);
 
-                if (nestedTreeLoaded || CameraChanged())
-                {
-                    nestedTreeLoaded = false;
+                //if (nestedTreeLoaded || CameraChanged())
+                //{
+                //    nestedTreeLoaded = false;
 
                     lastCameraAngle = (currentCamera.orthographic ? currentCamera.orthographicSize : currentCamera.fieldOfView);
                     currentCamera.transform.GetPositionAndRotation(out lastCameraPosition, out lastCameraRotation);
@@ -450,8 +467,12 @@ namespace Netherlands3D.Tiles3D
                     DisposeTilesOutsideView(currentCamera);
 
                     root.IsInViewFrustrum(currentCamera);
-                    yield return LoadInViewRecursively(root, currentCamera);
+                foreach (var child in root.children)
+                {
+                    LoadInViewRecursively(child, currentCamera);
                 }
+                    
+                //}
 
                 yield return null;
             }
@@ -483,7 +504,14 @@ namespace Netherlands3D.Tiles3D
                 var tileIsInView = tile.IsInViewFrustrum(currentCamera);
                 if (!tileIsInView)
                 {
-                    RequestDispose(tile);
+                    tilePrioritiser.RequestDispose(tile,true);
+                    visibleTiles.RemoveAt(i);
+                    continue;
+                }
+
+                if (tile.parent.CountLoadedParents() + tile.parent.CountLoadingParents() > 1)
+                {
+                    tilePrioritiser.RequestDispose(tile, true);
                     visibleTiles.RemoveAt(i);
                     continue;
                 }
@@ -502,7 +530,7 @@ namespace Netherlands3D.Tiles3D
                         }
                     }
                 }
-                else
+                if (tile.screenSpaceError <  maximumScreenSpaceError) //too much detail
                 {
                     if (tile.parentsLoadedCount>0)
                     {
@@ -517,58 +545,56 @@ namespace Netherlands3D.Tiles3D
 
         private void CalculateTileScreenSpaceError(Tile child, Camera currentMainCamera, Vector3 closestPointOnBounds)
         {
-            var sse = (sseComponent * (float)child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
-            if (sse == float.PositiveInfinity || sse == 0)
+            float sse;
+            if (Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds) < 0.1)
+            {
                 sse = float.MaxValue;
+            }
+            else
+            {
+                sse = (sseComponent * (float)child.geometricError) / Vector3.Distance(currentMainCamera.transform.position, closestPointOnBounds);
+            }   
             child.screenSpaceError = sse;
         }
 
-        private IEnumerator LoadInViewRecursively(Tile parentTile, Camera currentCamera)
+        private void LoadInViewRecursively(Tile parentTile, Camera currentCamera)
         {
-            //Make sure we loaded the chilren from possible nested tree
-            yield return LoadNestedTileset(parentTile);
-            yield return null;
+            if (parentTile.isLoading == false && parentTile.children.Count == 0 && parentTile.contentUri.Contains(".json"))
+            {
+                parentTile.isLoading = true;
+                StartCoroutine(LoadNestedTileset(parentTile));
+                return;
+            }
+            var tileIsInView = parentTile.IsInViewFrustrum(currentCamera);
+            if (!tileIsInView)
+            {
+                return;
+            }
+
+            var closestPointOnBounds = parentTile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
+            CalculateTileScreenSpaceError(parentTile, currentCamera, closestPointOnBounds);
+            var enoughDetail = parentTile.screenSpaceError < maximumScreenSpaceError;
+
+            if (enoughDetail)
+            {
+                var Has3DContent = parentTile.contentUri.Length > 0 && !parentTile.contentUri.Contains(".json");
+                if (Has3DContent)
+                {
+                    if (!visibleTiles.Contains(parentTile))
+                    {
+                        RequestContentUpdate(parentTile);
+                        visibleTiles.Add(parentTile);
+                    }
+                }
+                return;
+            }
+
 
             foreach (var childTile in parentTile.children)
             {
-                if (visibleTiles.Contains(childTile)) continue;
-                yield return null;
 
-                var closestPointOnBounds = childTile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
-                CalculateTileScreenSpaceError(childTile, currentCamera, closestPointOnBounds);
-
-                //Smaller geometric error or out of view? Too detailed for our current view so Dispose and stop going down the tree.
-                var tileIsInView = childTile.IsInViewFrustrum(currentCamera);
-                var enoughDetail = childTile.screenSpaceError <= maximumScreenSpaceError;
-
-                var childHas3DContent = childTile.contentUri.Length > 0 && !childTile.contentUri.Contains(".json");
-                var parentHas3DContent = parentTile.contentUri.Length > 0 && !parentTile.contentUri.Contains(".json");
-
-                var enoughDetailInParent = parentHas3DContent && (parentTile.screenSpaceError <= maximumScreenSpaceError);
-                var replace = (parentTile.refine == "REPLACE");
-
-                //Not in view? abort!
-                if (enoughDetail)
-                {
-                    if (!tileIsInView)
-                    {
-                        continue;
-                    }
-                    if (childHas3DContent)
-                    {
-                        if (!visibleTiles.Contains(childTile))
-                        {
-                            RequestContentUpdate(childTile);
-                            visibleTiles.Add(childTile);
-                        }
-                        
-                    }
-                }
-                else
-                {
-                    yield return LoadInViewRecursively(childTile, currentCamera);
-                }
-
+               
+            LoadInViewRecursively(childTile, currentCamera);
 
                 
             }
@@ -585,7 +611,7 @@ namespace Netherlands3D.Tiles3D
                     yield return www.SendWebRequest();
 
                     if (www.result != UnityWebRequest.Result.Success)
-                    {
+                    {            
                         Debug.Log(www.error);
                     }
                     else
@@ -598,6 +624,7 @@ namespace Netherlands3D.Tiles3D
                         nestedTreeLoaded = true;
                     }
                 }
+                tile.isLoading = false;
             }
             else if (tilingMethod == TilingMethod.implicitTiling)
             {

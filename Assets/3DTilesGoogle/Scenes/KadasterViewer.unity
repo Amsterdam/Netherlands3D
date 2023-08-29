@@ -191,6 +191,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1107191816428015818, guid: 8a8c1bdd94f08d144a7410a838c895ad, type: 3}
+      propertyPath: m_RendererIndex
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1233,48 +1237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b632da76a49ee5745b7fb140e0689838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilesetUrl: https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyDkuo4nZEmgObI5ETjUpNH3HsVvly_45To
-  root:
-    X: 0
-    Y: 0
-    Z: 0
-    hascontent: 0
-    childrenCountDelayingDispose: 0
-    children: []
-    transform:
-    - 1
-    - 0
-    - 0
-    - 0
-    - 0
-    - 1
-    - 0
-    - 0
-    - 0
-    - 0
-    - 1
-    - 0
-    - 0
-    - 0
-    - 0
-    - 1
-    geometricError: 0
-    screenSpaceError: 3.4028235e+38
-    refine: 
-    boundingVolume:
-      boundingVolumeType: 0
-      values: []
-    inView: 0
-    canRefine: 0
-    contentUri: 
-    content: {fileID: 0}
-    parentsLoadingCount: 0
-    parentsLoadedCount: 0
-    loadingChildrenCount: 0
-    loadedChildrenCount: 0
-    priority: 0
-    requestedDispose: 0
-    requestedUpdate: 0
+  tilesetUrl: https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyB9FRnque08yX0dkvpi_6jbkpvRJpqtXJE
   transformValues: []
   implicitTilingSettings:
     refinementType: 0
@@ -1307,10 +1270,10 @@ MonoBehaviour:
   OnMobileModeEnabled:
     m_PersistentCalls:
       m_Calls: []
-  maxSimultaneousDownloads: 6
-  maxTilesInDisposeList: 4
+  maxSimultaneousDownloads: 5
+  maxTilesInDisposeList: 50
   screenSpaceErrorScoreMultiplier: 1
-  screenCenterScore: 2000
+  screenCenterScore: 1000
   screenCenterWeight:
     serializedVersion: 2
     m_Curve:

@@ -71,28 +71,29 @@ namespace Netherlands3D.Tiles3D
         /// Add this tile to the dispose list.
         /// Using this list we can keep parent tiles visible untill their loading children are done.
         /// </summary>
-        public override void RequestDispose(Tile tile)
+        public override void RequestDispose(Tile tile, bool immediately=false)
         {
-            if (maxTilesInDisposeList == 0 || delayedDisposeList.Count >= maxTilesInDisposeList)
-            {
-                Dispose(tile);
-                return;
-            }
+           
+
+            //if (maxTilesInDisposeList == 0 || delayedDisposeList.Count >= maxTilesInDisposeList)
+            //{
+            //    Dispose(tile);
+            //    return;
+            //}
 
             bool anyChildLoading = false;
             tile.requestedDispose = true;
             tile.childrenCountDelayingDispose = 0;
 
-            foreach (var child in tile.children)
+            if (tile.loadingChildrenCount+tile.loadedChildrenCount>0) // there are active children
             {
-                if(child.requestedUpdate && !child.requestedDispose && child.content.State == Content.ContentLoadState.DOWNLOADING)
+                if (tile.loadingChildrenCount>0)
                 {
                     anyChildLoading = true;
-                    tile.childrenCountDelayingDispose++;
                 }
             }
 
-            if(anyChildLoading)
+            if(anyChildLoading && immediately==false)
             {
                 delayedDisposeList.Add(tile);
             }
@@ -100,6 +101,7 @@ namespace Netherlands3D.Tiles3D
             {
                 Dispose(tile);
             }
+
         }
 
         /// <summary>
@@ -133,10 +135,28 @@ namespace Netherlands3D.Tiles3D
         /// <summary>
         /// Directly dispose this tile content
         /// </summary>
-        private void Dispose(Tile tile)
+        public void Dispose(Tile tile)
         {
             PrioritisedTiles.Remove(tile);
             requirePriorityCheck = true;
+           
+                if (tile.isLoading)
+                {
+                tile.parent.DecrementLoadingChildren();
+                foreach (var child in tile.children)
+                {
+                    child.DecrementLoadingParents();
+                }
+                }
+                else
+                {
+                tile.parent.DecrementLoadedChildren();
+                foreach (var child in tile.children)
+                {
+                    child.DecrementLoadedParents();
+                }
+                } 
+            
 
             tile.Dispose();
             tile.requestedUpdate = false;

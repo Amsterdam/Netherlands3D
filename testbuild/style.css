@@ -1,0 +1,60 @@
+html {
+	box-sizing: border-box;
+}
+
+*,*:before,*:after {
+	box-sizing: inherit;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	background: #383838;
+	overflow:hidden;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+#unity-container { position: absolute }
+#unity-container.unity-desktop { width: 100%; height: 100% }
+#unity-container.unity-mobile { width: 100%; height: 100% }
+#unity-canvas { background: #383838; }
+#unity-canvas { width: 100%; height: 100% }
+#unity-loading-bar { width: 200px; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: none }
+#unity-progress-bar-empty { width: 100%; height: 100%; margin-top: 10px; background-color:grey; }
+#unity-progress-bar-full { width: 0%; height: 10px; margin-top: 10px; background-color: #FFFFFF; }
+#unity-mobile-warning { font-family: sans-serif; box-shadow: 4px 9px 14px 0px rgb(0 0 0 / 29%); position: absolute; left: 50%; top: 5%; transform: translate(-50%); background: white; padding: 10px; display: none }
+#unity-progress-text{
+	margin-top: 20px;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* try to handle mobile dialog */
+canvas+* {
+	z-index: 2;
+}
+
+.progress {
+	margin: 1.5em;
+	border: 2px solid #e1e1e1;
+	width: 300px;
+	display: none;
+}
+
+.progress .full {
+	background-color: #004699;
+	height: 1em;
+	transform-origin: top left;
+}

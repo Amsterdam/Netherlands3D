@@ -5,9 +5,10 @@ using UnityEngine;
 
 namespace Netherlands3D.Tiles3D
 {
-    [System.Serializable]
+   [System.Serializable]
     public class Tile : IDisposable
     {
+        public bool isLoading = false;
         public int X;
         public int Y;
         public int Z;
@@ -29,14 +30,41 @@ namespace Netherlands3D.Tiles3D
         public bool canRefine = false;
 
         public string contentUri = "";
-        public Content content;
+
+        public Content content; //Gltf content
 
         public int parentsLoadingCount;
         public int parentsLoadedCount;
         public int loadingChildrenCount;
         public int loadedChildrenCount;
 
+        public int CountLoadedParents()
+        {
+            int result = 0;
+            if (content!= null)
+            {
+                result = 1;
+            }
+            if (parent !=null)
+            {
+                return result + parent.CountLoadedParents();
+            }
+            return result;
+        }
 
+        public int CountLoadingParents()
+        {
+            int result = 0;
+            if (isLoading)
+            {
+                result = 1;
+            }
+            if (parent != null)
+            {
+                return result + parent.CountLoadingParents();
+            }
+            return result;
+        }
         public int priority = 0;
 
         private bool boundsAvailable = false;
@@ -77,16 +105,6 @@ namespace Netherlands3D.Tiles3D
             Quaternion rotation = Quaternion.FromToRotation(new Vector3(posX, posY, posZ), new Vector3(0, 0, 1));
 
             return rotation;
-        }
-
-        public int GetChildCount()
-        {
-            int childcount = 1;
-            foreach (var child in children)
-            {
-                childcount += child.GetChildCount();
-            }
-            return childcount;
         }
 
         public bool ChildrenHaveContent()
@@ -142,6 +160,14 @@ namespace Netherlands3D.Tiles3D
             if (parent != null)
             {
                 parent.IncrementLoadedChildren();
+            }
+            if (content != null)
+            {
+                content.gameObject.layer = 12;
+                foreach (var childtransform in content.gameObject.GetComponentsInChildren<Transform>())
+                {
+                    childtransform.gameObject.layer = 12;
+                }
             }
         }
 

@@ -30,7 +30,7 @@ namespace Netherlands3D.Core
         WGS84,
         RD
     }
-
+    
     /// <summary>
     /// Vector2 width Double values to represent RD-coordinates (X,Y)
     /// </summary>
@@ -115,7 +115,8 @@ namespace Netherlands3D.Core
         public static float zeroGroundLevelY = 0;
 
         private static Vector2RD relativeCenterRDCoordinate = new Vector2RD();
-        
+
+        static Quaternion ecefRotationToUp;
         public static Vector3ECEF relativeCenterECEF;
         public static Vector2RD relativeCenterRD { 
             get => relativeCenterRDCoordinate; 
@@ -124,7 +125,7 @@ namespace Netherlands3D.Core
                 Vector2RD change = new Vector2RD(value.x - relativeCenterRDCoordinate.x, value.y - relativeCenterRDCoordinate.y);
 
                 relativeCenterECEF = WGS84toECEF(RDtoWGS84(value.x, value.y));
-
+                ecefRotationToUp = calculateRotationToUp();
                 //TODO: rotation from earth centered earth fixed
                 relativeCenterRDCoordinate = value;
             }
@@ -418,14 +419,12 @@ namespace Netherlands3D.Core
         private static double flattening = 0.003352810681183637418;
         private static double eccentricity = 0.0818191910428;*/
 
-
-        public static Quaternion ecefRotionToUp()
+        private static Quaternion calculateRotationToUp()
         {
-
-            Vector3WGS centerWGS= ECEFtoWGS84(relativeCenterECEF);
+            Vector3WGS centerWGS = ECEFtoWGS84(relativeCenterECEF);
             Quaternion rotation = Quaternion.identity;
-           rotation = Quaternion.AngleAxis(90f - (float)(centerWGS.lat), Vector3.back);
-            rotation =  Quaternion.AngleAxis((float)(centerWGS.lon)-90, Vector3.up)*rotation;
+            rotation = Quaternion.AngleAxis(90f - (float)(centerWGS.lat), Vector3.back);
+            rotation = Quaternion.AngleAxis((float)(centerWGS.lon) - 90, Vector3.up) * rotation;
             return rotation;
 
 
@@ -442,13 +441,20 @@ namespace Netherlands3D.Core
             Vector3 northVector = new Vector3((float)-ecefEast.X, (float)ecefEast.Z, (float)-ecefEast.Y) - locationVector;
             northVector.z = 0;
 
-            
+
             Quaternion northRotation = Quaternion.FromToRotation(northVector, Vector3.right);
 
             // Combine the two rotations into a single quaternion
             Quaternion result = northRotation * flatRotation;
 
             return result;
+        }
+
+        public static Quaternion ecefRotionToUp()
+        {
+            return ecefRotationToUp;
+
+
         }
 
         public static Vector3 ECEFToUnity(Vector3ECEF ecef)

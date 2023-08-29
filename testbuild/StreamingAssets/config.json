@@ -1,0 +1,11 @@
+{
+    "viewerVersion": "2.0.0",
+    "tilesets": [
+		{
+            "url": "https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyAeqe4utT4N29QGFA89an_C3mnnuZlw0Xs",
+            "maximumScreenSpaceError": 5
+        }
+    ]
+}
+
+

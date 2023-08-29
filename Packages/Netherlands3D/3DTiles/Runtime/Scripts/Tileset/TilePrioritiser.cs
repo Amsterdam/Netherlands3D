@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Netherlands3D.Tiles3D
 {
+
+    
     /// <summary>
     /// Base class for adding/removing tiles to a prioritised list.
     /// Derived classes can contain specific logic to determine the priority based on platform.
@@ -28,6 +30,8 @@ namespace Netherlands3D.Tiles3D
         }
 
         public UnityEvent<bool> OnMobileModeEnabled;
+        
+
 
         private void Awake()
         {
@@ -48,7 +52,7 @@ namespace Netherlands3D.Tiles3D
 
         public abstract void CalculatePriorities();
         public abstract void RequestUpdate(Tile tile);
-        public abstract void RequestDispose(Tile tile);
+        public abstract void RequestDispose(Tile tile, bool immediately=false);
         public abstract void SetCamera(Camera currentMainCamera);
     }
 }

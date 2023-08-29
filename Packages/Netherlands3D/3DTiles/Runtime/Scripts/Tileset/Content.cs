@@ -83,15 +83,8 @@ namespace Netherlands3D.Tiles3D
                 return;
 
             State = ContentLoadState.DOWNLOADING;
-            if (parentTile.parent != null)
-            {
-                parentTile.parent.IncrementLoadingChildren();
-                
-            }
-            foreach (var child in parentTile.children)
-            {
-                child.IncrementLoadingParents();
-            }
+            parentTile.isLoading = true;
+
             runningContentRequest = StartCoroutine(
                 ImportB3DMGltf.ImportBinFromURL(uri, GotGltfContent)
             );
@@ -102,7 +95,8 @@ namespace Netherlands3D.Tiles3D
         /// </summary>
         private async void GotGltfContent(ParsedGltf parsedGltf)
         {
-            if (this == null)
+            parentTile.isLoading = false;
+            if (parsedGltf == null)
             {
                 if (parentTile.parent!=null)
                 {
@@ -139,6 +133,7 @@ namespace Netherlands3D.Tiles3D
                 {
                     await gltf.InstantiateSceneAsync(transform, i);
                     var scene = transform.GetChild(0).transform;
+                    
                     var scenePosition = scene.localPosition;
                     scene.localPosition = Vector3.zero;
                     transform.localPosition = scenePosition;
@@ -152,6 +147,10 @@ namespace Netherlands3D.Tiles3D
                 }
                 this.gameObject.name = uri;
                 this.gameObject.AddComponent<MovingOriginFollower>();
+                foreach (var item in this.gameObject.GetComponentsInChildren<Transform>())
+                {
+                    item.gameObject.layer = 11;
+                }
             }
 
             onDoneDownloading.Invoke();
