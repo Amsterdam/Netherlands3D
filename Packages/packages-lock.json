@@ -287,6 +287,13 @@
       },
       "url": "https://package.openupm.com"
     },
+    "eu.netherlands3d.web-cursors": {
+      "version": "https://github.com/Netherlands3D/WebCursors.git#v1.0.1",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "37cd340cf915900216642b9e6254403686533fd8"
+    },
     "nl.netherlands3d": {
       "version": "file:Netherlands3D",
       "depth": 0,
