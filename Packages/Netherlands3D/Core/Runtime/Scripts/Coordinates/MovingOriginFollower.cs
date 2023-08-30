@@ -9,7 +9,8 @@ public class MovingOriginFollower : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(DelayListeners());
+        CoordConvert.prepareForOriginShift.AddListener(SaveOrigin);
+        CoordConvert.relativeOriginChanged.AddListener(MoveToNewOrigin);
     }
 
     private void SaveOrigin()
@@ -25,13 +26,13 @@ public class MovingOriginFollower : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
 
-        CoordConvert.prepareForOriginShift.AddListener(SaveOrigin);
-        CoordConvert.relativeOriginChanged.AddListener(MoveToNewOrigin);
+        
     }
 
     private void OnDestroy()
     {
         CoordConvert.relativeOriginChanged.RemoveListener(MoveToNewOrigin);
+        CoordConvert.prepareForOriginShift.RemoveListener(SaveOrigin);
     }
 
     private void MoveToNewOrigin(Vector3 offset)
@@ -41,7 +42,7 @@ public class MovingOriginFollower : MonoBehaviour
             transform.position = CoordConvert.ECEFToUnity(ecefPosition);
             return;
         }
-
+        Debug.Log("object moved");
         transform.SetPositionAndRotation(
             CoordConvert.ECEFToUnity(ecefPosition),
             CoordConvert.ecefRotionToUp()

@@ -30,14 +30,9 @@ namespace Netherlands3D.Core
             get => movingOrigin;
             set
             {
-                if(runningCameraDistanceCheck != null)
-                {
-                    StopCoroutine(runningCameraDistanceCheck);
-                    runningCameraDistanceCheck = null;
-                }
+                
 
-                if(value == true && this.gameObject.activeSelf)
-                    runningCameraDistanceCheck = StartCoroutine(MaxCameraDistance());
+               
 
                 movingOrigin = value;
             }
@@ -76,23 +71,30 @@ namespace Netherlands3D.Core
             MovingOrigin = movingOrigin;
         }
 
-        private IEnumerator MaxCameraDistance()
+        private void MaxCameraDistance()
         {
-            while (MovingOrigin)
-            {
+          
                 var offset = Camera.main.transform.position;
                 offset.y = 0;
                 if (offset.magnitude > maxCameraDistanceFromOrigin)
                 {
+                    Debug.Log("moving origin");
                     CoordConvert.MoveAndRotateWorld(offset);
-                    Camera.main.transform.position = Camera.main.transform.position - offset;
+                    
+                    //Camera.main.transform.position = Camera.main.transform.position - offset;
                 }
 
                 
-                yield return new WaitForEndOfFrame();
+               
+            
+        }
+        private void Update()
+        {
+           if(MovingOrigin )
+            {
+                MaxCameraDistance();
             }
         }
-
 #if UNITY_EDITOR
         /// <summary>
         /// Draw the RD origin in our viewport center

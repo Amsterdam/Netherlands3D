@@ -142,11 +142,11 @@ namespace Netherlands3D.Core
 
             var flatCameraPosition = new Vector3(cameraPosition.x, 0, cameraPosition.z);
             var newWGS84 = UnitytoWGS84(flatCameraPosition);
-            var newECEF = WGS84toECEF(newWGS84);
-            relativeCenterECEF = newECEF;
-
+            var newRD = UnitytoRD(cameraPosition);
+            relativeCenterRD = new Vector2RD(newRD.x,newRD.y);
+           
             var offset = new Vector3(-cameraPosition.x, 0, -cameraPosition.z);
-
+            
             relativeOriginChanged.Invoke(offset);
         }
 

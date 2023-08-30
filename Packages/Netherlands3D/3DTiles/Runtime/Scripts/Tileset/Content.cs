@@ -115,27 +115,32 @@ namespace Netherlands3D.Tiles3D
             var gltf = parsedGltf.gltfImport;
             if (gltf != null)
             {
+                
                 this.gltf = gltf;
                 var scenes = gltf.SceneCount;
+                if (parsedGltf.rtcCenter != null)
+                {
+                    var unityFromEcef = CoordConvert.ECEFToUnity(new Vector3ECEF(parsedGltf.rtcCenter[0], parsedGltf.rtcCenter[1], parsedGltf.rtcCenter[2]));
+                    //transform.SetParent(null);
+                    transform.localPosition = unityFromEcef;
+                    
+
+                }
                 for (int i = 0; i < scenes; i++)
                 {
 
                     await gltf.InstantiateSceneAsync(transform, i);
                     var scene = transform.GetChild(0).transform;
-                    
-                    var scenePosition = scene.localPosition;
-                    scene.localPosition = Vector3.zero;
-                    transform.localPosition = scenePosition;
+                    double test = parentTile.transform[9];
+                    var scenePosition = CoordConvert.ECEFToUnity(new Vector3ECEF(-scene.localPosition.x,-scene.localPosition.z,scene.localPosition.y));
+                    //scene.localPosition = Vector3.zero;
+                    scene.localPosition = scenePosition;
+                    scene.rotation = CoordConvert.ecefRotionToUp();
+                    scene.gameObject.AddComponent<MovingOriginFollower>();
 
-                    if (parsedGltf.rtcCenter != null)
-                    {
-                        var unityFromEcef = CoordConvert.ECEFToUnity(new Vector3ECEF(parsedGltf.rtcCenter[0], parsedGltf.rtcCenter[1], parsedGltf.rtcCenter[2]));
-                        transform.localPosition = unityFromEcef;
-                        transform.SetParent(null);
-                    }
                 }
                 this.gameObject.name = uri;
-                this.gameObject.AddComponent<MovingOriginFollower>();
+                
                 foreach (var item in this.gameObject.GetComponentsInChildren<Transform>())
                 {
                     item.gameObject.layer = 11;

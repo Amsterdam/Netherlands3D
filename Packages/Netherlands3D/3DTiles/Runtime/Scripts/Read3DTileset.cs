@@ -296,7 +296,7 @@ namespace Netherlands3D.Tiles3D
                     
                     root = ReadExplicitNode(rootnode, rootTile);
                     root.screenSpaceError = float.MaxValue;
-                    ApplyRootOrientation();
+                    //ApplyRootOrientation();
                     StartCoroutine(LoadInView());
                     break;
                 case TilingMethod.implicitTiling:
