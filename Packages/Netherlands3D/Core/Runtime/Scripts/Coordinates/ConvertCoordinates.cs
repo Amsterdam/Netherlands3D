@@ -423,31 +423,11 @@ namespace Netherlands3D.Core
         {
             Vector3WGS centerWGS = ECEFtoWGS84(relativeCenterECEF);
             Quaternion rotation = Quaternion.identity;
-            rotation = Quaternion.AngleAxis(90f - (float)(centerWGS.lat), Vector3.back);
-            rotation = Quaternion.AngleAxis((float)(centerWGS.lon) - 90, Vector3.up) * rotation;
+            //rotation = Quaternion.AngleAxis(90f - (float)(centerWGS.lat), Vector3.back);
+            rotation = rotation*Quaternion.AngleAxis((float)(centerWGS.lon)-90, Vector3.up);
+            rotation =  Quaternion.AngleAxis(90f - (float)(centerWGS.lat), Vector3.right)*rotation;
             return rotation;
 
-
-            Vector3 locationVector = new Vector3((float)-relativeCenterECEF.X, (float)relativeCenterECEF.Z, (float)-relativeCenterECEF.Y);
-
-            //Compute the rotation to make the tiles point up on the world up
-            Quaternion flatRotation = Quaternion.FromToRotation(locationVector, Vector3.up);
-
-            //A long coordinate pointing east
-            var wgs84East = UnitytoWGS84(Vector3.zero);
-            wgs84East.lon += 0.0001;
-            var ecefEast = WGS84toECEF(wgs84East); // Use a unit vector pointing in the north direction
-
-            Vector3 northVector = new Vector3((float)-ecefEast.X, (float)ecefEast.Z, (float)-ecefEast.Y) - locationVector;
-            northVector.z = 0;
-
-
-            Quaternion northRotation = Quaternion.FromToRotation(northVector, Vector3.right);
-
-            // Combine the two rotations into a single quaternion
-            Quaternion result = northRotation * flatRotation;
-
-            return result;
         }
 
         public static Quaternion ecefRotionToUp()
