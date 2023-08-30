@@ -33,18 +33,78 @@ namespace Netherlands3D.Tiles3D
 
         public Content content; //Gltf content
 
-        public int parentsLoadingCount;
-        public int parentsLoadedCount;
-        public int loadingChildrenCount;
-        public int loadedChildrenCount;
+
+
+
+
+        public int CountLoadingChildren()
+        {
+            int result = 0;
+            foreach (var childTile in children)
+            {
+                if (childTile.content != null)
+                {
+                    if (childTile.contentUri.Contains(".json") == false)
+                    {
+                        if (childTile.content.State != Content.ContentLoadState.DOWNLOADED)
+                        {
+                            result += 1;
+                        }
+
+                    }
+                }
+            }
+            foreach (var childTile in children)
+                {
+                    result += childTile.CountLoadingChildren();
+                }
+            
+            return result;
+        }
+        public int loadedChildren;
+        public int CountLoadedChildren()
+        {
+            int result = 0;
+            foreach (var childTile in children)
+            {
+                if (childTile.content != null)
+                {
+                    if (childTile.contentUri.Contains(".json") == false)
+                    {
+
+                        if (childTile.content.State != Content.ContentLoadState.DOWNLOADING)
+                        {
+                            result++;
+                        }
+
+                    }
+                }
+            }
+                foreach (var childTile in children)
+                {
+                    result += childTile.CountLoadedChildren();
+                }
+            loadedChildren = result;
+            return result;
+        }
 
         public int CountLoadedParents()
         {
             int result = 0;
-            if (content!= null)
+            if (parent !=null)
             {
-                result = 1;
+                if (parent.content != null)
+                {
+                    if (parent.contentUri.Contains(".json") == false)
+                    {
+                        if (parent.content.State == Content.ContentLoadState.DOWNLOADED)
+                        {
+                            result = 1;
+                        }
+                    }
+                }
             }
+           
             if (parent !=null)
             {
                 return result + parent.CountLoadedParents();
@@ -55,9 +115,21 @@ namespace Netherlands3D.Tiles3D
         public int CountLoadingParents()
         {
             int result = 0;
-            if (isLoading)
+            if (parent != null)
             {
-                result = 1;
+                if (parent.isLoading)
+                {
+                    if (parent.contentUri.Contains(".json") == false)
+                    {
+                        if (parent.content != null)
+                        {
+                            if (parent.content.State != Content.ContentLoadState.DOWNLOADED)
+                            {
+                                result = 1;
+                            }
+                        }
+                    }
+                }
             }
             if (parent != null)
             {
@@ -137,80 +209,12 @@ namespace Netherlands3D.Tiles3D
             loaded
         }
 
-        public void IncrementLoadingChildren()
-        {
-            loadingChildrenCount++;
-            if (parent!=null)
-            {
-                parent.IncrementLoadingChildren();
-            }
-        }
-        public void IncrementLoadingParents()
-        {
-            parentsLoadingCount++;
-            foreach (var child in children)
-            {
-                child.IncrementLoadingParents();
-            }
-        }
+       
+       
 
-        public void IncrementLoadedChildren()
-        {
-            loadedChildrenCount++;
-            if (parent != null)
-            {
-                parent.IncrementLoadedChildren();
-            }
-            if (content != null)
-            {
-                content.gameObject.layer = 12;
-                foreach (var childtransform in content.gameObject.GetComponentsInChildren<Transform>())
-                {
-                    childtransform.gameObject.layer = 12;
-                }
-            }
-        }
+        
 
-        public void IncrementLoadedParents()
-        {
-            parentsLoadedCount++;
-            foreach (var child in children)
-            {
-                child.IncrementLoadedParents();
-            }
-        }
-        public void DecrementLoadingParents()
-        {
-            parentsLoadingCount--;
-            foreach (var child in children)
-            {
-                child.DecrementLoadingParents();
-            }
-        }
-        public void DecrementLoadingChildren()
-        {
-            loadingChildrenCount--;
-            if (parent != null)
-            {
-                parent.DecrementLoadingChildren();
-            }
-        }
-        public void DecrementLoadedChildren()
-        {
-            loadedChildrenCount--;
-            if (parent != null)
-            {
-                parent.DecrementLoadedChildren();
-            }
-        }
-        public void DecrementLoadedParents()
-        {
-            parentsLoadedCount--;
-            foreach (var child in children)
-            {
-                child.DecrementLoadedParents();
-            }
-        }
+      
 
         public bool IsInViewFrustrum(Camera ofCamera)
         {

@@ -31,6 +31,7 @@ namespace Netherlands3D.Tiles3D
             NOTLOADING,
             DOWNLOADING,
             DOWNLOADED,
+            PARSING,
         }
         private ContentLoadState state = ContentLoadState.NOTLOADING;
         public ContentLoadState State
@@ -95,34 +96,21 @@ namespace Netherlands3D.Tiles3D
         /// </summary>
         private async void GotGltfContent(ParsedGltf parsedGltf)
         {
+            if (State != ContentLoadState.DOWNLOADING)
+            {
+                State = ContentLoadState.DOWNLOADED;
+                return;
+            }
+            State = ContentLoadState.PARSING;
             parentTile.isLoading = false;
             if (parsedGltf == null)
             {
-                if (parentTile.parent!=null)
-                {
-                    parentTile.parent.DecrementLoadingChildren();
-                    
-                }
-                foreach (var child in parentTile.children)
-                {
-                    child.DecrementLoadingParents();
-                }
+                State = ContentLoadState.DOWNLOADED;
                 return;
                 
             }
 
-                if (parentTile.parent != null)
-                {
-                    
-                    parentTile.parent.IncrementLoadedChildren();
-                    parentTile.parent.DecrementLoadingChildren();
-                }
-            foreach (var child in parentTile.children)
-            {
-                child.IncrementLoadedParents();
-                child.DecrementLoadingParents();
-            }
-            State = ContentLoadState.DOWNLOADED;
+            
 
             var gltf = parsedGltf.gltfImport;
             if (gltf != null)
@@ -131,6 +119,7 @@ namespace Netherlands3D.Tiles3D
                 var scenes = gltf.SceneCount;
                 for (int i = 0; i < scenes; i++)
                 {
+
                     await gltf.InstantiateSceneAsync(transform, i);
                     var scene = transform.GetChild(0).transform;
                     
@@ -153,6 +142,7 @@ namespace Netherlands3D.Tiles3D
                 }
             }
 
+            State = ContentLoadState.DOWNLOADED;
             onDoneDownloading.Invoke();
         }
 
@@ -163,38 +153,27 @@ namespace Netherlands3D.Tiles3D
         {
             onDoneDownloading.RemoveAllListeners();
 
+            if (State == ContentLoadState.PARSING)
+            {
+                onDoneDownloading.AddListener(Dispose);
+                return;
+            }
+
             //Direct abort of downloads
             if (State == ContentLoadState.DOWNLOADING && runningContentRequest != null)
             {
-                if (parentTile.parent != null)
-                {
-                    parentTile.parent.DecrementLoadingChildren();
-                }
-                foreach (var child in parentTile.children)
-                {
-                    child.DecrementLoadingParents();
-                }
-
                 StopCoroutine(runningContentRequest);
-                return;
+
+               
             }
-            State = ContentLoadState.NOTLOADING;
+           
+
+            State = ContentLoadState.DOWNLOADED;
 
             if (gltf != null)
             {
                 gltf.Dispose();
-
-                    if (parentTile.parent != null)
-                    {
-                        parentTile.parent.DecrementLoadedChildren();
-                    }
-                    foreach (var child in parentTile.children)
-                    {
-                        child.DecrementLoadedParents();
-                    }
-
-
-                
+               
             }
             Destroy(this.gameObject);
         }

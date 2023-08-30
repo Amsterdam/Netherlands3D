@@ -1238,6 +1238,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilesetUrl: https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyB9FRnque08yX0dkvpi_6jbkpvRJpqtXJE
+  root:
+    isLoading: 0
+    X: 0
+    Y: 0
+    Z: 0
+    hascontent: 0
+    childrenCountDelayingDispose: 0
+    children: []
+    transform:
+    - 1
+    - 0
+    - 0
+    - 0
+    - 0
+    - 1
+    - 0
+    - 0
+    - 0
+    - 0
+    - 1
+    - 0
+    - 0
+    - 0
+    - 0
+    - 1
+    geometricError: 0
+    screenSpaceError: 3.4028235e+38
+    refine: 
+    boundingVolume:
+      boundingVolumeType: 0
+      values: []
+    inView: 0
+    canRefine: 0
+    contentUri: 
+    content: {fileID: 0}
+    parentsLoadingCount: 0
+    parentsLoadedCount: 0
+    loadingChildrenCount: 0
+    loadedChildrenCount: 0
+    priority: 0
+    requestedDispose: 0
+    requestedUpdate: 0
   transformValues: []
   implicitTilingSettings:
     refinementType: 0

@@ -36,6 +36,7 @@ namespace Netherlands3D.Tiles3D
         private bool requirePriorityCheck = false;
         public bool showPriorityNumbers = false;
 
+        [SerializeField]
         private int downloadAvailable = 0;
 
         private Camera currentCamera;
@@ -73,21 +74,16 @@ namespace Netherlands3D.Tiles3D
         /// </summary>
         public override void RequestDispose(Tile tile, bool immediately=false)
         {
-           
-
-            //if (maxTilesInDisposeList == 0 || delayedDisposeList.Count >= maxTilesInDisposeList)
-            //{
-            //    Dispose(tile);
-            //    return;
-            //}
+            PrioritisedTiles.Remove(tile);
+            requirePriorityCheck = true;
 
             bool anyChildLoading = false;
             tile.requestedDispose = true;
             tile.childrenCountDelayingDispose = 0;
 
-            if (tile.loadingChildrenCount+tile.loadedChildrenCount>0) // there are active children
+            if (tile.CountLoadingChildren()+tile.CountLoadedChildren()>0) // there are active children
             {
-                if (tile.loadingChildrenCount>0)
+                if (tile.CountLoadingChildren() > 0)
                 {
                     anyChildLoading = true;
                 }
@@ -114,19 +110,18 @@ namespace Netherlands3D.Tiles3D
                 for (int i = delayedDisposeList.Count - 1; i >= 0; i--)
                 {
                     var tile = delayedDisposeList[i];
+                    int loadingchildcount = tile.CountLoadingChildren();
+
                     foreach (var child in tile.children)
                     {
-                        if (child.content && child.content.State != Content.ContentLoadState.DOWNLOADING)
+                        if (loadingchildcount==0)
                         {
-                            tile.childrenCountDelayingDispose--;
+                            Dispose(tile);
+                            delayedDisposeList.RemoveAt(i);
                         }
                     }
 
-                    if(tile.childrenCountDelayingDispose <= 0)
-                    {
-                        Dispose(tile);
-                        delayedDisposeList.RemoveAt(i);
-                    }
+                    
                 }
             }
         }
@@ -137,27 +132,8 @@ namespace Netherlands3D.Tiles3D
         /// </summary>
         public void Dispose(Tile tile)
         {
-            PrioritisedTiles.Remove(tile);
-            requirePriorityCheck = true;
-           
-                if (tile.isLoading)
-                {
-                tile.parent.DecrementLoadingChildren();
-                foreach (var child in tile.children)
-                {
-                    child.DecrementLoadingParents();
-                }
-                }
-                else
-                {
-                tile.parent.DecrementLoadedChildren();
-                foreach (var child in tile.children)
-                {
-                    child.DecrementLoadedParents();
-                }
-                } 
             
-
+           
             tile.Dispose();
             tile.requestedUpdate = false;
             tile.requestedDispose = false;
@@ -184,7 +160,12 @@ namespace Netherlands3D.Tiles3D
                 var priorityScore = 0.0f;
                 priorityScore += DistanceScore(tile);
                 priorityScore += InViewCenterScore(tile.ContentBounds.center, screenCenterScore);
-
+                int loadedChildren = tile.CountLoadedChildren();
+                int loadedParents = tile.CountLoadedParents();
+                if (loadedParents<1) // no parents loaded
+                {
+                    priorityScore *= 10;
+                }
                 tile.priority = (int)priorityScore;
             }
 
