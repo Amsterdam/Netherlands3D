@@ -16,7 +16,7 @@
     "com.unity.toolchain.win-x86_64-linux-x86_64": "2.0.4",
     "com.unity.ugui": "1.0.0",
     "eu.netherlands3d.gltfast": "5.0.3",
-    "eu.netherlands3d.web-cursors": "https://github.com/Netherlands3D/WebCursors.git#v1.0.1",
+    "eu.netherlands3d.web-cursors": "1.0.2",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
