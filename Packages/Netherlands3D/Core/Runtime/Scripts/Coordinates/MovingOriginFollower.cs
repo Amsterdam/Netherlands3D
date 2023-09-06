@@ -1,21 +1,44 @@
 using Netherlands3D.Core;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MovingOriginFollower : MonoBehaviour
 {
     private Vector3ECEF ecefPosition;
+    private Quaternion rotation;
+    SetGlobalRDOrigin globalOrigin;
+    Camera connectedCamera;
 
     void Start()
     {
-        CoordConvert.prepareForOriginShift.AddListener(SaveOrigin);
-        CoordConvert.relativeOriginChanged.AddListener(MoveToNewOrigin);
+        globalOrigin = FindObjectOfType<SetGlobalRDOrigin>();
+        if (globalOrigin!=null)
+        {
+            globalOrigin.prepareForOriginShift.AddListener(SaveOrigin);
+            connectedCamera = GetComponent<Camera>();
+            if (connectedCamera!= null)
+            {
+                globalOrigin.relativeOriginChanged.AddListener(MoveCamera);
+            }
+            else
+            {
+                globalOrigin.relativeOriginChanged.AddListener(MoveAndRotateGameObject);
+            }
+        }
+       
     }
 
+    public void SetPosition(double X, double Y, double Z)
+    {
+        this.ecefPosition = new Vector3ECEF(X,Y,Z);
+        rotation = Quaternion.identity;
+        MoveAndRotateGameObject(Vector3.zero);
+    }
     private void SaveOrigin()
     {
         ecefPosition = CoordConvert.UnityToECEF(transform.position);
+        rotation = transform.rotation * Quaternion.Inverse(CoordConvert.ecefRotionToUp());
+        
     }
 
     /// <summary>
@@ -31,21 +54,35 @@ public class MovingOriginFollower : MonoBehaviour
 
     private void OnDestroy()
     {
-        CoordConvert.relativeOriginChanged.RemoveListener(MoveToNewOrigin);
-        CoordConvert.prepareForOriginShift.RemoveListener(SaveOrigin);
+        if (globalOrigin != null)
+        {
+            globalOrigin.relativeOriginChanged.RemoveListener(MoveAndRotateGameObject);
+            globalOrigin.prepareForOriginShift.RemoveListener(SaveOrigin);
+        }
     }
 
-    private void MoveToNewOrigin(Vector3 offset)
+    private void MoveAndRotateGameObject(Vector3 offset)
     {
-        if (GetComponent<Camera>()!=null)
-        {
-            transform.position = CoordConvert.ECEFToUnity(ecefPosition);
-            return;
-        }
-        Debug.Log("object moved");
+
         transform.SetPositionAndRotation(
             CoordConvert.ECEFToUnity(ecefPosition),
-            CoordConvert.ecefRotionToUp()
+            rotation * CoordConvert.ecefRotionToUp()
         );
+
+    }
+    private void MoveCamera(Vector3 offset)
+    {
+        if (connectedCamera == Camera.main)
+        {
+            transform.position = CoordConvert.ECEFToUnity(ecefPosition);
+        }
+        else
+        {
+            transform.SetPositionAndRotation(
+           CoordConvert.ECEFToUnity(ecefPosition),
+           rotation * CoordConvert.ecefRotionToUp()
+       );
+        }
+        
     }
 }

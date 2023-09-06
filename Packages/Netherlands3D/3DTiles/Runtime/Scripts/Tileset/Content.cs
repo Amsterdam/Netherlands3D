@@ -1,12 +1,12 @@
 using GLTFast;
 using Netherlands3D.B3DM;
-using Netherlands3D.Core;
-using SimpleJSON;
+//using Netherlands3D.Core;
+
 using System;
-using System.Collections;
+
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Networking;
+
 
 namespace Netherlands3D.Tiles3D
 {
@@ -105,7 +105,9 @@ namespace Netherlands3D.Tiles3D
             parentTile.isLoading = false;
             if (parsedGltf == null)
             {
-                State = ContentLoadState.DOWNLOADED;
+                Debug.Log("failed to download, trying again");
+                State = ContentLoadState.NOTLOADING;
+                Load();
                 return;
                 
             }
@@ -120,10 +122,10 @@ namespace Netherlands3D.Tiles3D
                 var scenes = gltf.SceneCount;
                 if (parsedGltf.rtcCenter != null)
                 {
-                    var unityFromEcef = CoordConvert.ECEFToUnity(new Vector3ECEF(parsedGltf.rtcCenter[0], parsedGltf.rtcCenter[1], parsedGltf.rtcCenter[2]));
-                    //transform.SetParent(null);
-                    transform.localPosition = unityFromEcef;
-                    
+                   
+                    MovingOriginFollower sceneOriginFollower = gameObject.AddComponent<MovingOriginFollower>();
+                    sceneOriginFollower.SetPosition(parsedGltf.rtcCenter[0], parsedGltf.rtcCenter[1], parsedGltf.rtcCenter[2]);
+
 
                 }
                 for (int i = 0; i < scenes; i++)
@@ -132,11 +134,13 @@ namespace Netherlands3D.Tiles3D
                     await gltf.InstantiateSceneAsync(transform, i);
                     var scene = transform.GetChild(0).transform;
                     double test = parentTile.transform[9];
-                    var scenePosition = CoordConvert.ECEFToUnity(new Vector3ECEF(-scene.localPosition.x,-scene.localPosition.z,scene.localPosition.y));
+                    //var scenePosition = CoordConvert.ECEFToUnity(new Vector3ECEF(-scene.localPosition.x,-scene.localPosition.z,scene.localPosition.y));
                     //scene.localPosition = Vector3.zero;
-                    scene.localPosition = scenePosition;
-                    scene.rotation = CoordConvert.ecefRotionToUp();
-                    scene.gameObject.AddComponent<MovingOriginFollower>();
+                    //scene.localPosition = scenePosition;
+                    //scene.rotation = CoordConvert.ecefRotionToUp();
+                    MovingOriginFollower sceneOriginFollower = scene.gameObject.AddComponent<MovingOriginFollower>();
+                    sceneOriginFollower.SetPosition(-scene.localPosition.x, -scene.localPosition.z, scene.localPosition.y);
+
 
                 }
                 this.gameObject.name = uri;
