@@ -160,6 +160,7 @@ namespace Netherlands3D.Tiles3D
                 var priorityScore = 0.0f;
                 priorityScore += DistanceScore(tile);
                 priorityScore += InViewCenterScore(tile.ContentBounds.center, screenCenterScore);
+                priorityScore += sseScore(tile);
                 int loadedChildren = tile.CountLoadedChildren();
                 int loadedParents = tile.CountLoadedParents();
                 if (loadedParents<1) // no parents loaded
@@ -208,6 +209,14 @@ namespace Netherlands3D.Tiles3D
             var distance = Vector2.Distance(position2D, viewCenter);
 
             return maxScore * screenCenterWeight.Evaluate(1.0f - distance);
+        }
+
+
+        public float sseScore(Tile tile)
+        {
+            float result = 0;
+            result = tile.screenSpaceError * 100;
+            return result;
         }
 
         /// <summary>
