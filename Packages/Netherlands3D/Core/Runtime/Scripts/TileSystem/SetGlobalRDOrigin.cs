@@ -7,6 +7,7 @@ using System.Globalization;
 using UnityEditor;
 #endif
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Netherlands3D.Core
 {
@@ -18,6 +19,7 @@ namespace Netherlands3D.Core
     {
         [SerializeField] private float zeroGroundLevelY = 0;
         [SerializeField] private Vector2RD relativeCenterRD = new Vector2RD(121000, 487000);
+        private Vector3ECEF centerECEF;
 
         [Tooltip("Forces standard culture for parsing/deserializing numbers"), SerializeField] private bool setInvariantCultureInfo = true;
 
@@ -38,11 +40,15 @@ namespace Netherlands3D.Core
             }
         }
 
+        public UnityEvent prepareForOriginShift = new UnityEvent();
+        public  CenterChangedEvent relativeOriginChanged = new CenterChangedEvent();
         private Coroutine runningCameraDistanceCheck;
 
         void Awake()
         {
-            if(setInvariantCultureInfo)
+            
+
+            if (setInvariantCultureInfo)
             {
                 CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             }
@@ -64,7 +70,7 @@ namespace Netherlands3D.Core
         {
             CoordConvert.zeroGroundLevelY = zeroGroundLevelY;
             CoordConvert.relativeCenterRD = relativeCenterRD;
-            CoordConvert.ecefIsSet = false;
+            
 
             Vector3WGS origin_wgs = CoordConvert.UnitytoWGS84(Vector3.zero);
 
@@ -78,8 +84,7 @@ namespace Netherlands3D.Core
                 offset.y = 0;
                 if (offset.magnitude > maxCameraDistanceFromOrigin)
                 {
-                    Debug.Log("moving origin");
-                    CoordConvert.MoveAndRotateWorld(offset);
+                    MoveAndRotateWorld(offset);
                     
                     //Camera.main.transform.position = Camera.main.transform.position - offset;
                 }
@@ -88,6 +93,30 @@ namespace Netherlands3D.Core
                
             
         }
+
+        public static bool ecefIsSet;
+        
+        public class CenterChangedEvent : UnityEvent<Vector3> { }
+        
+
+        public  void MoveAndRotateWorld(Vector3 cameraPosition)
+        {
+
+            prepareForOriginShift.Invoke();
+
+            var flatCameraPosition = new Vector3(cameraPosition.x, 0, cameraPosition.z);
+            Vector3ECEF newECEFOrigin = CoordConvert.UnityToECEF(flatCameraPosition);
+            CoordConvert.relativeCenterECEF = newECEFOrigin;
+            //var newWGS84 = CoordConvert.ECEFtoWGS84(newECEFOrigin);
+            //var newRD = CoordConvert.WGS84toRD(newWGS84.lon,newWGS84.lat);
+            //CoordConvert.relativeCenterRD = new Vector2RD(newRD.x, newRD.y);
+
+            var offset = new Vector3(-cameraPosition.x, 0, -cameraPosition.z);
+
+            relativeOriginChanged.Invoke(offset);
+        }
+
+
         private void Update()
         {
            if(MovingOrigin )

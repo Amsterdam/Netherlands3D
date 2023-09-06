@@ -117,7 +117,18 @@ namespace Netherlands3D.Core
         private static Vector2RD relativeCenterRDCoordinate = new Vector2RD();
 
         static Quaternion ecefRotationToUp;
-        public static Vector3ECEF relativeCenterECEF;
+
+        private static Vector3ECEF _relativeCenterECEF;
+        public static Vector3ECEF relativeCenterECEF
+        {
+            get => _relativeCenterECEF;
+            set
+            {
+                _relativeCenterECEF = value;
+                ecefRotationToUp = calculateRotationToUp();
+            }
+        }
+
         public static Vector2RD relativeCenterRD { 
             get => relativeCenterRDCoordinate; 
             set
@@ -125,30 +136,13 @@ namespace Netherlands3D.Core
                 Vector2RD change = new Vector2RD(value.x - relativeCenterRDCoordinate.x, value.y - relativeCenterRDCoordinate.y);
 
                 relativeCenterECEF = WGS84toECEF(RDtoWGS84(value.x, value.y));
-                ecefRotationToUp = calculateRotationToUp();
+                
                 //TODO: rotation from earth centered earth fixed
                 relativeCenterRDCoordinate = value;
             }
         }
         
-        public static bool ecefIsSet;
-        public static UnityEvent prepareForOriginShift = new UnityEvent();
-        public class CenterChangedEvent : UnityEvent<Vector3> { }
-        public static CenterChangedEvent relativeOriginChanged = new CenterChangedEvent();
-
-        public static void MoveAndRotateWorld(Vector3 cameraPosition)
-        {
-            prepareForOriginShift.Invoke();
-
-            var flatCameraPosition = new Vector3(cameraPosition.x, 0, cameraPosition.z);
-            var newWGS84 = UnitytoWGS84(flatCameraPosition);
-            var newRD = UnitytoRD(cameraPosition);
-            relativeCenterRD = new Vector2RD(newRD.x,newRD.y);
-           
-            var offset = new Vector3(-cameraPosition.x, 0, -cameraPosition.z);
-            
-            relativeOriginChanged.Invoke(offset);
-        }
+       
 
         /// <summary>
         /// Converts WGS84-coordinate to UnityCoordinate
@@ -423,7 +417,6 @@ namespace Netherlands3D.Core
         {
             Vector3WGS centerWGS = ECEFtoWGS84(relativeCenterECEF);
             Quaternion rotation = Quaternion.identity;
-            //rotation = Quaternion.AngleAxis(90f - (float)(centerWGS.lat), Vector3.back);
             rotation = rotation*Quaternion.AngleAxis((float)(centerWGS.lon)-90, Vector3.up);
             rotation =  Quaternion.AngleAxis(90f - (float)(centerWGS.lat), Vector3.right)*rotation;
             return rotation;
