@@ -16,7 +16,6 @@ namespace Netherlands3D.Tiles3D
     [RequireComponent(typeof(ReadSubtree))]
     public class Read3DTileset : MonoBehaviour
     {
-        
 
         public string tilesetUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json";
         private string absolutePath = "";
@@ -54,12 +53,7 @@ namespace Netherlands3D.Tiles3D
 
         private bool nestedTreeLoaded = false;
 
-        private static readonly Dictionary<string, BoundingVolumeType> boundingVolumeTypes = new()
-        {
-            { "region", BoundingVolumeType.Region },
-            { "box", BoundingVolumeType.Box },
-            { "sphere", BoundingVolumeType.Sphere }
-        };
+        
 
         private void OnEnable()
         {
@@ -76,8 +70,12 @@ namespace Netherlands3D.Tiles3D
             ExtractDatasetPaths();
 
             StartCoroutine(LoadTileset());
-
-            CoordConvert.relativeOriginChanged.AddListener(RelativeCenterChanged);
+            StartCoroutine(LoadInView());
+            SetGlobalRDOrigin globalOrigin = FindObjectOfType<SetGlobalRDOrigin>();
+            if (globalOrigin != null)
+            {
+                globalOrigin.relativeOriginChanged.AddListener(RelativeCenterChanged);
+            }
         }
 
         private void ExtractDatasetPaths()
@@ -167,25 +165,11 @@ namespace Netherlands3D.Tiles3D
         {
             if (root == null) return;
 
-            //ApplyRootOrientation();
-
             //Flag all calculated bounds to be recalculated when tile bounds is requested
             RecalculateAllTileBounds(root);
         }
 
-        /// <summary>
-        /// Move the center ( 0,0,0 ) of the tileset to the proper unity position
-        /// and make sure the up is set correctly
-        /// </summary>
-        /// <param name="root">The root tile</param>
-        private void ApplyRootOrientation()
-        {
-            var tilePositionOrigin = new Vector3ECEF(root.transform[12], root.transform[13], root.transform[14]);
-            this.transform.SetPositionAndRotation(
-                CoordConvert.ECEFToUnity(tilePositionOrigin),
-                CoordConvert.ecefRotionToUp()
-            );
-        }
+
 
         /// <summary>
         /// Recursive recalculation of tile bounds
@@ -220,7 +204,8 @@ namespace Netherlands3D.Tiles3D
                 string jsonstring = www.downloadHandler.text;
 
                 JSONNode rootnode = JSON.Parse(jsonstring)["root"];
-                ReadTileset(rootnode);
+               root = ParseTileset.ReadTileset(rootnode);
+                
             }
         }
 
@@ -269,174 +254,6 @@ namespace Netherlands3D.Tiles3D
             }
         }
 
-        private void ReadTileset(JSONNode rootnode)
-        {   
-            transformValues = new double[16] {1.0, 0.0, 0.0, 0.0,0.0, 1.0, 0.0, 0.0,0.0, 0.0, 1.0, 0.0,0.0, 0.0, 0.0, 1.0 };
-            JSONNode transformNode = rootnode["transform"];
-            if (transformNode!=null)
-            {
-                for (int i = 0; i < 16; i++)
-                {
-                    transformValues[i] = transformNode[i].AsDouble;
-                }
-            }
-            
-            JSONNode implicitTilingNode = rootnode["implicitTiling"];
-            if (implicitTilingNode != null)
-            {
-                tilingMethod = TilingMethod.implicitTiling;           
-            }
-
-            //setup location and rotation
-            switch (tilingMethod)
-            {
-                case TilingMethod.explicitTiling:
-                    Debug.Log("Explicit tiling");
-                    Tile rootTile = new Tile();
-                    
-                    root = ReadExplicitNode(rootnode, rootTile);
-                    root.screenSpaceError = float.MaxValue;
-                    //ApplyRootOrientation();
-                    StartCoroutine(LoadInView());
-                    break;
-                case TilingMethod.implicitTiling:
-                    Debug.Log("Implicit tiling");
-                    ReadImplicitTiling(rootnode);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Recursive reading of tile nodes to build the tiles tree
-        /// </summary>
-        public static Tile ReadExplicitNode(JSONNode node, Tile tile)
-        {
-            tile.boundingVolume = new BoundingVolume();
-            JSONNode boundingVolumeNode = node["boundingVolume"];
-            ParseBoundingVolume(tile, boundingVolumeNode);
-
-            tile.geometricError = double.Parse(node["geometricError"].Value);
-            tile.refine = node["refine"].Value;
-            JSONNode childrenNode = node["children"];
-
-            tile.children = new List<Tile>();
-            if (childrenNode != null)
-            {
-                for (int i = 0; i < childrenNode.Count; i++)
-                {
-                    var childTile = new Tile();
-                    childTile.parent = tile;
-                    tile.children.Add(ReadExplicitNode(childrenNode[i], childTile));
-                }
-            }
-            JSONNode contentNode = node["content"];
-            if (contentNode != null)
-            {
-                tile.hascontent = true;
-                tile.contentUri = contentNode["uri"].Value;
-            }
-
-            return tile;
-        }
-
-        public static void ParseBoundingVolume(Tile tile, JSONNode boundingVolumeNode)
-        {
-            if (boundingVolumeNode != null)
-            {
-                foreach (KeyValuePair<string, BoundingVolumeType> kvp in boundingVolumeTypes)
-                {
-                    JSONNode volumeNode = boundingVolumeNode[kvp.Key];
-                    if (volumeNode != null)
-                    {
-                        int length = GetBoundingVolumeLength(kvp.Value);
-                        if (volumeNode.Count == length)
-                        {
-                            tile.boundingVolume.values = new double[length];
-                            for (int i = 0; i < length; i++)
-                            {
-                                tile.boundingVolume.values[i] = volumeNode[i].AsDouble;
-                            }
-                            tile.boundingVolume.boundingVolumeType = kvp.Value;
-                            break; // Exit the loop after finding the first valid bounding volume
-                        }
-                    }
-                }
-            }
-
-            tile.CalculateBounds();
-        }
-
-        public static int GetBoundingVolumeLength(BoundingVolumeType type)
-        {
-            switch (type)
-            {
-                case BoundingVolumeType.Region:
-                    return 6;
-                case BoundingVolumeType.Box:
-                    return 12;
-                case BoundingVolumeType.Sphere:
-                    return 4;
-                default:
-                    return 0;
-            }
-        }
-
-        private void ReadImplicitTiling(JSONNode rootnode)
-        {
-            implicitTilingSettings = new ImplicitTilingSettings();
-            string refine = rootnode["refine"].Value;
-            switch (refine)
-            {
-                case "REPLACE":
-                    implicitTilingSettings.refinementType = RefinementType.Replace;
-                    break;
-                case "ADD":
-                    implicitTilingSettings.refinementType = RefinementType.Add;
-                    break;
-                default:
-                    break;
-            }
-            implicitTilingSettings.geometricError = rootnode["geometricError"].AsFloat;
-            implicitTilingSettings.boundingRegion = new double[6];
-            for (int i = 0; i < 6; i++)
-            {
-                implicitTilingSettings.boundingRegion[i] = rootnode["boundingVolume"]["region"][i].AsDouble;
-            }
-            implicitTilingSettings.contentUri = rootnode["content"]["uri"].Value;
-            JSONNode implicitTilingNode = rootnode["implicitTiling"];
-            string subdivisionScheme = implicitTilingNode["subsivisionScheme"].Value;
-            switch (subdivisionScheme)
-            {
-                case "QUADTREE":
-                    implicitTilingSettings.subdivisionScheme = SubdivisionScheme.Quadtree;
-                    break;
-                default:
-                    implicitTilingSettings.subdivisionScheme = SubdivisionScheme.Octree;
-                    break;
-            }
-            implicitTilingSettings.subtreeLevels = implicitTilingNode["subtreeLevels"];
-            implicitTilingSettings.subtreeUri = implicitTilingNode["subtrees"]["uri"].Value;
-
-
-            ReadSubtree subtreeReader = GetComponent<ReadSubtree>();
-            string subtreeURL = tilesetUrl.Replace(tilesetFilename, implicitTilingSettings.subtreeUri)
-                                .Replace("{level}", "0")
-                                .Replace("{x}", "0")
-                                .Replace("{y}", "0");
-
-            Debug.Log("Load subtree: " + subtreeURL);
-            subtreeReader.DownloadSubtree(subtreeURL, implicitTilingSettings, ReturnTiles);
-        }
-
-        private void ReturnTiles(Tile rootTile)
-        {
-            root = rootTile;
-            ApplyRootOrientation();
-
-            StartCoroutine(LoadInView());
-        }
 
         /// <summary>
         /// Check what tiles should be loaded/unloaded based on view recursively
@@ -472,24 +289,19 @@ namespace Netherlands3D.Tiles3D
         }
 
         /// <summary>
-        /// Returns if current camera changed in position/rotation/fov or size in the last frame
-        /// </summary>
-        private bool CameraChanged()
-        {
-            return 
-                (currentCamera.orthographic == true && lastCameraAngle != currentCamera.orthographicSize) || 
-                (currentCamera.orthographic == false && lastCameraAngle != currentCamera.fieldOfView) || 
-                lastCameraPosition != currentCameraPosition || 
-                lastCameraRotation != currentCameraRotation;
-        }
-
-        /// <summary>
         /// Check for tiles in our visibile tiles list that moved out of the view / max distance.
         /// Request dispose for tiles that moved out of view
         /// </summary>
         /// <param name="currentCamera">Camera to use for visibility check</param>
         private void DisposeTilesOutsideView(Camera currentCamera)
         {
+            for (int i = visibleTiles.Count - 1; i >= 0; i--)
+            {
+                var tile = visibleTiles[i];
+                var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
+                CalculateTileScreenSpaceError(tile, currentCamera, closestPointOnBounds);
+            }
+
             //Clean up list op previously loaded tiles outside of view
             for (int i = visibleTiles.Count - 1; i >= 0; i--)
             {
@@ -509,9 +321,6 @@ namespace Netherlands3D.Tiles3D
                     continue;
                 }
 
-                var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
-                CalculateTileScreenSpaceError(tile, currentCamera, closestPointOnBounds);
-
                 if (tile.screenSpaceError > maximumScreenSpaceError) //too little detail
                 {
                     
@@ -527,14 +336,18 @@ namespace Netherlands3D.Tiles3D
                         }
                     }
                 }
-                //if (tile.screenSpaceError <  maximumScreenSpaceError) //too much detail
-                //{
-                //    if (tile.CountLoadedParents()>0)
-                //    {
-                //        RequestDispose(tile);
-                //        visibleTiles.RemoveAt(i);
-                //    }
-                //}
+                if (tile.screenSpaceError < maximumScreenSpaceError) //too much detail
+                {
+                    if (tile.CountLoadedParents() > 0)
+                    {
+                        if (tile.getParentSSE()<maximumScreenSpaceError)
+                        {
+                            tilePrioritiser.RequestDispose(tile, true);
+                            visibleTiles.RemoveAt(i);
+                        }
+                        
+                    }
+                }
 
                 int childcount = tile.CountLoadedChildren();
                 int layerIndex = 12;
@@ -570,39 +383,39 @@ namespace Netherlands3D.Tiles3D
             child.screenSpaceError = sse;
         }
 
-        private void LoadInViewRecursively(Tile parentTile, Camera currentCamera)
+        private void LoadInViewRecursively(Tile tile, Camera currentCamera)
         {
-            var tileIsInView = parentTile.IsInViewFrustrum(currentCamera);
+            var tileIsInView = tile.IsInViewFrustrum(currentCamera);
             if (!tileIsInView)
             {
                 return;
             }
 
-            if (parentTile.isLoading == false && parentTile.children.Count == 0 && parentTile.contentUri.Contains(".json"))
+            if (tile.isLoading == false && tile.children.Count == 0 && tile.contentUri.Contains(".json"))
             {
-                parentTile.isLoading = true;
-                StartCoroutine(LoadNestedTileset(parentTile));
+                tile.isLoading = true;
+                StartCoroutine(LoadNestedTileset(tile));
                 return;
             }
 
-            var closestPointOnBounds = parentTile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
-            CalculateTileScreenSpaceError(parentTile, currentCamera, closestPointOnBounds);
-            var enoughDetail = parentTile.screenSpaceError < maximumScreenSpaceError;
+            var closestPointOnBounds = tile.ContentBounds.ClosestPoint(currentCamera.transform.position); //Returns original point when inside the bounds
+            CalculateTileScreenSpaceError(tile, currentCamera, closestPointOnBounds);
+            var enoughDetail = tile.screenSpaceError < maximumScreenSpaceError;
 
             if (enoughDetail)
             {
-                var Has3DContent = parentTile.contentUri.Length > 0 && !parentTile.contentUri.Contains(".json");
+                var Has3DContent = tile.contentUri.Length > 0 && !tile.contentUri.Contains(".json");
                 
                 if (Has3DContent)
                 {
-                    int loadingParentsCount = parentTile.CountLoadingParents();
-                    int loadedParentsCount = parentTile.CountLoadedParents();
+                    int loadingParentsCount = tile.CountLoadingParents();
+                    int loadedParentsCount = tile.CountLoadedParents();
                     if (loadedParentsCount+ loadingParentsCount<2)
                     {
-                        if (!visibleTiles.Contains(parentTile))
+                        if (!visibleTiles.Contains(tile))
                         {
-                            RequestContentUpdate(parentTile);
-                            visibleTiles.Add(parentTile);
+                            RequestContentUpdate(tile);
+                            visibleTiles.Add(tile);
                         }
                     }
                     
@@ -611,7 +424,7 @@ namespace Netherlands3D.Tiles3D
             }
 
 
-            foreach (var childTile in parentTile.children)
+            foreach (var childTile in tile.children)
             {
                 LoadInViewRecursively(childTile, currentCamera);
             }
@@ -637,7 +450,7 @@ namespace Netherlands3D.Tiles3D
                         tile.nestedTilesLoaded = true;
 
                         JSONNode node = JSON.Parse(jsonstring)["root"];
-                        ReadExplicitNode(node, tile);
+                        ParseTileset.ReadExplicitNode(node, tile);
                         nestedTreeLoaded = true;
                     }
                 }
@@ -706,21 +519,7 @@ namespace Netherlands3D.Tiles3D
             return "?" + queryString.ToString();
         }
 
-        private bool GetCanRefineToChildren(Tile tile)
-        {
-            if (tile.screenSpaceError > maximumScreenSpaceError){
-
-                if (tilingMethod == TilingMethod.implicitTiling)
-                {
-                    return tile.children.Count > 0 && (tile.screenSpaceError / 2.0f > maximumScreenSpaceError);
-                }
-                else if (tilingMethod == TilingMethod.explicitTiling)
-                {
-                    return tile.children.Count > 0 || tile.contentUri.Contains(".json");
-                }
-            }
-            return false;
-        }
+       
 
         /// <summary>
         /// Screen-space error component calculation.
