@@ -283,6 +283,29 @@ namespace Netherlands3D.Tiles3D
             boundsAvailable = true;
         }
 
+        public float getParentSSE()
+        {
+            float result = 0;
+            if (parent!=null)
+            {
+
+            
+            
+            if (parent.content!=null)
+            {
+                if (parent.content.State==Content.ContentLoadState.DOWNLOADED)
+                {
+                    result = parent.screenSpaceError;
+                }
+            }
+            if (result==0)
+            {
+                    result = parent.getParentSSE();
+            }
+            }
+            return result;
+        }
+
         public void Dispose()
         {
             if (content != null)
