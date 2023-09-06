@@ -106,6 +106,10 @@ namespace Netherlands3D.Core
 
             var flatCameraPosition = new Vector3(cameraPosition.x, 0, cameraPosition.z);
             Vector3ECEF newECEFOrigin = CoordConvert.UnityToECEF(flatCameraPosition);
+            Vector3WGS newWGSOrigin = CoordConvert.ECEFtoWGS84(newECEFOrigin);
+            newWGSOrigin.h = 0;
+            newECEFOrigin = CoordConvert.WGS84toECEF(newWGSOrigin);
+
             CoordConvert.relativeCenterECEF = newECEFOrigin;
             //var newWGS84 = CoordConvert.ECEFtoWGS84(newECEFOrigin);
             //var newRD = CoordConvert.WGS84toRD(newWGS84.lon,newWGS84.lat);
