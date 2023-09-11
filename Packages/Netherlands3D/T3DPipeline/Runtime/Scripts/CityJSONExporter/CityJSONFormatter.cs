@@ -84,6 +84,10 @@ namespace Netherlands3D.T3DPipeline
         private static JSONArray GetGeographicalExtents(Dictionary<Vector3Double, int> vertices)
         {
             var extentArray = new JSONArray();
+
+            if (vertices.Count == 0)
+                return extentArray;
+
             var minX = vertices.Keys.MinBy(v => v.x).x;
             var minY = vertices.Keys.MinBy(v => v.y).y;
             var minZ = vertices.Keys.MinBy(v => v.z).z;

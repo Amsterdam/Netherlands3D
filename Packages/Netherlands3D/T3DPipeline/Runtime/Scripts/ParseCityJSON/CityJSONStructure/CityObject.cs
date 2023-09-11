@@ -54,7 +54,7 @@ namespace Netherlands3D.T3DPipeline
         public Vector3Double RelativeCenter { get { return (MaxExtent - MinExtent) / 2; } }
         public Vector3Double AbsoluteCenter { get { return (MaxExtent + MinExtent) / 2; } }
 
-        public List<CityGeometry> Geometries { get; protected set; }
+        public List<CityGeometry> Geometries { get; protected set; } = new List<CityGeometry>();
         public List<CityObjectAttribute> Attributes { get; protected set; } = new List<CityObjectAttribute>();
 
         protected List<CityObject> cityChildren = new List<CityObject>();
@@ -79,16 +79,6 @@ namespace Netherlands3D.T3DPipeline
 
                 includeInExport = value;
             }
-        }
-
-        //add/remove the CityObject to the exporter when it is enabled/disabled
-        protected virtual void OnEnable()
-        {
-            IncludeInExport = true;
-        }
-        protected virtual void OnDisable()
-        {
-            IncludeInExport = false;
         }
 
         public void UnparentFromAll()
@@ -207,6 +197,28 @@ namespace Netherlands3D.T3DPipeline
         public void AddAttribute(CityObjectAttribute attribute)
         {
             Attributes.Add(attribute);
+        }
+
+        public static CityObject CreateEmpty(string id, CityObjectType type = CityObjectType.GenericCityObject, CoordinateSystem coordinateSystem = CoordinateSystem.RD)
+        {
+            var co = new GameObject().AddComponent<CityObject>();
+
+            co.SetId(id);
+            co.Type = type;
+            co.CoordinateSystem = coordinateSystem;
+            co.Geometries = new List<CityGeometry>();
+            co.Attributes = new List<CityObjectAttribute>();
+
+            return co;
+        }
+
+        public CityGeometry AddEmptyGeometry(GeometryType type, int lod, bool includeSemantics, bool includeMaterials, bool includeTextures)
+        {
+            var geometry = new CityGeometry(type, lod, includeSemantics, includeMaterials, includeTextures);
+
+            Assert.IsTrue(CityGeometry.IsValidType(Type, geometry.Type));
+            Geometries.Add(geometry);
+            return geometry;
         }
 
         public void FromJSONNode(string id, JSONNode cityObjectNode, CoordinateSystem coordinateSystem, List<Vector3Double> combinedVertices)
