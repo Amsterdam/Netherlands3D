@@ -100,17 +100,9 @@ namespace Netherlands3D.T3DPipeline
 
         private Vector3 SetPosition(CityObject cityObject)
         {
-            var center = cityObject.AbsoluteCenter;
-            switch (cityObject.CoordinateSystem)
-            {
-                case CoordinateSystem.WGS84:
-                    var wgs = new Vector3WGS(center.x, center.y, center.z);
-                    return CoordinateConverter.WGS84toUnity(wgs);
-                case CoordinateSystem.RD:
-                    var rd = new Vector3RD(center.x, center.y, center.z);
-                    return CoordinateConverter.RDtoUnity(rd);
-            }
-            return new Vector3((float)center.x, (float)center.z, (float)center.y);
+            var center = cityObject.AbsoluteCenter; 
+            var coordinate = new Coordinate(cityObject.CoordinateSystem, center.x, center.y, center.z);
+            return CoordinateConverter.ConvertTo(coordinate, CoordinateSystem.Unity).ToVector3();
         }
 
 
@@ -234,7 +226,7 @@ namespace Netherlands3D.T3DPipeline
         {
             if (boundary is CityMultiPoint)
                 throw new NotSupportedException("Boundary of type " + typeof(CityMultiPoint) + "is not supported by this Visualiser script since it contains no mesh data. Use MultiPointVisualiser instead and assign an object to use as visualization of the points");
-            if(boundary is CityMultiLineString) //todo this boundary type is not supported at all
+            if (boundary is CityMultiLineString) //todo this boundary type is not supported at all
                 throw new NotSupportedException("Boundary of type " + typeof(CityMultiLineString) + "is currently not supported.");
             if (boundary is CitySurface)
                 return BoundariesToMeshes(boundary as CitySurface, coordinateSystem);
