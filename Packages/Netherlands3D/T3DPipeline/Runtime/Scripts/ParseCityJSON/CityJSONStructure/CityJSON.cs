@@ -17,7 +17,7 @@ namespace Netherlands3D.T3DPipeline
         //nodes defined in a CityJSON and therefore reserved node keys.
         private static string[] definedNodes = { "type", "version", "CityObjects", "vertices", "extensions", "metadata", "transform", "appearance", "geometry-templates" };
 
-        public string Version { get; private set; }
+        public string Version { get; private set; } = "1.0"; //default version
         public JSONNode Extensions { get; private set; }
         public JSONNode Metadata { get; private set; }
         public Vector3Double TransformScale { get; private set; } = new Vector3Double(1d, 1d, 1d);
@@ -25,11 +25,11 @@ namespace Netherlands3D.T3DPipeline
         public JSONNode Appearance { get; private set; }
         public JSONNode GeometryTemplates { get; private set; }
 
-        public CityObject[] CityObjects { get; private set; } = new CityObject[0];
+        public List<CityObject> CityObjects { get; private set; } = new List<CityObject>();
         public Vector3Double MinExtent { get; private set; }
         public Vector3Double MaxExtent { get; private set; }
         public Vector3Double AbsoluteCenter { get { return (MaxExtent + MinExtent) / 2; } }
-        public CoordinateSystem CoordinateSystem { get; private set; }
+        public CoordinateSystem CoordinateSystem { get; private set; } = CoordinateSystem.Unity;
 
         private Dictionary<string, JSONNode> extensionNodes = new Dictionary<string, JSONNode>();
 
@@ -63,6 +63,20 @@ namespace Netherlands3D.T3DPipeline
                 onCityJSONReceived.RemoveAllListenersStarted();
         }
 
+        public static CityJSON CreateEmpty()
+        {
+            var cityJSON = new GameObject("CityJSON").AddComponent<CityJSON>();
+            return cityJSON;
+        }
+
+        public CityObject AddEmptyCityObject(string id)
+        {
+            var cityObject = CityObject.CreateEmpty(id);
+            cityObject.transform.SetParent(transform);
+            CityObjects.Add(cityObject);
+            return cityObject;
+        }
+
         public void ParseCityJSON(string cityJson)
         {
             //remove old data if re-parsing
@@ -70,7 +84,7 @@ namespace Netherlands3D.T3DPipeline
             {
                 co.UnparentFromAll(); //needed because OnDestroy is not immediately called.
                 Destroy(co.gameObject);
-                CityObjects = new CityObject[0]; //reset this in case an invalid CityJSON is parsed after a succesful parse
+                CityObjects = new List<CityObject>(); //reset this in case an invalid CityJSON is parsed after a succesful parse
             }
             RemoveExtensionNodes(extensionNodes);
 
@@ -185,7 +199,7 @@ namespace Netherlands3D.T3DPipeline
                 co.Value.SetParents(parentObjects);
             }
 
-            CityObjects = cityObjects.Values.ToArray();
+            CityObjects = cityObjects.Values.ToList();
 
             if (useAsRelativeRDCenter)
                 SetRelativeCenter();
