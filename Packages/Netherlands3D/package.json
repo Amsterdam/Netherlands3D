@@ -131,6 +131,15 @@
     "name": "3D Amsterdam Team",
     "url": "https://3d.amsterdam.nl"
   },
+  "scopedRegistries": [
+      {
+          "name": "package.openupm.com",
+          "url": "https://package.openupm.com",
+          "scopes": [
+              "eu.netherlands3d"
+          ]
+      }
+  ],
   "dependencies": {
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.inputsystem": "1.3.0",
@@ -145,6 +154,7 @@
     "eu.netherlands3d.filebrowser": "1.3.1",
     "eu.netherlands3d.obj-importer": "1.1.0",
     "eu.netherlands3d.poly2tri": "2.0.0",
-    "eu.netherlands3d.selection-tools": "1.0.1"
+    "eu.netherlands3d.selection-tools": "1.0.1",
+    "eu.netherlands3d.web-cursors": "1.0.2"
   }
 }
