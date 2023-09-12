@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 
 public static class B3dmReader
 {
@@ -14,10 +15,37 @@ public static class B3dmReader
         var batchTableBytes = reader.ReadBytes(b3dmHeader.BatchTableBinaryByteLength);
 
         var glbLength = b3dmHeader.ByteLength - b3dmHeader.Length;
+        
         var glbBuffer = reader.ReadBytes(glbLength);
 
         // remove the trailing glb padding characters if any
-        glbBuffer = glbBuffer.TakeWhile((v, index) => glbBuffer.Skip(index).Any(w => (w != 0x20))).ToArray();
+
+        //int stride = 8;
+        byte paddingbyte = Encoding.UTF8.GetBytes(" ")[0];
+        List<byte> bytes = new List<byte>();
+        bytes.Capacity = glbBuffer.Length;
+        for (int i = 0; i < glbLength; i++)
+        {
+
+                bytes.Add(glbBuffer[i]);
+
+        }
+
+        for (int i = bytes.Count - 1; i >= 0; i--)
+        {
+            if (bytes[i]==paddingbyte)
+            {
+                bytes.RemoveAt(i);
+               
+            }
+            else
+            {
+                i = -1;
+            }
+        }
+        
+        glbBuffer = bytes.ToArray();
+        //glbBuffer = glbBuffer.TakeWhile((v, index) => glbBuffer.Skip(index).Any(w => (w != 0x20))).ToArray();
 
         var b3dm = new B3dm {
             B3dmHeader = b3dmHeader,
