@@ -135,16 +135,16 @@ namespace Netherlands3D.Tiles3D
                         if (parsedGltf.rtcCenter != null)
                         {
                         Quaternion rotation = (scene.rotation);
-                        //    sceneOriginFollower.SetPositionAndRotation(parsedGltf.rtcCenter[0] + parentTile.transform[12], parsedGltf.rtcCenter[1] + parentTile.transform[13], parsedGltf.rtcCenter[2]+parentTile.transform[14],rotation);
+                          sceneOriginFollower.SetPositionAndRotation(parsedGltf.rtcCenter[0] + parentTile.transform[12], parsedGltf.rtcCenter[1] + parentTile.transform[13], parsedGltf.rtcCenter[2]+parentTile.transform[14],rotation);
 
-                       // sceneOriginFollower.SetPositionAndRotation(-scene.localPosition.x + parentTile.transform[12], -scene.localPosition.z + parentTile.transform[13], scene.localPosition.y + parentTile.transform[14],rotation);
+                       
                     }
                         else
                         {
-                           // sceneOriginFollower.SetPosition(-scene.localPosition.x+parentTile.transform[12], -scene.localPosition.z+parentTile.transform[13], scene.localPosition.y+parentTile.transform[14]);
+                            sceneOriginFollower.SetPosition(-scene.localPosition.x+parentTile.transform[12], -scene.localPosition.z+parentTile.transform[13], scene.localPosition.y+parentTile.transform[14]);
                         }
                         
-                        //scene.localPosition = Vector3.zero;
+                       
 
                     }
                 
