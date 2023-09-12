@@ -18,6 +18,8 @@ namespace Netherlands3D.Tiles3D
     {
 
         public string tilesetUrl = "https://storage.googleapis.com/ahp-research/maquette/kadaster/3dbasisvoorziening/test/landuse_1_1/tileset.json";
+        public string publicKey;
+        public string personalKey;
         private string absolutePath = "";
         private string rootPath = "";
         private NameValueCollection queryParameters;
@@ -53,7 +55,21 @@ namespace Netherlands3D.Tiles3D
 
         private bool nestedTreeLoaded = false;
 
-        
+        private void Awake()
+        {
+#if UNITY_EDITOR
+            if (string.IsNullOrEmpty(personalKey)==false)
+            {
+                tilesetUrl = tilesetUrl + "?key=" + personalKey;
+            }
+
+#else
+if (string.IsNullOrEmpty(publicKey)==false)
+            {
+            tilesetUrl = tilesetUrl + "?key=" + publicKey;
+            }
+#endif
+        }
 
         private void OnEnable()
         {
@@ -82,8 +98,14 @@ namespace Netherlands3D.Tiles3D
         {
             Uri uri = new(tilesetUrl);
             absolutePath = tilesetUrl.Substring(0,tilesetUrl.LastIndexOf("/")+1);
-
-            rootPath = uri.GetLeftPart(UriPartial.Authority);
+            if (tilesetUrl.StartsWith("file://"))
+            {
+                rootPath = absolutePath;
+            }
+            else
+            {
+                rootPath = uri.GetLeftPart(UriPartial.Authority);
+            }
             queryParameters = ParseQueryString(uri.Query);
             Debug.Log($"Query url {ToQueryString(queryParameters)}");
             foreach (string segment in uri.Segments)
@@ -442,7 +464,7 @@ namespace Netherlands3D.Tiles3D
 
                     if (www.result != UnityWebRequest.Result.Success)
                     {            
-                        Debug.Log(www.error);
+                        Debug.Log(www.error + " at " + nestedJsonPath);
                     }
                     else
                     {
