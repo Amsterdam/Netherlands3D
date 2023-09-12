@@ -1,9 +1,10 @@
 using GLTFast;
 using Netherlands3D.B3DM;
+
 //using Netherlands3D.Core;
 
 using System;
-
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -120,29 +121,33 @@ namespace Netherlands3D.Tiles3D
                 
                 this.gltf = gltf;
                 var scenes = gltf.SceneCount;
-                if (parsedGltf.rtcCenter != null)
-                {
+
+                    for (int i = 0; i < scenes; i++)
+                    {
+
+                        await gltf.InstantiateSceneAsync(transform, i);
+                        var scene = transform.GetChild(0).transform;
+
                    
-                    MovingOriginFollower sceneOriginFollower = gameObject.AddComponent<MovingOriginFollower>();
-                    sceneOriginFollower.SetPosition(parsedGltf.rtcCenter[0], parsedGltf.rtcCenter[1], parsedGltf.rtcCenter[2]);
 
 
-                }
-                for (int i = 0; i < scenes; i++)
-                {
-
-                    await gltf.InstantiateSceneAsync(transform, i);
-                    var scene = transform.GetChild(0).transform;
-                    double test = parentTile.transform[9];
-                    //var scenePosition = CoordConvert.ECEFToUnity(new Vector3ECEF(-scene.localPosition.x,-scene.localPosition.z,scene.localPosition.y));
-                    //scene.localPosition = Vector3.zero;
-                    //scene.localPosition = scenePosition;
-                    //scene.rotation = CoordConvert.ecefRotionToUp();
                     MovingOriginFollower sceneOriginFollower = scene.gameObject.AddComponent<MovingOriginFollower>();
-                    sceneOriginFollower.SetPosition(-scene.localPosition.x, -scene.localPosition.z, scene.localPosition.y);
+                        if (parsedGltf.rtcCenter != null)
+                        {
+                        Quaternion rotation = (scene.rotation);
+                        //    sceneOriginFollower.SetPositionAndRotation(parsedGltf.rtcCenter[0] + parentTile.transform[12], parsedGltf.rtcCenter[1] + parentTile.transform[13], parsedGltf.rtcCenter[2]+parentTile.transform[14],rotation);
 
+                       // sceneOriginFollower.SetPositionAndRotation(-scene.localPosition.x + parentTile.transform[12], -scene.localPosition.z + parentTile.transform[13], scene.localPosition.y + parentTile.transform[14],rotation);
+                    }
+                        else
+                        {
+                           // sceneOriginFollower.SetPosition(-scene.localPosition.x+parentTile.transform[12], -scene.localPosition.z+parentTile.transform[13], scene.localPosition.y+parentTile.transform[14]);
+                        }
+                        
+                        //scene.localPosition = Vector3.zero;
 
-                }
+                    }
+                
                 this.gameObject.name = uri;
                 
                 foreach (var item in this.gameObject.GetComponentsInChildren<Transform>())

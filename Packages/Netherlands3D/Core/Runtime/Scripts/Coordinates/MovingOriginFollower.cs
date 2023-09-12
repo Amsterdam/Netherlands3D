@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class MovingOriginFollower : MonoBehaviour
 {
-    private Vector3ECEF ecefPosition;
+    
+    public Vector3ECEF ecefPosition;
     private Quaternion rotation;
     SetGlobalRDOrigin globalOrigin;
     Camera connectedCamera;
@@ -31,13 +32,20 @@ public class MovingOriginFollower : MonoBehaviour
     public void SetPosition(double X, double Y, double Z)
     {
         this.ecefPosition = new Vector3ECEF(X,Y,Z);
-        rotation = Quaternion.identity;
+        rotation = transform.rotation;
+        MoveAndRotateGameObject(Vector3.zero);
+    }
+
+    public void SetPositionAndRotation(double X, double Y, double Z,Quaternion defaultRotation)
+    {
+        this.ecefPosition = new Vector3ECEF(X, Y, Z);
+        rotation = defaultRotation;
         MoveAndRotateGameObject(Vector3.zero);
     }
     private void SaveOrigin()
     {
         ecefPosition = CoordConvert.UnityToECEF(transform.position);
-        rotation = transform.rotation * Quaternion.Inverse(CoordConvert.ecefRotionToUp());
+        rotation =  Quaternion.Inverse(CoordConvert.ecefRotionToUp())* transform.rotation;
         
     }
 
@@ -66,7 +74,7 @@ public class MovingOriginFollower : MonoBehaviour
 
         transform.SetPositionAndRotation(
             CoordConvert.ECEFToUnity(ecefPosition),
-            rotation * CoordConvert.ecefRotionToUp()
+            CoordConvert.ecefRotionToUp()*rotation
         );
 
     }
