@@ -27,7 +27,7 @@ namespace Netherlands3D.Tiles3D
                     transformValues[i] = transformNode[i].AsDouble;
                 }
             }
-
+            root.transform = transformValues;
             JSONNode implicitTilingNode = rootnode["implicitTiling"];
             if (implicitTilingNode != null)
             {
@@ -40,7 +40,7 @@ namespace Netherlands3D.Tiles3D
                 case TilingMethod.explicitTiling:
                     Debug.Log("Explicit tiling");
                     Tile rootTile = new Tile();
-
+                    rootTile.transform = root.transform;
                     root = ReadExplicitNode(rootnode, rootTile);
                     root.screenSpaceError = float.MaxValue;
                     break;
@@ -59,6 +59,7 @@ namespace Netherlands3D.Tiles3D
         /// </summary>
         public static Tile ReadExplicitNode(JSONNode node, Tile tile)
         {
+
             tile.boundingVolume = new BoundingVolume();
             JSONNode boundingVolumeNode = node["boundingVolume"];
             ParseBoundingVolume(tile, boundingVolumeNode);
@@ -73,6 +74,7 @@ namespace Netherlands3D.Tiles3D
                 for (int i = 0; i < childrenNode.Count; i++)
                 {
                     var childTile = new Tile();
+                    childTile.transform = tile.transform;
                     childTile.parent = tile;
                     tile.children.Add(ReadExplicitNode(childrenNode[i], childTile));
                 }
