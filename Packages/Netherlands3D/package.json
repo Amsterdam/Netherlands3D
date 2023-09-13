@@ -7,7 +7,7 @@
   "type": "library",
   "keywords": [
     "3d",
-	"3dtiles",
+    "3dtiles",
     "geojson",
     "cityjson",
     "digital twin",
@@ -80,7 +80,7 @@
       "description": "Basic TileSystem",
       "path": "Core/Samples~"
     },
-	{
+    {
       "displayName": "3DTiles",
       "description": "3DTiles tile system example",
       "path": "3DTiles/Samples~"
@@ -146,6 +146,7 @@
     "eu.netherlands3d.obj-importer": "1.1.0",
     "eu.netherlands3d.poly2tri": "2.0.0",
     "eu.netherlands3d.selection-tools": "1.0.1",
-    "eu.netherlands3d.web-cursors": "1.0.2"
+    "eu.netherlands3d.web-cursors": "1.0.2",
+    "eu.netherlands3d.masking": "1.0.2"
   }
 }
