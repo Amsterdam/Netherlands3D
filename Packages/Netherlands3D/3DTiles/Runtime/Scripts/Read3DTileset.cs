@@ -74,6 +74,7 @@ if (string.IsNullOrEmpty(publicKey)==false)
         private void OnEnable()
         {
             currentCamera = Camera.main;
+            StartCoroutine(LoadInView());
         }
 
         void Start()
@@ -86,11 +87,11 @@ if (string.IsNullOrEmpty(publicKey)==false)
             ExtractDatasetPaths();
 
             StartCoroutine(LoadTileset());
-            StartCoroutine(LoadInView());
+            
             SetGlobalRDOrigin globalOrigin = FindObjectOfType<SetGlobalRDOrigin>();
             if (globalOrigin != null)
             {
-                globalOrigin.relativeOriginChanged.AddListener(RelativeCenterChanged);
+                //globalOrigin.relativeOriginChanged.AddListener(RelativeCenterChanged);
             }
         }
 

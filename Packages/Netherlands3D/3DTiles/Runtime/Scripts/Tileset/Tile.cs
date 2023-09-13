@@ -1,4 +1,4 @@
-using Netherlands3D.Core;
+using Netherlands3D.Coordinates;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -231,18 +231,18 @@ namespace Netherlands3D.Tiles3D
             {
                 case BoundingVolumeType.Box:
                     //TODO: proper Box bounding calculation
-                    var boxCenter = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0], boundingVolume.values[1], boundingVolume.values[2]));
-                    var xAxis = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[3], boundingVolume.values[4], boundingVolume.values[5]));
-                    var yAxis = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[6], boundingVolume.values[7], boundingVolume.values[8]));
-                    var zAxis = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[9], boundingVolume.values[10], boundingVolume.values[11]));
+                    var boxCenter = CoordinateConverter.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0], boundingVolume.values[1], boundingVolume.values[2]));
+                    var xAxis = CoordinateConverter.ECEFToUnity(new Vector3ECEF(boundingVolume.values[3], boundingVolume.values[4], boundingVolume.values[5]));
+                    var yAxis = CoordinateConverter.ECEFToUnity(new Vector3ECEF(boundingVolume.values[6], boundingVolume.values[7], boundingVolume.values[8]));
+                    var zAxis = CoordinateConverter.ECEFToUnity(new Vector3ECEF(boundingVolume.values[9], boundingVolume.values[10], boundingVolume.values[11]));
 
-                    var xAxisExt = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] + boundingVolume.values[3], boundingVolume.values[1] + boundingVolume.values[4], boundingVolume.values[2] + boundingVolume.values[5]));
-                    var yAxisExt = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] + boundingVolume.values[6], boundingVolume.values[1] + boundingVolume.values[7], boundingVolume.values[2] + boundingVolume.values[8]));
-                    var zAxisExt = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] + boundingVolume.values[9], boundingVolume.values[1] + boundingVolume.values[10], boundingVolume.values[2] + boundingVolume.values[11]));
+                    var xAxisExt = CoordinateConverter.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] + boundingVolume.values[3], boundingVolume.values[1] + boundingVolume.values[4], boundingVolume.values[2] + boundingVolume.values[5]));
+                    var yAxisExt = CoordinateConverter.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] + boundingVolume.values[6], boundingVolume.values[1] + boundingVolume.values[7], boundingVolume.values[2] + boundingVolume.values[8]));
+                    var zAxisExt = CoordinateConverter.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] + boundingVolume.values[9], boundingVolume.values[1] + boundingVolume.values[10], boundingVolume.values[2] + boundingVolume.values[11]));
 
-                    var xAxisExtInv = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] - boundingVolume.values[3], boundingVolume.values[1] - boundingVolume.values[4], boundingVolume.values[2] - boundingVolume.values[5]));
-                    var yAxisExtInv = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] - boundingVolume.values[6], boundingVolume.values[1] - boundingVolume.values[7], boundingVolume.values[2] - boundingVolume.values[8]));
-                    var zAxisExtInv = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] - boundingVolume.values[9], boundingVolume.values[1] - boundingVolume.values[10], boundingVolume.values[2] - boundingVolume.values[11]));
+                    var xAxisExtInv = CoordinateConverter.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] - boundingVolume.values[3], boundingVolume.values[1] - boundingVolume.values[4], boundingVolume.values[2] - boundingVolume.values[5]));
+                    var yAxisExtInv = CoordinateConverter.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] - boundingVolume.values[6], boundingVolume.values[1] - boundingVolume.values[7], boundingVolume.values[2] - boundingVolume.values[8]));
+                    var zAxisExtInv = CoordinateConverter.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0] - boundingVolume.values[9], boundingVolume.values[1] - boundingVolume.values[10], boundingVolume.values[2] - boundingVolume.values[11]));
 
                     bounds.size = Vector3.zero;
                     bounds.center = boxCenter;
@@ -256,9 +256,9 @@ namespace Netherlands3D.Tiles3D
                     break;
                 case BoundingVolumeType.Sphere:
                     var sphereRadius = boundingVolume.values[0];
-                    var sphereCentre = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0], boundingVolume.values[1], boundingVolume.values[2]));
-                    var sphereMin = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0]- sphereRadius, boundingVolume.values[1] - sphereRadius, boundingVolume.values[2] - sphereRadius));
-                    var sphereMax = CoordConvert.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0]+ sphereRadius, boundingVolume.values[1]+ sphereRadius, boundingVolume.values[2]+ sphereRadius));
+                    var sphereCentre = CoordinateConverter.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0], boundingVolume.values[1], boundingVolume.values[2]));
+                    var sphereMin = CoordinateConverter.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0]- sphereRadius, boundingVolume.values[1] - sphereRadius, boundingVolume.values[2] - sphereRadius));
+                    var sphereMax = CoordinateConverter.ECEFToUnity(new Vector3ECEF(boundingVolume.values[0]+ sphereRadius, boundingVolume.values[1]+ sphereRadius, boundingVolume.values[2]+ sphereRadius));
                     bounds.size = Vector3.zero;
                     bounds.center = sphereCentre;
                     bounds.Encapsulate(sphereMin);
@@ -266,11 +266,11 @@ namespace Netherlands3D.Tiles3D
                     break;
                 case BoundingVolumeType.Region:
                     //Array order: west, south, east, north, minimum height, maximum height
-                    var ecefMin = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[0] * 180.0f) / Mathf.PI, (boundingVolume.values[1] * 180.0f) / Mathf.PI, boundingVolume.values[4]));
-                    var ecefMax = CoordConvert.WGS84toECEF(new Vector3WGS((boundingVolume.values[2] * 180.0f) / Mathf.PI, (boundingVolume.values[3] * 180.0f) / Mathf.PI, boundingVolume.values[5]));
+                    var ecefMin = CoordinateConverter.WGS84toECEF(new Vector3WGS((boundingVolume.values[0] * 180.0f) / Mathf.PI, (boundingVolume.values[1] * 180.0f) / Mathf.PI, boundingVolume.values[4]));
+                    var ecefMax = CoordinateConverter.WGS84toECEF(new Vector3WGS((boundingVolume.values[2] * 180.0f) / Mathf.PI, (boundingVolume.values[3] * 180.0f) / Mathf.PI, boundingVolume.values[5]));
 
-                    var unityMin = CoordConvert.ECEFToUnity(ecefMin);
-                    var unityMax = CoordConvert.ECEFToUnity(ecefMax);
+                    var unityMin = CoordinateConverter.ECEFToUnity(ecefMin);
+                    var unityMax = CoordinateConverter.ECEFToUnity(ecefMax);
 
                     bounds.size = Vector3.zero;
                     bounds.center = unityMin;

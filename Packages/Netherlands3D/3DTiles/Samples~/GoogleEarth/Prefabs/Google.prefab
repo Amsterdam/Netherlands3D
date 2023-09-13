@@ -1,0 +1,165 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1137090658718639578
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4432990961586191457}
+  - component: {fileID: 9022951501267948101}
+  - component: {fileID: 695982999054598136}
+  - component: {fileID: 2732464195841845553}
+  m_Layer: 0
+  m_Name: Google
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4432990961586191457
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137090658718639578}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9022951501267948101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137090658718639578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b5ff742a37465440ade3029dfbbbc9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  subtreeUrl: 
+--- !u!114 &695982999054598136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137090658718639578}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b632da76a49ee5745b7fb140e0689838, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilesetUrl: https://tile.googleapis.com/v1/3dtiles/root.json
+  publicKey: AIzaSyB9FRnque08yX0dkvpi_6jbkpvRJpqtXJE
+  personalKey: AIzaSyBvyxiQFUg9KToAvWw_pmKzYIJTQ-JMDPk
+  root:
+    isLoading: 0
+    X: 0
+    Y: 0
+    Z: 0
+    hascontent: 0
+    childrenCountDelayingDispose: 0
+    children: []
+    transform:
+    - 1
+    - 0
+    - 0
+    - 0
+    - 0
+    - 1
+    - 0
+    - 0
+    - 0
+    - 0
+    - 1
+    - 0
+    - 0
+    - 0
+    - 0
+    - 1
+    geometricError: 0
+    screenSpaceError: 3.4028235e+38
+    refine: 
+    boundingVolume:
+      boundingVolumeType: 0
+      values: []
+    inView: 0
+    canRefine: 0
+    contentUri: 
+    content: {fileID: 0}
+    loadedChildren: 0
+    priority: 0
+    requestedDispose: 0
+    requestedUpdate: 0
+  transformValues: []
+  implicitTilingSettings:
+    refinementType: 0
+    subdivisionScheme: 0
+    subtreeLevels: 0
+    subtreeUri: 
+    contentUri: 
+    geometricError: 0
+    boundingRegion: []
+  tileCount: 0
+  nestingDepth: 0
+  maxScreenHeightInPixels: 0
+  maximumScreenSpaceError: 10
+  sseComponent: -1
+  tilePrioritiser: {fileID: 2732464195841845553}
+--- !u!114 &2732464195841845553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137090658718639578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff92e6a69b9d234cbb60c523eaff631, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxScreenHeightInPixels: 0
+  maxScreenHeightInPixelsMobile: 0
+  OnMobileModeEnabled:
+    m_PersistentCalls:
+      m_Calls: []
+  maxSimultaneousDownloads: 5
+  maxTilesInDisposeList: 50
+  screenSpaceErrorScoreMultiplier: 1
+  screenCenterScore: 1000
+  screenCenterWeight:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: -0.023010522
+      outSlope: -0.023010522
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.604638
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  showPriorityNumbers: 0
+  downloadAvailable: 0
