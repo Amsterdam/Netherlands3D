@@ -1,7 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.Coordinates;
 using Netherlands3D.Utilities;
-using Netherlands3D.Core;
 using UnityEngine;
 
 namespace Netherlands3D.WFSHandlers
@@ -17,7 +16,7 @@ namespace Netherlands3D.WFSHandlers
                 List<Vector3> linePoints = new();
                 foreach(GeoJSONPoint point in list)
                 {
-                    linePoints.Add(CoordConvert.RDtoUnity(point.x, point.y, -10));
+                    linePoints.Add(CoordinateConverter.RDtoUnity(point.x, point.y, -10));
                 }
                 result.Add(linePoints);
             }

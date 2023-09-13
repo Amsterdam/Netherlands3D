@@ -5,6 +5,7 @@ using Netherlands3D.Core;
 using UnityEngine.Networking;
 using System;
 using System.Linq;
+using Netherlands3D.Coordinates;
 using UnityEngine.Rendering;
 
 namespace Netherlands3D.TileSystem
@@ -195,7 +196,7 @@ namespace Netherlands3D.TileSystem
             container = new GameObject();
 
             container.name = tileChange.X.ToString() + "-" + tileChange.Y.ToString();
-            container.transform.position = CoordConvert.RDtoUnity(new Vector2(tileChange.X + (tileSize / 2), tileChange.Y + (tileSize / 2)));
+            container.transform.position = CoordinateConverter.RDtoUnity(new Vector2(tileChange.X + (tileSize / 2), tileChange.Y + (tileSize / 2)));
 
             container.SetActive(isEnabled);
 

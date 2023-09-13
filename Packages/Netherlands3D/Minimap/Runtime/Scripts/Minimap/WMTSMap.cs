@@ -1,13 +1,13 @@
-using Netherlands3D.Core;
-using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.Coordinates;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace Netherlands3D.Minimap
 {
 	/// <summary>
-	/// Handles the functionality of the minimap 
+	/// Handles the functionality of the minimap
 	/// </summary>
 	[HelpURL("https://portal.opengeospatial.org/files/?artifact_id=35326")]
 	public class WMTSMap : MonoBehaviour
@@ -34,6 +34,10 @@ namespace Netherlands3D.Minimap
 		[SerializeField] private RectTransform fov;
 		[Tooltip("The used configuration of the minimap")]
 		[SerializeField] private MinimapConfig minimapConfig;
+
+        [Header("Events")]
+        [SerializeField] private UnityEvent<int> onZoom = new();
+        [SerializeField] private UnityEvent<Coordinate> onClick = new();
 
 		/// <summary>
 		/// The current index layer of tile layers
@@ -64,7 +68,7 @@ namespace Netherlands3D.Minimap
 		/// </summary>
 		private double pixelInMeters = 0.00028;
 		/// <summary>
-		/// The minimap scale denominator, Zero zoomlevel is 1:12288000 
+		/// The minimap scale denominator, Zero zoomlevel is 1:12288000
 		/// </summary>
 		private double scaleDenominator = 12288000;
 		/// <summary>
@@ -100,7 +104,7 @@ namespace Netherlands3D.Minimap
 		/// </summary>
 		private RectTransform rectTransformMinimapUI;
 		/// <summary>
-		/// The rect transform 
+		/// The rect transform
 		/// </summary>
 		private RectTransform rectTransform;
 		/// <summary>
@@ -166,7 +170,7 @@ namespace Netherlands3D.Minimap
 				0
 			);
 		}
-		
+
 		/// <summary>
 		/// Called from minimap UI when the user clicked on the map
 		/// </summary>
@@ -180,17 +184,19 @@ namespace Netherlands3D.Minimap
 			var meterX = localClickPosition.x * startMeterInPixels;
 			var meterY = localClickPosition.y * startMeterInPixels;
 
-			var RDcoordinate = CoordConvert.RDtoUnity(new Vector3RD
-			{
-				x = (float)bottomLeft.x + meterX,
-				y = (float)topRight.y + meterY,
-				z = 0.0
-			});
-			RDcoordinate.y = Camera.main.transform.position.y;
+            var rdCoordinate = new Coordinate(
+                CoordinateSystem.RD,
+                bottomLeft.x + meterX,
+                (float)topRight.y + meterY,
+                0.0d
+            );
+			var unityCoordinate = CoordinateConverter.ConvertTo(rdCoordinate, CoordinateSystem.Unity).ToVector3();
+            unityCoordinate.y = Camera.main.transform.position.y;
 
-			print(RDcoordinate);
+            onClick.Invoke(rdCoordinate);
+			print(unityCoordinate);
 
-			Camera.main.transform.position = RDcoordinate;
+			Camera.main.transform.position = unityCoordinate;
 		}
 
 		/// <summary>
@@ -234,6 +240,7 @@ namespace Netherlands3D.Minimap
 			layerIndex = layerStartIndex + viewerZoom;
 			CalculateGridScaling();
 			ActivateMapLayer();
+            onZoom.Invoke(viewerZoom);
 		}
 
 		/// <summary>
@@ -304,7 +311,7 @@ namespace Netherlands3D.Minimap
 			fov.SetAsLastSibling(); //Fov is on top of map
 			pointer.SetAsLastSibling(); //Pointer is on top of fov
 
-			PositionObjectOnMap(pointer, CoordConvert.UnitytoRD(Camera.main.transform.position));
+			PositionObjectOnMap(pointer, CoordinateConverter.UnitytoRD(Camera.main.transform.position));
 
 			if(CenterPointerInView)
 			{

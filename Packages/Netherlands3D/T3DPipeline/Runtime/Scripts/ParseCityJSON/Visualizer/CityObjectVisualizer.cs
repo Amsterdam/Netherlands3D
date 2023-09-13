@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Netherlands3D.Core;
+using Netherlands3D.Coordinates;
 using Netherlands3D.Events;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Netherlands3D.T3DPipeline
 {
@@ -101,17 +100,9 @@ namespace Netherlands3D.T3DPipeline
 
         private Vector3 SetPosition(CityObject cityObject)
         {
-            var center = cityObject.AbsoluteCenter;
-            switch (cityObject.CoordinateSystem)
-            {
-                case CoordinateSystem.WGS84:
-                    var wgs = new Vector3WGS(center.x, center.y, center.z);
-                    return CoordConvert.WGS84toUnity(wgs);
-                case CoordinateSystem.RD:
-                    var rd = new Vector3RD(center.x, center.y, center.z);
-                    return CoordConvert.RDtoUnity(rd);
-            }
-            return new Vector3((float)center.x, (float)center.z, (float)center.y);
+            var center = cityObject.AbsoluteCenter; 
+            var coordinate = new Coordinate(cityObject.CoordinateSystem, center.x, center.y, center.z);
+            return CoordinateConverter.ConvertTo(coordinate, CoordinateSystem.Unity).ToVector3();
         }
 
 
@@ -233,9 +224,9 @@ namespace Netherlands3D.T3DPipeline
         //Different boundary objects need to be parsed into meshes in different ways because of the different depths of the boundary arrays. We need to go as deep as needed to create meshes from surfaces.
         protected virtual List<BoundaryMesh> BoundariesToMeshes(CityBoundary boundary, CoordinateSystem coordinateSystem)
         {
-            if (boundary is CityMultiPoint) 
+            if (boundary is CityMultiPoint)
                 throw new NotSupportedException("Boundary of type " + typeof(CityMultiPoint) + "is not supported by this Visualiser script since it contains no mesh data. Use MultiPointVisualiser instead and assign an object to use as visualization of the points");
-            if(boundary is CityMultiLineString) //todo this boundary type is not supported at all
+            if (boundary is CityMultiLineString) //todo this boundary type is not supported at all
                 throw new NotSupportedException("Boundary of type " + typeof(CityMultiLineString) + "is currently not supported.");
             if (boundary is CitySurface)
                 return BoundariesToMeshes(boundary as CitySurface, coordinateSystem);
@@ -325,11 +316,11 @@ namespace Netherlands3D.T3DPipeline
                 {
                     case CoordinateSystem.WGS84:
                         var wgs = new Vector3WGS(relativeVert.x, relativeVert.y, relativeVert.z);
-                        convertedVert = CoordConvert.WGS84toUnity(wgs);
+                        convertedVert = CoordinateConverter.WGS84toUnity(wgs);
                         break;
                     case CoordinateSystem.RD:
                         var rd = new Vector3RD(relativeVert.x, relativeVert.y, relativeVert.z);
-                        convertedVert = CoordConvert.RDtoUnity(rd);
+                        convertedVert = CoordinateConverter.RDtoUnity(rd);
                         break;
                     default:
                         convertedVert = new Vector3((float)relativeVert.x, (float)relativeVert.z, (float)relativeVert.y);

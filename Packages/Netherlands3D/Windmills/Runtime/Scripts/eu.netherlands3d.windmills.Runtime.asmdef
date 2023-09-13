@@ -1,0 +1,18 @@
+{
+    "name": "eu.netherlands3d.windmills.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9ca88277166fea644a31588b4f943acc",
+        "GUID:1e17bff3de8024951b931a842b81fb0f",
+        "GUID:6fc4e9e40fe9cfd41bc3559197fc47b1"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

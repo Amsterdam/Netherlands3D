@@ -1,0 +1,31 @@
+{
+  "name": "nl.netherlands3d.authentication",
+  "displayName": "Netherlands3D - Authentication",
+  "version": "1.0.0",
+  "unity": "2022.2",
+  "description": "This package provides an OAuth client for use with Netherlands3D.\nPlease see the README for instructions on installing and using this package.\n\nDepends on <b>https://github.com/cdmvision/authentication-unity.git#1.1.3</b>",
+  "type": "library",
+  "keywords": [
+    "authentication",
+    "netherlands3d"
+  ],
+  "license": "EUPL-1.2",
+  "documentationUrl": "https://github.com/Amsterdam/Netherlands3D/blob/main/Packages/nl.netherlands3d.authentication/README.md",
+  "licensesUrl": "https://github.com/Amsterdam/Netherlands3D/blob/main/Packages/nl.netherlands3d.authentication/LICENSE.txt",
+  "changelogURL": "https://github.com/Amsterdam/Netherlands3D/blob/main/Packages/nl.netherlands3d.authentication/CHANGELOG.md",
+  "hideInEditor": false,
+  "author": {
+    "name": "3D Amsterdam Team",
+    "url": "https://3d.amsterdam.nl"
+  },
+  "repository": {
+    "url": "https://github.com/Amsterdam/Netherlands3D"
+  },
+  "samples": [
+    {
+      "displayName": "Signing in and out",
+      "description": "Example of a sign in and sign out button, and showing user information after signing in",
+      "path": "Samples~"
+    }
+  ]
+}

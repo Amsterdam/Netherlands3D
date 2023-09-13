@@ -23,6 +23,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Netherlands3D.Utilities;
 using System.Globalization;
+using Netherlands3D.Coordinates;
 using TMPro;
 
 namespace Netherlands3D.TileSystem
@@ -30,7 +31,7 @@ namespace Netherlands3D.TileSystem
 	public class GeoJSONTextLayer : Layer
 	{
 		public GameObject textPrefab;
-		public string geoJsonUrl = "https://geodata.nationaalgeoregister.nl/kadastralekaart/wfs/v4_0?service=WFS&version=2.0.0&request=GetFeature&TypeNames=kadastralekaartv4:openbareruimtenaam&&propertyName=plaatsingspunt,tekst,hoek,relatieveHoogteligging,openbareRuimteType&outputformat=geojson&srs=EPSG:28992&bbox=";//121000,488000,122000,489000";	
+		public string geoJsonUrl = "https://geodata.nationaalgeoregister.nl/kadastralekaart/wfs/v4_0?service=WFS&version=2.0.0&request=GetFeature&TypeNames=kadastralekaartv4:openbareruimtenaam&&propertyName=plaatsingspunt,tekst,hoek,relatieveHoogteligging,openbareRuimteType&outputformat=geojson&srs=EPSG:28992&bbox=";//121000,488000,122000,489000";
 
 		[SerializeField]
 		private int maxSpawnsPerFrame = 100;
@@ -143,7 +144,7 @@ namespace Netherlands3D.TileSystem
 					return;
 				default:
 					break;
-			}	
+			}
 		}
 
 		private Tile CreateNewTile(Vector2Int tileKey)
@@ -155,7 +156,7 @@ namespace Netherlands3D.TileSystem
 			tile.gameObject = new GameObject();
 			tile.gameObject.transform.parent = transform.gameObject.transform;
 			tile.gameObject.layer = tile.gameObject.transform.parent.gameObject.layer;
-			tile.gameObject.transform.position = CoordConvert.RDtoUnity(tileKey);
+			tile.gameObject.transform.position = CoordinateConverter.RDtoUnity(tileKey);
 
 			return tile;
 		}
@@ -199,12 +200,12 @@ namespace Netherlands3D.TileSystem
 				{
 					var centroidX = coordinates[i];
 					var centroidY = coordinates[i + 1];
-					var linePoint = CoordConvert.RDtoUnity(new Vector2RD(centroidX, centroidY));
+					var linePoint = CoordinateConverter.RDtoUnity(new Vector2RD(centroidX, centroidY));
 					newLineRenderer.SetPosition(Mathf.FloorToInt(i / 2), linePoint);
 				}
 			}
 
-			return lineRenderObject;			
+			return lineRenderObject;
 		}
 
 		private IEnumerator DownloadTextNameData(TileChange tileChange, Tile tile, System.Action<TileChange> callback = null)
@@ -216,7 +217,7 @@ namespace Netherlands3D.TileSystem
 			yield return streetnameRequest.SendWebRequest();
 
 			if (streetnameRequest.result == UnityWebRequest.Result.Success)
-			{	
+			{
 				GeoJSON customJsonHandler = new GeoJSON(streetnameRequest.downloadHandler.text);
 				yield return null;
 				Vector3 locationPoint = default;
@@ -230,7 +231,7 @@ namespace Netherlands3D.TileSystem
 					//string textPropertyValue = customJsonHandler.getPropertyStringValue(textProperty);
 					foreach(TextsAndSize textAndSize in textsAndSizes)
 					{
-						string textPropertyValue = customJsonHandler.GetPropertyStringValue(textAndSize.textPropertyName);	
+						string textPropertyValue = customJsonHandler.GetPropertyStringValue(textAndSize.textPropertyName);
 
 						if (textPropertyValue.Length > 1 && (!filterUniqueNames || !uniqueNames.Contains(textPropertyValue)))
 						{
@@ -239,7 +240,7 @@ namespace Netherlands3D.TileSystem
 							textObject.name = textPropertyValue;
 							textObject.transform.SetParent(tile.gameObject.transform, true);
 							textObject.GetComponent<TextMeshPro>().text = textPropertyValue;
-							
+
 							if(filterUniqueNames)
 								uniqueNames.Add(textPropertyValue);
 
@@ -248,7 +249,7 @@ namespace Netherlands3D.TileSystem
 							{
 								case PositionSourceType.Point:
 									double[] coordinate = customJsonHandler.GetGeometryPoint2DDouble();
-									locationPoint = CoordConvert.RDtoUnity(new Vector2RD(coordinate[0], coordinate[1]));
+									locationPoint = CoordinateConverter.RDtoUnity(new Vector2RD(coordinate[0], coordinate[1]));
 									locationPoint.y = textAndSize.offset;
 
 									//Turn the text object so it faces up
@@ -282,7 +283,7 @@ namespace Netherlands3D.TileSystem
 									double centerX = minX + ((maxX - minX) / 2);
 									double centerY = minY + ((maxY - minY) / 2);
 
-									locationPoint = CoordConvert.RDtoUnity(new Vector2RD(centerX, centerY));
+									locationPoint = CoordinateConverter.RDtoUnity(new Vector2RD(centerX, centerY));
 									locationPoint.y = textAndSize.offset;
 									break;
 							}

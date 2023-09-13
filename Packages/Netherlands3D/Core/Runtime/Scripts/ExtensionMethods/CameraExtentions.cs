@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Netherlands3D.Coordinates;
 using Netherlands3D.Core;
 
 public static class CameraExtensions
@@ -41,8 +42,8 @@ public static class CameraExtensions
         CalculateCornerExtents(camera, maximumViewDistance);
 
         // Convert min and max to WGS84 coordinates
-        var rdMin = CoordConvert.UnitytoRD(unityMin);
-        var rdMax = CoordConvert.UnitytoRD(unityMax);
+        var rdMin = CoordinateConverter.UnitytoRD(unityMin);
+        var rdMax = CoordinateConverter.UnitytoRD(unityMax);
 
         // Area that should be loaded
         var extent = new Extent(rdMin.x, rdMin.y, rdMax.x, rdMax.y);

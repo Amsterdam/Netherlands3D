@@ -3,11 +3,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using Netherlands3D.Coordinates;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Netherlands3D.Core
 {
@@ -19,7 +19,6 @@ namespace Netherlands3D.Core
     {
         [SerializeField] private float zeroGroundLevelY = 0;
         [SerializeField] private Vector2RD relativeCenterRD = new Vector2RD(121000, 487000);
-        private Vector3ECEF centerECEF;
 
         [Tooltip("Forces standard culture for parsing/deserializing numbers"), SerializeField] private bool setInvariantCultureInfo = true;
 
@@ -28,106 +27,60 @@ namespace Netherlands3D.Core
         private bool movingOrigin = false;
         [SerializeField]
         private float maxCameraDistanceFromOrigin = 5000;
-        public bool MovingOrigin { 
+        public bool MovingOrigin {
             get => movingOrigin;
             set
             {
-                
+                if(runningCameraDistanceCheck != null)
+                {
+                    StopCoroutine(runningCameraDistanceCheck);
+                    runningCameraDistanceCheck = null;
+                }
 
-               
+                if(value == true)
+                    runningCameraDistanceCheck = StartCoroutine(MaxCameraDistance());
 
                 movingOrigin = value;
             }
         }
 
-        public UnityEvent prepareForOriginShift = new UnityEvent();
-        public  CenterChangedEvent relativeOriginChanged = new CenterChangedEvent();
         private Coroutine runningCameraDistanceCheck;
 
         void Awake()
         {
-            
-
-            if (setInvariantCultureInfo)
+            if(setInvariantCultureInfo)
             {
                 CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             }
 
-            CoordConvert.zeroGroundLevelY = zeroGroundLevelY;
-            CoordConvert.relativeCenterRD = relativeCenterRD;
-        }
-
-        private void OnDisable()
-        {
-            if (runningCameraDistanceCheck != null)
-            {
-                StopCoroutine(runningCameraDistanceCheck);
-                runningCameraDistanceCheck = null;
-            }
+            CoordinateConverter.zeroGroundLevelY = zeroGroundLevelY;
+            CoordinateConverter.relativeCenterRD = relativeCenterRD;
         }
 
         private void OnValidate()
         {
-            CoordConvert.zeroGroundLevelY = zeroGroundLevelY;
-            CoordConvert.relativeCenterRD = relativeCenterRD;
-            
+            CoordinateConverter.zeroGroundLevelY = zeroGroundLevelY;
+            CoordinateConverter.relativeCenterRD = relativeCenterRD;
 
-            Vector3WGS origin_wgs = CoordConvert.UnitytoWGS84(Vector3.zero);
+            Vector3WGS origin_wgs = CoordinateConverter.UnitytoWGS84(Vector3.zero);
 
             MovingOrigin = movingOrigin;
         }
 
-        private void MaxCameraDistance()
+        private IEnumerator MaxCameraDistance()
         {
-          
+            while (MovingOrigin)
+            {
                 var offset = Camera.main.transform.position;
                 offset.y = 0;
                 if (offset.magnitude > maxCameraDistanceFromOrigin)
                 {
-                    MoveAndRotateWorld(offset);
-                    
-                    //Camera.main.transform.position = Camera.main.transform.position - offset;
+                    Coordinates.MovingOrigin.MoveAndRotateWorld(offset);
                 }
-
-                
-               
-            
-        }
-
-        public static bool ecefIsSet;
-        
-        public class CenterChangedEvent : UnityEvent<Vector3> { }
-        
-
-        public  void MoveAndRotateWorld(Vector3 cameraPosition)
-        {
-
-            prepareForOriginShift.Invoke();
-
-            var flatCameraPosition = new Vector3(cameraPosition.x, 0, cameraPosition.z);
-            Vector3ECEF newECEFOrigin = CoordConvert.UnityToECEF(flatCameraPosition);
-            Vector3WGS newWGSOrigin = CoordConvert.ECEFtoWGS84(newECEFOrigin);
-            newWGSOrigin.h = 0;
-            newECEFOrigin = CoordConvert.WGS84toECEF(newWGSOrigin);
-
-            CoordConvert.relativeCenterECEF = newECEFOrigin;
-            //var newWGS84 = CoordConvert.ECEFtoWGS84(newECEFOrigin);
-            //var newRD = CoordConvert.WGS84toRD(newWGS84.lon,newWGS84.lat);
-            //CoordConvert.relativeCenterRD = new Vector2RD(newRD.x, newRD.y);
-
-            var offset = new Vector3(-cameraPosition.x, 0, -cameraPosition.z);
-
-            relativeOriginChanged.Invoke(offset);
-        }
-
-
-        private void Update()
-        {
-           if(MovingOrigin )
-            {
-                MaxCameraDistance();
+                yield return new WaitForEndOfFrame();
             }
         }
+
 #if UNITY_EDITOR
         /// <summary>
         /// Draw the RD origin in our viewport center
@@ -135,7 +88,7 @@ namespace Netherlands3D.Core
         void OnDrawGizmosSelected()
         {
             Handles.color = Color.yellow;
-            Handles.Label(Vector3.zero, $"    RD: {CoordConvert.relativeCenterRD.x},{CoordConvert.relativeCenterRD.y}");
+            Handles.Label(Vector3.zero, $"    RD: {CoordinateConverter.relativeCenterRD.x},{CoordinateConverter.relativeCenterRD.y}");
         }
 #endif
     }

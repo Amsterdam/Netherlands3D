@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Events;
-using Netherlands3D.ModelParsing;
 using static Netherlands3D.BIMPlanning.BimPlanningSetup;
 
 namespace Netherlands3D.BIMPlanning
@@ -39,7 +38,7 @@ namespace Netherlands3D.BIMPlanning
         [SerializeField] private Material DestroyMaterial;
 
         BimPlanningSetup csvImporter;
-        ObjImporter objImporter;
+        ObjImporter.ObjImporter objImporter;
 
         [Header("Optional output")]
         [SerializeField] private BoolEvent onObjReady;
@@ -69,8 +68,8 @@ namespace Netherlands3D.BIMPlanning
             get => csvReady;
             set { csvReady = value; if (onCsvReady) onCsvReady.InvokeStarted(csvReady); }
         }
-        public bool MtlReady { 
-            get => mtlReady; 
+        public bool MtlReady {
+            get => mtlReady;
             set { mtlReady = value; if (onMtlReady) onMtlReady.InvokeStarted(mtlReady); }
         }
 
@@ -161,7 +160,7 @@ namespace Netherlands3D.BIMPlanning
             if (!csvImporter) csvImporter = gameObject.AddComponent<BimPlanningSetup>();
             if (!objImporter)
             {
-                objImporter = gameObject.AddComponent<ObjImporter>();
+                objImporter = gameObject.AddComponent<ObjImporter.ObjImporter>();
                 objImporter.BaseMaterial = baseMaterial;
                 objImporter.createSubMeshes = false;
             }

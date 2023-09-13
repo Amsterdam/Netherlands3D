@@ -1,13 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(InputField))]
 public class DateTimeExtract : MonoBehaviour
 {
-    public enum ExtractType { SECONDS, MINUTES, HOURS, DAYS, MONTHS, YEARS }
-    
+    public enum ExtractType
+    {
+        SECONDS,
+        MINUTES,
+        HOURS,
+        DAYS,
+        MONTHS,
+        YEARS
+    }
+
     [SerializeField] private ExtractType extractType;
 
     private InputField field;
@@ -16,7 +23,8 @@ public class DateTimeExtract : MonoBehaviour
     {
         field = GetComponent<InputField>();
     }
-    public void ExtractFromDateTime(System.DateTime dateTime)
+
+    public void ExtractFromDateTime(DateTime dateTime)
     {
         int extractValue = -1;
         switch (extractType)
@@ -40,13 +48,12 @@ public class DateTimeExtract : MonoBehaviour
                 extractValue = dateTime.Year;
                 break;
             default:
-                throw new System.Exception("Impossible case found, this shouldn't happen!");
+                throw new Exception("Impossible case found, this shouldn't happen!");
         }
+
         if (!field.isFocused)
         {
             field.text = extractValue.ToString();
         }
-
     }
-
 }

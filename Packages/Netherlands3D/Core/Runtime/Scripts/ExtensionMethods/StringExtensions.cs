@@ -7,6 +7,7 @@ using System.Text;
 using System;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using Netherlands3D.Coordinates;
 
 public static class StringExtensions
 {    
