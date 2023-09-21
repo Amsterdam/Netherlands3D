@@ -210,6 +210,15 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "com.virgis.geojson.net": {
+      "version": "1.2.17",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "2.0.0"
+      },
+      "url": "https://package.openupm.com"
+    },
     "eu.netherlands3d.coordinates": {
       "version": "1.1.0",
       "depth": 1,
@@ -224,6 +233,18 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
+    "eu.netherlands3d.geojson": {
+      "version": "1.1.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.unitywebrequest": "1.0.0",
+        "com.unity.nuget.newtonsoft-json": "3.2.0",
+        "com.virgis.geojson.net": "1.2.17",
+        "eu.netherlands3d.coordinates": "1.1.0"
+      },
+      "url": "https://package.openupm.com"
+    },
     "eu.netherlands3d.gltfast": {
       "version": "5.0.3",
       "depth": 0,
@@ -233,6 +254,16 @@
         "com.unity.modules.unitywebrequest": "1.0.0",
         "com.unity.mathematics": "1.2.6",
         "com.unity.burst": "1.6.6"
+      },
+      "url": "https://package.openupm.com"
+    },
+    "eu.netherlands3d.masking": {
+      "version": "1.0.2",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "eu.netherlands3d.web-cursors": "1.0.2",
+        "com.unity.inputsystem": "1.5.1"
       },
       "url": "https://package.openupm.com"
     },
@@ -313,7 +344,9 @@
         "eu.netherlands3d.obj-importer": "1.1.0",
         "eu.netherlands3d.poly2tri": "2.0.0",
         "eu.netherlands3d.selection-tools": "1.0.1",
-        "eu.netherlands3d.web-cursors": "1.0.2"
+        "eu.netherlands3d.web-cursors": "1.0.2",
+        "eu.netherlands3d.masking": "1.0.2",
+        "eu.netherlands3d.geojson": "1.1.0"
       }
     },
     "nl.netherlands3d.authentication": {

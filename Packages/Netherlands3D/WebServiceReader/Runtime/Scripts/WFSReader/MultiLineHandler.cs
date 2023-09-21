@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Netherlands3D.Coordinates;
-using Netherlands3D.Utilities;
+using Netherlands3D.GeoJSON;
 using UnityEngine;
 
 namespace Netherlands3D.WFSHandlers

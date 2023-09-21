@@ -1,14 +1,9 @@
-using Netherlands3D.Core;
-using Netherlands3D.Events;
-using Netherlands3D.Utilities;
-using Netherlands3D.WFSHandlers;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Xml;
-using UnityEngine;
-using UnityEngine.Networking;
+using Netherlands3D.Events;
+using Netherlands3D.GeoJSON;
 using TMPro;
+using UnityEngine;
 using UnityEngine.Events;
 
 public class WFSHandler : MonoBehaviour
@@ -186,31 +181,31 @@ public class WFSHandler : MonoBehaviour
 
         switch (featureData.GeometryType)
         {
-            case GeoJSON.GeoJSONGeometryType.Point:
+            case GeoJSONStreamReader.GeoJSONGeometryType.Point:
                 ActiveWFS.AddListenerFeatureProcessed(pointEvent.InvokeStarted);
                 break;
-            case GeoJSON.GeoJSONGeometryType.MultiPoint:
+            case GeoJSONStreamReader.GeoJSONGeometryType.MultiPoint:
                 ActiveWFS.AddListenerFeatureProcessed(multiPointEvent.InvokeStarted);
                 break;
-            case GeoJSON.GeoJSONGeometryType.LineString:
+            case GeoJSONStreamReader.GeoJSONGeometryType.LineString:
                 ActiveWFS.AddListenerFeatureProcessed(drawLineEvent.InvokeStarted);
                 break;
-            case GeoJSON.GeoJSONGeometryType.MultiLineString:
+            case GeoJSONStreamReader.GeoJSONGeometryType.MultiLineString:
                 ActiveWFS.AddListenerFeatureProcessed(drawLinesEvent.InvokeStarted);
                 break;
-            case GeoJSON.GeoJSONGeometryType.Polygon:
+            case GeoJSONStreamReader.GeoJSONGeometryType.Polygon:
                 ActiveWFS.AddListenerFeatureProcessed(drawPolygonEvent.InvokeStarted);
                 break;
-            case GeoJSON.GeoJSONGeometryType.MultiPolygon:
+            case GeoJSONStreamReader.GeoJSONGeometryType.MultiPolygon:
                 ActiveWFS.AddListenerFeatureProcessed(drawPolygonsEvent.InvokeStarted);
                 break;
-            case GeoJSON.GeoJSONGeometryType.GeometryCollection:
+            case GeoJSONStreamReader.GeoJSONGeometryType.GeometryCollection:
                 // String Event voor error.
-                throw new System.NotImplementedException("Geometry Type of type: 'GeometryCollection' is not currently supported");
+                throw new NotImplementedException("Geometry Type of type: 'GeometryCollection' is not currently supported");
             //break;
             default:
                 // String Event voor error.
-                throw new System.Exception("Geometry Type is either 'Undefined' or not found, cannot process like this!");
+                throw new Exception("Geometry Type is either 'Undefined' or not found, cannot process like this!");
         }
     }
 

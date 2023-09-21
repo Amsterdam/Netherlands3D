@@ -17,10 +17,10 @@
 */
 using Netherlands3D.Core;
 using Netherlands3D.Events;
-using Netherlands3D.Utilities;
 using System.Collections;
 using System.Collections.Generic;
 using Netherlands3D.Coordinates;
+using Netherlands3D.GeoJSON;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -166,7 +166,7 @@ public class GetGeoJSONFloatValues : MonoBehaviour
 
 			if (runningWebRequest.result == UnityWebRequest.Result.Success)
 			{
-				GeoJSON customJsonHandler = new GeoJSON(runningWebRequest.downloadHandler.text);
+				GeoJSONStreamReader customJsonHandler = new GeoJSONStreamReader(runningWebRequest.downloadHandler.text);
 				int featuresFoundInPage = 0;
 				while (customJsonHandler.GotoNextFeature())
 				{
