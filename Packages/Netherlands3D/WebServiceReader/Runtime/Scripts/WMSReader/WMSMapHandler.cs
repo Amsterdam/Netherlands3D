@@ -1,7 +1,4 @@
-using Netherlands3D.Core;
 using Netherlands3D.Events;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WMSMapHandler : MonoBehaviour
@@ -13,7 +10,7 @@ public class WMSMapHandler : MonoBehaviour
 
     [Header("Invoked Events")]
     [SerializeField] private TriggerEvent requestWMSData;
-    [SerializeField] private ObjectEvent mapImageEvent; 
+    [SerializeField] private ObjectEvent mapImageEvent;
     [Header("Listen Events")]
     [SerializeField] private ObjectEvent wmsDataEvent;
 
