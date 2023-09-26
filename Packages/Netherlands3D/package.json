@@ -147,6 +147,7 @@
     "eu.netherlands3d.poly2tri": "2.0.0",
     "eu.netherlands3d.selection-tools": "1.0.1",
     "eu.netherlands3d.web-cursors": "1.0.2",
-    "eu.netherlands3d.masking": "1.0.2"
+    "eu.netherlands3d.masking": "1.0.2",
+    "eu.netherlands3d.simplejson": "1.0.0"
   }
 }
