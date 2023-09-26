@@ -302,6 +302,13 @@
       },
       "url": "https://package.openupm.com"
     },
+    "eu.netherlands3d.simplejson": {
+      "version": "1.0.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
     "eu.netherlands3d.snapshots": {
       "version": "1.0.0",
       "depth": 1,
@@ -344,9 +351,10 @@
         "eu.netherlands3d.obj-importer": "1.1.0",
         "eu.netherlands3d.poly2tri": "2.0.0",
         "eu.netherlands3d.selection-tools": "1.0.1",
+        "eu.netherlands3d.geojson": "1.1.0",
         "eu.netherlands3d.web-cursors": "1.0.2",
         "eu.netherlands3d.masking": "1.0.2",
-        "eu.netherlands3d.geojson": "1.1.0"
+        "eu.netherlands3d.simplejson": "1.0.0"
       }
     },
     "nl.netherlands3d.authentication": {
