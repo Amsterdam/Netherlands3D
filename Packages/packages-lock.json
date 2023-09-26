@@ -210,6 +210,12 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "eu.netherlands3d.address-search": {
+      "version": "file:eu.netherlands3d.address-search",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "eu.netherlands3d.coordinates": {
       "version": "1.1.0",
       "depth": 1,

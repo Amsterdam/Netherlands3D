@@ -1,0 +1,22 @@
+{
+  "name": "eu.netherlands3d.address-search",
+  "displayName": "Netherlands3D - Address Search",
+  "version": "1.0.0",
+  "unity": "2021.1",
+  "description": "",
+  "type": "library",
+  "keywords": [
+    "netherlands3d",
+    "address",
+    "pdok"
+  ],
+  "license": "EUPL-1.2",
+  "documentationUrl": "https://github.com/Amsterdam/Netherlands3D/blob/main/Packages/eu.netherlands3d.address-search/README.md",
+  "licensesUrl": "https://github.com/Amsterdam/Netherlands3D/blob/main/Packages/eu.netherlands3d.address-search/LICENSE.txt",
+  "changelogURL": "https://github.com/Amsterdam/Netherlands3D/blob/main/Packages/eu.netherlands3d.address-search/CHANGELOG.md",
+  "hideInEditor": false,
+  "author": {
+    "name": "Netherlands3D",
+    "url": "https://netherlands3d.eu"
+  }
+}
