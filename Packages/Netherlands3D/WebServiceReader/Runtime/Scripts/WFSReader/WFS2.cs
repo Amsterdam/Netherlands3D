@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using Netherlands3D.Core;
-using Netherlands3D.Utilities;
+using Netherlands3D.GeoJSON;
 using Netherlands3D.Web;
 using UnityEngine;
 using UnityEngine.Events;
@@ -28,7 +27,7 @@ namespace Netherlands3D.WFSHandlers
 
         public UnityEvent<object, List<WFSFeature>> getCapabilitiesReceived = new();
         public UnityEvent<object, List<WFSFeatureDescriptor>> featureDescriptorsReceived = new();
-        public UnityEvent<object, GeoJSON> rawGeoJSONReceived = new();
+        public UnityEvent<object, GeoJSONStreamReader> rawGeoJSONReceived = new();
         public UnityEvent<object, List<WFSFeatureData>> featureDataReceived = new();
 
         public WFS2(string baseURL)
@@ -167,7 +166,7 @@ namespace Netherlands3D.WFSHandlers
 
         private void ProcessGetFeature(object source, string geoJSONString)
         {
-            var geoJSON = new GeoJSON(geoJSONString);
+            var geoJSON = new GeoJSONStreamReader(geoJSONString);
             //Debug.Log("Handling Feature JSON!");
 
             var list = new List<WFSFeatureData>();
@@ -185,9 +184,9 @@ namespace Netherlands3D.WFSHandlers
 
         private void ProcessGetFeatureWithGeometry(object source, string geoJSONString)
         {
-            var geoJSON = new GeoJSON(geoJSONString);
+            var geoJSON = new GeoJSONStreamReader(geoJSONString);
             var geometry = new GeoJSONGeometry();
-            geometry.ActiveGeoJSON = geoJSON;
+            geometry.ActiveGeoJsonStreamReader = geoJSON;
             //Debug.Log("Handling Feature JSON!");
 
             var list = new List<WFSFeatureData>();
@@ -236,7 +235,7 @@ namespace Netherlands3D.WFSHandlers
             }
 
             if (!allowsGeoJSON)
-                throw new System.NotImplementedException("This WFS does not support GeoJSON and currently cannot be processed!");
+                throw new NotImplementedException("This WFS does not support GeoJSON and currently cannot be processed!");
 
             XmlNode filterCapabilities = GetChildNode(wmsXml.DocumentElement, "Filter_Capabilities", "fes", namespaceManager);
 

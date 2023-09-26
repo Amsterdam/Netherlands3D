@@ -16,12 +16,12 @@
 *  permissions and limitations under the License.
 */
 using Netherlands3D.Core;
+using Netherlands3D.GeoJSON;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using Netherlands3D.Utilities;
 using System.Globalization;
 using Netherlands3D.Coordinates;
 using TMPro;
@@ -218,7 +218,7 @@ namespace Netherlands3D.TileSystem
 
 			if (streetnameRequest.result == UnityWebRequest.Result.Success)
 			{
-				GeoJSON customJsonHandler = new GeoJSON(streetnameRequest.downloadHandler.text);
+				GeoJSONStreamReader customJsonHandler = new GeoJSONStreamReader(streetnameRequest.downloadHandler.text);
 				yield return null;
 				Vector3 locationPoint = default;
 				int featureCounter = 0;
