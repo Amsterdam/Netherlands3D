@@ -540,14 +540,20 @@ MonoBehaviour:
   centerPointerInView: 1
   layerStartIndex: 7
   topRight:
-    x: 169068
-    y: 511043
+    x: 280000
+    y: 620000
   bottomLeft:
-    x: 151608
-    y: 496659
+    x: 0
+    y: 300000
   pointer: {fileID: 2568988434725556389}
   fov: {fileID: 2568988435099580100}
   minimapConfig: {fileID: 11400000, guid: e6d0b533c91ab9249906b9d224cb6b6f, type: 2}
+  onZoom:
+    m_PersistentCalls:
+      m_Calls: []
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2568988434725556390
 GameObject:
   m_ObjectHideFlags: 0
@@ -917,7 +923,7 @@ RectTransform:
   - {fileID: 2568988434724862236}
   - {fileID: 2568988433968528623}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1004,6 +1010,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxZoomScale: 6
+  hoverResize: 1
   hoverResizeSpeed: 10
   hoverSize: {x: 222, y: 222}
   mapTiles: {fileID: 2568988434724862236}
