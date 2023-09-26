@@ -211,10 +211,11 @@
       }
     },
     "eu.netherlands3d.address-search": {
-      "version": "file:eu.netherlands3d.address-search",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
+      "version": "1.0.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
     },
     "eu.netherlands3d.coordinates": {
       "version": "1.1.0",
@@ -338,7 +339,8 @@
         "eu.netherlands3d.selection-tools": "1.0.1",
         "eu.netherlands3d.web-cursors": "1.0.2",
         "eu.netherlands3d.masking": "1.0.2",
-        "eu.netherlands3d.simplejson": "1.0.0"
+        "eu.netherlands3d.simplejson": "1.0.0",
+        "eu.netherlands3d.address-search": "1.0.0"
       }
     },
     "nl.netherlands3d.authentication": {
