@@ -16,17 +16,17 @@
 *  permissions and limitations under the License.
 */
 using Netherlands3D.Events;
-using Netherlands3D.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.GeoJSON;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Netherlands3D.BAGInformation
 {
 	/// <summary>
-	/// Loads GeoJSON from an URL using unique ID's, and invoke events for 
+	/// Loads GeoJSON from an URL using unique ID's, and invoke events for
 	/// returned key/value pairs for all properties.
 	/// </summary>
 	public class GeoJSONPropertyLoader : MonoBehaviour
@@ -87,7 +87,7 @@ namespace Netherlands3D.BAGInformation
 
 			if (webRequest.result == UnityWebRequest.Result.Success)
 			{
-				GeoJSON customJsonHandler = new GeoJSON(webRequest.downloadHandler.text);
+				GeoJSONStreamReader customJsonHandler = new GeoJSONStreamReader(webRequest.downloadHandler.text);
 				while (customJsonHandler.GotoNextFeature())
 				{
 					var properties = customJsonHandler.GetProperties();

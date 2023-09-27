@@ -1,10 +1,7 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Netherlands3D.Core;
 using Netherlands3D.WFSHandlers;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Netherlands3D.TileSystem
 {

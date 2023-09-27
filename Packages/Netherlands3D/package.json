@@ -149,6 +149,7 @@
     "eu.netherlands3d.web-cursors": "1.0.2",
     "eu.netherlands3d.masking": "1.0.2",
     "eu.netherlands3d.simplejson": "1.0.0",
-    "eu.netherlands3d.address-search": "1.0.0"
+    "eu.netherlands3d.address-search": "1.0.0",
+    "eu.netherlands3d.geojson": "1.1.0"
   }
 }

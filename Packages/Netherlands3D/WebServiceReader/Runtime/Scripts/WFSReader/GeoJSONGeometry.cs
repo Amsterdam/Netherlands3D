@@ -1,19 +1,17 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using Netherlands3D.Coordinates;
-using Netherlands3D.Core;
-using Netherlands3D.Utilities;
+using Netherlands3D.GeoJSON;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Netherlands3D.WFSHandlers
 {
     public class PointGeometry
     {
-        public GeoJSON.GeoJSONGeometryType GeometryType;
+        public GeoJSONStreamReader.GeoJSONGeometryType GeometryType;
         public Vector3 point;
 
-        public PointGeometry(GeoJSON.GeoJSONGeometryType geometryType, Vector3 point)
+        public PointGeometry(GeoJSONStreamReader.GeoJSONGeometryType geometryType, Vector3 point)
         {
             GeometryType = geometryType;
             this.point = point;
@@ -22,10 +20,10 @@ namespace Netherlands3D.WFSHandlers
 
     public class ListPointGeometry
     {
-        public GeoJSON.GeoJSONGeometryType GeometryType;
+        public GeoJSONStreamReader.GeoJSONGeometryType GeometryType;
         public List<Vector3> points;
 
-        public ListPointGeometry(GeoJSON.GeoJSONGeometryType geometryType, List<Vector3> points)
+        public ListPointGeometry(GeoJSONStreamReader.GeoJSONGeometryType geometryType, List<Vector3> points)
         {
             GeometryType = geometryType;
             this.points = points;
@@ -34,10 +32,10 @@ namespace Netherlands3D.WFSHandlers
 
     public class MultiListPointGeometry
     {
-        public GeoJSON.GeoJSONGeometryType GeometryType;
+        public GeoJSONStreamReader.GeoJSONGeometryType GeometryType;
         public List<List<Vector3>> points;
 
-        public MultiListPointGeometry(GeoJSON.GeoJSONGeometryType geometryType, List<List<Vector3>> points)
+        public MultiListPointGeometry(GeoJSONStreamReader.GeoJSONGeometryType geometryType, List<List<Vector3>> points)
         {
             GeometryType = geometryType;
             this.points = points;
@@ -46,7 +44,7 @@ namespace Netherlands3D.WFSHandlers
 
     public class GeoJSONGeometry
     {
-        public GeoJSON ActiveGeoJSON { get; set; }
+        public GeoJSONStreamReader ActiveGeoJsonStreamReader { get; set; }
 
         public List<PointGeometry> points = new();
         public List<ListPointGeometry> listPoints = new();
@@ -91,55 +89,55 @@ namespace Netherlands3D.WFSHandlers
 
         public void EvaluateGeoType()
         {
-            GeoJSON geoJSON = ActiveGeoJSON;
+            GeoJSONStreamReader geoJsonStreamReader = ActiveGeoJsonStreamReader;
 
-            switch (geoJSON.GetGeometryType())
+            switch (geoJsonStreamReader.GetGeometryType())
             {
-                case GeoJSON.GeoJSONGeometryType.Point:
-                    double[] geoPointDouble = geoJSON.GetGeometryPoint2DDouble();
+                case GeoJSONStreamReader.GeoJSONGeometryType.Point:
+                    double[] geoPointDouble = geoJsonStreamReader.GetGeometryPoint2DDouble();
                     //pointEvent.Invoke(CoordConvert.RDtoUnity(geoPointDouble[0], geoPointDouble[1], -10));
                     var coord = CoordinateConverter.ConvertTo(new Coordinate(CoordinateSystem.RD, geoPointDouble[0], geoPointDouble[1], -10), CoordinateSystem.Unity);
                     var point = coord.ToVector3();
-                    this.points.Add(new PointGeometry(GeoJSON.GeoJSONGeometryType.Point, point));
+                    this.points.Add(new PointGeometry(GeoJSONStreamReader.GeoJSONGeometryType.Point, point));
                     break;
-                case GeoJSON.GeoJSONGeometryType.MultiPoint:
+                case GeoJSONStreamReader.GeoJSONGeometryType.MultiPoint:
                     MultiPointHandler pointHandler = new MultiPointHandler();
                     //listPointEvent.Invoke(pointHandler.ProcessMultiPoint(geoJSON.GetMultiPoint()));
-                    var points = pointHandler.ProcessMultiPoint(geoJSON.GetMultiPoint());
-                    listPoints.Add(new ListPointGeometry(GeoJSON.GeoJSONGeometryType.MultiPoint, points));
+                    var points = pointHandler.ProcessMultiPoint(geoJsonStreamReader.GetMultiPoint());
+                    listPoints.Add(new ListPointGeometry(GeoJSONStreamReader.GeoJSONGeometryType.MultiPoint, points));
                     break;
-                case GeoJSON.GeoJSONGeometryType.LineString:
+                case GeoJSONStreamReader.GeoJSONGeometryType.LineString:
                     LineStringHandler lineStringHandler = new LineStringHandler();
                     //ShiftLineColor();
                     //listPointEvent.Invoke(lineStringHandler.ProcessLineString(geoJSON.GetGeometryLineString()));
-                    var lineString = lineStringHandler.ProcessLineString(geoJSON.GetMultiPoint());
-                    listPoints.Add(new ListPointGeometry(GeoJSON.GeoJSONGeometryType.LineString, lineString));
+                    var lineString = lineStringHandler.ProcessLineString(geoJsonStreamReader.GetMultiPoint());
+                    listPoints.Add(new ListPointGeometry(GeoJSONStreamReader.GeoJSONGeometryType.LineString, lineString));
                     break;
-                case GeoJSON.GeoJSONGeometryType.MultiLineString:
+                case GeoJSONStreamReader.GeoJSONGeometryType.MultiLineString:
                     MultiLineHandler multiLineHandler = new MultiLineHandler();
                     //multiListPointEvent.Invoke(multiLineHandler.ProcessMultiLine(geoJSON.GetMultiLine()));
-                    var multiLineString = multiLineHandler.ProcessMultiLine(geoJSON.GetMultiLine());
-                    multiListPoints.Add(new MultiListPointGeometry(GeoJSON.GeoJSONGeometryType.MultiLineString, multiLineString));
+                    var multiLineString = multiLineHandler.ProcessMultiLine(geoJsonStreamReader.GetMultiLine());
+                    multiListPoints.Add(new MultiListPointGeometry(GeoJSONStreamReader.GeoJSONGeometryType.MultiLineString, multiLineString));
                     break;
-                case GeoJSON.GeoJSONGeometryType.Polygon:
+                case GeoJSONStreamReader.GeoJSONGeometryType.Polygon:
                     PolygonHandler polyHandler = new PolygonHandler();
                     //listPointEvent.Invoke(polyHandler.ProcessPolygon(geoJSON.GetPolygon()));
-                    var polygon = polyHandler.ProcessPolygon(geoJSON.GetPolygon());
-                    listPoints.Add(new ListPointGeometry(GeoJSON.GeoJSONGeometryType.Polygon, polygon));
+                    var polygon = polyHandler.ProcessPolygon(geoJsonStreamReader.GetPolygon());
+                    listPoints.Add(new ListPointGeometry(GeoJSONStreamReader.GeoJSONGeometryType.Polygon, polygon));
                     break;
-                case GeoJSON.GeoJSONGeometryType.MultiPolygon:
+                case GeoJSONStreamReader.GeoJSONGeometryType.MultiPolygon:
                     MultiPolygonHandler multiPolyHandler = new MultiPolygonHandler();
                     //multiListPointEvent.Invoke(multiPolyHandler.GetMultiPoly(geoJSON.GetMultiPolygon()));
-                    var multiPolygon = multiPolyHandler.GetMultiPoly(geoJSON.GetMultiPolygon());
-                    multiListPoints.Add(new MultiListPointGeometry(GeoJSON.GeoJSONGeometryType.MultiPolygon, multiPolygon));
+                    var multiPolygon = multiPolyHandler.GetMultiPoly(geoJsonStreamReader.GetMultiPolygon());
+                    multiListPoints.Add(new MultiListPointGeometry(GeoJSONStreamReader.GeoJSONGeometryType.MultiPolygon, multiPolygon));
                     break;
-                case GeoJSON.GeoJSONGeometryType.GeometryCollection:
+                case GeoJSONStreamReader.GeoJSONGeometryType.GeometryCollection:
                     // String Event voor error.
-                    throw new System.NotImplementedException("Geometry Type of type: 'GeometryCollection' is not currently supported");
+                    throw new NotImplementedException("Geometry Type of type: 'GeometryCollection' is not currently supported");
                 //break;
                 default:
                     // String Event voor error.
-                    throw new System.Exception("Geometry Type is either 'Undefined' or not found, cannot process like this!");
+                    throw new Exception("Geometry Type is either 'Undefined' or not found, cannot process like this!");
             }
         }
 

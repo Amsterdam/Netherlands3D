@@ -1,14 +1,11 @@
 using Netherlands3D.Coordinates;
-using Netherlands3D.Core;
-using Netherlands3D.Utilities;
 using Netherlands3D.WFSHandlers;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using System.Xml.Linq;
+using Netherlands3D.GeoJSON;
 using Netherlands3D.Web;
 using UnityEngine;
 using UnityEngine.Events;
@@ -61,7 +58,7 @@ public class WFS : IWebService
 
     public WFSFeature ActiveFeature { get; private set; }
     //public WFSFeatureData featureData { get; private set; }
-    public GeoJSON ActiveGeoJSON { get; private set; }
+    public GeoJSONStreamReader ActiveGeoJsonStreamReader { get; private set; }
     //public WFSFeature activeFeature;
 
     public UnityEvent wfsGetCapabilitiesProcessedEvent = new UnityEvent();
@@ -206,8 +203,8 @@ public class WFS : IWebService
 
     private void FeatureCallback(string geoJSONString)
     {
-        ActiveGeoJSON = new GeoJSON(geoJSONString);
-        ProcessFeatureJSON(ActiveGeoJSON);
+        ActiveGeoJsonStreamReader = new GeoJSONStreamReader(geoJSONString);
+        ProcessFeatureJSON(ActiveGeoJsonStreamReader);
     }
 
     public void SetActiveFeature(string activatedFeatureName)
@@ -225,19 +222,19 @@ public class WFS : IWebService
         Debug.Log(ActiveFeature.FeatureName);
     }
 
-    private void ProcessFeatureJSON(GeoJSON geoJSON)
+    private void ProcessFeatureJSON(GeoJSONStreamReader geoJsonStreamReader)
     {
         Debug.Log("Handling Feature JSON!");
 
         var list = new List<WFSFeatureData>();
-        while (geoJSON.GotoNextFeature())
+        while (geoJsonStreamReader.GotoNextFeature())
         {
             var featureData = new WFSFeatureData();
-            featureData.GeometryType = geoJSON.GetGeometryType();
-            featureData.TransferDictionary(geoJSON.GetProperties());
+            featureData.GeometryType = geoJsonStreamReader.GetGeometryType();
+            featureData.TransferDictionary(geoJsonStreamReader.GetProperties());
             ActiveFeature.AddNewFeatureData(featureData); //list of all requested features in this session
             list.Add(featureData); //list of all features for this request only
-            EvaluateGeoType(geoJSON);
+            EvaluateGeoType(geoJsonStreamReader);
         }
         //wfsFeatureDataReceivedEvent.Invoke(ActiveFeature.GetFeatureDataList);
         //Debug.Log("listcount: " + list.Count);
@@ -246,7 +243,7 @@ public class WFS : IWebService
 
     public bool AddListenerFeatureProcessed(UnityAction<Vector3> action)
     {
-        if (ActiveGeoJSON.GetGeometryType() == GeoJSON.GeoJSONGeometryType.Point)
+        if (ActiveGeoJsonStreamReader.GetGeometryType() == GeoJSONStreamReader.GeoJSONGeometryType.Point)
         {
             pointEvent.AddListener(action);
             return true;
@@ -256,9 +253,9 @@ public class WFS : IWebService
 
     public bool AddListenerFeatureProcessed(UnityAction<List<Vector3>> action)
     {
-        if (ActiveGeoJSON.GetGeometryType() == GeoJSON.GeoJSONGeometryType.MultiPoint ||
-            ActiveGeoJSON.GetGeometryType() == GeoJSON.GeoJSONGeometryType.LineString ||
-            ActiveGeoJSON.GetGeometryType() == GeoJSON.GeoJSONGeometryType.Polygon)
+        if (ActiveGeoJsonStreamReader.GetGeometryType() == GeoJSONStreamReader.GeoJSONGeometryType.MultiPoint ||
+            ActiveGeoJsonStreamReader.GetGeometryType() == GeoJSONStreamReader.GeoJSONGeometryType.LineString ||
+            ActiveGeoJsonStreamReader.GetGeometryType() == GeoJSONStreamReader.GeoJSONGeometryType.Polygon)
         {
             listPointEvent.AddListener(action);
             return true;
@@ -268,8 +265,8 @@ public class WFS : IWebService
 
     public bool AddListenerFeatureProcessed(UnityAction<List<List<Vector3>>> action)
     {
-        if (ActiveGeoJSON.GetGeometryType() == GeoJSON.GeoJSONGeometryType.MultiLineString ||
-            ActiveGeoJSON.GetGeometryType() == GeoJSON.GeoJSONGeometryType.MultiPolygon)
+        if (ActiveGeoJsonStreamReader.GetGeometryType() == GeoJSONStreamReader.GeoJSONGeometryType.MultiLineString ||
+            ActiveGeoJsonStreamReader.GetGeometryType() == GeoJSONStreamReader.GeoJSONGeometryType.MultiPolygon)
         {
             multiListPointEvent.AddListener(action);
             return true;
@@ -277,37 +274,37 @@ public class WFS : IWebService
         return false;
     }
 
-    private void EvaluateGeoType(GeoJSON geoJSON)
+    private void EvaluateGeoType(GeoJSONStreamReader geoJsonStreamReader)
     {
-        switch (geoJSON.GetGeometryType())
+        switch (geoJsonStreamReader.GetGeometryType())
         {
-            case GeoJSON.GeoJSONGeometryType.Point:
-                double[] geoPointDouble = geoJSON.GetGeometryPoint2DDouble();
+            case GeoJSONStreamReader.GeoJSONGeometryType.Point:
+                double[] geoPointDouble = geoJsonStreamReader.GetGeometryPoint2DDouble();
                 var coord = CoordinateConverter.ConvertTo(new Coordinate(CoordinateSystem.RD, geoPointDouble[0], geoPointDouble[1], -10), CoordinateSystem.Unity);
                 pointEvent.Invoke(coord.ToVector3());
                 break;
-            case GeoJSON.GeoJSONGeometryType.MultiPoint:
+            case GeoJSONStreamReader.GeoJSONGeometryType.MultiPoint:
                 MultiPointHandler pointHandler = new MultiPointHandler();
-                listPointEvent.Invoke(pointHandler.ProcessMultiPoint(geoJSON.GetMultiPoint()));
+                listPointEvent.Invoke(pointHandler.ProcessMultiPoint(geoJsonStreamReader.GetMultiPoint()));
                 break;
-            case GeoJSON.GeoJSONGeometryType.LineString:
+            case GeoJSONStreamReader.GeoJSONGeometryType.LineString:
                 LineStringHandler lineStringHandler = new LineStringHandler();
                 //ShiftLineColor();
-                listPointEvent.Invoke(lineStringHandler.ProcessLineString(geoJSON.GetGeometryLineString()));
+                listPointEvent.Invoke(lineStringHandler.ProcessLineString(geoJsonStreamReader.GetGeometryLineString()));
                 break;
-            case GeoJSON.GeoJSONGeometryType.MultiLineString:
+            case GeoJSONStreamReader.GeoJSONGeometryType.MultiLineString:
                 MultiLineHandler multiLineHandler = new MultiLineHandler();
-                multiListPointEvent.Invoke(multiLineHandler.ProcessMultiLine(geoJSON.GetMultiLine()));
+                multiListPointEvent.Invoke(multiLineHandler.ProcessMultiLine(geoJsonStreamReader.GetMultiLine()));
                 break;
-            case GeoJSON.GeoJSONGeometryType.Polygon:
+            case GeoJSONStreamReader.GeoJSONGeometryType.Polygon:
                 PolygonHandler polyHandler = new PolygonHandler();
-                listPointEvent.Invoke(polyHandler.ProcessPolygon(geoJSON.GetPolygon()));
+                listPointEvent.Invoke(polyHandler.ProcessPolygon(geoJsonStreamReader.GetPolygon()));
                 break;
-            case GeoJSON.GeoJSONGeometryType.MultiPolygon:
+            case GeoJSONStreamReader.GeoJSONGeometryType.MultiPolygon:
                 MultiPolygonHandler multiPolyHandler = new MultiPolygonHandler();
-                multiListPointEvent.Invoke(multiPolyHandler.GetMultiPoly(geoJSON.GetMultiPolygon()));
+                multiListPointEvent.Invoke(multiPolyHandler.GetMultiPoly(geoJsonStreamReader.GetMultiPolygon()));
                 break;
-            case GeoJSON.GeoJSONGeometryType.GeometryCollection:
+            case GeoJSONStreamReader.GeoJSONGeometryType.GeometryCollection:
                 // String Event voor error.
                 throw new System.NotImplementedException("Geometry Type of type: 'GeometryCollection' is not currently supported");
             //break;

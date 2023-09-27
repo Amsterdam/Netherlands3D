@@ -54,7 +54,8 @@
       "name": "OpenUPM",
       "url": "https://package.openupm.com",
       "scopes": [
-        "eu.netherlands3d"
+        "eu.netherlands3d",
+        "com.virgis"
       ]
     }
   ]
