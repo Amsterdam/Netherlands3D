@@ -63,6 +63,11 @@ namespace Netherlands3D.Minimap
             rectTransform = this.GetComponent<RectTransform>();
 
             defaultSizeDelta = rectTransform.sizeDelta;
+
+            var anchorOffset = rectTransform.pivot * defaultSizeDelta;
+            rectTransform.pivot = new Vector2(0,0);
+            rectTransform.anchoredPosition -= anchorOffset;
+
             navigation.gameObject.SetActive(false);
         }
 
