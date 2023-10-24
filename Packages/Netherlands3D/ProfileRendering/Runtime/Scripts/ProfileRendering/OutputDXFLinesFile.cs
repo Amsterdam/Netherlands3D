@@ -16,7 +16,8 @@ namespace Netherlands3D.ProfileRendering
     public class OutputDXFLinesFile : MonoBehaviour
     {
         [DllImport("__Internal")]
-        private static extern void DownloadFile(byte[] array, int byteLength, string fileName);
+        private static extern void DownloadFile(string callbackGameObjectName, string callbackMethodName, string fileName, byte[] array, int byteLength);
+
         [Header("Input")]
         [SerializeField] StringEvent onReceiveLayerName;
         [SerializeField] ColorEvent onReceiveLayerColor;
@@ -160,7 +161,7 @@ namespace Netherlands3D.ProfileRendering
                 if (dxfDocument.Save(stream, binary))
                 {
                     var streamArray = stream.ToArray();
-                    DownloadFile(streamArray, streamArray.Length, outputFileName);
+                    DownloadFile(this.gameObject.name, nameof(FileSaved), outputFileName, streamArray, streamArray.Length);
                 }
                 else
                 {
@@ -168,6 +169,10 @@ namespace Netherlands3D.ProfileRendering
                 }
             }
 #endif
+        }
+        public void FileSaved()
+        {
+            Debug.Log("DXF saved");
         }
     }
 }
