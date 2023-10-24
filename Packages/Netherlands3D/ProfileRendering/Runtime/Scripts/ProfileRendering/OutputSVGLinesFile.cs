@@ -15,7 +15,7 @@ namespace Netherlands3D.ProfileRendering
     public class OutputSVGLinesFile : MonoBehaviour
     {
         [DllImport("__Internal")]
-        private static extern void DownloadFile(byte[] array, int byteLength, string fileName);
+        private static extern void DownloadFile(string callbackGameObjectName, string callbackMethodName, string fileName, byte[] array, int byteLength);
 
         [Header("Input")]
         [SerializeField] Vector3ListEvent onReceiveLayerLines;
@@ -149,9 +149,15 @@ namespace Netherlands3D.ProfileRendering
             }
 #elif !UNITY_EDITOR && UNITY_WEBGL
             byte[] buffer = Encoding.ASCII.GetBytes(svgStringBuilder.ToString());
-            DownloadFile(buffer, buffer.Length, outputFileName);
+            DownloadFile(this.gameObject.name, nameof(FileSaved), outputFileName, buffer, buffer.Length);
+
 #endif
             svgStringBuilder.Clear();
+        }
+
+        public void FileSaved()
+        {
+            Debug.Log("SVG saved");
         }
     }
 }

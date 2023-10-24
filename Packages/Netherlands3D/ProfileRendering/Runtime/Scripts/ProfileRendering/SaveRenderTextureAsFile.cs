@@ -12,7 +12,7 @@ using UnityEditor;
 public class SaveRenderTextureAsFile : MonoBehaviour
 {
     [DllImport("__Internal")]
-    private static extern void DownloadFile(byte[] array, int byteLength, string fileName);
+    private static extern void DownloadFile(string callbackGameObjectName, string callbackMethodName, string fileName, byte[] array, int byteLength);
 
     [SerializeField] private RenderTexture renderTexure;
 
@@ -26,14 +26,19 @@ public class SaveRenderTextureAsFile : MonoBehaviour
         byte[] bytes;
         bytes = texture.EncodeToPNG();
 
-#if !UNITY_EDITOR && UNITY_WEBGL
-        DownloadFile(bytes, bytes.Length, "Profile.png");
-#elif UNITY_EDITOR
+    #if !UNITY_EDITOR && UNITY_WEBGL
+        DownloadFile(this.gameObject.name, nameof(FileSaved), "Profile.png", bytes, bytes.Length);
+    #elif UNITY_EDITOR
         string path = EditorUtility.SaveFilePanel("Save profile PNG", "", "Profile.png","png");
         if (path.Length != 0)
         {
             File.WriteAllBytes(path, bytes);
         }
-#endif        
+    #endif
+    }
+
+    public void FileSaved()
+    {
+        Debug.Log("PNG saved");
     }
 }
