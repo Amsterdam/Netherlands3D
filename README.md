@@ -1,7 +1,7 @@
 ## ⚠️ Development Has Moved!
 
 **Attention:** Development for this project has moved to a new location.
-Please refer to [github.com/netherlands3d](github.com/netherlands3d) for the latest updates and contributions.
+Please refer to [github.com/netherlands3d](https://www.github.com/netherlands3d) for the latest updates and contributions.
 
 If you have any questions or concerns, feel free to reach out to us.
 
