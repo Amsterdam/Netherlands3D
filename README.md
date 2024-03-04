@@ -1,3 +1,11 @@
+## ⚠️ Development Has Moved!
+
+**Attention:** Development for this project has moved to a new location.
+Please refer to [github.com/netherlands3d](github.com/netherlands3d) for the latest updates and contributions.
+
+If you have any questions or concerns, feel free to reach out to us.
+
+
 # Netherlands3D
 
 A library of Unity3D systems/prefabs meant for reuse/addition that were initialy developed for 3D Amsterdam and 3D Utrecht.<br>
