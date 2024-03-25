@@ -16,7 +16,7 @@
       "dependencies": {}
     },
     "com.unity.ai.navigation": {
-      "version": "1.1.3",
+      "version": "1.1.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -25,7 +25,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.burst": {
-      "version": "1.8.4",
+      "version": "1.8.9",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -34,7 +34,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
-      "version": "2.0.4",
+      "version": "2.2.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -48,7 +48,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
-      "version": "3.0.21",
+      "version": "3.0.26",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -57,7 +57,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.18",
+      "version": "2.0.22",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -73,7 +73,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.inputsystem": {
-      "version": "1.5.1",
+      "version": "1.7.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -99,14 +99,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
-      "version": "3.2.0",
+      "version": "3.2.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.render-pipelines.core": {
-      "version": "14.0.7",
+      "version": "14.0.9",
       "depth": 2,
       "source": "builtin",
       "dependencies": {
@@ -117,14 +117,14 @@
       }
     },
     "com.unity.render-pipelines.universal": {
-      "version": "14.0.7",
+      "version": "14.0.9",
       "depth": 1,
       "source": "builtin",
       "dependencies": {
         "com.unity.mathematics": "1.2.1",
-        "com.unity.burst": "1.8.4",
-        "com.unity.render-pipelines.core": "14.0.7",
-        "com.unity.shadergraph": "14.0.7"
+        "com.unity.burst": "1.8.9",
+        "com.unity.render-pipelines.core": "14.0.9",
+        "com.unity.shadergraph": "14.0.9"
       }
     },
     "com.unity.searcher": {
@@ -135,11 +135,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.shadergraph": {
-      "version": "14.0.7",
+      "version": "14.0.9",
       "depth": 2,
       "source": "builtin",
       "dependencies": {
-        "com.unity.render-pipelines.core": "14.0.7",
+        "com.unity.render-pipelines.core": "14.0.9",
         "com.unity.searcher": "4.9.2"
       }
     },
@@ -180,7 +180,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.7.4",
+      "version": "1.7.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -226,9 +226,26 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
+    "eu.netherlands3d.cartesiantiles": {
+      "version": "1.1.2",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "eu.netherlands3d.coordinates": "1.2.0",
+        "com.unity.textmeshpro": "3.0.6"
+      },
+      "url": "https://package.openupm.com"
+    },
     "eu.netherlands3d.coordinates": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
+    "eu.netherlands3d.event-containers": {
+      "version": "0.1.0",
+      "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://package.openupm.com"
@@ -349,7 +366,6 @@
         "com.unity.render-pipelines.universal": "1.3.0",
         "com.unity.nuget.newtonsoft-json": "3.1.0",
         "com.unity.meshopt.decompress": "0.1.0-preview.5",
-        "eu.netherlands3d.gltfast": "5.0.3",
         "eu.netherlands3d.coordinates": "1.1.0",
         "eu.netherlands3d.snapshots": "1.0.0",
         "eu.netherlands3d.sun": "1.0.0",
@@ -358,23 +374,11 @@
         "eu.netherlands3d.obj-importer": "1.1.0",
         "eu.netherlands3d.poly2tri": "2.0.0",
         "eu.netherlands3d.selection-tools": "1.0.1",
-        "eu.netherlands3d.geojson": "1.1.0",
         "eu.netherlands3d.web-cursors": "1.0.2",
         "eu.netherlands3d.masking": "1.0.2",
         "eu.netherlands3d.simplejson": "1.0.0",
-        "eu.netherlands3d.address-search": "1.0.0"
-    },
-    "eu.netherlands3d.geojson": {
-      "version": "1.1.0",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.modules.unitywebrequest": "1.0.0",
-        "com.unity.nuget.newtonsoft-json": "3.2.0",
-        "com.virgis.geojson.net": "1.2.17",
-        "eu.netherlands3d.coordinates": "1.1.0"
-      },
-      "url": "https://package.openupm.com"
+        "eu.netherlands3d.address-search": "1.0.0",
+        "eu.netherlands3d.geojson": "1.1.0"
       }
     },
     "nl.netherlands3d.authentication": {
