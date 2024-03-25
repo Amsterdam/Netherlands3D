@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 25-03-2024
+
+### Removed
+
+- Removed legacy packages that are moved, or will be moved to dedicated repo packages at github.com/netherlands3d
+
 ## [3.2.0] - 04-03-2024
 
 ### Removed
