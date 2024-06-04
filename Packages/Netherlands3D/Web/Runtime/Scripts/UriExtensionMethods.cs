@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Linq;
 
 namespace Netherlands3D.Web
 {
@@ -15,6 +16,28 @@ namespace Netherlands3D.Web
         public static void AddQueryParameter(this UriBuilder uriBuilder, UriQueryParameter parameter)
         {
             AddQueryParameter(uriBuilder, parameter.Key, parameter.Value);
+        }
+
+        public static void RemoveQueryParameter(this UriBuilder uriBuilder, string key)
+        {
+            var query = uriBuilder.Query;
+
+            var nameValueCollection = new NameValueCollection();
+            QueryStringAsNameValueCollection(query, nameValueCollection);
+
+            //Remove if exists
+            if (nameValueCollection.AllKeys.Contains(key))
+                nameValueCollection.Remove(key);
+
+            uriBuilder.Query = nameValueCollection.ToQueryString();
+        }
+
+        private static string ToQueryString(this NameValueCollection nameValueCollection)
+        {
+            var queryString = string.Join("&", nameValueCollection.AllKeys
+                .Select(key => $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(nameValueCollection[key])}"));
+
+            return queryString;
         }
 
         /// <summary>
