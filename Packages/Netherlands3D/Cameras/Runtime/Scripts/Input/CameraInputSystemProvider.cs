@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
@@ -67,14 +68,23 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
     [SerializeField] private float pitchThreshold = 10.0f;
     [SerializeField] private float touchPitchMultiplier = 10.0f;
 
-    [SerializeField] private float macScrollScaleValue = 0.2f;
-    [SerializeField] private bool useScrollScaleValue;
+    [SerializeField] private float scrollScaleValue = 0.2f;
+    [SerializeField] private bool useZoomScaleValue;
 
-    public bool UseScrollScaleValue
+    public bool UseZoomScaleValue
     {
-        get => useScrollScaleValue;
-        set => useScrollScaleValue = value;
+        get => useZoomScaleValue;
+        set
+        {
+            useZoomScaleValue = value;
+            if(useZoomScaleValue)
+                ApplyInputActionScaling(zoomAction, scrollScaleValue);
+            else
+                RemoveImputActionScaling(zoomAction);
+        }
     }
+
+    private string[] originalProcessors;
 
     public bool OverLockingObject
     {
@@ -117,11 +127,22 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         firstPersonModifierAction = cameraActionMap.FindAction("FirstPersonModifier");
         pointerAction = cameraActionMap.FindAction("Point");
 
+        SetOriginalProcessors(zoomAction);
 #if !UNITY_EDITOR
-        UseScrollScaleValue = SystemInfo.operatingSystemFamily == OperatingSystemFamily.MacOSX;
+        UseZoomScaleValue = SystemInfo.operatingSystemFamily == OperatingSystemFamily.MacOSX;
 #endif
-        if (UseScrollScaleValue)
-            ApplyInputActionScaling(zoomAction, macScrollScaleValue);
+        if (UseZoomScaleValue)
+            ApplyInputActionScaling(zoomAction, scrollScaleValue);
+    }
+
+    private void SetOriginalProcessors(InputAction action)
+    {
+        originalProcessors = new string[action.bindings.Count];
+        for (int i = 0; i < action.bindings.Count; i++)
+        {
+            var binding = action.bindings[i];
+            originalProcessors[i] = binding.overrideProcessors;
+        }
     }
 
     private void ApplyInputActionScaling(InputAction action, float scaleValue)
@@ -129,9 +150,23 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         for (int i = 0; i < action.bindings.Count; i++)
         {
             var binding = action.bindings[i];
-            binding.overrideProcessors = "scaleVector2(x=" + scaleValue + ",y=" + scaleValue + ")";
+            if (string.IsNullOrEmpty(originalProcessors[i]))
+                binding.overrideProcessors = "scaleVector2(x=" + scaleValue + ",y=" + scaleValue + ")";
+            else
+                binding.overrideProcessors = originalProcessors[i] + ", scaleVector2(x=" + scaleValue + ",y=" + scaleValue + ")";
             action.ChangeBinding(i).To(binding);
             Debug.Log("scaling " + action.name + " input by: " + scaleValue);
+        }
+    }
+
+    private void RemoveImputActionScaling(InputAction action)
+    {
+        for (int i = 0; i < action.bindings.Count; i++)
+        {
+            var binding = action.bindings[i];
+            binding.overrideProcessors = originalProcessors[i];
+            action.ChangeBinding(i).To(binding);
+            Debug.Log("Removing " + action.name + " scale value");
         }
     }
 
