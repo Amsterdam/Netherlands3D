@@ -80,7 +80,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
             if(useZoomScaleValue)
                 ApplyInputActionScaling(zoomAction, scrollScaleValue);
             else
-                RemoveImputActionScaling(zoomAction);
+                RemoveInputActionScaling(zoomAction);
         }
     }
 
@@ -130,6 +130,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         SetOriginalProcessors(zoomAction);
 #if !UNITY_EDITOR
         UseZoomScaleValue = SystemInfo.operatingSystemFamily == OperatingSystemFamily.MacOSX;
+        return;
 #endif
         if (UseZoomScaleValue)
             ApplyInputActionScaling(zoomAction, scrollScaleValue);
@@ -159,7 +160,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         }
     }
 
-    private void RemoveImputActionScaling(InputAction action)
+    private void RemoveInputActionScaling(InputAction action)
     {
         for (int i = 0; i < action.bindings.Count; i++)
         {
