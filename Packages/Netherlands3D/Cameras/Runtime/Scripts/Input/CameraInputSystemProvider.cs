@@ -23,11 +23,11 @@ implied. See the License for the specific language governing permissions and lim
 public class CameraInputSystemProvider : BaseCameraInputProvider
 {
 #if ENABLE_INPUT_SYSTEM
-    [Header("Input")]
-    [SerializeField] private InputActionAsset inputActionAsset;
-    [Header("Interface input ignore")]
-    [Tooltip("The CameraInputProvider will lock the input when a interaction starts while the pointer is over any of these layers")]
-    [SerializeField] private LayerMask lockInputLayers = 32; //UI layer 5th bit is a 1
+    [Header("Input")] [SerializeField] private InputActionAsset inputActionAsset;
+
+    [Header("Interface input ignore")] [Tooltip("The CameraInputProvider will lock the input when a interaction starts while the pointer is over any of these layers")] [SerializeField]
+    private LayerMask lockInputLayers = 32; //UI layer 5th bit is a 1
+
     [SerializeField] private float pinchStrength = 1000.0f;
 
     private InputActionMap cameraActionMap;
@@ -59,13 +59,22 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
     private Vector2 previousPrimaryPointerPosition;
     private Vector2 previousSecondaryPointerPosition;
 
-    [Header("Multi touch to input")]
-    [SerializeField] private float rotateThreshold = 10.0f;
+    [Header("Multi touch to input")] [SerializeField]
+    private float rotateThreshold = 10.0f;
+
     [SerializeField] private float touchRotateMultiplier = 10.0f;
 
     [SerializeField] private float pitchThreshold = 10.0f;
     [SerializeField] private float touchPitchMultiplier = 10.0f;
 
+    [SerializeField] private float macScrollScaleValue = 0.2f;
+    [SerializeField] private bool useScrollScaleValue;
+
+    public bool UseScrollScaleValue
+    {
+        get => useScrollScaleValue;
+        set => useScrollScaleValue = value;
+    }
 
     public bool OverLockingObject
     {
@@ -79,6 +88,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
             {
                 return true;
             }
+
             return false;
         }
     }
@@ -106,6 +116,23 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         rotateModifierAction = cameraActionMap.FindAction("RotateModifier");
         firstPersonModifierAction = cameraActionMap.FindAction("FirstPersonModifier");
         pointerAction = cameraActionMap.FindAction("Point");
+
+#if !UNITY_EDITOR
+        UseScrollScaleValue = SystemInfo.operatingSystemFamily == OperatingSystemFamily.MacOSX;
+#endif
+        if (UseScrollScaleValue)
+            ApplyInputActionScaling(zoomAction, macScrollScaleValue);
+    }
+
+    private void ApplyInputActionScaling(InputAction action, float scaleValue)
+    {
+        for (int i = 0; i < action.bindings.Count; i++)
+        {
+            var binding = action.bindings[i];
+            binding.overrideProcessors = "scaleVector2(x=" + scaleValue + ",y=" + scaleValue + ")";
+            action.ChangeBinding(i).To(binding);
+            Debug.Log("scaling " + action.name + " input by: " + scaleValue);
+        }
     }
 
     public void Update()
@@ -135,7 +162,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         //Always send position of main pointer
         var pointerPosition = pointerAction.ReadValue<Vector2>();
 
-        //Transform inputs 
+        //Transform inputs
         var moveValue = moveAction.ReadValue<Vector2>();
         var lookValue = lookAction.ReadValue<Vector2>();
         var zoomValue = zoomAction.ReadValue<Vector2>();
@@ -151,7 +178,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         //Inverse secondary touch input X in editor so we can test pinch distance with mouse touch debugging
         secondaryPointerPosition.x = Screen.width - secondaryPointerPosition.x;
 
-        if(Keyboard.current.shiftKey.IsPressed())
+        if (Keyboard.current.shiftKey.IsPressed())
             secondaryPointerPosition.y = Screen.height - secondaryPointerPosition.y;
 #endif
 
@@ -191,7 +218,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
                 zoomValue.y = (pinchDelta / Screen.height) * pinchStrength;
 
                 previousPinchDistance = currentPinchDistance;
-                
+
                 //Override rotate around point on pinch rotate
                 var rotationDelta = touchRotateMultiplier * TouchesToRotationDelta(previousPrimaryPointerPosition, previousSecondaryPointerPosition, primaryPointerPosition, secondaryPointerPosition) / Screen.height;
                 var upAndDownDelta = touchPitchMultiplier * TouchesUpDownDelta(previousPrimaryPointerPosition, previousSecondaryPointerPosition, primaryPointerPosition, secondaryPointerPosition) / Screen.height;
@@ -200,12 +227,12 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
                     Debug.Log("rotationDelta " + rotationDelta);
                     lookValue.x = rotationDelta;
                 }
+
                 if (Mathf.Abs(upAndDownDelta) > pitchThreshold)
                 {
                     //Override pitch movement simultaneously moving two fingers up and down
                     Debug.Log("upAndDownDelta " + upAndDownDelta);
                     lookValue.y = upAndDownDelta;
-
                 }
             }
 
@@ -257,16 +284,19 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
 
             requiresSmoothMovement = true;
         }
+
         if (zoomValue.magnitude > 0)
         {
             zoomInput.InvokeStarted(zoomValue.y);
         }
+
         if (rotateValue.magnitude > 0)
         {
             rotateInput.InvokeStarted(rotateValue);
 
             requiresSmoothMovement = true;
         }
+
         if (upPressed)
         {
             upDownInput.InvokeStarted(1);
@@ -277,7 +307,7 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
         }
 
 
-        if(pauseHeavyProcess)
+        if (pauseHeavyProcess)
             pauseHeavyProcess.InvokeStarted(requiresSmoothMovement);
     }
 
@@ -296,7 +326,6 @@ public class CameraInputSystemProvider : BaseCameraInputProvider
     /// <summary>
     /// Converts two previous and current touch positions into rotation delta
     /// </summary>
-    
     public float TouchesToRotationDelta(Vector2 startTouch1, Vector2 startTouch2, Vector2 endTouch1, Vector2 endTouch2)
     {
         //Calculate the initial direction vector between the two touch positions
